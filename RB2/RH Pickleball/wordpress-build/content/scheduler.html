@@ -1,0 +1,116 @@
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:52px 0 56px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Free tool</span>
+      <h1 class="rh-h1">Tournament Scheduler</h1>
+      <p class="rh-lead">Round-robin or pool play → playoff bracket, up to 12 teams (48 players). Live standings, printable, works on your phone. No sign-up, no cost, nothing collected.</p>
+    </div>
+  </section>
+
+  <section class="rh-section rh-tight">
+    <div class="rh-container">
+
+      <!-- DEMO BAR -->
+      <div class="rh-demobar">
+        <p>👀 <strong>Just want to see how it works?</strong> Load an example tournament with fake teams and scores already filled in.</p>
+        <button class="rh-btn rh-btn-primary" id="rh-demo-rr" type="button" style="padding:12px 18px">Load Round-Robin Example</button>
+        <button class="rh-btn rh-btn-ghost" id="rh-demo-pool" type="button" style="padding:12px 18px">Load Pool-Play Example</button>
+      </div>
+
+      <!-- ===== The scheduler widget (embedded inline) ===== -->
+      <div id="pbts-root" class="pbts-app">
+        <div class="pbts-header">
+          <h1>🎾 Rock Hill Pickleball</h1>
+          <p>Tournament Scheduler - Round Robin &amp; Pool Play + Playoffs</p>
+        </div>
+
+        <div id="pbts-setup" class="pbts-section pbts-setup-sec">
+          <h2>Set Up Your Tournament <span class="pbts-tag">Step 1</span></h2>
+          <div class="pbts-fmt" id="pbts-fmt">
+            <button data-fmt="rr" class="pbts-active">Round Robin<small>Everyone plays everyone</small></button>
+            <button data-fmt="pool">Pool Play &rarr; Playoffs<small>Pools, then a bracket</small></button>
+          </div>
+          <div class="pbts-row">
+            <div><label for="pbts-numTeams">Teams</label><select id="pbts-numTeams"></select></div>
+            <div><label for="pbts-perTeam">Players / Team</label>
+              <select id="pbts-perTeam"><option value="1">1 (singles)</option><option value="2" selected>2 (doubles)</option><option value="3">3</option><option value="4">4</option></select></div>
+            <div><label for="pbts-numCourts">Courts</label><select id="pbts-numCourts"></select></div>
+            <div><label for="pbts-target">Games To</label><select id="pbts-target"><option>11</option><option>15</option><option>21</option></select></div>
+          </div>
+          <div class="pbts-row" id="pbts-poolOpts" style="margin-top:14px;display:none">
+            <div><label for="pbts-numPools">Number of Pools</label><select id="pbts-numPools"></select></div>
+            <div><label for="pbts-advance">Advance / Pool</label><select id="pbts-advance"></select></div>
+          </div>
+          <p class="pbts-hint" id="pbts-summaryHint"></p>
+          <label style="margin-top:16px">Team Names &amp; Rosters <span style="font-weight:500;text-transform:none;letter-spacing:0">(rosters optional)</span></label>
+          <div class="pbts-teamgrid" id="pbts-teamInputs"></div>
+          <button class="pbts-btn pbts-btn-primary" id="pbts-genBtn">Generate Schedule &rarr;</button>
+          <p class="pbts-hint" id="pbts-modeHelp"></p>
+        </div>
+
+        <div id="pbts-results" class="pbts-section pbts-hidden">
+          <div class="pbts-tabs" id="pbts-tabs"></div>
+          <div id="pbts-tab-a"></div>
+          <div id="pbts-tab-b"></div>
+          <div class="pbts-controls pbts-no-print" style="margin-top:20px">
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-printBtn">🖨️ Print / PDF</button>
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-editBtn">✏️ Edit Setup</button>
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-resetBtn">↺ New Tournament</button>
+          </div>
+        </div>
+
+        <p class="pbts-footer-note pbts-no-print">Scores save automatically in this browser on this device. Bookmark the page to pick up where you left off.</p>
+      </div>
+      <!-- ===== end widget ===== -->
+
+      <div class="rh-callout" style="margin-top:22px">💡 <strong>Hosting a real event?</strong> One scorekeeper runs it on one device - it works fully offline, so bad court wifi is no problem. <a href="/about/#contact">Questions? Get in touch.</a></div>
+    </div>
+  </section>
+
+</main>
+<script src="/rh-assets/scheduler.js"></script>
+<script>
+/* Demo loader - fills example teams + scores so visitors see it working */
+(function(){
+  var TEAMS = ["Dinkin' Donuts","Net Ninjas","Kitchen Sinkers","The Volley Llamas","Third Shot Heroes","Paddle Battalion","Dill With It","Smash Bros","No Kitchen Mercy","Rally Cats","Baseline Bandits","The Picklebacks"];
+  var ROSTERS = ["Rich & Dana","Sam & Alex","Chris & Pat","Jordan & Casey","Taylor & Morgan","Drew & Riley","Jamie & Kai","Lee & Quinn","Avery & Sky","Reese & Noah","Devin & Cam","Robin & Sage"];
+  function root(){ return document.getElementById("pbts-root"); }
+  function fire(el,type){ el.dispatchEvent(new Event(type,{bubbles:true})); }
+
+  function loadExample(pool){
+    var r = root(); if(!r) return;
+    var fmt = r.querySelector('#pbts-fmt button[data-fmt="'+(pool?"pool":"rr")+'"]');
+    if(fmt) fmt.click();
+    var nt = document.getElementById("pbts-numTeams");
+    nt.value = "6"; fire(nt,"change");
+    var cards = r.querySelectorAll("#pbts-teamInputs .pbts-teamcard");
+    cards.forEach(function(c,i){
+      var name=c.querySelector(".pbts-t-name"), ros=c.querySelector(".pbts-t-players");
+      if(name){ name.value = TEAMS[i] || ("Team "+(i+1)); }
+      if(ros){ ros.value = ROSTERS[i] || ""; }
+    });
+    document.getElementById("pbts-genBtn").click();
+    // fill plausible scores so standings populate
+    setTimeout(function(){
+      r.querySelectorAll(".pbts-match").forEach(function(m){
+        var sa=m.querySelector(".pbts-sa"), sb=m.querySelector(".pbts-sb");
+        if(!sa||!sb) return;
+        var win = Math.random() < 0.5;
+        var lo = 3 + Math.floor(Math.random()*8); // 3..10
+        sa.value = win ? 11 : lo;
+        sb.value = win ? lo : 11;
+        fire(sa,"input"); fire(sb,"input");
+      });
+      if(pool){
+        var seed = document.querySelector("#pbts-tab-b .pbts-btn-primary");
+        if(seed) seed.click();
+      }
+      r.scrollIntoView({behavior:"smooth",block:"start"});
+    }, 80);
+  }
+  var a=document.getElementById("rh-demo-rr"), b=document.getElementById("rh-demo-pool");
+  if(a) a.addEventListener("click", function(){ loadExample(false); });
+  if(b) b.addEventListener("click", function(){ loadExample(true); });
+})();
+</script>

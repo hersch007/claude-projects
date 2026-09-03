@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/xlsx/**)",
+      "Bash(python -c ' *)",
+      "Bash(py --version)",
+      "PowerShell($cmds = @\\('python','python3','py'\\); foreach\\($c in $cmds\\){ $g = Get-Command $c -ErrorAction SilentlyContinue; if\\($g\\){ \"$c -> $\\($g.Source\\)\" } }; \"---LibreOffice---\"; Test-Path \"C:\\\\Program Files\\\\LibreOffice\\\\program\\\\soffice.exe\")",
+      "PowerShell(try { $x = New-Object -ComObject Excel.Application; \"Excel COM available: \" + $x.Version; $x.Quit\\(\\); [System.Runtime.Interopservices.Marshal]::ReleaseComObject\\($x\\) | Out-Null } catch { \"No Excel COM: \" + $_.Exception.Message })",
+      "WebFetch(domain:gcpflexpack-24024882.hs-sites.com)",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/**)",
+      "Bash(npm --version)",
+      "Bash(node -e \"try{require.resolve\\('docx'\\);console.log\\('docx: OK'\\)}catch\\(e\\){console.log\\('docx: MISSING'\\)}\")",
+      "Bash(npm root *)",
+      "Bash(node build-running-audit.js)",
+      "Bash(python scripts/office/validate.py \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Garlock\\\\Garlock-On-Page-SEO-Audit-Running-Log.docx\")",
+      "Bash(node build-running-audit.js \"C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Garlock/Garlock-On-Page-SEO-Audit-Running-Log-UPDATED.docx\")",
+      "Bash(pandoc --version)",
+      "Bash(pandoc \"Garlock-On-Page-SEO-Audit-Running-Log.docx\" -t plain)",
+      "Bash(node -e ' *)",
+      "mcp__mcp-registry__search_mcp_registry",
+      "Bash(cd \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Garlock\" && ls -la *.js 2>/dev/null; echo \"--- Page Audits ---\"; ls -la \"Page Audits\"/*.js 2>/dev/null; echo \"--- any report files ---\"; ls -la *eport* 2>/dev/null; echo \"--- build-report.js anywhere in project ---\"; find \"C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub\" -name \"build-report.js\" 2>/dev/null | head)",
+      "Bash(node build-report.js)",
+      "Bash(node -e \"try{require.resolve\\('C:/Users/richa/AppData/Roaming/npm/node_modules/pptxgenjs'\\);console.log\\('pptxgenjs OK'\\)}catch\\(e\\){console.log\\('MISSING'\\)}\")",
+      "Bash(node -e \"try{require.resolve\\('C:/Users/richa/AppData/Roaming/npm/node_modules/pptxgenjs'\\);console.log\\('pptxgenjs OK'\\)}catch\\(e\\){console.log\\('MISSING: '+e.message\\)}\")",
+      "PowerShell(Get-Process WINWORD -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(& node \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Garlock\\\\Page Audits\\\\build-running-audit.js\" 2>&1)",
+      "WebFetch(domain:www.garlockflexibles.com)"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Mothership Roofing",
+  "url": "https://www.mothershiproofing.com",
+  "brand_color": "#C0392B",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/MothershipRoofing",
+  "max_pages": 100,
+  "ignore_paths": ["/cdn-cgi/", "?", "#", "/wp-admin", "/wp-login"]
+}

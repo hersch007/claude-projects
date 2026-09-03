@@ -1,0 +1,449 @@
+<!-- ═══════════════════════════════════════════════════════════
+     WTS AMP AI Chatbot — Floating Widget
+     INSTALL: WP Admin → Settings → Insert Headers and Footers → Footer Scripts
+     ═══════════════════════════════════════════════════════════ -->
+
+<style>
+/* ── Root variables ── */
+#wts-chat-widget *{box-sizing:border-box;margin:0;padding:0}
+#wts-chat-widget{position:fixed;bottom:24px;right:24px;z-index:99999;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+
+/* ── Bubble button ── */
+#wts-chat-bubble{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#1a4f8a,#0d6b8c);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.28);transition:transform .2s,box-shadow .2s}
+#wts-chat-bubble:hover{transform:scale(1.08);box-shadow:0 6px 22px rgba(0,0,0,.35)}
+#wts-chat-bubble svg{width:26px;height:26px;fill:#fff}
+#wts-chat-badge{position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:#e53935;border-radius:50%;border:2px solid #fff;display:none;animation:wts-pulse 1.5s infinite}
+@keyframes wts-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+
+/* ── Window ── */
+#wts-chat-window{
+    position:absolute;bottom:70px;right:0;
+    width:380px;height:540px;
+    background:#fff;border-radius:16px;
+    box-shadow:0 12px 48px rgba(0,0,0,.22);
+    display:none;flex-direction:column;overflow:hidden;
+    animation:wts-slidein .22s ease
+}
+@keyframes wts-slidein{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+#wts-chat-window.open{display:flex}
+
+/* ── Header ── */
+#wts-chat-header{
+    background:linear-gradient(135deg,#1a4f8a,#0d6b8c);
+    padding:14px 16px;display:flex;align-items:center;gap:10px
+}
+#wts-chat-header .avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#wts-chat-header .avatar svg{width:20px;height:20px;fill:#fff}
+#wts-chat-header .info{flex:1}
+#wts-chat-header .info .name{font-size:14px;font-weight:600;color:#fff}
+#wts-chat-header .info .status{font-size:11px;color:rgba(255,255,255,.75);display:flex;align-items:center;gap:5px}
+#wts-chat-header .info .status::before{content:'';width:7px;height:7px;border-radius:50%;background:#4caf50;display:inline-block}
+#wts-chat-close{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.8);font-size:20px;line-height:1;padding:4px}
+#wts-chat-close:hover{color:#fff}
+
+/* ── Messages ── */
+#wts-chat-widget #wts-chat-messages{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;min-height:0}
+#wts-chat-widget #wts-chat-messages::-webkit-scrollbar{width:4px}
+#wts-chat-widget #wts-chat-messages::-webkit-scrollbar-track{background:transparent}
+#wts-chat-widget #wts-chat-messages::-webkit-scrollbar-thumb{background:#1a4f8a;border-radius:4px}
+
+#wts-chat-widget .wts-msg-row{display:flex !important;align-items:flex-end !important;gap:8px !important;flex-direction:row !important;width:100% !important}
+#wts-chat-widget .wts-msg-row.wts-user{flex-direction:row-reverse !important}
+#wts-chat-widget .wts-msg-wrap{max-width:75% !important;display:flex !important;flex-direction:column !important;gap:3px !important;float:none !important}
+#wts-chat-widget .wts-msg-row.wts-user .wts-msg-wrap{align-items:flex-end !important}
+#wts-chat-widget .wts-bubble{padding:12px 15px !important;font-size:13.5px !important;line-height:1.6 !important;border-radius:14px !important;word-break:break-word !important;display:block !important;width:auto !important}
+#wts-chat-widget .wts-msg-row.wts-user .wts-bubble{background:linear-gradient(135deg,#1a4f8a,#0d6b8c) !important;color:#fff !important;border-radius:14px 14px 4px 14px !important;font-weight:500 !important}
+#wts-chat-widget .wts-msg-row.wts-bot  .wts-bubble{background:#f8fafc !important;border:1.5px solid #dde8f0 !important;color:#1a2a3a !important;border-radius:14px 14px 14px 4px !important;max-height:280px;overflow-y:auto}
+#wts-chat-widget .wts-time{font-size:10px !important;color:#9aabb8 !important;padding:0 2px !important}
+#wts-chat-widget .wts-msg-row.wts-user .wts-time{text-align:right !important}
+
+/* Typing indicator */
+.wts-typing .wts-bubble{padding:12px 16px}
+.wts-dots{display:flex;gap:5px;align-items:center}
+.wts-dots span{width:7px;height:7px;border-radius:50%;background:#8aa5bf;animation:wts-bounce .9s infinite ease-in-out}
+.wts-dots span:nth-child(2){animation-delay:.18s}
+.wts-dots span:nth-child(3){animation-delay:.36s}
+@keyframes wts-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* Role selector bubbles */
+#wts-role-bubbles{padding:10px 14px 12px;display:flex;gap:8px;justify-content:center}
+.wts-role-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 6px;border-radius:12px;border:2px solid #c5d8eb;background:#eef4fa;cursor:pointer;transition:all .18s}
+.wts-role-btn:hover{background:#1a4f8a;border-color:#1a4f8a}
+.wts-role-btn:hover .role-icon,
+.wts-role-btn:hover .role-label,
+.wts-role-btn:hover .role-sub{color:#fff}
+.role-icon{font-size:20px;line-height:1}
+.role-label{font-size:12px;font-weight:700;color:#1a3a5a;line-height:1.2}
+.role-sub{font-size:10px;color:#5a6a7a;line-height:1.2;text-align:center}
+
+/* ── Glossary button ── */
+#wts-glossary-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:calc(100% - 28px);margin:0 14px 10px;padding:7px 14px;background:#f0f6ff;border:1.5px solid #1a4f8a;border-radius:20px;color:#1a4f8a;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+#wts-glossary-btn:hover{background:#1a4f8a;color:#fff}
+
+/* ── Glossary panel ── */
+#wts-glossary-panel{display:none;flex-direction:column;flex:1;overflow:hidden}
+#wts-glossary-panel.open{display:flex}
+#wts-glossary-header{padding:10px 14px;border-bottom:1px solid #e5ecf2;display:flex;align-items:center;gap:8px;background:#f5f8fc;flex-shrink:0}
+#wts-glossary-search{flex:1;border:1px solid #d0dae4;border-radius:8px;padding:6px 10px;font-size:12px;outline:none}
+#wts-glossary-search:focus{border-color:#1a4f8a}
+#wts-glossary-back{background:none;border:none;color:#1a4f8a;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;padding:0}
+#wts-glossary-list{flex:1;overflow-y:auto;padding:8px 0}
+#wts-glossary-list::-webkit-scrollbar{width:4px}
+#wts-glossary-list::-webkit-scrollbar-thumb{background:#1a4f8a;border-radius:4px}
+#wts-chat-widget .wts-gloss-item{padding:10px 16px !important;border-bottom:1px solid #f0f4f8;cursor:pointer;transition:background .12s}
+#wts-chat-widget .wts-gloss-item:hover{background:#eef4fb}
+#wts-chat-widget .wts-gloss-term{font-size:13px !important;font-weight:600 !important;color:#1a3a5a !important;padding-left:0 !important;margin-left:0 !important}
+#wts-chat-widget .wts-gloss-def{font-size:11.5px !important;color:#5a6a7a !important;line-height:1.45 !important;margin-top:3px !important;padding-left:0 !important;margin-left:0 !important}
+#wts-chat-widget .wts-gloss-tag{display:inline-block !important;font-size:10px !important;padding:1px 7px !important;border-radius:10px !important;background:#e0ecfa !important;color:#1a4f8a !important;font-weight:600 !important;margin-bottom:3px !important}
+#wts-chat-widget .wts-gloss-tag.status{background:#fff3cd !important;color:#7a4a00 !important}
+#wts-chat-widget .wts-gloss-tag.component{background:#e8f5ee !important;color:#1a6b3a !important}
+
+.wts-bubble table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}
+.wts-bubble th{background:#1a4f8a;color:#fff;padding:6px 10px;text-align:left;font-weight:600}
+.wts-bubble td{padding:5px 10px;border-bottom:1px solid #d0dae4;color:#1a2a3a;vertical-align:top}
+.wts-bubble tr:last-child td{border-bottom:none}
+.wts-bubble tr:nth-child(even) td{background:#f5f8fc}
+
+#wts-chat-input-row{padding:10px 12px;border-top:1px solid #e5ecf2;display:flex;gap:8px;align-items:flex-end;background:#fff}
+#wts-chat-input{flex:1;border:1px solid #d0dae4;border-radius:10px;padding:8px 12px;font-size:13px;resize:none;height:54px;max-height:120px;overflow-y:auto;font-family:inherit;color:#1a2a3a;transition:border-color .15s;outline:none;line-height:1.5}
+#wts-chat-input:focus{border-color:#1a4f8a}
+#wts-send-btn{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a4f8a,#0d6b8c);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity .15s}
+#wts-send-btn:disabled{opacity:.45;cursor:default}
+#wts-send-btn svg{width:16px;height:16px;fill:#fff}
+
+/* ── Branding ── */
+#wts-chat-footer{text-align:center;padding:5px;font-size:10px;color:#aab8c4;background:#fff}
+
+@media(max-width:400px){
+    #wts-chat-window{width:calc(100vw - 32px);right:-8px}
+}
+</style>
+
+<div id="wts-chat-widget">
+    <button id="wts-chat-bubble" onclick="wtsChatToggle()" aria-label="Open AMP Assistant">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+    </button>
+    <div id="wts-chat-badge"></div>
+
+    <div id="wts-chat-window">
+
+        <div id="wts-chat-header">
+            <div class="avatar">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+            </div>
+            <div class="info">
+                <div class="name">AMP Advisor</div>
+                <div class="status">Online — Wireless Tower Solutions</div>
+            </div>
+            <button id="wts-chat-close" onclick="wtsChatToggle()" aria-label="Close">✕</button>
+        </div>
+
+        <div id="wts-chat-messages"></div>
+
+        <button id="wts-glossary-btn" onclick="wtsOpenGlossary()">
+            📖 AMP Glossary & Terms
+        </button>
+
+        <div id="wts-role-bubbles">
+            <button class="wts-role-btn" onclick="wtsSelectRole('agent','Agent (Carrier Representative)')">
+                <span class="role-icon">📋</span>
+                <span class="role-label">Agent</span>
+                <span class="role-sub">Carrier Representative</span>
+            </button>
+            <button class="wts-role-btn" onclick="wtsSelectRole('client','Client / Jurisdiction Reviewer')">
+                <span class="role-icon">🏛️</span>
+                <span class="role-label">Client</span>
+                <span class="role-sub">Jurisdiction Reviewer</span>
+            </button>
+            <button class="wts-role-btn" onclick="wtsSelectRole('analyst','WTS Analyst')">
+                <span class="role-icon">🔍</span>
+                <span class="role-label">Analyst</span>
+                <span class="role-sub">WTS Analyst</span>
+            </button>
+        </div>
+
+        <div id="wts-glossary-panel">
+            <div id="wts-glossary-header">
+                <button id="wts-glossary-back" onclick="wtsCloseGlossary()">← Back</button>
+                <input id="wts-glossary-search" type="text" placeholder="Search terms…" oninput="wtsFilterGlossary(this.value)">
+            </div>
+            <div id="wts-glossary-list"></div>
+        </div>
+
+        <div id="wts-chat-input-row">
+            <textarea id="wts-chat-input" placeholder="Ask about AMP, applications, or workflows…" rows="1"
+                onkeydown="wtsHandleKey(event)" oninput="wtsAutoResize(this)"></textarea>
+            <button id="wts-send-btn" onclick="wtsSendMessage()" aria-label="Send">
+                <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+            </button>
+        </div>
+
+        <div id="wts-chat-footer">Powered by WTS · AMP Platform</div>
+    </div>
+</div>
+
+<script>
+(function(){
+    var isOpen      = false;
+    var isLoading   = false;
+    var sessionId   = 'wts_' + Math.random().toString(36).substr(2,9);
+    var currentRole = 'general';
+    var history     = [];
+
+    window.addEventListener('load', function(){
+        wtsAppendMessage('bot',
+            'Welcome! I\'m **AMP Advisor**, the official AI support for the Application Management Platform (AMP) by Wireless Tower Solutions.\n\nTo get started, select your role below:',
+            false
+        );
+    });
+
+    window.wtsChatToggle = function(){
+        isOpen = !isOpen;
+        var win   = document.getElementById('wts-chat-window');
+        var badge = document.getElementById('wts-chat-badge');
+        if(isOpen){
+            win.classList.add('open');
+            badge.style.display = 'none';
+            document.getElementById('wts-chat-input').focus();
+        } else {
+            win.classList.remove('open');
+        }
+    };
+
+    var WTS_GLOSSARY = [
+        {tag:'platform', term:'AMP (Application Management Platform)', def:'Online software application specifically designed to streamline the application process for wireless facilities. The system of record for all applications.'},
+        {tag:'platform', term:'WTS (Wireless Tower Solutions)', def:'A South Carolina based corporation providing wireless facility professional services, expertise, and AMP software to help local governments maintain health, safety and welfare of their communities.'},
+        {tag:'role', term:'Client (Jurisdiction)', def:'The local jurisdiction or municipality with sole authority to approve projects. Clients are local governments contracted with WTS. Holds FINAL approval authority.'},
+        {tag:'role', term:'Agent (Carrier Representative)', def:'The legal representative of a wireless carrier who completes the project application process on behalf of that carrier. Has NO approval authority.'},
+        {tag:'role', term:'Analyst (Client Representative)', def:'Represents WTS and works on behalf of Clients using expertise and AMP tools to manage applications. Supports decisions but does NOT hold final approval authority.'},
+        {tag:'role', term:'Analyst in Training (AIT)', def:'A new Analyst authorized to act in the best interest of Clients, but requiring an additional level of approval by a qualified Analyst prior to final approval.'},
+        {tag:'role', term:'Admin (System Administrator)', def:'Manages system configuration, user access, and platform functionality. Does NOT participate in application approval decisions.'},
+        {tag:'platform', term:'Dashboard', def:'AMP\'s primary status page showing the status of all Projects in real time. Agents see their own projects; Analysts and Clients see all projects within their jurisdiction. First page shown after login.'},
+        {tag:'platform', term:'Project', def:'Represents one request for a wireless tower from application to completed construction. Each project goes through phases: initial application, pay fees, tower information, review, approval, and inspection.'},
+        {tag:'status', term:'Project Status Colors', def:'Green: Approved · Orange: Invoiced · Cyan/Light Blue: Saved · Yellow: Pending · Red: Awaiting Revision · Dark Blue: AIT Approved · Lime Green: AIT Awaiting Revision'},
+        {tag:'status', term:'Saved (Cyan)', def:'Project or component has been created/updated but not yet submitted for review. User must submit to continue the workflow.'},
+        {tag:'status', term:'Invoiced (Orange)', def:'Fees have been generated and issued. Payment is required before components can be accessed and the project can proceed.'},
+        {tag:'status', term:'Pending (Yellow)', def:'Project is in progress and awaiting the next step in the workflow. Monitor status and determine if action is required.'},
+        {tag:'status', term:'Awaiting Revision (Red)', def:'Project has been reviewed and requires corrections or additional information. Agent must revise and resubmit before the project can proceed.'},
+        {tag:'status', term:'Approved (Green)', def:'Project has met all requirements for this stage and has been accepted. No further action required for this step.'},
+        {tag:'status', term:'AIT Approved (Dark Blue)', def:'Project has been approved under the Analyst in Training track, requiring additional approval by a qualified Analyst.'},
+        {tag:'platform', term:'Shot Clock', def:'Based on federal regulations, shows how much time remains for the Client to review an application before it is automatically approved. Length varies by project type.'},
+        {tag:'component', term:'PIF (Project Information Form)', def:'The initial step in AMP to define a project — type, location, tower ownership, etc. Once approved, establishes costs, components, and database tracking. Required for ALL projects.'},
+        {tag:'component', term:'ATF (Add Tower Form)', def:'Must be completed by the Agent whenever a new tower site is added. Contains all information necessary to register a new tower in the WTS database.'},
+        {tag:'component', term:'NWF (New Wireless Facility)', def:'Required ONLY for New Tower-type projects. Provides the justification and purpose of the new tower.'},
+        {tag:'component', term:'TWF (Tower/Wireless Facility Registration)', def:'Identifies tower aspects that only require infrequent updating. Not needed if the tower is already defined and current in the database.'},
+        {tag:'component', term:'NCM (New Colocation/Modification)', def:'The ONLY component required for ALL project types. Gathers essential tower configuration data to ensure the structure will remain safe.'},
+        {tag:'legal', term:'Ordinance', def:'Law(s) defined by a local government establishing rules, regulations, and information needed to complete a wireless facility application.'},
+        {tag:'legal', term:'Final Inspection', def:'The act of physically visiting a permitted site to verify the as-built configuration matches the approved application and meets all ordinance requirements.'},
+        {tag:'legal', term:'Certified Document', def:'Reviewed, stamped, and signed by a Professional Engineer licensed in the state. Ensures work is properly designed, engineered, and safe.'},
+        {tag:'legal', term:'Performance Bond', def:'An insurance-like document ensuring the local government has resources if the wireless carrier cannot fulfill obligations. Typically a removal bond.'},
+        {tag:'legal', term:'RF (Radio Frequency) Emissions', def:'Defined and regulated by the FCC. Local governments verify that each site meets FCC requirements and is safe.'},
+        {tag:'legal', term:'Permits', def:'Issued by local governments to grant permission to construct a wireless facility. Most permits have conditions that must be met prior to or during construction.'},
+        {tag:'platform', term:'Official Record', def:'All project data, communication, and decisions stored in AMP. Everything entered into AMP becomes part of the permanent official record and must be accurate and complete.'},
+        {tag:'platform', term:'2FA (Two-Factor Authentication)', def:'Security feature requiring a second form of verification to log into AMP, protecting user accounts and sensitive application data.'},
+        {tag:'legal', term:'Small Wireless Facility (SWF)', def:'A site meeting federal definitions of a small site, specifically designed to support 5G technologies. Always requires 3 components; up to 25 sites per application.'},
+        {tag:'legal', term:'Eligible Facility Colocation (EFC)', def:'A project type that colocates on an existing structure meeting federal law requirements. Ensured approval if the structure remains safe.'},
+        {tag:'legal', term:'Eligible Facility Modification (EFM)', def:'A project type that modifies equipment on an existing structure meeting federal requirements. Ensured approval if the structure remains safe.'},
+        {tag:'platform', term:'Agent Registration', def:'Process by which an Agent registers on AMP to support a wireless carrier to obtain permits. An Agent can only access their own applications and may register in multiple jurisdictions.'},
+    ];
+
+    window.wtsOpenGlossary = function(){
+        document.getElementById('wts-chat-messages').style.display = 'none';
+        document.getElementById('wts-role-bubbles').style.display = 'none';
+        document.getElementById('wts-glossary-btn').style.display = 'none';
+        document.getElementById('wts-chat-input-row').style.display = 'none';
+        document.getElementById('wts-chat-footer').style.display = 'none';
+        document.getElementById('wts-glossary-panel').classList.add('open');
+        document.getElementById('wts-glossary-search').value = '';
+        wtsRenderGlossary(WTS_GLOSSARY);
+        document.getElementById('wts-glossary-search').focus();
+    };
+
+    window.wtsCloseGlossary = function(){
+        document.getElementById('wts-glossary-panel').classList.remove('open');
+        document.getElementById('wts-chat-messages').style.display = 'flex';
+        document.getElementById('wts-glossary-btn').style.display = 'flex';
+        document.getElementById('wts-chat-input-row').style.display = 'flex';
+        document.getElementById('wts-chat-footer').style.display = 'block';
+        if(currentRole === 'general'){
+            document.getElementById('wts-role-bubbles').style.display = 'flex';
+        }
+    };
+
+    window.wtsFilterGlossary = function(q){
+        if(!q.trim()){ wtsRenderGlossary(WTS_GLOSSARY); return; }
+        var lq = q.toLowerCase();
+        var filtered = WTS_GLOSSARY.filter(function(g){
+            return g.term.toLowerCase().includes(lq) || g.def.toLowerCase().includes(lq);
+        });
+        wtsRenderGlossary(filtered);
+    };
+
+    function wtsRenderGlossary(items){
+        var list = document.getElementById('wts-glossary-list');
+        if(!items.length){
+            list.innerHTML = '<div style="padding:20px 16px;font-size:13px;color:#5a6a7a;text-align:center">No terms found</div>';
+            return;
+        }
+        list.innerHTML = items.map(function(g){
+            var tagClass  = g.tag === 'status' ? 'status' : g.tag === 'component' ? 'component' : '';
+            var tagLabels = {platform:'Platform',role:'Role',status:'Status',component:'Component',legal:'Legal/Regulatory'};
+            return '<div class="wts-gloss-item">'
+                + '<div class="wts-gloss-tag ' + tagClass + '">' + (tagLabels[g.tag]||g.tag) + '</div>'
+                + '<div class="wts-gloss-term">' + g.term + '</div>'
+                + '<div class="wts-gloss-def">' + g.def + '</div>'
+                + '</div>';
+        }).join('');
+    }
+
+    window.wtsSelectRole = function(role, label){
+        currentRole = role;
+        document.getElementById('wts-role-bubbles').style.display = 'none';
+        var greetings = {
+            agent   : 'Perfect — Agent mode activated. I\'ll focus on helping you submit complete, accurate, and compliant applications. What would you like to know?',
+            client  : 'Great — switching to Jurisdiction mode. I\'ll help you evaluate applications confidently and make accurate decisions efficiently. What\'s your first question?',
+            analyst : 'Got it! I\'ll tailor my responses to the WTS Analyst role — supporting reviews, identifying issues, assisting multiple jurisdictions, and streamlining workflows. How can I help you today?'
+        };
+        wtsAppendMessage('user', 'I am a ' + label, true);
+        history.push({ role:'user', content: 'I am a ' + label });
+        var greeting = greetings[role] || 'Great — how can I help you today?';
+        wtsAppendMessage('bot', greeting, false);
+        history.push({ role:'assistant', content: greeting });
+        document.getElementById('wts-chat-input').focus();
+    };
+
+    window.wtsSendMessage = function(text){
+        var input = document.getElementById('wts-chat-input');
+        var msg   = (text || input.value).trim();
+        if(!msg || isLoading) return;
+        if(!text){ input.value = ''; wtsAutoResize(input); }
+
+        var rb = document.getElementById('wts-role-bubbles');
+        if(rb) rb.style.display = 'none';
+
+        wtsAppendMessage('user', msg, true);
+        history.push({ role:'user', content: msg });
+
+        isLoading = true;
+        document.getElementById('wts-send-btn').disabled = true;
+        var typingId = wtsShowTyping();
+
+        var cfg     = window.wtsChatConfig || {};
+        var ajaxUrl = cfg.ajaxUrl || '/wp-admin/admin-ajax.php';
+        var nonce   = cfg.nonce  || '';
+
+        var formData = new FormData();
+        formData.append('action',     'wts_chat');
+        formData.append('message',    msg);
+        formData.append('role',       currentRole);
+        formData.append('session_id', sessionId);
+        formData.append('nonce',      nonce);
+        formData.append('history',    JSON.stringify(history.slice(-6)));
+
+        fetch(ajaxUrl, { method:'POST', body: formData })
+            .then(function(r){ return r.json(); })
+            .then(function(data){
+                wtsRemoveTyping(typingId);
+                if(data.success){
+                    var reply = data.data.message;
+                    history.push({ role:'assistant', content: reply });
+                    wtsAppendMessage('bot', reply, false);
+                } else {
+                    wtsAppendMessage('bot', data.data && data.data.message ? data.data.message : 'Something went wrong. Please contact your WTS Analyst directly.', false);
+                }
+            })
+            .catch(function(){
+                wtsRemoveTyping(typingId);
+                wtsAppendMessage('bot', 'Connection error. Please try again or contact your WTS representative directly.', false);
+            })
+            .finally(function(){
+                isLoading = false;
+                document.getElementById('wts-send-btn').disabled = false;
+                document.getElementById('wts-chat-input').focus();
+            });
+    };
+
+    function wtsConvertTables(text){
+        return text.replace(/((?:\|.+\|\n?)+)/g, function(block){
+            var lines = block.trim().split('\n').filter(function(l){ return l.trim(); });
+            if(lines.length < 2) return block;
+            if(!/^\|[\s\-|:]+\|$/.test(lines[1].trim())) return block;
+            var html = '<table>';
+            var headers = lines[0].split('|').filter(function(c){ return c.trim(); });
+            html += '<tr>' + headers.map(function(h){ return '<th>' + h.trim() + '</th>'; }).join('') + '</tr>';
+            for(var i = 2; i < lines.length; i++){
+                var cells = lines[i].split('|').slice(1,-1);
+                if(!cells.length) continue;
+                html += '<tr>' + cells.map(function(c){ return '<td>' + c.trim() + '</td>'; }).join('') + '</tr>';
+            }
+            html += '</table>';
+            return html;
+        });
+    }
+
+    function wtsAppendMessage(sender, text, isUser){
+        var messages = document.getElementById('wts-chat-messages');
+        var row = document.createElement('div');
+        row.className = 'wts-msg-row ' + (isUser ? 'wts-user' : 'wts-bot');
+        var wrap = document.createElement('div');
+        wrap.className = 'wts-msg-wrap';
+        var bubble = document.createElement('div');
+        bubble.className = 'wts-bubble';
+        var processed = wtsConvertTables(text);
+        var html = processed
+            .replace(/&(?!amp;|lt;|gt;|bull;)/g,'&')
+            .replace(/^### (.+)$/gm,'<strong>$1</strong>')
+            .replace(/^## (.+)$/gm,'<strong>$1</strong>')
+            .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+            .replace(/^[-•]\s(.+)$/gm,'• $1')
+            .replace(/^---+$/gm,'<hr style="border:none;border-top:1px solid #d0dae4;margin:6px 0">')
+            .replace(/\n/g,'<br>');
+        bubble.innerHTML = html;
+        if(!isUser){ bubble.scrollTop = 0; }
+        if(!isUser && !isOpen){
+            document.getElementById('wts-chat-badge').style.display = 'block';
+        }
+        var time = document.createElement('div');
+        time.className = 'wts-time';
+        time.textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+        wrap.appendChild(bubble);
+        wrap.appendChild(time);
+        row.appendChild(wrap);
+        messages.appendChild(row);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function wtsShowTyping(){
+        var id  = 'wts-typing-' + Date.now();
+        var row = document.createElement('div');
+        row.id  = id;
+        row.className = 'wts-msg-row wts-bot';
+        var wrap = document.createElement('div');
+        wrap.className = 'wts-msg-wrap';
+        wrap.innerHTML = '<div class="wts-bubble" style="padding:12px 16px"><div class="wts-dots"><span></span><span></span><span></span></div></div>';
+        row.appendChild(wrap);
+        document.getElementById('wts-chat-messages').appendChild(row);
+        document.getElementById('wts-chat-messages').scrollTop = 9999;
+        return id;
+    }
+
+    function wtsRemoveTyping(id){
+        var el = document.getElementById(id);
+        if(el) el.remove();
+    }
+
+    window.wtsHandleKey = function(e){
+        if(e.key === 'Enter' && !e.shiftKey){
+            e.preventDefault();
+            wtsSendMessage();
+        }
+    };
+
+    window.wtsAutoResize = function(el){
+        el.style.height = 'auto';
+        el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+    };
+
+})();
+</script>
+<!-- END WTS AMP Chatbot Widget -->

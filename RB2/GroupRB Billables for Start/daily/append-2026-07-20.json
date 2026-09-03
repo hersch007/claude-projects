@@ -1,0 +1,11 @@
+{
+  "date": "2026-07-20",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Wireless TS": 5.5,
+    "Automotive Service Products": 1.5
+  },
+  "nonBillable": {
+    "STA": 1
+  }
+}

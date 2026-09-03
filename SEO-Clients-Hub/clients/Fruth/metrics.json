@@ -1,0 +1,18 @@
+{
+  "snapshot_date": "2026-08-11",
+  "comparison_label": "vs. prior period",
+  "metrics": [
+    {
+      "label": "Organic Clicks",
+      "value": "173",
+      "change": "12.3",
+      "direction": "up"
+    },
+    {
+      "label": "Impressions",
+      "value": "10500",
+      "change": "14%",
+      "direction": "up"
+    }
+  ]
+}

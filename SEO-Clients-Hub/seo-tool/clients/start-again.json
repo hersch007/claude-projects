@@ -1,0 +1,8 @@
+{
+  "name": "Start Again Associates",
+  "url": "https://www.startagainassociates.com",
+  "brand_color": "#2563eb",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/start-again-associates",
+  "max_pages": 60,
+  "ignore_paths": ["/cdn-cgi/", "?hs", "#"]
+}

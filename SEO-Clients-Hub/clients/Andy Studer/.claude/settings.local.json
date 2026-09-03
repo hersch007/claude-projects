@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:andystuder.com)",
+      "Bash(node -e \"require.resolve\\('docx'\\)\")",
+      "Bash(npm list *)",
+      "Bash(npm root *)",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node gen-master.js)",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node gen-prospect.js)",
+      "WebFetch(domain:www.googleapis.com)",
+      "Bash(python3 -c ' *)",
+      "Bash(python -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(node -e \" *)"
+    ]
+  }
+}

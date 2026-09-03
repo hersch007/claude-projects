@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "A Jurisdiction reviewer has a batch of 20 Small Wireless Facility applications submitted together by one carrier. Her office is short-staffed and she realizes on day 55 that she has not yet begun reviewing them. The Shot Clock for a batch SWF application is 90 days. She has 35 days remaining. What is the most important thing she must understand about her situation?",
+      "options": {
+        "A": "She has plenty of time. 35 days is more than enough to review 20 applications.",
+        "B": "She should contact the carrier and ask them to voluntarily withdraw and resubmit to restart the clock.",
+        "C": "She has 35 days to act on all 20 applications or they will be deemed approved by operation of federal law. The Shot Clock does not pause for staffing issues, does not reset without a valid completeness determination, and does not care about workload. She must either complete the review and issue decisions within the window or issue a valid completeness determination to stop the clock while deficiencies are corrected.",
+        "D": "She can issue a blanket extension request to the carrier explaining her staffing situation."
+      },
+      "answer": "C",
+      "explanation": "The Shot Clock is a federal mandate. It does not pause for staffing shortages, workload, or any reason outside of a valid completeness determination. If the Jurisdiction does not act within the Shot Clock window, all 20 applications in the batch are deemed approved by operation of law -- the carrier can build without formal approval, and the Jurisdiction loses all ability to impose conditions or require corrections. The only legitimate tool to stop the clock is a completeness determination issued while a genuine completeness deficiency exists."
+    },
+    {
+      "question": "A Jurisdiction reviewer wants to stop the Shot Clock on a New Tower application because her office needs more time to review the engineering. She issues a completeness determination stating the application is incomplete, though she has not yet identified a specific deficiency. What is the risk of this approach?",
+      "options": {
+        "A": "No risk. Issuing a completeness determination is always within the Jurisdiction's discretion.",
+        "B": "Using a completeness determination without a genuine, documented deficiency is an improper use of the tool. If challenged, the carrier can argue the application was complete and the completeness stop was used to extend the review period improperly. A court could find the clock never actually stopped -- meaning the Jurisdiction is closer to deemed approval than the paperwork suggests.",
+        "C": "The only risk is that the Agent may be frustrated by the delay.",
+        "D": "The Analyst should have identified the deficiency before the completeness determination was issued."
+      },
+      "answer": "B",
+      "explanation": "A completeness determination must be based on a genuine, specifically identified deficiency in the application. It is not a tool for buying additional review time when no actual deficiency exists. Issuing a completeness stop without documenting a real deficiency is legally risky -- a carrier can challenge it, and if a court finds the stop was improper, the original clock continues running from the submission date. The Jurisdiction may discover it is closer to deemed approval than it believed."
+    }
+  ]
+}

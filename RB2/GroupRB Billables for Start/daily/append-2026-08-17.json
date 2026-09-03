@@ -1,0 +1,10 @@
+{
+  "date": "2026-08-17",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Garlock": 5.25,
+    "Advernology": 1,
+    "Automotive Service Products": 1
+  },
+  "nonBillable": {}
+}

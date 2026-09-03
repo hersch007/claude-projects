@@ -1,0 +1,584 @@
+<title>AI Chat Suite — Start Performance</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sp-red:   #ed272a;
+    --sp-black: #1a1818;
+    --sp-gray:  #7d797a;
+    --sp-lgray: #f2f1f1;
+    --sp-rule:  #e4e1e1;
+    --col-base: #7d797a;
+    --col-full: #ed272a;
+    --yes:      #2e9e58;
+    --no:       #c94040;
+    --partial:  #b87c1a;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #d6d4d4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 16px 48px;
+    color: var(--sp-black);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ── Sheet (both pages share this) ── */
+  .sheet {
+    background: #fff;
+    width: 780px;
+    border-radius: 3px;
+    box-shadow: 0 4px 32px rgba(0,0,0,.22);
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  /* ══════════════════════════════════════
+     SHARED HEADER
+  ══════════════════════════════════════ */
+  .sp-header {
+    background: var(--sp-black);
+    padding: 0;
+    display: flex;
+    align-items: stretch;
+  }
+  .sp-header-red {
+    background: var(--sp-red);
+    width: 7px;
+    flex-shrink: 0;
+  }
+  .sp-header-inner {
+    flex: 1;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .sp-header-left {}
+  .sp-eyebrow {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--sp-gray);
+    margin-bottom: 4px;
+  }
+  .sp-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.3px;
+  }
+  .sp-sub {
+    font-size: 11.5px;
+    color: var(--sp-gray);
+    margin-top: 3px;
+  }
+  .sp-contact {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .sp-contact-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 3px;
+  }
+  .sp-contact-detail {
+    font-size: 11px;
+    color: var(--sp-gray);
+    line-height: 1.7;
+  }
+  .sp-contact-detail a {
+    color: var(--sp-red);
+    text-decoration: none;
+  }
+
+  /* ══════════════════════════════════════
+     PAGE 1 — COMPARISON GRID
+  ══════════════════════════════════════ */
+
+  /* Column headers */
+  .col-heads {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    border-bottom: 2px solid var(--sp-rule);
+  }
+  .col-spacer { background: var(--sp-lgray); }
+  .col-head {
+    padding: 14px 20px;
+    border-left: 1px solid var(--sp-rule);
+    position: relative;
+  }
+  .col-head::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .col-head.base::before { background: var(--col-base); }
+  .col-head.full::before { background: var(--sp-red); }
+
+  .ch-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--sp-black);
+    margin-bottom: 1px;
+  }
+  .ch-tag {
+    font-size: 10px;
+    color: var(--sp-gray);
+    font-style: italic;
+    margin-bottom: 9px;
+  }
+  .ch-prices { display: flex; flex-wrap: wrap; gap: 5px; }
+  .price-pill {
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .base .price-setup { background: #ebebeb; color: #555; }
+  .base .price-mo    { background: #f4f4f4; color: var(--sp-gray); }
+  .full .price-setup { background: #fdeaea; color: #b31f22; }
+  .full .price-mo    { background: #fff0f0; color: var(--sp-red); }
+
+  /* Feature rows */
+  .feat-body { display: flex; flex-direction: column; }
+
+  .cat-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    background: var(--sp-lgray);
+    border-top: 1px solid var(--sp-rule);
+    border-bottom: 1px solid var(--sp-rule);
+  }
+  .cat-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--sp-gray);
+    padding: 5px 14px;
+    display: flex;
+    align-items: center;
+  }
+  .cat-col { border-left: 1px solid var(--sp-rule); }
+
+  .feat-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    border-bottom: 1px solid #f0eeee;
+  }
+  .feat-name {
+    padding: 7px 14px;
+    font-size: 12px;
+    color: #2e2a2a;
+    display: flex;
+    align-items: center;
+  }
+  .feat-cell {
+    padding: 7px 20px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-left: 1px solid #f0eeee;
+    font-size: 11px;
+    color: var(--sp-gray);
+  }
+
+  .ind {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 8.5px;
+    font-weight: 900;
+  }
+  .y { background: #e4f5ec; color: var(--yes); }
+  .n { background: #faeaea; color: var(--no); }
+  .p { background: #fdf3e3; color: var(--partial); }
+  .y::before { content: '✓'; }
+  .n::before { content: '✕'; }
+  .p::before { content: '~'; }
+
+  .feat-note { font-size: 10px; color: #b0aaaa; font-style: italic; }
+
+  /* Bottom best-for */
+  .bottom {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    background: var(--sp-lgray);
+    border-top: 2px solid var(--sp-rule);
+  }
+  .bottom-label {
+    padding: 16px 14px;
+    display: flex;
+    align-items: center;
+  }
+  .bl-inner {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--sp-gray);
+  }
+  .bottom-card {
+    padding: 14px 20px;
+    border-left: 1px solid var(--sp-rule);
+  }
+  .bc-heading {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .base .bc-heading { color: var(--sp-gray); }
+  .full .bc-heading { color: var(--sp-red); }
+  .bc-text { font-size: 11.5px; color: #3a3636; line-height: 1.55; }
+
+  /* ── Footer (shared) ── */
+  .sp-footer {
+    background: var(--sp-black);
+    padding: 10px 28px 10px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sp-footer-left { font-size: 10px; color: var(--sp-gray); }
+  .sp-footer-right {
+    font-size: 10px;
+    color: var(--sp-red);
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+
+  /* ══════════════════════════════════════
+     PAGE 2 — FEATURE DESCRIPTIONS
+  ══════════════════════════════════════ */
+
+  .desc-body {
+    padding: 24px 28px 28px;
+    columns: 2;
+    column-gap: 28px;
+  }
+
+  .desc-cat {
+    break-inside: avoid;
+    margin-bottom: 18px;
+  }
+  .desc-cat-name {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--sp-red);
+    border-bottom: 2px solid var(--sp-red);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+  .desc-item {
+    break-inside: avoid;
+    margin-bottom: 10px;
+  }
+  .desc-feature-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sp-black);
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .desc-badge {
+    font-size: 8.5px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    flex-shrink: 0;
+  }
+  .badge-both { background: #ebebeb; color: #666; }
+  .badge-full { background: #fdeaea; color: #b31f22; }
+  .desc-text {
+    font-size: 11.5px;
+    color: #4a4646;
+    line-height: 1.55;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: none; padding: 0; gap: 0; }
+    .sheet { box-shadow: none; border-radius: 0; width: 100%; page-break-after: always; }
+    .sheet:last-child { page-break-after: auto; }
+  }
+</style>
+
+<!-- ═══════════════════════════════════════
+     PAGE 1 — COMPARISON GRID
+═══════════════════════════════════════ -->
+<div class="sheet">
+
+  <div class="sp-header">
+    <div class="sp-header-red"></div>
+    <div class="sp-header-inner">
+      <div class="sp-header-left">
+        <div class="sp-eyebrow">AI Chat Suite · Product Comparison</div>
+        <div class="sp-title">Chat Base vs. Full Build</div>
+        <div class="sp-sub">Two versions. One decision. Here's what's in each.</div>
+      </div>
+      <div class="sp-contact">
+        <div class="sp-contact-name">Rich Brashear</div>
+        <div class="sp-contact-detail">
+          <a href="mailto:RBStart@StartPerformance.com">RBStart@StartPerformance.com</a><br>
+          800-541-4938<br>
+          StartPerformance.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Column headers -->
+  <div class="col-heads">
+    <div class="col-spacer"></div>
+    <div class="col-head base">
+      <div class="ch-name">AI Chat Base</div>
+      <div class="ch-tag">Chat-only · White-label ready</div>
+      <div class="ch-prices">
+        <span class="price-pill price-setup">$800–1,000 setup</span>
+        <span class="price-pill price-mo">$79–99 / mo</span>
+      </div>
+    </div>
+    <div class="col-head full">
+      <div class="ch-name">Full Build</div>
+      <div class="ch-tag">Analytics + dashboard included</div>
+      <div class="ch-prices">
+        <span class="price-pill price-setup">$1,500–2,000 setup</span>
+        <span class="price-pill price-mo">$149–199 / mo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat-body">
+    <div class="cat-row"><div class="cat-label">Chat & Conversation</div><div class="cat-col"></div><div class="cat-col"></div></div>
+    <div class="feat-row"><div class="feat-name">Claude AI responses</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Starter chip buttons</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Photo upload (vision AI)</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Proactive nudge trigger</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Message timestamps</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Hours & seasonal logic</div><div class="feat-cell"><span class="ind y"></span><span class="feat-note">via prompt</span></div><div class="feat-cell"><span class="ind y"></span><span class="feat-note">auto-injected</span></div></div>
+    <div class="feat-row"><div class="feat-name">Conversation ratings</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Sound notification</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+
+    <div class="cat-row"><div class="cat-label">Lead Capture</div><div class="cat-col"></div><div class="cat-col"></div></div>
+    <div class="feat-row"><div class="feat-name">Lead capture flow</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Instant email alert</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Full conversation in email</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Lead database (WP)</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">CSV export</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+
+    <div class="cat-row"><div class="cat-label">Analytics & Insights</div><div class="cat-col"></div><div class="cat-col"></div></div>
+    <div class="feat-row"><div class="feat-name">Admin dashboard</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Conversation logs</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Topic + ZIP analytics</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Peak hours chart</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">AI business insights</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Drop-off analysis</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+
+    <div class="cat-row"><div class="cat-label">Configuration & Deployment</div><div class="cat-col"></div><div class="cat-col"></div></div>
+    <div class="feat-row"><div class="feat-name">WP settings page</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Brand color pickers</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind p"></span><span class="feat-note">in CSS file</span></div></div>
+    <div class="feat-row"><div class="feat-name">Prompt editor in admin</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind n"></span><span class="feat-note">PHP file only</span></div></div>
+    <div class="feat-row"><div class="feat-name">White-label / rebrand</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind n"></span><span class="feat-note">client-specific</span></div></div>
+    <div class="feat-row"><div class="feat-name">Self-update via zip upload</div><div class="feat-cell"><span class="ind n"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">Rate limiting</div><div class="feat-cell"><span class="ind y"></span></div><div class="feat-cell"><span class="ind y"></span></div></div>
+    <div class="feat-row"><div class="feat-name">AI API cost (billed at cost)</div><div class="feat-cell"><span class="ind y"></span><span class="feat-note">~$5–15/mo</span></div><div class="feat-cell"><span class="ind y"></span><span class="feat-note">~$5–15/mo</span></div></div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-label"><div class="bl-inner">Best For</div></div>
+    <div class="bottom-card base">
+      <div class="bc-heading">AI Chat Base</div>
+      <div class="bc-text">New clients who need a fast, affordable start. Rebrand in under an hour — no dev work per client. Sell this when speed to launch matters most.</div>
+    </div>
+    <div class="bottom-card full">
+      <div class="bc-heading">Full Build</div>
+      <div class="bc-text">Clients who need proof it's working. The dashboard is the retention tool — clients who can see leads and analytics stay. Sell this when longevity matters.</div>
+    </div>
+  </div>
+
+  <div class="sp-footer">
+    <div class="sp-footer-left">AI API (Claude) billed at cost on every invoice · Typical $5–15/mo · Shown transparently</div>
+    <div class="sp-footer-right">StartPerformance.com · 800-541-4938</div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     PAGE 2 — FEATURE DESCRIPTIONS
+═══════════════════════════════════════ -->
+<div class="sheet">
+
+  <div class="sp-header">
+    <div class="sp-header-red"></div>
+    <div class="sp-header-inner">
+      <div class="sp-header-left">
+        <div class="sp-eyebrow">AI Chat Suite · Feature Reference</div>
+        <div class="sp-title">What Every Feature Does</div>
+        <div class="sp-sub">One- and two-line descriptions for every item in the comparison.</div>
+      </div>
+      <div class="sp-contact">
+        <div class="sp-contact-name">Rich Brashear</div>
+        <div class="sp-contact-detail">
+          <a href="mailto:RBStart@StartPerformance.com">RBStart@StartPerformance.com</a><br>
+          800-541-4938<br>
+          StartPerformance.com
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desc-body">
+
+    <div class="desc-cat">
+      <div class="desc-cat-name">Chat & Conversation</div>
+
+      <div class="desc-item">
+        <div class="desc-feature-name">Claude AI responses <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Powered by Anthropic's Claude — one of the most capable AI models available. Handles complex questions, objections, and lead qualification in a natural, human-like conversation.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Starter chip buttons <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Three clickable buttons on the opening screen (e.g., New Customer, Existing Customer, Ask a Question) that route the conversation and reduce friction for first-time visitors.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Photo upload (vision AI) <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Visitors can attach a photo directly in the chat window. The AI analyzes the image and responds contextually — ideal for service businesses where customers want to show a problem.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Proactive nudge trigger <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">After 45 seconds on-page or when the visitor scrolls 60% down, a small prompt appears above the chat button. Fires once per session to invite a conversation without being annoying.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Message timestamps <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Each chat bubble shows "Just now" or "2 mins ago," updating automatically. Makes the conversation feel live and keeps the user oriented in the exchange.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Hours & seasonal logic <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The bot automatically knows whether the business is open or closed and adjusts its response accordingly. Seasonal content (spring treatments, fall prep, etc.) is injected automatically by month.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Conversation ratings <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">A thumbs up / thumbs down button appears below each AI response. Ratings are stored in the admin dashboard and used to identify where the bot is performing well or falling short.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Sound notification <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">A soft audio ping plays when the AI responds, drawing the visitor's attention back to the chat if they've scrolled away or are multitasking.</div>
+      </div>
+    </div>
+
+    <div class="desc-cat">
+      <div class="desc-cat-name">Lead Capture</div>
+
+      <div class="desc-item">
+        <div class="desc-feature-name">Lead capture flow <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The AI collects name, email, phone, and address through natural conversation — not a form. No pop-ups, no interruptions. The transition from chat to lead happens seamlessly.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Instant email alert <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The moment a lead is captured, a formatted HTML email fires to the team inbox with the lead's contact details and a full transcript of the conversation.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Full conversation in email <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Every lead notification includes the complete chat so the team knows exactly what was discussed before they follow up — no context lost, no awkward cold calls.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Lead database (WP) <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">All captured leads are stored in WordPress admin, searchable and reviewable at any time. Includes name, email, date, session ID, and the full conversation thread.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">CSV export <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">Download the complete lead list as a CSV file for import into a CRM, email platform, or reporting tool. One click from the admin dashboard.</div>
+      </div>
+    </div>
+
+    <div class="desc-cat">
+      <div class="desc-cat-name">Analytics & Insights</div>
+
+      <div class="desc-item">
+        <div class="desc-feature-name">Admin dashboard <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">A dedicated WordPress panel showing all chatbot activity — conversation volume, lead count, topics, peak hours, and ZIP codes — without leaving the WP backend.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Conversation logs <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">Every conversation is stored in full with timestamps and session IDs. Review individual sessions, spot patterns, and catch issues before they affect more visitors.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Topic + ZIP analytics <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">Conversations are automatically categorized by topic (pricing, complaints, services, etc.) and any ZIP codes mentioned are tracked — so you know what visitors ask and where they're from.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Peak hours chart <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">A visual breakdown of when conversations happen by hour and day of week — useful for staffing decisions, scheduling follow-ups, and timing marketing campaigns.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">AI business insights <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">One click sends recent chat data to Claude, which returns a plain-English analysis of what customers are asking, what's working, and what to improve. No analyst needed.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Drop-off analysis <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">Tracks which exchange in the conversation visitors tend to disengage, helping identify exactly where the bot loses momentum so the prompt can be refined.</div>
+      </div>
+    </div>
+
+    <div class="desc-cat">
+      <div class="desc-cat-name">Configuration & Deployment</div>
+
+      <div class="desc-item">
+        <div class="desc-feature-name">WP settings page <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">All key settings — API key, notification email, bot name, colors, greeting, and starter buttons — managed from a single WordPress admin page. No code or FTP required.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Brand color pickers <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Color pickers in the settings page let you set the primary and accent colors. The widget updates instantly to match any client's brand without touching the CSS.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Prompt editor in admin <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The AI's full instruction set is editable from the WordPress settings page in the Base version. Update messaging, add services, or refine tone in minutes without touching a PHP file.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">White-label / rebrand <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The Base version is built to deploy under any business name. Every visible string, color, and label is configurable from the admin panel — one codebase, unlimited clients.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Self-update via zip upload <span class="desc-badge badge-full">Full only</span></div>
+        <div class="desc-text">Upload a new zip file from WordPress admin to update the plugin instantly — no deactivate, delete, or reinstall cycle. Version numbers are tracked automatically.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">Rate limiting <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">Each visitor IP is limited to 30–40 messages per hour, preventing API abuse and keeping monthly Claude API costs predictable and controlled.</div>
+      </div>
+      <div class="desc-item">
+        <div class="desc-feature-name">AI API cost (billed at cost) <span class="desc-badge badge-both">Both</span></div>
+        <div class="desc-text">The Anthropic API fee is tracked separately and passed through transparently on every invoice. Typical usage runs $5–15/month — no markup, no surprises.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sp-footer">
+    <div class="sp-footer-left">Confidential · Prepared for prospective client use · Start Performance 2026</div>
+    <div class="sp-footer-right">StartPerformance.com · 800-541-4938</div>
+  </div>
+
+</div>

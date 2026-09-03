@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.techousecorp.com)",
+      "Bash(npm list *)",
+      "Bash(node gen-master.js)",
+      "Bash(node -e \"require\\('docx'\\); console.log\\('ok'\\)\")",
+      "Bash(node -e \"const m = require.resolve\\('docx'\\); console.log\\(m\\)\")",
+      "Bash(npm root *)",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp\\\\gen-master.js\")",
+      "Bash(python \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\\\\scripts\\\\office\\\\unpack.py\" \"TC-SEO-Report-2026-06-11-PartsofPractice-MASTER.docx\" \"unpacked_master/\")",
+      "Bash(py --version)",
+      "Bash(where python3 *)",
+      "Bash(where py *)",
+      "Bash(python3 'C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\\\\scripts\\\\office/unpack.py' 'C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp/TC-SEO-Report-2026-06-11-PartsofPractice-MASTER.docx' 'C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp/unpacked_master/')",
+      "Bash(python3 'C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\\\\scripts\\\\office/unpack.py' 'C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp/TC-SEO-Prospect-Report-2026-06-11.docx' 'C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp/unpacked_prospect/')",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node gen-master.js)",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node gen-prospect.js)",
+      "Bash(node \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\bundled-skills\\\\2.1.234\\\\47a57c147a2339bbfb22736f2ded1b1c\\\\design\\\\seed-canvas.mjs\" --check techouse-footer-design.html)",
+      "Bash(node \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\bundled-skills\\\\2.1.234\\\\47a57c147a2339bbfb22736f2ded1b1c\\\\design\\\\seed-canvas.mjs\" --template \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\bundled-skills\\\\2.1.234\\\\47a57c147a2339bbfb22736f2ded1b1c\\\\design\\\\payload.template.html\" --out techouse-footer-design.html --title \"TecHouse Footer Redesign\" --artboard Current.dc.html --artboard Main.dc.html --artboard Mobile.dc.html --canvas canvas.json)",
+      "PowerShell($env:NODE_PATH = \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\"; node \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-SEO-Clients-Hub-clients-TechouseCorp\\\\be567585-b34c-45a2-8aa1-bfe24c4cea42\\\\scratchpad\\\\build-tc-seo-log.js\")",
+      "PowerShell($skillDir = \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\"; $docx = \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp\\\\TC-Product-Page-SEO-Running-Log.docx\"; $scratchpad = \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-SEO-Clients-Hub-clients-TechouseCorp\\\\be567585-b34c-45a2-8aa1-bfe24c4cea42\\\\scratchpad\"; python \"$skillDir\\\\scripts\\\\office\\\\soffice.py\" --headless --convert-to pdf --outdir $scratchpad $docx)",
+      "PowerShell(& \"C:\\\\Program Files\\\\LibreOffice\\\\program\\\\soffice.exe\" --headless --convert-to pdf --outdir $scratchpad $docx)",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp\\\\TC-Product-Page-SEO-Running-Log.docx\"\\).Length / 1KB)",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\richa\\\\Downloads\\\\AdobeStock_679581886.jpeg\"\\).Length / 1MB)",
+      "PowerShell(Add-Type -AssemblyName System.Drawing; echo \"System.Drawing available\")",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "PowerShell($env:NODE_PATH = \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\"; node \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-SEO-Clients-Hub-clients-TechouseCorp\\\\be567585-b34c-45a2-8aa1-bfe24c4cea42\\\\scratchpad\\\\patch-section7.js\")",
+      "PowerShell(Get-ChildItem \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\TechouseCorp\\\\assets\" | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}} | Format-Table -AutoSize)"
+    ]
+  }
+}

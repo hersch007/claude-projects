@@ -1,0 +1,188 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="Echo-64 card back">
+  <defs>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="30%" stop-color="#00f5ff"/>
+      <stop offset="70%" stop-color="#ff00e5"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+    <linearGradient id="rule-dim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="transparent"/>
+      <stop offset="30%" stop-color="#00f5ff" stop-opacity="0.3"/>
+      <stop offset="70%" stop-color="#ff00e5" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+    <filter id="glow-cyan" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-soft" x="-5%" y="-20%" width="110%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-magenta" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1080" height="1080" fill="#07070f"/>
+
+  <!-- Subtle scanline texture via thin horizontal rects -->
+  <rect width="1080" height="1080" fill="none" stroke="#0d0d1a" stroke-width="0"
+        style="background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,.08) 3px, rgba(0,0,0,.08) 4px)"/>
+
+  <!-- Scanlines (every 8px) -->
+  <g opacity="0.06">
+    <rect x="0" y="0" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="8" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="16" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="24" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="32" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="40" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="48" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="56" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="64" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="72" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="80" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="88" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="96" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="104" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="112" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="120" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="128" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="136" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="144" width="1080" height="1" fill="#00f5ff"/>
+    <rect x="0" y="152" width="1080" height="1" fill="#00f5ff"/>
+  </g>
+
+  <!-- Top gradient rule -->
+  <rect x="0" y="0" width="1080" height="3" fill="url(#rule)"/>
+
+  <!-- Corner dots -->
+  <circle cx="40" cy="40" r="4" fill="#00f5ff" opacity="0.5"/>
+  <circle cx="1040" cy="40" r="4" fill="#00f5ff" opacity="0.5"/>
+  <circle cx="40" cy="1040" r="4" fill="#ff00e5" opacity="0.5"/>
+  <circle cx="1040" cy="1040" r="4" fill="#ff00e5" opacity="0.5"/>
+
+  <!-- Outer border -->
+  <rect x="30" y="30" width="1020" height="1020" fill="none" stroke="#1a1a2e" stroke-width="1"/>
+
+  <!-- Inner border -->
+  <rect x="60" y="60" width="960" height="960" fill="none" stroke="#0f0f24" stroke-width="1"/>
+
+  <!-- Boot sequence header block -->
+  <text x="540" y="148"
+        font-family="'Courier New', monospace"
+        font-size="22"
+        fill="#333355"
+        text-anchor="middle"
+        letter-spacing="3">**** COMMODORE 64 BASIC V2 ****</text>
+
+  <text x="540" y="182"
+        font-family="'Courier New', monospace"
+        font-size="22"
+        fill="#333355"
+        text-anchor="middle"
+        letter-spacing="2">64K RAM SYSTEM  38911 BASIC BYTES FREE.</text>
+
+  <text x="540" y="220"
+        font-family="'Courier New', monospace"
+        font-size="22"
+        fill="#2a2a44"
+        text-anchor="middle"
+        letter-spacing="3">READY.</text>
+
+  <!-- Thin rule under boot block -->
+  <rect x="120" y="240" width="840" height="1" fill="#1a1a2e"/>
+
+  <!-- ECHO-64 main logotype -->
+  <text x="540" y="370"
+        font-family="'Courier New', monospace"
+        font-size="112"
+        fill="#00f5ff"
+        text-anchor="middle"
+        filter="url(#glow-cyan)"
+        letter-spacing="8">ECHO-64</text>
+
+  <!-- Gradient rule under logo -->
+  <rect x="0" y="402" width="1080" height="2" fill="url(#rule)"/>
+
+  <!-- Tagline -->
+  <text x="540" y="456"
+        font-family="'Courier New', monospace"
+        font-size="26"
+        fill="#8888b0"
+        text-anchor="middle"
+        letter-spacing="6">SCI-FI AFTER MIDNIGHT</text>
+
+  <!-- Dot separator -->
+  <text x="540" y="494"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        fill="#333355"
+        text-anchor="middle"
+        letter-spacing="4">· · ·</text>
+
+  <!-- Signal/status block -->
+  <text x="540" y="556"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        fill="#444466"
+        text-anchor="middle"
+        letter-spacing="3">SIGNAL ORIGIN: UNKNOWN</text>
+
+  <text x="540" y="590"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        fill="#444466"
+        text-anchor="middle"
+        letter-spacing="3">UPTIME: 40 YEARS, 5 MONTHS</text>
+
+  <text x="540" y="624"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        fill="#444466"
+        text-anchor="middle"
+        letter-spacing="3">STATUS: TRANSMITTING</text>
+
+  <!-- Thin rule -->
+  <rect x="120" y="652" width="840" height="1" fill="#1a1a2e"/>
+
+  <!-- Pull instruction -->
+  <text x="540" y="716"
+        font-family="'Courier New', monospace"
+        font-size="28"
+        fill="#e8eaf6"
+        text-anchor="middle"
+        filter="url(#glow-soft)"
+        letter-spacing="2">Pull a card. Argue with it.</text>
+
+  <!-- Gradient rule -->
+  <rect x="0" y="746" width="1080" height="2" fill="url(#rule-dim)"/>
+
+  <!-- URL -->
+  <text x="540" y="808"
+        font-family="'Courier New', monospace"
+        font-size="24"
+        fill="#ff00e5"
+        text-anchor="middle"
+        filter="url(#glow-magenta)"
+        letter-spacing="4">NERDAFTERDARK.COM</text>
+
+  <!-- Cursor blink block -->
+  <rect x="516" y="834" width="14" height="22" fill="#00f5ff" opacity="0.6"/>
+
+  <!-- Bottom gradient rule -->
+  <rect x="0" y="1077" width="1080" height="3" fill="url(#rule)" opacity="0.4"/>
+
+  <!-- Bottom tag -->
+  <text x="540" y="1048"
+        font-family="'Courier New', monospace"
+        font-size="20"
+        fill="#333355"
+        text-anchor="middle"
+        letter-spacing="3">54 TRANSMISSIONS  ·  1984</text>
+
+</svg>

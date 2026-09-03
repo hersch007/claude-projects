@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:/Users/richa/Documents/Claude Projects/SP Builds/Fruth Quote System\" 2>/dev/null; echo \"---PARENT---\"; ls -la \"C:/Users/richa/Documents/Claude Projects/SP Builds\" 2>/dev/null)",
+      "Bash(cd \"C:/Users/richa/Documents/Claude Projects/start-performance-platform/plugin\" *)",
+      "Bash(mkdir -p start-performance-quotes/includes)",
+      "Bash(mkdir -p start-performance-quotes/templates/views)",
+      "Bash(cp __TRACKED_VAR__/sales-quote-system/sales-quote-system/sales-quote-system.php start-performance-quotes/includes/quote-engine.php)",
+      "Bash(cp __TRACKED_VAR__/quote-builder-print/quote-builder-print/quote-builder-print.php start-performance-quotes/includes/quote-print.php)",
+      "Bash(python -)",
+      "Bash(mv start-performance-quotes *)",
+      "Bash(rm -f start-performance-fruth-quotes/start-performance-quotes.php)",
+      "Bash(rm -f start-performance-quotes-1.0.0.zip)",
+      "Bash(unzip -l \"start-performance-fruth-quotes-1.0.0.zip\")"
+    ]
+  }
+}

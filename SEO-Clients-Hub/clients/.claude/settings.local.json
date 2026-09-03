@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.grouprb.com)",
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\GroupRB\")",
+      "Bash(extract-text \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Root and Grow Providence\\\\RAG-SEO-Prospect-Report-2026-06-04.docx\")",
+      "Bash(extract-text \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Root and Grow Providence\\\\RAG-SEO-Report-2026-05-31-PartsofPractice-MASTER.docx\")",
+      "Read(//c/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/**)",
+      "Bash(python scripts/office/unpack.py \"clients/Root and Grow Providence/RAG-SEO-Prospect-Report-2026-06-04.docx\" \"tmp_prospect/\")",
+      "Bash(node gen-master.js)",
+      "Bash(npm install *)",
+      "Bash(node -e \"require\\('docx'\\); console.log\\('ok'\\)\")",
+      "Bash(npm root *)",
+      "Bash(node gen-prospect.js)",
+      "Bash(del \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\GroupRB\\\\gen-master.js\")",
+      "Bash(del \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\GroupRB\\\\gen-prospect.js\")"
+    ]
+  }
+}

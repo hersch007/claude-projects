@@ -1,0 +1,21 @@
+{
+  "_README": "Maps each 3-char tracker code to the matrix CLIENT NAMES (which must match the column headers in Start Billables.xlsx). The tools resolve names to columns at write-time using the 'NON BILLABLE' column as the divider between the billable section (left) and non-billable section (right), so columns can be inserted/moved without breaking anything. billableName = header for BILLABLE hours; nonBillableName = header for NON-BILLABLE hours; null = that client has no column of that type. Add a new code here; build-append.js errors on any unknown code.",
+  "_headers": {
+    "billable": ["Start PErf", "Sport Medical", "Wireless TS", "Garlock", "Fruth", "LAWN", "Advernology", "TriCoGo", "ANS", "MISC", "Automotive Service Products", "Click Broadband"],
+    "nonBillable": ["Start Performance", "Sport Medical", "Wireless TS", "Bolsterist", "Fruth", "Lawn Ace", "Advernology", "Power Sports", "Catoe Nalley", "STA"]
+  },
+  "codes": {
+    "GAR": { "billableName": "Garlock", "nonBillableName": null },
+    "CFB": { "billableName": "Fruth", "nonBillableName": "Fruth" },
+    "SMT": { "billableName": "Sport Medical", "nonBillableName": "Sport Medical" },
+    "STA": { "billableName": null, "nonBillableName": "STA" },
+    "STP": { "billableName": "Start PErf", "nonBillableName": "Start Performance" },
+    "TCG": { "billableName": "TriCoGo", "nonBillableName": null },
+    "ADV": { "billableName": "Advernology", "nonBillableName": "Advernology" },
+    "WTS": { "billableName": "Wireless TS", "nonBillableName": "Wireless TS" },
+    "ASP": { "billableName": "Automotive Service Products", "nonBillableName": null },
+    "ANS": { "billableName": "ANS", "nonBillableName": null },
+    "MSC": { "billableName": "MISC", "nonBillableName": null },
+    "CLB": { "billableName": "Click Broadband", "nonBillableName": null }
+  }
+}

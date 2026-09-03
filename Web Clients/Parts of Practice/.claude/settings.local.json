@@ -1,0 +1,30 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(Start-Sleep -Seconds 4)",
+      "Bash(Invoke-WebRequest -Uri \"http://localhost:3000\" -UseBasicParsing -TimeoutSec 5)",
+      "Bash(Select-Object -ExpandProperty StatusCode)",
+      "Bash(npx next *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3002/)",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -s http://localhost:3001)",
+      "Bash(curl -s \"http://localhost:3001/_next/static/css/app/layout.css?v=1781877236998\")",
+      "PowerShell(Stop-Process -Name \"node\" -ErrorAction SilentlyContinue; Start-Sleep -Seconds 1; Start-Process -FilePath \"cmd.exe\" -ArgumentList \"/c cd `\"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Web Clients\\\\Parts of Practice`\" && npx next dev --port 3001\" -WindowStyle Hidden; Start-Sleep -Seconds 10; try { $r = Invoke-WebRequest -Uri \"http://localhost:3001/_next/static/css/app/layout.css\" -UseBasicParsing -TimeoutSec 8; $content = $r.Content; if \\($content -match \"sage-500|cream-100|bark\"\\) { \"SUCCESS: Custom colors found in CSS\" } else { \"WARNING: Colors still missing. CSS length: $\\($content.Length\\)\" } } catch { \"Server not ready yet: $_\" })",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__list-brand-kits",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__search-designs",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__get-design-content",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Name \"node\" -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 3; $result = netstat -an 2>&1 | Select-String \":3001|:3002|:3003\"; Write-Host \"Ports in use: $result\")",
+      "Bash(Copy-Item \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Web Clients\\\\Parts of Practice\\\\Images\\\\parts of practice IFS practice web design and business coaches \\(1\\).png\" \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Web Clients\\\\Parts of Practice\\\\public\\\\logo.png\")",
+      "WebFetch(domain:partsofpractice.com)",
+      "mcp__visualize__read_me",
+      "mcp__visualize__show_widget",
+      "WebFetch(domain:sites.generatepress.com)"
+    ]
+  }
+}

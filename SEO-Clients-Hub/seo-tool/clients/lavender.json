@@ -1,0 +1,8 @@
+{
+  "name": "Lavender Healing Collective",
+  "url": "https://www.lavenderhealingcollective.com",
+  "brand_color": "#7c5c8a",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/lavender-healing-collective",
+  "max_pages": 60,
+  "ignore_paths": ["/cdn-cgi/", "?hs", "#"]
+}

@@ -1,0 +1,31 @@
+{
+  "date": "2026-07-01",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "WTS", "note": "Course 2 Quiz 2 - 7 creation", "job": "0110021", "billable": true },
+    { "client": "GAR", "note": "Schema - Laser-Scored Pouches", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Schema - Aerospace packaging", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Schema - Functional Bags", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Schema - Functional Bags", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Schema - Child Resistent", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Schema - Autoclave", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouch SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouch SEO Imp", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouch Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Cold Sealed SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Cold Sealed SEO Imp", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Cold Sealed Schema Imp", "job": "0790149", "billable": true },
+    { "client": "STA", "note": "Meeting", "job": "", "billable": false },
+    { "client": "STA", "note": "Meeting", "job": "", "billable": false },
+    { "client": "STA", "note": "Meeting", "job": "", "billable": false },
+    { "client": "STA", "note": "Meeting", "job": "", "billable": false }
+  ]
+}

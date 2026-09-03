@@ -1,0 +1,8 @@
+{
+  "name": "Andy Studer",
+  "url": "https://andystuder.com",
+  "brand_color": "#1a1a2e",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Andy Studer",
+  "max_pages": 60,
+  "ignore_paths": ["/cdn-cgi/", "?hs", "#"]
+}

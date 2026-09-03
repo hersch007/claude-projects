@@ -1,0 +1,23 @@
+78098b89c88a74ebe8c20117b8754620
+::res://::1787659217
+CLAUDE.md::TextFile::-1::1787654527::0::1::::<><><>0<>0<><>::
+DESIGN.md::TextFile::-1::1787146039::0::1::::<><><>0<>0<><>::
+README.md::TextFile::-1::1787146733::0::1::::<><><>0<>0<><>::
+::res://assets/::1787316533
+Warehouse51 Background.png::CompressedTexture2D::1098129897872705338::1787316221::1787316533::1::::<><><>0<>0<>03cb5a8978b032192a465181d68cbc75<>res://.godot/imported/Warehouse51 Background.png-8061bd1b8238dfc664b9035be9d98c33.ctex::
+::res://data/::1787146539
+::res://data/items/::1787146705
+blue_book_vol1.tres::Resource/ItemData::-1::1787146663::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+blue_book_vol2.tres::Resource/ItemData::-1::1787146671::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+blue_book_vol3.tres::Resource/ItemData::-1::1787146678::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+neural_interface_mk2.tres::Resource/ItemData::-1::1787146697::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+neural_interface_proto.tres::Resource/ItemData::-1::1787146689::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+roswell_fragment.tres::Resource/ItemData::-1::1787146705::0::1::::<><><>0<>0<><>::res://scripts/item_data.gd
+::res://scenes/::1787403974
+main.tscn::PackedScene::-1::1787403974::0::1::::<><><>0<>0<><>::res://scripts/main.gd
+::res://scripts/::1787658772
+ai_overseer.gd::GDScript::5093302191471533519::1787658706::0::1::::<>Node<><>0<>0<><>::
+item_data.gd::GDScript::6146401330174547779::1787146554::0::1::::ItemData<>Resource<><>0<>0<><>::
+main.gd::GDScript::3445026353003156234::1787658772::0::1::::<>Node2D<><>0<>0<><>::
+research_manager.gd::GDScript::7621440450063268963::1787148903::0::1::::<>Node<><>0<>0<><>::
+warehouse_bg.gd::GDScript::3850712489070969975::1787497755::0::1::::<>Node2D<><>0<>0<><>::

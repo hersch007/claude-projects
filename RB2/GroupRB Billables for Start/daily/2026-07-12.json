@@ -1,0 +1,16 @@
+{
+  "date": "2026-07-12",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false },
+    { "client": "STP", "note": "Chat Plugin Refinement", "job": "", "billable": false }
+  ]
+}

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>American Mahjong</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/tiles.css">
+  <link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+
+<!-- ── Navigation ─────────────────────────────────────────────────────────── -->
+<nav id="nav">
+  <span class="logo">🀄 American Mahjong</span>
+  <a href="index.html" class="active">Game</a>
+  <a href="rules.html">Rules</a>
+  <a href="faq.html">FAQ</a>
+</nav>
+
+<!-- ── Game Page ──────────────────────────────────────────────────────────── -->
+<div id="game-page">
+
+  <!-- Top controls bar -->
+  <div id="game-controls">
+    <button id="btn-new-game" class="btn btn-primary">▶ New Game</button>
+    <button id="btn-sort" class="btn btn-secondary">⇅ Sort Hand</button>
+    <button id="btn-mahjong" class="btn btn-mahjong hidden">🏆 Mahjong!</button>
+    <span id="status-msg" class="status-msg">Click "New Game" to start.</span>
+  </div>
+
+  <!-- Main table grid -->
+  <div id="game-table">
+
+    <!-- ── Top: North (AI 2) ─────────────────────────────────────────────── -->
+    <div class="player-area" id="top-player">
+      <span class="player-label" id="label-2">North (AI)</span>
+      <div id="rack-2"></div>
+      <div id="exposed-2" class="exposed-row"></div>
+      <span class="tile-count" id="count-2">13 tiles</span>
+    </div>
+
+    <!-- ── Left: East (AI 1) ─────────────────────────────────────────────── -->
+    <div class="player-area" id="left-player">
+      <span class="player-label" id="label-1">East (AI)</span>
+      <div id="rack-1"></div>
+      <div id="exposed-1" class="exposed-row"></div>
+      <span class="tile-count" id="count-1">13 tiles</span>
+    </div>
+
+    <!-- ── Center: discard pile + wall info ──────────────────────────────── -->
+    <div id="center-area">
+      <div id="game-info">
+        <div id="turn-indicator">New Game</div>
+        <div id="wall-count" class="wall-count">Wall: —</div>
+      </div>
+      <div id="discard-container">
+        <div id="discard-label">Discard Pile</div>
+        <div id="discard-pile">
+          <!-- tiles rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Right: West (AI 3) ────────────────────────────────────────────── -->
+    <div class="player-area" id="right-player">
+      <span class="player-label" id="label-3">West (AI)</span>
+      <div id="rack-3"></div>
+      <div id="exposed-3" class="exposed-row"></div>
+      <span class="tile-count" id="count-3">13 tiles</span>
+    </div>
+
+    <!-- ── Bottom: South (Human) ─────────────────────────────────────────── -->
+    <div class="player-area" id="bottom-player">
+      <div id="human-area">
+        <span class="player-label">You — South</span>
+        <div id="human-flowers"></div>
+        <div id="human-exposed" class="exposed-row"></div>
+        <div id="human-rack"></div>
+      </div>
+    </div>
+
+  </div><!-- #game-table -->
+
+  <!-- Call bar (appears when a discard can be called) -->
+  <div id="call-bar"></div>
+
+</div><!-- #game-page -->
+
+<!-- ── Charleston Modal ───────────────────────────────────────────────────── -->
+<div id="charleston-modal">
+  <div id="charleston-panel">
+    <h2 id="charleston-title">Charleston</h2>
+    <p id="charleston-desc">Select 3 tiles to pass.</p>
+    <div id="charleston-count">0/3 selected</div>
+    <div id="charleston-rack"></div>
+    <div id="charleston-actions">
+      <button id="charleston-confirm" class="btn btn-primary" disabled>Pass Tiles →</button>
+      <button id="charleston-stop"   class="btn btn-secondary" style="display:none">Stop Charleston</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Win Overlay ────────────────────────────────────────────────────────── -->
+<div id="win-overlay">
+  <div id="win-panel">
+    <div id="win-title">🏆 Winner!</div>
+    <div id="win-detail"></div>
+    <button id="btn-play-again" class="btn btn-primary">Play Again</button>
+  </div>
+</div>
+
+<!-- ── Scripts (load order matters — dependencies first) ─────────────────── -->
+<script src="js/tiles.js"></script>
+<script src="js/american-rules.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/drag-drop.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/game-logic.js"></script>
+<script src="js/main.js"></script>
+
+
+</body>
+</html>

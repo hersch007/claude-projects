@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<!--
+  SEO AUDIT REPORT — MASTER TEMPLATE
+  ====================================
+  Based on: Fruth-Custom-Packaging-SEO-Audit-2026-08-14.html
+  Saved as master: 2026-08-31
+
+  HOW TO USE:
+  1. Find/replace [CLIENT_NAME], [CLIENT_URL], [AUDIT_DATE], [SCORE], [SCORE_LABEL]
+  2. Update cover meta items (pages audited, critical issues, etc.)
+  3. Update score trend SVG data points
+  4. Fill in snapshot card numbers + classes (good/warn/bad/neutral)
+  5. Add/remove sections as needed (progress tracker optional for repeat audits)
+  6. Fill findings cards and page table
+  7. Set default agency in the <select> and JS init()
+
+  AGENCIES (agency switcher):
+  - Start Advertising   → startadvertising.com
+  - GroupRB Marketing   → grouprb.com
+  - Parts of Practice   → partsofpractice.com
+
+  SCORE LABELS:
+  85-100 → Good
+  70-84  → Needs Attention
+  50-69  → Needs Work
+  0-49   → Critical
+
+  localStorage keys: use [client_initials]_audit_agency  (e.g. fruth_audit_agency, ggc_audit_agency)
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: [CLIENT_NAME] — [AUDIT_DATE]</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #003366; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Agency Switcher ── */
+  .agency-switcher { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .agency-switcher label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .5; }
+  .agency-switcher select { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: white; font-size: 11px; padding: 3px 8px; border-radius: 6px; cursor: pointer; appearance: none; -webkit-appearance: none; }
+  .agency-switcher select option { background: #003366; color: white; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #003366; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Box ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority Badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Finding Cards ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #003366; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score Trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Progress Tracker (repeat audits only) ── */
+  .progress-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+  .progress-item { background: white; border-radius: 10px; padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); display: flex; align-items: flex-start; gap: 12px; }
+  .progress-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .progress-text { font-size: 12px; color: #374151; line-height: 1.5; }
+  .progress-text strong { display: block; color: #0f172a; margin-bottom: 2px; }
+
+  /* ── Quick Wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance Cards ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Keyword Table ── */
+  .kw-change.improved { color: #16a34a; font-weight: 700; }
+  .kw-change.declined { color: #dc2626; font-weight: 700; }
+  .kw-change.new      { color: #7c3aed; font-weight: 700; }
+  .kw-change.same     { color: #94a3b8; }
+  .kw-pos             { font-weight: 700; color: #0f172a; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+    .cover { min-height: 96vh; padding: 48px 56px 44px; page-break-after: always; break-after: page; }
+    .agency-switcher { display: none; }
+    .container { padding: 20px 0; }
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+    .finding-card { page-break-inside: avoid; break-inside: avoid; box-shadow: none !important; border: 1px solid #e2e8f0; border-left-width: 4px; padding: 12px 16px; margin-bottom: 8px; }
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+    .report-footer { margin-top: 24px; padding: 16px 0 8px; }
+    tr:hover td { background: transparent !important; }
+    .progress-item { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .perf-card { box-shadow: none !important; border: 1px solid #e2e8f0; border-bottom-width: 3px; }
+    .qw-card { box-shadow: none !important; border: 1px solid #e2e8f0; border-top-width: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     COVER
+     ─ Replace: agency default, score, client name, URL, date, meta items, score note
+     ─ Score trend SVG: see comment below
+═══════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-header">
+    <div>
+      <div class="cover-agency" id="agencyName">Start Advertising &bull; SEO Audit</div>
+      <div class="agency-switcher">
+        <label>Prepared by</label>
+        <select id="agencySelect" onchange="switchAgency(this.value)">
+          <option value="Start Advertising">Start Advertising</option>
+          <option value="GroupRB Marketing">GroupRB Marketing</option>
+          <option value="Parts of Practice">Parts of Practice</option>
+        </select>
+      </div>
+    </div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">[SCORE]</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">[SCORE_LABEL]</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">[CLIENT_NAME]</div>
+    <div class="cover-sub">[CLIENT_URL]</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">[AUDIT_DATE]</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">[N]</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">[N]</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">[N] of [N] pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">[N] of [N] pages</div></div>
+    </div>
+  </div>
+
+  <!--
+    SCORE TREND CHART
+    ─────────────────
+    viewBox: 0 0 520 110
+    X positions for N data points: evenly spaced from x=36 to x=500
+      2 pts: 36, 500
+      3 pts: 36, 268, 500
+      4 pts: 36, 188, 352, 500
+      5 pts: 36, 152, 268, 384, 500
+      6 pts: 36, 129, 222, 314, 407, 500
+
+    Y formula (scale to your score range):
+      y = bottomY - ((score - minScore) / scoreRange) * pixelRange
+      Typical defaults: bottomY=82, pixelRange=72, minScore=floor of your lowest score
+      Last point (current) gets r=5 and fill="#fff" (or "#fbbf24" for a decline)
+  -->
+  <div class="cover-trend">
+    <div class="trend-label">Score History</div>
+    <svg viewBox="0 0 520 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;overflow:visible">
+      <defs>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+      </defs>
+      <!-- REPLACE: polygon points, polyline points, circles, text labels, and date labels -->
+      <polygon points="36,82 36,53 268,28 500,28 500,82" fill="url(#tg)"/>
+      <polyline points="36,53 268,28 500,28" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="36" cy="53" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="36" y="44" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">##</text>
+      <circle cx="268" cy="28" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="268" y="19" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">##</text>
+      <circle cx="500" cy="28" r="5" fill="#fff" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="500" y="19" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,1)">##</text>
+      <text x="36" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Date 1</text>
+      <text x="268" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Date 2</text>
+      <text x="500" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Date 3</text>
+    </svg>
+  </div>
+  <div class="cover-note"><strong>Score note:</strong> [SCORE_NOTE]</div>
+</div>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════
+       SNAPSHOT CARDS (8 cards = 2 rows of 4)
+       ─ Adjust numbers and classes (good/warn/bad/neutral)
+       ─ Add/remove .snap-card blocks as needed
+  ═══════════════════════════════════════════ -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num [CLASS]">[N]</div>
+      <div class="snap-label">[Label]</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">[N]</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PROGRESS TRACKER (repeat audits only — delete for first audit)
+  ═══════════════════════════════════════════ -->
+  <!--
+  <div class="section">
+    <div class="section-title">Progress Since [DATE] — [N] of [N] Implemented</div>
+    <p style="font-size:12px;color:#64748b;margin-bottom:16px;line-height:1.6">[Intro copy]</p>
+    <div class="progress-grid">
+      <div class="progress-item">
+        <div class="progress-icon">&#10003;</div>  < done
+        <div class="progress-icon">&#9711;</div>    < not done
+        <div class="progress-text"><strong>[Rec title]</strong>[Status note]</div>
+      </div>
+    </div>
+  </div>
+  -->
+
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE METRICS (requires GSC data — delete if not available)
+  ═══════════════════════════════════════════ -->
+  <!--
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Performance Highlights</div>
+      <div class="perf-period">Live data &bull; [DATE_RANGE] &bull; vs. prior 28 days</div>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-value">[N]</div>
+        <div class="perf-label">Organic Clicks</div>
+        <span class="perf-change up"><span class="perf-arrow">▲</span> +[N]%</span>
+      </div>
+      ...
+    </div>
+  </div>
+  -->
+
+  <!-- ═══════════════════════════════════════════
+       QUICK WINS
+  ═══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+          <!-- Impact badge options:
+               High:   style="background:#eff6ff;color:#1d4ed8"
+               Medium: style="background:#eff6ff;color:#1d4ed8" (same color, different text)
+               Critical: style="background:#fee2e2;color:#b91c1c"
+          -->
+        </div>
+        <div class="qw-action">[Action title]</div>
+        <div class="qw-detail" style="margin-top:6px">[Detail explaining why and what to do]</div>
+      </div>
+
+      <!-- Add more .qw-card blocks as needed -->
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       AUDIT SUMMARY
+  ═══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val [bad|warn|good]">[SCORE] / 100 — [SCORE_LABEL]</span>
+      </div>
+      <!-- Add more .summary-row blocks -->
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> [Plain-English summary of the score and top priorities]
+    </p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       FINDINGS BY PAGE
+       ─ has-critical = red left border (dc2626)
+       ─ has-warn     = amber left border (f59e0b)
+  ═══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">Findings by Page ([N] pages need attention)</div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/[page-url]</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority [critical|high|medium|low]">[Priority]</span>
+          <span class="finding-label">[Issue title]</span>
+        </div>
+        <div class="finding-why">[Why this matters — plain English, 1-2 sentences]</div>
+      </div>
+      <!-- Add more .finding-item blocks for additional issues on same page -->
+    </div>
+
+    <!-- Add more .finding-card blocks for additional pages -->
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ALL PAGES TABLE
+       ─ status-cell classes: critical / warn / ok
+       ─ &#10003; = checkmark, &#10005; = X
+       ─ <span class="warn-text">None</span> for missing schema
+  ═══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="status-cell [ok|warn|critical]">&#[symbol];</td>
+          <td class="url-cell"><a href="[FULL_URL]" target="_blank">/[path]</a></td>
+          <td>[Title tag text]</td>
+          <td class="center">&#10003;</td>
+          <td class="center">&#10003;</td>
+          <td class="center">[Schema type or <span class="warn-text">None</span>]</td>
+          <td class="center">&#10003;</td>
+        </tr>
+        <!-- &#9651; = triangle (warn), &#10003; = checkmark (ok), &#9888; = warning sign (critical) -->
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Prepared by <span id="footerAgency">Start Advertising</span> &bull; [CLIENT_NAME] SEO Audit &bull; [AUDIT_DATE]<br>
+  Questions? Contact richard@grouprb.com
+</div>
+
+<!-- ═══════════════════════════════════════════
+     AGENCY SWITCHER JS
+     ─ Change localStorage key to [client_initials]_audit_agency
+     ─ Change default selected option above to match default agency
+═══════════════════════════════════════════ -->
+<script>
+  const AGENCIES = {
+    "Start Advertising":  {},
+    "GroupRB Marketing":  {},
+    "Parts of Practice":  {}
+  };
+
+  function switchAgency(name) {
+    document.getElementById('agencyName').textContent = name + ' • SEO Audit';
+    document.getElementById('footerAgency').textContent = name;
+    try { localStorage.setItem('[CLIENT_INITIALS]_audit_agency', name); } catch(e) {}
+  }
+
+  (function init() {
+    let saved;
+    try { saved = localStorage.getItem('[CLIENT_INITIALS]_audit_agency'); } catch(e) {}
+    if (saved && AGENCIES[saved]) {
+      document.getElementById('agencySelect').value = saved;
+      switchAgency(saved);
+    }
+  })();
+</script>
+
+</body>
+</html>

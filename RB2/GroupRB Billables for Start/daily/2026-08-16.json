@@ -1,0 +1,25 @@
+{
+  "date": "2026-08-16",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "GAR", "note": "NPA Updates - schema // web page", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "NPA Updates - schema // web page", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "Premade Pouch - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "Premade Pouch - AI/SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Premade Pouch - Schema Dev", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Premade Pouch - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Films Glossary - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "FlexPak Films Glossary - AI/SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "FlexPak Films Glossary - Schema Dev", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "FlexPak Films Glossary - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - AI/SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Schema Dev", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Web Updates", "job": "0790146", "billable": true },
+    { "client": "GAR", "note": "FlexPak Calc - Web Updates", "job": "0790146", "billable": true }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "date": "2026-07-09",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Garlock": 4,
+    "Automotive Service Products": 1.75,
+    "Sport Medical": 1.25
+  },
+  "nonBillable": {
+    "STA": 1,
+    "Sport Medical": 1
+  }
+}

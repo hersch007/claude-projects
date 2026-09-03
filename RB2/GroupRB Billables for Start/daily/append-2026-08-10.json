@@ -1,0 +1,11 @@
+{
+  "date": "2026-08-10",
+  "employee": "Richard Brashear",
+  "billable": {
+    "MISC": 7,
+    "Advernology": 1
+  },
+  "nonBillable": {
+    "STA": 1.5
+  }
+}

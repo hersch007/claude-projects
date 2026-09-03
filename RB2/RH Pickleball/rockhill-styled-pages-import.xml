@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+<title>Rock Hill Pickleball</title>
+<link>https://rockhillpickleball.com</link>
+<description>Styled pages</description>
+<language>en-US</language>
+<wp:wxr_version>1.2</wp:wxr_version>
+<wp:base_site_url>https://rockhillpickleball.com</wp:base_site_url>
+<wp:base_blog_url>https://rockhillpickleball.com</wp:base_blog_url>
+<wp:author><wp:author_id>1</wp:author_id><wp:author_login><![CDATA[admin]]></wp:author_login><wp:author_email><![CDATA[]]></wp:author_email><wp:author_display_name><![CDATA[admin]]></wp:author_display_name><wp:author_first_name><![CDATA[]]></wp:author_first_name><wp:author_last_name><![CDATA[]]></wp:author_last_name></wp:author>
+<item>
+<title>Home</title>
+<link>https://rockhillpickleball.com/home</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=101</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <!-- HERO -->
+  <section class="rh-hero">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Rock Hill &amp; York County, SC</span>
+      <h1 class="rh-h1">Your Complete Guide to <span class="rh-hl">Pickleball</span> in Rock Hill</h1>
+      <p class="rh-lead">Where to play, how to find people, and everything you need to get started - the straight truth on every court in York County, all in one place.</p>
+      <div class="rh-hero-cards">
+        <a class="rh-door" href="/getting-started/">
+          <strong>New to the Game? Start Here</strong>
+          <span>Rules, gear, skill levels, and the friendliest places to start.</span>
+        </a>
+        <a class="rh-door" href="/courts/">
+          <strong>Show Me the Courts</strong>
+          <span>Honest pros &amp; cons of every spot, and how to book.</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS STRIP -->
+  <div class="rh-statsband">
+    <div class="rh-container">
+      <div class="rh-stats">
+        <div class="rh-stat"><b>4+</b><span>Local courts, honestly reviewed</span></div>
+        <div class="rh-stat"><b>2.5–5.0</b><span>All skill levels welcome</span></div>
+        <div class="rh-stat"><b>$0</b><span>Free community resource</span></div>
+        <div class="rh-stat"><b>1</b><span>Free tournament scheduler</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COURTS AT A GLANCE -->
+  <section class="rh-section">
+    <div class="rh-container">
+      <span class="rh-eyebrow">The courts, honestly</span>
+      <h2 class="rh-h2">Every court in York County - at a glance</h2>
+      <p class="rh-lead">No hype. How many courts, indoor or outdoor, and what each is best for. Tap through for the full rundown.</p>
+      <div class="rh-tablewrap" style="margin-top:22px">
+        <table class="rh-table">
+          <thead><tr><th>Court</th><th>Indoor / Outdoor</th><th>Courts</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td><a href="/courts/">Boyd Hill</a></td><td>Outdoor</td><td>Limited</td><td>Close-in casual play</td></tr>
+            <tr><td><a href="/courts/">Bleachery Fieldhouse</a></td><td>Indoor</td><td>12</td><td>Rain-or-shine, group play</td></tr>
+            <tr><td><a href="/courts/">Shield of Faith</a></td><td>Indoor</td><td>-</td><td>Weekday mornings, beginners</td></tr>
+            <tr><td><a href="/courts/">Peachtree (Fort Mill)</a></td><td>Varies</td><td>-</td><td>Consistency (worth the drive)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rh-btn-row"><a class="rh-btn rh-btn-primary" href="/courts/">See the full Courts Guide →</a></div>
+    </div>
+  </section>
+
+  <!-- FIND YOUR PEOPLE -->
+  <section class="rh-section rh-section-alt">
+    <div class="rh-container">
+      <div class="rh-grid rh-grid-2" style="align-items:center">
+        <div>
+          <span class="rh-eyebrow">The scene</span>
+          <h2 class="rh-h2">The games are already happening</h2>
+          <p class="rh-lead">We're the map, not the host. Every CourtReserve, Group.Me, and Facebook link that matters - in one place, so you're not hunting through screenshots.</p>
+          <div class="rh-btn-row"><a class="rh-btn rh-btn-ghost" href="/find-players/">Find players &amp; groups →</a></div>
+        </div>
+        <div class="rh-card">
+          <h3 class="rh-h3">One tap into the community</h3>
+          <p>CourtReserve for booking · Group.Me for “who’s playing” · Facebook for events &amp; photos · plus beginner clinics and coaches.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START CARDS -->
+  <section class="rh-section">
+    <div class="rh-container">
+      <div class="rh-center"><span class="rh-eyebrow">Get started fast</span><h2 class="rh-h2">Everything a new player needs</h2></div>
+      <div class="rh-grid rh-grid-3" style="margin-top:26px">
+        <div class="rh-card"><h3 class="rh-h3">Skill Levels Explained</h3><p>What 2.5 to 5.0 actually means - and why you shouldn’t stress about your number.</p><a class="rh-card-link" href="/getting-started/">Learn more →</a></div>
+        <div class="rh-card"><h3 class="rh-h3">Coaches &amp; Clinics</h3><p>Local lessons and beginner-friendly clinics to level up fast.</p><a class="rh-card-link" href="/find-players/">Find lessons →</a></div>
+        <div class="rh-card"><h3 class="rh-h3">Beginner Gear Guide</h3><p>You don’t need a fancy paddle. Here’s what to get (and where).</p><a class="rh-card-link" href="/getting-started/">See the guide →</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY QUOTE -->
+  <section class="rh-section">
+    <div class="rh-container">
+      <div class="rh-quote">
+        <p>"No more group-chat screenshots and 'is the court even open?' texts - just one honest place to find a game, meet people, and play more."</p>
+        <cite>- The Rock Hill Pickleball crew</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCHEDULER TEASER -->
+  <section class="rh-section rh-section-alt">
+    <div class="rh-container">
+      <div class="rh-band">
+        <span class="rh-eyebrow" style="background:rgba(255,255,255,.16);color:#fff">Free tool</span>
+        <h2 class="rh-h2">Running a tournament? We built you a scheduler.</h2>
+        <p>Round-robin or pool play → playoff bracket, up to 12 teams. Live standings, printable, works on your phone. No sign-up, no cost.</p>
+        <div class="rh-btn-row" style="justify-content:center"><a class="rh-btn rh-btn-yellow" href="/scheduler/">Open the Tournament Scheduler →</a></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>101</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[home]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+<item>
+<title>Courts</title>
+<link>https://rockhillpickleball.com/courts</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=102</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:56px 0 60px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">The courts, honestly</span>
+      <h1 class="rh-h1">Every court in York County - the honest version</h1>
+      <p class="rh-lead">How many courts, indoor or outdoor, what it costs, how to book, and the real pros and cons. No hype.</p>
+    </div>
+  </section>
+
+  <!-- comparison -->
+  <section class="rh-section rh-tight">
+    <div class="rh-container">
+      <div class="rh-tablewrap">
+        <table class="rh-table">
+          <thead><tr><th>Court</th><th>Indoor / Outdoor</th><th>Courts</th><th>Booking</th><th>Best for</th></tr></thead>
+          <tbody>
+            <tr><td><a href="#boyd-hill">Boyd Hill</a></td><td>Outdoor</td><td>Limited</td><td>CourtReserve</td><td>Close-in casual play</td></tr>
+            <tr><td><a href="#bleachery">Bleachery Fieldhouse</a></td><td>Indoor</td><td>12</td><td>CourtReserve</td><td>Rain-or-shine, group play</td></tr>
+            <tr><td><a href="#shield">Shield of Faith</a></td><td>Indoor</td><td>-</td><td>Church schedule</td><td>Weekday mornings, beginners</td></tr>
+            <tr><td><a href="#peachtree">Peachtree (Fort Mill)</a></td><td>Varies</td><td>-</td><td>CourtReserve</td><td>Consistency (worth the drive)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="rh-callout">💡 <strong>Notice something out of date?</strong> This guide stays accurate because players keep us honest. <a href="/about/#contact">Suggest an update →</a></div>
+    </div>
+  </section>
+
+  <!-- court cards -->
+  <section class="rh-section rh-tight">
+    <div class="rh-container">
+      <div class="rh-grid" style="gap:22px">
+
+        <div class="rh-court" id="boyd-hill">
+          <div class="rh-court-top"><h3 class="rh-h3">Boyd Hill</h3><div class="rh-court-meta">Outdoor · [FILL IN: # courts] · Rock Hill, SC</div></div>
+          <div class="rh-court-body">
+            <p>One of the most convenient outdoor spots in Rock Hill - when it’s up and running, it’s great for a game close to town. The trade-off is consistency: court time can get moved or cancelled with little notice, and there aren’t many courts. <strong>Always check the schedule before you drive over.</strong></p>
+            <div class="rh-proscons">
+              <div class="rh-pros"><h4>👍 Pros</h4><ul><li>Convenient, close-in location</li><li>Outdoor play in nice weather</li><li>Good for casual drop-in games</li></ul></div>
+              <div class="rh-cons"><h4>👎 Honest cons</h4><ul><li>Availability can be inconsistent</li><li>Limited number of courts</li><li>Weather-dependent</li></ul></div>
+            </div>
+            <div class="rh-callout" style="margin-bottom:0">Cost: [FILL IN] · Booking: <a href="https://app.courtreserve.com/Online/Portal/Index/16310" target="_blank" rel="noopener">CourtReserve</a> · Best times: [FILL IN]</div>
+          </div>
+        </div>
+
+        <div class="rh-court" id="bleachery">
+          <div class="rh-court-top"><h3 class="rh-h3">Bleachery Fieldhouse</h3><div class="rh-court-meta">Indoor · 12 courts · Rock Hill, SC</div></div>
+          <div class="rh-court-body">
+            <p>The biggest indoor option around - 12 courts means you can almost always get on, rain or shine. It’s the workhorse of Rock Hill indoor play. Just go in knowing its quirks.</p>
+            <div class="rh-proscons">
+              <div class="rh-pros"><h4>👍 Pros</h4><ul><li>12 indoor courts - great capacity</li><li>Weather-proof, central location</li><li>Good for groups &amp; larger sessions</li></ul></div>
+              <div class="rh-cons"><h4>👎 Honest cons</h4><ul><li>Uneven lighting in spots</li><li>Known dead spots on the floor</li><li>Competitive to book at peak times</li></ul></div>
+            </div>
+            <div class="rh-callout" style="margin-bottom:0">Cost: [FILL IN] · Booking: <a href="https://app.courtreserve.com/Online/Portal/Index/16310" target="_blank" rel="noopener">CourtReserve</a> · Surface: [FILL IN]</div>
+          </div>
+        </div>
+
+        <div class="rh-court" id="shield">
+          <div class="rh-court-top"><h3 class="rh-h3">Shield of Faith Church</h3><div class="rh-court-meta">Indoor · [FILL IN: # courts] · Rock Hill, SC</div></div>
+          <div class="rh-court-body">
+            <p>A genuine community gem - welcoming, indoor, and one of the best spots in town for beginners. The catch is availability: play is limited to <strong>weekday mornings and Sundays after church</strong>. Ideal for early birds and flexible schedules.</p>
+            <div class="rh-proscons">
+              <div class="rh-pros"><h4>👍 Pros</h4><ul><li>Indoor - any weather</li><li>Warm, beginner-friendly vibe</li><li>Great for morning players</li></ul></div>
+              <div class="rh-cons"><h4>👎 Honest cons</h4><ul><li>Limited hours only</li><li>No evenings or Saturdays</li><li>[FILL IN: # courts / how busy]</li></ul></div>
+            </div>
+            <div class="rh-callout" style="margin-bottom:0">When: weekday mornings [FILL IN] &amp; Sundays after service [FILL IN] · Cost: [FILL IN]</div>
+          </div>
+        </div>
+
+        <div class="rh-court" id="peachtree">
+          <div class="rh-court-top"><h3 class="rh-h3">Peachtree - Fort Mill</h3><div class="rh-court-meta">[FILL IN: Indoor/Outdoor] · [FILL IN: # courts] · ~20–25 min from Rock Hill</div></div>
+          <div class="rh-court-body">
+            <p>Enough Rock Hill players make the trip that we’d be leaving something out if we didn’t list it. The draw is <strong>consistency</strong> - reliable availability and quality. It’s a drive, but for a guaranteed good game a lot of folks think it’s worth it. Grab a carpool.</p>
+            <div class="rh-proscons">
+              <div class="rh-pros"><h4>👍 Pros</h4><ul><li>Consistent, reliable courts</li><li>A favorite of serious players</li><li>Dependable when local courts are full</li></ul></div>
+              <div class="rh-cons"><h4>👎 Honest cons</h4><ul><li>~20–25 min drive</li><li>Not for spur-of-the-moment games</li><li>[FILL IN: cost / booking]</li></ul></div>
+            </div>
+            <div class="rh-callout" style="margin-bottom:0">🚗 Carpool with the crew - organize a ride in <a href="/find-players/">Find Players &amp; Groups</a>.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>102</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[courts]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+<item>
+<title>Find Players</title>
+<link>https://rockhillpickleball.com/find-players</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=103</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:56px 0 60px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">The scene</span>
+      <h1 class="rh-h1">The games are already happening. Here’s how to plug in.</h1>
+      <p class="rh-lead">You don’t need us to run a schedule - the community is active across a few platforms. Here’s every place worth joining, so you’re not hunting through screenshots and word-of-mouth.</p>
+    </div>
+  </section>
+
+  <section class="rh-section">
+    <div class="rh-container">
+      <div class="rh-grid rh-grid-2">
+
+        <div class="rh-card"><span class="rh-icon">📅</span><h3 class="rh-h3">CourtReserve</h3><p>How most local courts handle open play and reservations. Set up a free account, then use the direct links for each court.</p><a class="rh-card-link" href="https://app.courtreserve.com/Online/Portal/Index/16310" target="_blank" rel="noopener">Open the CourtReserve portal →</a></div>
+
+        <div class="rh-card"><span class="rh-icon">💬</span><h3 class="rh-h3">Group.Me chats</h3><p>Where the day-to-day “who’s playing tonight” happens - join the chat for the courts you play:</p>
+          <ul class="rh-chips">
+            <li><a href="https://web.groupme.com/chats/group/84433180" target="_blank" rel="noopener">Boyd Hill</a></li>
+            <li><a href="https://web.groupme.com/chats/group/104461825" target="_blank" rel="noopener">The Bleachery</a></li>
+            <li><a href="https://web.groupme.com/chats/group/104461825" target="_blank" rel="noopener">The Shield</a></li>
+            <li><a href="https://web.groupme.com/chats/group/112069213" target="_blank" rel="noopener">York</a></li>
+            <li><a href="https://web.groupme.com/chats/group/69245536" target="_blank" rel="noopener">Lake Wylie</a></li>
+            <li><a href="https://web.groupme.com/chats/group/114367505" target="_blank" rel="noopener">Peachtree</a></li>
+          </ul>
+        </div>
+
+        <div class="rh-card"><span class="rh-icon">📘</span><h3 class="rh-h3">Facebook group</h3><p>Events, photos, and the bigger announcements. Good for staying in the loop on what’s coming up.</p><span class="rh-soon">Coming soon</span></div>
+
+        <div class="rh-card"><span class="rh-icon">🎓</span><h3 class="rh-h3">Clinics &amp; coaches</h3><p>New players start here. Beginner clinics and local lessons are the fastest way to get comfortable and improve.</p><span class="rh-soon">Coming soon</span></div>
+
+      </div>
+
+      <div class="rh-callout" style="margin-top:24px">🎯 <strong>New to all of this?</strong> Start with CourtReserve and one Group.Me - that’s enough to find a game this week. Then read <a href="/getting-started/">Getting Started</a>.</div>
+
+      <div class="rh-band" style="margin-top:32px">
+        <h2 class="rh-h2">Know a group we’re missing?</h2>
+        <p>This directory is only as good as the community keeps it. Tell us about a chat, league, or clinic and we’ll add it.</p>
+        <div class="rh-btn-row" style="justify-content:center"><a class="rh-btn rh-btn-yellow" href="/about/#contact">Suggest an addition →</a></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>103</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[find-players]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+<item>
+<title>Getting Started</title>
+<link>https://rockhillpickleball.com/getting-started</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=104</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:56px 0 60px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">New player? Start here</span>
+      <h1 class="rh-h1">You picked a great time to start.</h1>
+      <p class="rh-lead">Pickleball is the easiest racquet sport to pick up and one of the hardest to put down. You can genuinely be rallying within your first hour. Here’s your no-stress path in.</p>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="rh-section">
+    <div class="rh-container">
+      <h2 class="rh-h2">5 steps to your first game</h2>
+      <div class="rh-steps" style="margin-top:22px">
+        <div class="rh-step"><h3>Learn the basics (15 minutes)</h3><p>Court smaller than tennis, paddle and a plastic ball. Games to 11, win by 2. There’s a “kitchen” (no-volley zone) at the net, and you serve underhand. That’s enough to start.</p></div>
+        <div class="rh-step"><h3>Know what the numbers mean</h3><p>“I’m a 3.0” refers to skill ratings from 2.5 to 5.0+. Don’t worry about yours yet - most beginners are a 2.5–3.0. (Full breakdown below.)</p></div>
+        <div class="rh-step"><h3>Grab a paddle (nothing fancy)</h3><p>A $40–$80 beginner paddle is perfect. Many groups have loaner paddles too - you can play your first few times without buying anything.</p></div>
+        <div class="rh-step"><h3>Show up to a beginner-friendly session</h3><p>Open play or a beginner clinic is the easiest way in. See the <a href="/courts/">friendliest courts to start</a> and <a href="/find-players/">find the local groups</a>.</p></div>
+        <div class="rh-step"><h3>Find your people</h3><p>The community organizes through CourtReserve, Group.Me, and Facebook. We’ve rounded up all the links in <a href="/find-players/">Find Players &amp; Groups</a>.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILL LEVELS -->
+  <section class="rh-section rh-section-alt">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Skill levels</span>
+      <h2 class="rh-h2">What 2.5 to 5.0 actually means</h2>
+      <p class="rh-lead">Ratings help match players for even, fun games. Don’t stress about your number - the friendly move is to under-rate yourself and play up.</p>
+      <div style="margin-top:22px">
+        <div class="rh-skill"><div class="rh-skill-num">🟢 2.5</div><div><h3>Brand New</h3><p>Learning the rules, serving and returning sometimes, getting a feel for the kitchen and scoring. Where nearly everyone starts.</p></div></div>
+        <div class="rh-skill"><div class="rh-skill-num">🟢 3.0</div><div><h3>Advancing Beginner</h3><p>You keep rallies going and are learning to “dink” (soft shots at the net) instead of banging every ball. Consistency is next.</p></div></div>
+        <div class="rh-skill"><div class="rh-skill-num">🟡 3.5</div><div><h3>Solid Intermediate</h3><p>You sustain rallies, move to the net as a team, and mix soft shots and drives on purpose. Where a huge chunk of club players live.</p></div></div>
+        <div class="rh-skill"><div class="rh-skill-num">🟡 4.0</div><div><h3>Strong Intermediate</h3><p>Consistent, places shots, reliable third-shot drop and dinking game. Forces errors and rarely beats itself.</p></div></div>
+        <div class="rh-skill"><div class="rh-skill-num">🟠 4.5</div><div><h3>Advanced</h3><p>Few unforced errors, strong control on soft and power shots, smart shot selection, real teamwork. Competitive tournament territory.</p></div></div>
+        <div class="rh-skill"><div class="rh-skill-num">🔴 5.0+</div><div><h3>Highly Competitive</h3><p>Elite consistency, power, touch, and strategy. Regional and national tournament players.</p></div></div>
+      </div>
+      <div class="rh-callout">📊 <strong>DUPR</strong> is a more precise rating (roughly 2.0–8.0) based on your actual match results - many leagues use it. For casual play, the scale above is all you need. [FILL IN: club DUPR link if you have one.]</div>
+    </div>
+  </section>
+
+  <!-- GEAR -->
+  <section class="rh-section">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Gear</span>
+      <h2 class="rh-h2">Beginner gear, without the overwhelm</h2>
+      <div class="rh-grid rh-grid-3" style="margin-top:22px">
+        <div class="rh-card"><span class="rh-icon">🏓</span><h3 class="rh-h3">Paddle</h3><p>A $40–$80 beginner paddle is all you need. Skip the $200+ ones until you know you’re hooked. [FILL IN: 2–3 recommendations.]</p></div>
+        <div class="rh-card"><span class="rh-icon">👟</span><h3 class="rh-h3">Shoes</h3><p>Get court shoes (tennis or dedicated court), <em>not</em> running shoes - they aren’t built for side-to-side movement.</p></div>
+        <div class="rh-card"><span class="rh-icon">🛒</span><h3 class="rh-h3">Where to buy</h3><p>Try before you buy - many groups have loaner paddles. [FILL IN: local shop / online options you recommend.]</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="rh-section rh-section-alt">
+    <div class="rh-container">
+      <span class="rh-eyebrow">FAQ</span>
+      <h2 class="rh-h2">Every question a new player asks</h2>
+      <div style="margin-top:22px;max-width:760px">
+        <details class="rh-acc"><summary>Is it hard to learn?</summary><div class="rh-acc-body">No - that’s the magic of it. Most people are rallying within their first hour. The basics take minutes; the strategy takes a lifetime (in a good way).</div></details>
+        <details class="rh-acc"><summary>Do I need my own paddle?</summary><div class="rh-acc-body">Not to start. Many sessions have loaner paddles, so you can try it for free first. When you’re ready, a $40–$80 beginner paddle is plenty.</div></details>
+        <details class="rh-acc"><summary>Do I need to bring a partner?</summary><div class="rh-acc-body">Nope. Most open-play sessions rotate partners and opponents, so you can show up solo and play all day. Want to line someone up? Use <a href="/find-players/">Find Players &amp; Groups</a>.</div></details>
+        <details class="rh-acc"><summary>What should I wear?</summary><div class="rh-acc-body">Comfortable athletic clothes and court shoes (not running shoes). Bring water.</div></details>
+        <details class="rh-acc"><summary>What’s “the kitchen”?</summary><div class="rh-acc-body">The 7-foot no-volley zone at the net. You can stand in it, but you can’t hit the ball out of the air while you’re there - it keeps the game from becoming all smashes.</div></details>
+        <details class="rh-acc"><summary>How much does it cost to play?</summary><div class="rh-acc-body">It varies by location - some are free or low-cost, others charge for court time. Check the <a href="/courts/">Courts Guide</a> for each spot.</div></details>
+        <details class="rh-acc"><summary>Can kids / seniors / total beginners play?</summary><div class="rh-acc-body">Absolutely - all of the above, often on the same court. It’s one of the most age-friendly sports there is.</div></details>
+        <details class="rh-acc"><summary>Something on this site is out of date - can I tell you?</summary><div class="rh-acc-body">Please do! We keep this resource accurate with help from players like you. <a href="/about/#contact">Suggest an update</a>.</div></details>
+      </div>
+    </div>
+  </section>
+
+</main>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>104</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[getting-started]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+<item>
+<title>About</title>
+<link>https://rockhillpickleball.com/about</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=105</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:56px 0 60px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">About us</span>
+      <h1 class="rh-h1">Built by local players who got tired of the runaround.</h1>
+      <p class="rh-lead">A fun, welcoming sport shouldn’t be hidden behind insider knowledge. So we built the guide we wish we’d had.</p>
+    </div>
+  </section>
+
+  <section class="rh-section">
+    <div class="rh-container">
+      <div class="rh-grid rh-grid-2" style="align-items:start">
+        <div>
+          <h2 class="rh-h2">Our story</h2>
+          <p>Getting into pickleball around Rock Hill used to mean piecing things together - a Group.Me screenshot here, a “which court is even open?” text there, and no straight answer on what any of the courts were actually like. Newcomers had it worst.</p>
+          <p>This site isn’t a booking system or a schedule - it’s a <strong>resource.</strong> Honest information about every court, plain-English help for anyone new, and a directory of where the community actually lives online.</p>
+          <p>Our goal is simple: <strong>make it easy for anyone in York County to find a game and fall in love with this sport.</strong> We keep it accurate with help from players like you.</p>
+          <p style="font-weight:800;color:var(--green-dark)">Welcome to the community. Now go play. 🎾</p>
+        </div>
+        <div class="rh-card">
+          <span class="rh-icon">🤝</span>
+          <h3 class="rh-h3">What we’re about</h3>
+          <p style="margin-bottom:12px">• <strong>Honest court intel</strong> - pros and cons, no hype.</p>
+          <p style="margin-bottom:12px">• <strong>A welcoming on-ramp</strong> for brand-new players.</p>
+          <p style="margin-bottom:12px">• <strong>One directory</strong> for where the community plays.</p>
+          <p>• <strong>Free, community-run,</strong> and kept accurate by you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="rh-section rh-section-alt" id="contact">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Contact</span>
+      <h2 class="rh-h2">Get in touch / suggest an update</h2>
+      <p class="rh-lead">Question, correction, a court change, or a group we should add? Drop us a note - a real local player will get back to you.</p>
+      <div class="rh-form" style="margin-top:22px">
+        <p style="margin-top:0;color:var(--muted);font-size:.9rem">⚙️ <strong>In WordPress:</strong> replace this block with your forms plugin (Fluent Forms / WPForms) set to email your club address. This is a visual placeholder.</p>
+        <label>Name</label><input type="text" placeholder="Your name" disabled>
+        <label>Email</label><input type="text" placeholder="you@email.com" disabled>
+        <label>Message</label><textarea placeholder="What’s up?" disabled></textarea>
+        <button class="rh-btn rh-btn-primary" type="button" disabled>Send</button>
+      </div>
+      <p class="rh-hint" style="margin-top:12px;color:var(--muted)">Prefer email? [FILL IN: club email address]</p>
+    </div>
+  </section>
+
+</main>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>105</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[about]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+<item>
+<title>Scheduler</title>
+<link>https://rockhillpickleball.com/scheduler</link>
+<pubDate>Tue, 28 Jul 2026 12:00:00 +0000</pubDate>
+<dc:creator><![CDATA[admin]]></dc:creator>
+<guid isPermaLink="false">https://rockhillpickleball.com/?page_id=106</guid>
+<description></description>
+<content:encoded><![CDATA[<!-- wp:html -->
+<main class="rh-main">
+
+  <section class="rh-hero" style="padding:52px 0 56px">
+    <div class="rh-container">
+      <span class="rh-eyebrow">Free tool</span>
+      <h1 class="rh-h1">Tournament Scheduler</h1>
+      <p class="rh-lead">Round-robin or pool play → playoff bracket, up to 12 teams (48 players). Live standings, printable, works on your phone. No sign-up, no cost, nothing collected.</p>
+    </div>
+  </section>
+
+  <section class="rh-section rh-tight">
+    <div class="rh-container">
+
+      <!-- DEMO BAR -->
+      <div class="rh-demobar">
+        <p>👀 <strong>Just want to see how it works?</strong> Load an example tournament with fake teams and scores already filled in.</p>
+        <button class="rh-btn rh-btn-primary" id="rh-demo-rr" type="button" style="padding:12px 18px">Load Round-Robin Example</button>
+        <button class="rh-btn rh-btn-ghost" id="rh-demo-pool" type="button" style="padding:12px 18px">Load Pool-Play Example</button>
+      </div>
+
+      <!-- ===== The scheduler widget (embedded inline) ===== -->
+      <div id="pbts-root" class="pbts-app">
+        <div class="pbts-header">
+          <h1>🎾 Rock Hill Pickleball</h1>
+          <p>Tournament Scheduler - Round Robin &amp; Pool Play + Playoffs</p>
+        </div>
+
+        <div id="pbts-setup" class="pbts-section pbts-setup-sec">
+          <h2>Set Up Your Tournament <span class="pbts-tag">Step 1</span></h2>
+          <div class="pbts-fmt" id="pbts-fmt">
+            <button data-fmt="rr" class="pbts-active">Round Robin<small>Everyone plays everyone</small></button>
+            <button data-fmt="pool">Pool Play &rarr; Playoffs<small>Pools, then a bracket</small></button>
+          </div>
+          <div class="pbts-row">
+            <div><label for="pbts-numTeams">Teams</label><select id="pbts-numTeams"></select></div>
+            <div><label for="pbts-perTeam">Players / Team</label>
+              <select id="pbts-perTeam"><option value="1">1 (singles)</option><option value="2" selected>2 (doubles)</option><option value="3">3</option><option value="4">4</option></select></div>
+            <div><label for="pbts-numCourts">Courts</label><select id="pbts-numCourts"></select></div>
+            <div><label for="pbts-target">Games To</label><select id="pbts-target"><option>11</option><option>15</option><option>21</option></select></div>
+          </div>
+          <div class="pbts-row" id="pbts-poolOpts" style="margin-top:14px;display:none">
+            <div><label for="pbts-numPools">Number of Pools</label><select id="pbts-numPools"></select></div>
+            <div><label for="pbts-advance">Advance / Pool</label><select id="pbts-advance"></select></div>
+          </div>
+          <p class="pbts-hint" id="pbts-summaryHint"></p>
+          <label style="margin-top:16px">Team Names &amp; Rosters <span style="font-weight:500;text-transform:none;letter-spacing:0">(rosters optional)</span></label>
+          <div class="pbts-teamgrid" id="pbts-teamInputs"></div>
+          <button class="pbts-btn pbts-btn-primary" id="pbts-genBtn">Generate Schedule &rarr;</button>
+          <p class="pbts-hint" id="pbts-modeHelp"></p>
+        </div>
+
+        <div id="pbts-results" class="pbts-section pbts-hidden">
+          <div class="pbts-tabs" id="pbts-tabs"></div>
+          <div id="pbts-tab-a"></div>
+          <div id="pbts-tab-b"></div>
+          <div class="pbts-controls pbts-no-print" style="margin-top:20px">
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-printBtn">🖨️ Print / PDF</button>
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-editBtn">✏️ Edit Setup</button>
+            <button class="pbts-btn pbts-btn-ghost" id="pbts-resetBtn">↺ New Tournament</button>
+          </div>
+        </div>
+
+        <p class="pbts-footer-note pbts-no-print">Scores save automatically in this browser on this device. Bookmark the page to pick up where you left off.</p>
+      </div>
+      <!-- ===== end widget ===== -->
+
+      <div class="rh-callout" style="margin-top:22px">💡 <strong>Hosting a real event?</strong> One scorekeeper runs it on one device - it works fully offline, so bad court wifi is no problem. <a href="/about/#contact">Questions? Get in touch.</a></div>
+    </div>
+  </section>
+
+</main>
+<script src="/rh-assets/scheduler.js"></script>
+<script>
+/* Demo loader - fills example teams + scores so visitors see it working */
+(function(){
+  var TEAMS = ["Dinkin' Donuts","Net Ninjas","Kitchen Sinkers","The Volley Llamas","Third Shot Heroes","Paddle Battalion","Dill With It","Smash Bros","No Kitchen Mercy","Rally Cats","Baseline Bandits","The Picklebacks"];
+  var ROSTERS = ["Rich & Dana","Sam & Alex","Chris & Pat","Jordan & Casey","Taylor & Morgan","Drew & Riley","Jamie & Kai","Lee & Quinn","Avery & Sky","Reese & Noah","Devin & Cam","Robin & Sage"];
+  function root(){ return document.getElementById("pbts-root"); }
+  function fire(el,type){ el.dispatchEvent(new Event(type,{bubbles:true})); }
+
+  function loadExample(pool){
+    var r = root(); if(!r) return;
+    var fmt = r.querySelector('#pbts-fmt button[data-fmt="'+(pool?"pool":"rr")+'"]');
+    if(fmt) fmt.click();
+    var nt = document.getElementById("pbts-numTeams");
+    nt.value = "6"; fire(nt,"change");
+    var cards = r.querySelectorAll("#pbts-teamInputs .pbts-teamcard");
+    cards.forEach(function(c,i){
+      var name=c.querySelector(".pbts-t-name"), ros=c.querySelector(".pbts-t-players");
+      if(name){ name.value = TEAMS[i] || ("Team "+(i+1)); }
+      if(ros){ ros.value = ROSTERS[i] || ""; }
+    });
+    document.getElementById("pbts-genBtn").click();
+    // fill plausible scores so standings populate
+    setTimeout(function(){
+      r.querySelectorAll(".pbts-match").forEach(function(m){
+        var sa=m.querySelector(".pbts-sa"), sb=m.querySelector(".pbts-sb");
+        if(!sa||!sb) return;
+        var win = Math.random() < 0.5;
+        var lo = 3 + Math.floor(Math.random()*8); // 3..10
+        sa.value = win ? 11 : lo;
+        sb.value = win ? lo : 11;
+        fire(sa,"input"); fire(sb,"input");
+      });
+      if(pool){
+        var seed = document.querySelector("#pbts-tab-b .pbts-btn-primary");
+        if(seed) seed.click();
+      }
+      r.scrollIntoView({behavior:"smooth",block:"start"});
+    }, 80);
+  }
+  var a=document.getElementById("rh-demo-rr"), b=document.getElementById("rh-demo-pool");
+  if(a) a.addEventListener("click", function(){ loadExample(false); });
+  if(b) b.addEventListener("click", function(){ loadExample(true); });
+})();
+</script>
+<!-- /wp:html -->]]></content:encoded>
+<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+<wp:post_id>106</wp:post_id>
+<wp:post_date><![CDATA[2026-07-28 08:00:00]]></wp:post_date>
+<wp:post_date_gmt><![CDATA[2026-07-28 12:00:00]]></wp:post_date_gmt>
+<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+<wp:post_name><![CDATA[scheduler]]></wp:post_name>
+<wp:status><![CDATA[draft]]></wp:status>
+<wp:post_parent>0</wp:post_parent>
+<wp:menu_order>0</wp:menu_order>
+<wp:post_type><![CDATA[page]]></wp:post_type>
+<wp:post_password><![CDATA[]]></wp:post_password>
+<wp:is_sticky>0</wp:is_sticky>
+</item>
+</channel>
+</rss>

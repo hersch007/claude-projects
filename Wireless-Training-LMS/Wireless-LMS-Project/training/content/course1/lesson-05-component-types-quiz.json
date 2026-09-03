@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: An Agent is submitting a Colocation application on a tower that is already registered and current in the WTS database. Which components will AMP require for this project?",
+      "options": {
+        "A": "PIF, ATF, NWF, TWF, and NCM — all five components are always required.",
+        "B": "PIF and NCM only. The tower is already in the WTS database and current, so ATF and TWF are not needed. NWF is only for New Tower projects.",
+        "C": "PIF, TWF, and NCM — the TWF is always required even when the tower is already registered.",
+        "D": "PIF and NWF only — the NWF covers both new and colocation projects."
+      },
+      "answer": "B",
+      "explanation": "For a colocation on a tower that is already registered and current in the WTS database, only the PIF and NCM are required. The ATF is only needed when adding a new tower site to the database. The TWF is only needed when tower data is not current. The NWF is exclusively for New Tower projects. NCM is the only component required on every project without exception."
+    },
+    {
+      "question": "A Jurisdiction reviewer receives a New Tower application for review. The NCM component is in 'Submitted / In Review' status, but there is no structural analysis document uploaded. The Agent insists the structural analysis is 'in progress' and asks the Jurisdiction to approve based on what has been submitted so far. What should the Jurisdiction do?",
+      "options": {
+        "A": "Approve the NCM conditionally and require the structural analysis before the final inspection.",
+        "B": "Ask the Analyst whether the structural analysis is really necessary for this project type.",
+        "C": "Do not approve. The NCM requires certified structural engineering documentation. Approving a New Tower application without a structural analysis creates a compliance gap and leaves the Jurisdiction without a documented basis for its decision. The project should be sent back for revision until the certified document is provided.",
+        "D": "Accept the submission as-is since the Agent has committed to providing the document later."
+      },
+      "answer": "C",
+      "explanation": "The NCM must include certified structural engineering documentation before it can be approved. A certified document has been reviewed, stamped, and signed by a licensed Professional Engineer. Approving without it leaves the Jurisdiction without a documented basis for its decision — which is legally indefensible and violates the Official Record requirement. The correct action is to send it back for revision."
+    }
+  ]
+}

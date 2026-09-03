@@ -1,0 +1,8 @@
+{
+  "name": "Garlock",
+  "url": "https://gcpflexpack-24024882.hs-sites.com",
+  "brand_color": "#1a3a5c",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Garlock",
+  "max_pages": 120,
+  "ignore_paths": ["/cdn-cgi/", "?hs", "#", "/hs-"]
+}

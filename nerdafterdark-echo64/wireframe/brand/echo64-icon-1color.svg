@@ -1,0 +1,53 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 200" width="220" height="200" role="img" aria-label="Echo-64 icon â€” single color print version">
+  <title>Echo-64 (Print)</title>
+  <!--
+    SINGLE-COLOR PRINT VERSION
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    Use this file for:
+      Â· Screen printing (swap #ffffff for your ink color)
+      Â· Embroidery digitizing
+      Â· Laser engraving
+      Â· Vinyl cutting
+    All elements are flat fills â€” no gradients, no filters, no strokes that require
+    separation. Change the fill color on the root <g> to switch the entire mark.
+    Background is transparent.
+  -->
+  <defs>
+  </defs>
+
+  <!-- Everything in one color â€” white for dark shirts, black for light -->
+  <g fill="#ffffff">
+
+    <!-- Monitor outer bezel (filled shape) -->
+    <rect x="8" y="6" width="204" height="140" rx="18" ry="18"/>
+
+    <!-- Screen knockout â€” black regardless of shirt color so content reads -->
+    <rect x="26" y="24" width="168" height="104" rx="5" ry="5" fill="#000000"/>
+
+    <!-- READY. on screen -->
+    <text x="38" y="46"
+          font-family="'VT323', 'Courier New', monospace"
+          font-size="13"
+          fill="#ffffff"
+          opacity="0.6">READY.</text>
+
+    <!-- ECHO-64 on screen -->
+    <text x="38" y="76"
+          font-family="'VT323', 'Courier New', monospace"
+          font-size="28"
+          fill="#ffffff"
+          letter-spacing="1">ECHO-64</text>
+
+    <!-- Cursor — new line below ECHO-64, not inline with it -->
+    <rect x="38" y="88" width="13" height="14" fill="#ffffff"/>
+
+    <!-- Neck -->
+    <path d="M 86,146 L 134,146 L 128,166 L 92,166 Z"/>
+
+    <!-- Base -->
+    <rect x="62" y="166" width="96" height="14" rx="5" ry="5"/>
+
+  </g>
+
+</svg>
+

@@ -1,0 +1,15 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A new Jurisdiction staff member is reviewing her first wireless facility application. She receives an email from the Agent with the structural analysis attached and a note explaining the project. She replies to the email asking clarifying questions and the Agent responds by email. She approves the project via email and sends the approval letter by mail. What is the problem with this workflow — and what should have happened instead?",
+      "options": {
+        "A": "Nothing is wrong. Email is an acceptable channel for application review as long as the Jurisdiction keeps copies. AMP is optional when both parties agree to use email.",
+        "B": "The only issue is the paper approval letter. Everything else — email submissions, email questions and answers — is acceptable as long as the email is saved somewhere.",
+        "C": "This entire workflow bypasses AMP. The application should have been submitted through AMP by the Agent. All review communications, questions, and responses should have occurred inside AMP. The approval decision should have been made and recorded in AMP. None of this activity exists in the Official Record.",
+        "D": "The workflow is fine as long as the Jurisdiction manually enters the email correspondence into AMP afterward."
+      },
+      "answer": "C",
+      "explanation": "AMP is not optional. It is the system of record. When an Agent submits outside AMP and a Jurisdiction reviews outside AMP, everything — every question, every answer, every document, every decision — is invisible to the Official Record. Under federal telecommunications law, the Jurisdiction's approval decision must be supported by a documented record. An email chain and a paper letter are not the Official Record."
+    }
+  ]
+}

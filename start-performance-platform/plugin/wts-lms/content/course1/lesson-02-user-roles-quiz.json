@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer is very busy and trusts her WTS Analyst completely. She tells the Analyst: 'I've reviewed your notes — everything looks good. Go ahead and approve the project in AMP. I'll back you up if anyone asks.' What is the problem with this arrangement?",
+      "options": {
+        "A": "Nothing is wrong. The Analyst's approval is equivalent to the Jurisdiction's approval as long as the Jurisdiction verbally agrees beforehand.",
+        "B": "The arrangement is acceptable temporarily when the Jurisdiction is busy, as long as she documents the verbal approval by email afterward.",
+        "C": "This is not permissible. The Analyst role has no approval authority in AMP. Even if the Analyst took the action, it would have no legal standing. The Jurisdiction reviewer must personally take the approval action in AMP — her verbal backing does not transfer her legal authority.",
+        "D": "The Analyst can approve as long as the Jurisdiction copies the approval into the Official Record manually after the fact."
+      },
+      "answer": "C",
+      "explanation": "Only the Jurisdiction (Client role) can approve. This is a legal requirement enforced at the system level, not a convenience setting. Approval authority cannot be delegated, verbally transferred, or worked around. The Jurisdiction must personally take the approval action in AMP."
+    },
+    {
+      "question": "An Agent submits a project. The Analyst reviews it, finds no issues, and tells the Agent by phone: 'Looks good — you should be approved soon.' Two weeks later the Agent calls back angry because the project is still in 'Submitted / In Review' status. What most likely happened?",
+      "options": {
+        "A": "The Analyst's verbal statement meant the project was approved. The system must have an error.",
+        "B": "The Analyst approved the project but the Jurisdiction reversed it.",
+        "C": "The Analyst reviewed for completeness and found no issues — but the Jurisdiction has not yet taken the formal approval action. Analyst review does not equal approval. The project remains in review until the Jurisdiction acts.",
+        "D": "The Agent should have followed up with the Admin to process the approval."
+      },
+      "answer": "C",
+      "explanation": "Analyst review and Analyst sign-off are not approval. The Analyst's role is advisory — they check for completeness and flag issues. Only when the Jurisdiction (Client) takes the formal approval action in AMP is the project approved. The project will remain 'In Review' until that happens."
+    }
+  ]
+}

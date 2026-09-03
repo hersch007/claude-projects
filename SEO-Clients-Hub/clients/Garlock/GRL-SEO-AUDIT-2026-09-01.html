@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Garlock — September 1, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #003366; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,165,0,.6); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; color: #ffd080; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-icon { font-size: 26px; margin-bottom: 6px; }
+  .snap-num { font-size: 26px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #003366; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Score section ── */
+  .score-hero { background: white; border-radius: 12px; padding: 28px 32px; box-shadow: 0 1px 4px rgba(0,0,0,.07); display: flex; gap: 32px; align-items: center; margin-bottom: 36px; }
+  .score-circle { width: 100px; height: 100px; border-radius: 50%; border: 6px solid #d97706; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .score-big { font-size: 32px; font-weight: 800; color: #d97706; line-height: 1; }
+  .score-denom { font-size: 12px; color: #94a3b8; }
+  .score-label-main { font-size: 13px; font-weight: 700; color: #d97706; margin-top: 3px; }
+  .score-desc { font-size: 13px; color: #374151; line-height: 1.65; }
+  .score-sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+  .score-sub { background: #f8fafc; border-radius: 8px; padding: 12px 14px; }
+  .score-sub-label { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; margin-bottom: 4px; }
+  .score-sub-val { font-size: 15px; font-weight: 700; }
+  .score-sub-val.good { color: #16a34a; }
+  .score-sub-val.warn { color: #d97706; }
+  .score-sub-val.bad { color: #dc2626; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-card.has-good { border-left-color: #16a34a; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #003366; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-icon { font-size: 14px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+  .ok-text { color: #16a34a; font-weight: 600; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+  .qw-badge.impact-Critical { background: #fee2e2; color: #b91c1c; }
+  .qw-badge.impact-High { background: #eff6ff; color: #1d4ed8; }
+  .qw-badge.impact-Medium { background: #f5f3ff; color: #7c3aed; }
+
+  /* ── Action table ── */
+  .action-table tr td:first-child { font-weight: 600; }
+  .timeline-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .timeline-badge.now { background: #fee2e2; color: #b91c1c; }
+  .timeline-badge.week1 { background: #ffedd5; color: #c2410c; }
+  .timeline-badge.week2 { background: #fef9c3; color: #92400e; }
+  .timeline-badge.weeks3-8 { background: #eff6ff; color: #1d4ed8; }
+  .timeline-badge.months { background: #f0fdf4; color: #166534; }
+
+  /* ── Keyword table ── */
+  .diff-high { color: #dc2626; font-weight: 600; }
+  .diff-med { color: #d97706; font-weight: 600; }
+  .diff-low { color: #16a34a; font-weight: 600; }
+  .opp-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+  .opp-badge.own { background: #dcfce7; color: #166534; }
+  .opp-badge.acquire { background: #eff6ff; color: #1d4ed8; }
+
+  /* ── Code block ── */
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 16px 18px; font-size: 11px; line-height: 1.65; overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; margin-top: 10px; }
+
+  /* ── Alert box ── */
+  .alert { border-radius: 10px; padding: 16px 18px; margin-bottom: 16px; font-size: 13px; line-height: 1.6; }
+  .alert.critical { background: #fef2f2; border-left: 4px solid #dc2626; }
+  .alert.warn { background: #fffbeb; border-left: 4px solid #d97706; }
+  .alert.info { background: #eff6ff; border-left: 4px solid #3b82f6; }
+  .alert-title { font-weight: 700; margin-bottom: 4px; }
+  .alert.critical .alert-title { color: #b91c1c; }
+  .alert.warn .alert-title { color: #92400e; }
+  .alert.info .alert-title { color: #1d4ed8; }
+
+  /* ── Cover baseline ── */
+  .cover-baseline { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .cover-bl-item { padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-bl-item:last-child { border: none; margin: 0; }
+  .cover-bl-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; opacity: .5; }
+  .cover-bl-val { font-size: 13px; font-weight: 700; margin-top: 3px; }
+  .cover-bl-val.bad { color: #fca5a5; }
+  .cover-bl-val.warn { color: #fde68a; }
+  .cover-bl-val.good { color: #86efac; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0.55in 0.65in; }
+    body { background: white !important; font-size: 11px; }
+    .cover { min-height: 96vh; page-break-after: always; break-after: page; }
+    .container { padding: 20px 0; }
+    .snapshot { gap: 10px; }
+    .snap-card, .summary-box, .finding-card, .qw-card { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .finding-card { border-left-width: 4px; }
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    td, th { padding: 6px 8px; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    a { color: inherit !important; text-decoration: none !important; }
+    pre { font-size: 9px; }
+    .alert { border-left-width: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">GroupRB Marketing &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">54</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;color:#fde68a">Needs Work</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Garlock</div>
+    <div class="cover-sub">https://www.garlock.com &nbsp;&bull;&nbsp; Leaders in Sealing Integrity</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">September 1, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Audit Type</div><div class="cm-val">Baseline</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val" style="color:#fca5a5">3 Site-Wide</div></div>
+      <div class="cover-meta-item"><div class="cm-label">E-E-A-T Score</div><div class="cm-val" style="color:#86efac">78 / 100</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">4</div></div>
+    </div>
+  </div>
+  <div class="cover-baseline">
+    <div class="cover-bl-item">
+      <div class="cover-bl-label">Meta Descriptions</div>
+      <div class="cover-bl-val bad">&#10007; Missing Site-Wide</div>
+    </div>
+    <div class="cover-bl-item">
+      <div class="cover-bl-label">Schema Markup</div>
+      <div class="cover-bl-val bad">&#10007; None Found</div>
+    </div>
+    <div class="cover-bl-item">
+      <div class="cover-bl-label">JS Rendering Risk</div>
+      <div class="cover-bl-val warn">&#9651; Unconfirmed — High Risk</div>
+    </div>
+  </div>
+  <div class="cover-note" style="margin-top:20px"><strong>Score note:</strong> The SEO Health Score deducts for critical issues (missing meta descriptions, schema, canonical tags, rendering problems) and adjusts for E-E-A-T strength. Garlock's brand authority is excellent — the infrastructure to take advantage of it is not yet built.</div>
+</div>
+
+<div class="container">
+
+  <!-- SCORE HERO -->
+  <div class="score-hero">
+    <div class="score-circle">
+      <div class="score-big">54</div>
+      <div class="score-denom">/100</div>
+      <div class="score-label-main">Needs Work</div>
+    </div>
+    <div style="flex:1">
+      <p class="score-desc">Garlock has an exceptional E-E-A-T foundation — 135+ years of expertise, a publicly traded parent (Enpro Industries, NYSE: NPO), and multiple proprietary product brands. But site-wide technical deficiencies are preventing search engines from seeing or ranking that authority. Every page audited is missing a meta description, there is zero schema markup anywhere on the site, canonical tags are absent site-wide, and the Angular SPA architecture creates a serious risk that Googlebot is not rendering the product catalog at all.</p>
+      <div class="score-sub-grid">
+        <div class="score-sub"><div class="score-sub-label">Technical SEO</div><div class="score-sub-val bad">38/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">On-Page SEO</div><div class="score-sub-val bad">42/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Schema Markup</div><div class="score-sub-val bad">0/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">E-E-A-T Signals</div><div class="score-sub-val good">78/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Content Quality</div><div class="score-sub-val warn">55/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Crawlability</div><div class="score-sub-val bad">45/100</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Meta Descriptions</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Schema Markup</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Canonical Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#9651;</div>
+      <div class="snap-num warn">3+</div>
+      <div class="snap-label">404 Errors Found</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#9651;</div>
+      <div class="snap-num warn">2+</div>
+      <div class="snap-label">Pages with Multiple H1s</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#9651;</div>
+      <div class="snap-num warn">High</div>
+      <div class="snap-label">JS Rendering Risk</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10003;</div>
+      <div class="snap-num good">78</div>
+      <div class="snap-label">E-E-A-T Score / 100</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10003;</div>
+      <div class="snap-num neutral">135+</div>
+      <div class="snap-label">Years in Business</div>
+    </div>
+  </div>
+
+  <!-- TOP 5 PRIORITIES -->
+  <div class="section">
+    <div class="section-title">Top 5 Priorities Right Now</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label"><strong>1.</strong> Diagnose JavaScript rendering — confirm Googlebot is seeing real content, not Angular template code</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label"><strong>2.</strong> Add meta descriptions to all key pages — missing entirely site-wide, directly hurting CTR</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label"><strong>3.</strong> Implement canonical tags at the template level — prevents duplicate content penalties across the product catalog</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label"><strong>4.</strong> Add Organization schema to homepage — unlocks Knowledge Panel eligibility and entity recognition</span>
+        <span class="sr-val warn">High</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label"><strong>5.</strong> Audit and fix 404 pages — /en/industries, /en/resources, /en/products/gaskets all returned 404 during crawl</span>
+        <span class="sr-val warn">High</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRITICAL ALERT -->
+  <div class="section">
+    <div class="section-title">Critical Issue: JavaScript Rendering</div>
+
+    <div class="alert critical">
+      <div class="alert-title">&#9888; Googlebot may not be seeing your product catalog</div>
+      During the crawl, the products page returned Angular template syntax literally — including strings like <code>{{ vm.products.pagination.totalItemCount }} Items results for {{ vm.query }}</code>. This means the crawler received unrendered template code instead of actual product names, descriptions, and categories.
+    </div>
+
+    <div class="alert warn">
+      <div class="alert-title">What this means in practice</div>
+      Google does execute JavaScript — but with a crawl/render queue that can delay indexing of JS-rendered content by days or weeks. The "first pass" version of every product page that Googlebot indexes may contain no meaningful content. New or updated product pages may not appear in search results for an extended period.
+    </div>
+
+    <div class="alert info">
+      <div class="alert-title">Immediate diagnostic action (Day 1)</div>
+      In Google Search Console: go to URL Inspection &rarr; enter a key product page URL &rarr; click "Test Live URL" &rarr; view the "Rendered HTML" tab. If you see Angular template strings instead of real content, SSR or prerendering is non-negotiable. Do this before any other work.
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="section-title" style="font-size:12px;margin-bottom:10px;border-bottom-width:1px">Fix Options (in order of preference)</div>
+      <div class="page-table-wrap">
+      <table>
+        <thead><tr>
+          <th>Option</th>
+          <th>Effort</th>
+          <th>Impact</th>
+          <th>Notes</th>
+        </tr></thead>
+        <tbody>
+          <tr><td><strong>Angular Universal (SSR)</strong></td><td>High</td><td class="ok-text">Critical</td><td>Full SSR within Angular — best long-term solution, requires dev work</td></tr>
+          <tr><td><strong>Prerender.io</strong></td><td>Medium</td><td class="ok-text">Critical</td><td>Serves pre-rendered HTML to crawlers; minimal code change, works with existing Angular app</td></tr>
+          <tr><td><strong>Static generation of key pages</strong></td><td>Medium</td><td class="warn-text">High</td><td>Convert product/category pages to static HTML; keep SPA for app flows</td></tr>
+          <tr><td><strong>Dynamic Rendering (deprecated by Google)</strong></td><td>Low</td><td class="warn-text">Medium</td><td>Google discourages this approach — not recommended long-term</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  <div class="section">
+    <div class="section-title">Quick Wins (&lt; 1 Week)</div>
+    <div class="qw-grid">
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge impact-Critical">Critical impact</span>
+        </div>
+        <div class="qw-action">Add meta descriptions to top 10 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Every page audited has no meta description. Even a templated one-liner will improve CTR in search results. Start with homepage, /products, /company/about-garlock, and the top product category pages.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge impact-Critical">Critical impact</span>
+        </div>
+        <div class="qw-action">Add canonical tags at template level</div>
+        <div class="qw-detail" style="margin-top:6px">A single edit to the Angular head component adds a self-referencing canonical to every page. On a product catalog with filtering and sorting, this prevents massive duplicate content penalties.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge impact-High">High impact</span>
+        </div>
+        <div class="qw-action">Add Organization schema to homepage</div>
+        <div class="qw-detail" style="margin-top:6px">One JSON-LD block in the homepage &lt;head&gt;. Connects Garlock to Enpro Industries (NYSE: NPO) as the parent org and makes the brand eligible for Google's Knowledge Panel.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort (diagnostic)</span>
+          <span class="qw-badge impact-Critical">Critical impact</span>
+        </div>
+        <div class="qw-action">Run URL Inspection in GSC on 5 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Use Google Search Console's URL Inspection tool to compare rendered vs. live HTML on the homepage, /products, one product detail page, /company/about-garlock, and one industry page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge impact-High">High impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on /products</div>
+        <div class="qw-detail" style="margin-top:6px">The products page has multiple H1 tags including unrendered Angular template strings. Each page should have exactly one H1 that communicates the primary topic to search engines.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMA CODE -->
+  <div class="section">
+    <div class="section-title">Schema Markup — Ready to Implement</div>
+
+    <p style="font-size:13px;color:#374151;margin-bottom:12px">Add the following JSON-LD to the homepage <code>&lt;head&gt;</code>. This is the highest-value schema addition on the site — it connects Garlock to Enpro Industries, establishes the organization's entity in Google's Knowledge Graph, and is required for Knowledge Panel eligibility.</p>
+
+    <pre>{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Garlock",
+  "alternateName": "Garlock Sealing Technologies",
+  "url": "https://www.garlock.com",
+  "logo": "https://www.garlock.com/[logo-path].png",
+  "description": "Leaders in sealing integrity — industrial gaskets, mechanical seals, PTFE products, and sealing solutions for over 135 years.",
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Enpro Industries",
+    "tickerSymbol": "NPO",
+    "exchange": "NYSE",
+    "url": "https://www.enproindustries.com"
+  },
+  "areaServed": "Worldwide",
+  "sameAs": [
+    "https://www.linkedin.com/company/garlock",
+    "https://en.wikipedia.org/wiki/Garlock_Sealing_Technologies"
+  ]
+}</pre>
+
+    <p style="font-size:13px;color:#374151;margin-top:16px;margin-bottom:8px">For product pages, add the following pattern to each product detail page:</p>
+
+    <pre>{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "[Product Name, e.g. GYLON® High-Performance PTFE Gasket]",
+  "description": "[Product description text from the page]",
+  "brand": {
+    "@type": "Brand",
+    "name": "[Brand name, e.g. GYLON®]"
+  },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Garlock"
+  },
+  "category": "[Category, e.g. Industrial Gaskets]"
+}</pre>
+  </div>
+
+  <!-- PAGES AUDITED -->
+  <div class="section">
+    <div class="section-title">Pages Audited — Findings</div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/ (Homepage)</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+        <div class="finding-why">Title "Leaders in Sealing Integrity | Garlock" is strong, but without a meta description Google will auto-generate one — usually low-quality and off-message.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">Multiple H1 tags (2)</span></div>
+        <div class="finding-why">"Advanced Sealing Solutions for the Hydrogen Industry" and "GYLON® High-Performance PTFE Material" are both H1s. One is a campaign promotion, the other a product feature — neither is a primary page H1. Should be one clear H1 about Garlock's core offering.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No schema markup</span></div>
+        <div class="finding-why">Organization schema would connect this page to Google's Knowledge Graph and establish the brand entity. Missing entirely.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No canonical tag</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/en/products</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">Angular template variables visible to crawlers</span></div>
+        <div class="finding-why">Crawler received literal text: <code>{{ vm.products.pagination.totalItemCount }} Items results for {{ vm.query }}</code>. This is unrendered JavaScript. If Googlebot sees this, the entire product catalog is invisible to search engines.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">Multiple H1 tags including template strings</span></div>
+        <div class="finding-why">Multiple H1 elements detected, including one containing an Angular expression instead of real text.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description, no canonical, no schema</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/en/company</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">Multiple H1 tags</span></div>
+        <div class="finding-why">Multiple section headings using H1 instead of H2/H3.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">No schema markup</span></div>
+        <div class="finding-why">Company hub is the natural home for Organization and LocalBusiness schema. Currently none present.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No canonical tag</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/en/company/about-garlock</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+        <div class="finding-why">Page title "About Us | Garlock" is present. Strong E-E-A-T content on-page (135 years, Enpro parent, $70M environmental investment) but none of it is surfaced to search engines without a meta description or schema.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority low">Low</span><span class="finding-label">Single H1 ✓ — "About Us"</span></div>
+        <div class="finding-why">Good: one H1. Opportunity: "About Us" is generic. Consider "About Garlock | 135 Years of Sealing Innovation" for keyword context.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">No schema markup</span></div>
+        <div class="finding-why">This page could carry AboutPage or Organization schema and signal the company's expertise, founding date, and parent company directly to Google.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No canonical tag</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority medium">Medium</span><span class="finding-label">No author attribution on any content</span></div>
+        <div class="finding-why">Technical articles and resources have no visible author bylines. Author attribution with bio pages strengthens E-E-A-T for YMYL-adjacent industrial content.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/en/industries &nbsp;/en/resources &nbsp;/en/products/gaskets</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">404 Not Found — all three URLs</span></div>
+        <div class="finding-why">These are expected high-value pages based on navigation structure. Either the URLs have changed and redirects are missing, or content that was navigable is now returning errors. All links pointing to these URLs are passing zero authority to the new location.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- E-E-A-T -->
+  <div class="section">
+    <div class="section-title">E-E-A-T Assessment — 78 / 100</div>
+    <p style="font-size:13px;color:#374151;margin-bottom:14px">Garlock's E-E-A-T foundation is genuinely strong — the problem is that it is not being communicated to search engines via structured data or on-page signals. The gap between the actual authority (78) and what Google can currently detect is large.</p>
+    <div class="page-table-wrap">
+    <table>
+      <thead><tr>
+        <th>Signal</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>Experience — 135+ year operating history</td><td><span class="ok-text">&#10003; Strong</span></td><td>Core strength; needs schema to surface it to Google</td></tr>
+        <tr><td>Expertise — proprietary formulations, patents, testing labs</td><td><span class="ok-text">&#10003; Strong</span></td><td>GYLON®, TUFF-RAIL® 3504 patent, R&amp;D facilities mentioned on-page</td></tr>
+        <tr><td>Authoritativeness — Enpro Industries parent (NYSE: NPO)</td><td><span class="ok-text">&#10003; Strong</span></td><td>Public company affiliation; not yet expressed in Organization schema</td></tr>
+        <tr><td>Trustworthiness — safety &amp; compliance messaging</td><td><span class="ok-text">&#10003; Strong</span></td><td>$70M+ environmental investment, safety-first culture — needs structured expression</td></tr>
+        <tr><td>Author attribution on content</td><td><span class="missing">&#10007; Missing</span></td><td>No visible bylines on technical articles or resources</td></tr>
+        <tr><td>Certifications &amp; standards on product pages</td><td><span class="warn-text">&#9651; Partial</span></td><td>Referenced in copy but not structured, highlighted, or in schema</td></tr>
+        <tr><td>Customer proof (case studies, testimonials)</td><td><span class="warn-text">&#9651; Limited</span></td><td>Not visible in crawled pages</td></tr>
+        <tr><td>Schema signals</td><td><span class="missing">&#10007; None</span></td><td>Zero structured data anywhere on the site</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- KEYWORD OPPORTUNITIES -->
+  <div class="section">
+    <div class="section-title">Keyword Opportunities</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead><tr>
+        <th>Keyword</th>
+        <th class="center">Est. Monthly Searches</th>
+        <th class="center">Difficulty</th>
+        <th>Opportunity</th>
+        <th>Target Page</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>PTFE gasket</td><td class="center">4,400</td><td class="center"><span class="diff-med">Medium</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>GYLON® product page</td></tr>
+        <tr><td>spiral wound gasket</td><td class="center">3,600</td><td class="center"><span class="diff-med">Medium</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>Product category page</td></tr>
+        <tr><td>industrial gaskets manufacturer</td><td class="center">1,600</td><td class="center"><span class="diff-high">High</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>/en/products/gaskets</td></tr>
+        <tr><td>compression packing</td><td class="center">1,000</td><td class="center"><span class="diff-med">Medium</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>Product page</td></tr>
+        <tr><td>mechanical seal industrial</td><td class="center">1,300</td><td class="center"><span class="diff-high">High</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>/en/products/mechanical-seals</td></tr>
+        <tr><td>chemical resistant gasket</td><td class="center">720</td><td class="center"><span class="diff-med">Medium</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>Product page</td></tr>
+        <tr><td>expansion joints industrial</td><td class="center">880</td><td class="center"><span class="diff-med">Medium</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>Product page</td></tr>
+        <tr><td>wall penetration sealing</td><td class="center">390</td><td class="center"><span class="diff-low">Low</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>LINK-SEAL® page</td></tr>
+        <tr><td>sealing solutions oil gas</td><td class="center">480</td><td class="center"><span class="diff-high">High</span></td><td><span class="opp-badge acquire">Acquire</span></td><td>Industry page</td></tr>
+        <tr><td>hydrogen sealing solutions</td><td class="center">260</td><td class="center"><span class="diff-low">Low</span></td><td><span class="opp-badge own">Own now</span></td><td>Homepage hero / dedicated page</td></tr>
+        <tr><td>gasket material selection guide</td><td class="center">590</td><td class="center"><span class="diff-low">Low</span></td><td><span class="opp-badge own">Own now</span></td><td>New resource/content page</td></tr>
+        <tr><td>PTFE vs graphite gasket</td><td class="center">320</td><td class="center"><span class="diff-low">Low</span></td><td><span class="opp-badge own">Own now</span></td><td>New comparison content</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:10px">&#9679; <strong>Own now</strong> = low competition, emerging topic Garlock can establish authority in quickly. &#9679; <strong>Acquire</strong> = competitive keywords requiring sustained on-page + content investment.</p>
+  </div>
+
+  <!-- ACTION PLAN -->
+  <div class="section">
+    <div class="section-title">Full Action Plan</div>
+    <div class="page-table-wrap">
+    <table class="action-table">
+      <thead><tr>
+        <th>Action</th>
+        <th class="center">Effort</th>
+        <th class="center">Impact</th>
+        <th class="center">Timeline</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td>Run URL Inspection in GSC on 5 key pages</td>
+          <td class="center">Very Low</td>
+          <td class="center"><span class="missing">Critical diagnostic</span></td>
+          <td class="center"><span class="timeline-badge now">Day 1</span></td>
+        </tr>
+        <tr>
+          <td>Add meta descriptions to top 10 pages</td>
+          <td class="center">Low</td>
+          <td class="center"><span class="missing">Critical</span></td>
+          <td class="center"><span class="timeline-badge week1">Week 1</span></td>
+        </tr>
+        <tr>
+          <td>Implement canonical tags (template-level edit)</td>
+          <td class="center">Low</td>
+          <td class="center"><span class="missing">Critical</span></td>
+          <td class="center"><span class="timeline-badge week1">Week 1</span></td>
+        </tr>
+        <tr>
+          <td>Add Organization schema to homepage</td>
+          <td class="center">Low</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge week1">Week 1</span></td>
+        </tr>
+        <tr>
+          <td>Fix multiple H1 tags on products page and homepage</td>
+          <td class="center">Low</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge week2">Week 2</span></td>
+        </tr>
+        <tr>
+          <td>Audit and fix 404 pages (add 301 redirects)</td>
+          <td class="center">Medium</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge week2">Week 2</span></td>
+        </tr>
+        <tr>
+          <td>Implement SSR (Angular Universal) or prerendering</td>
+          <td class="center">High</td>
+          <td class="center"><span class="missing">Critical</span></td>
+          <td class="center"><span class="timeline-badge weeks3-8">Weeks 3–8</span></td>
+        </tr>
+        <tr>
+          <td>Add Product schema to top 20 product pages</td>
+          <td class="center">Medium</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge weeks3-8">Weeks 3–6</span></td>
+        </tr>
+        <tr>
+          <td>Add FAQPage schema to industry and category pages</td>
+          <td class="center">Medium</td>
+          <td class="center"><span class="warn-text">Medium</span></td>
+          <td class="center"><span class="timeline-badge weeks3-8">Weeks 4–8</span></td>
+        </tr>
+        <tr>
+          <td>Keyword-targeted meta descriptions site-wide</td>
+          <td class="center">Medium</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge weeks3-8">Weeks 4–8</span></td>
+        </tr>
+        <tr>
+          <td>Non-brand keyword content strategy</td>
+          <td class="center">High</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge months">Months 2–6</span></td>
+        </tr>
+        <tr>
+          <td>E-E-A-T build-out (authors, case studies, certifications)</td>
+          <td class="center">High</td>
+          <td class="center"><span class="warn-text">High</span></td>
+          <td class="center"><span class="timeline-badge months">Months 2–6</span></td>
+        </tr>
+        <tr>
+          <td>International hreflang audit (AU/EU/CN/SG/TW sites)</td>
+          <td class="center">Medium</td>
+          <td class="center"><span class="warn-text">Medium</span></td>
+          <td class="center"><span class="timeline-badge months">Month 2</span></td>
+        </tr>
+        <tr>
+          <td>Core Web Vitals optimization (SPA performance)</td>
+          <td class="center">High</td>
+          <td class="center"><span class="warn-text">Medium</span></td>
+          <td class="center"><span class="timeline-badge months">Month 3</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- SAMPLE META DESCRIPTIONS -->
+  <div class="section">
+    <div class="section-title">Sample Meta Descriptions — Ready to Use</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label" style="font-family:monospace;font-size:11px">/</span>
+        <span style="font-size:12px;color:#374151;max-width:680px">"Garlock is a global leader in sealing integrity — industrial gaskets, mechanical seals, PTFE products, and expansion joints for demanding applications. Trusted for 135+ years."</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label" style="font-family:monospace;font-size:11px">/en/products</span>
+        <span style="font-size:12px;color:#374151;max-width:680px">"Browse Garlock's full catalog of industrial sealing products — gaskets, mechanical seals, compression packing, PTFE films, and expansion joints. Request a quote."</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label" style="font-family:monospace;font-size:11px">/en/company/about-garlock</span>
+        <span style="font-size:12px;color:#374151;max-width:680px">"Garlock engineers sealing solutions with 135+ years of expertise. An Enpro Industries company serving aerospace, oil &amp; gas, pharmaceutical, and 12+ industries worldwide."</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label" style="font-family:monospace;font-size:11px">/en/products/gaskets</span>
+        <span style="font-size:12px;color:#374151;max-width:680px">"Custom industrial gaskets engineered to your application — spiral wound, sheet, kammprofile, ring joint, and PTFE. Fire-safe, corrosion-resistant. Request a quote from Garlock."</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Prepared by GroupRB Marketing &bull; Garlock SEO Audit — Baseline &bull; September 1, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+
+</body>
+</html>

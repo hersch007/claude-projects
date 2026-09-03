@@ -1,0 +1,13 @@
+{
+    "name":  "TechouseCorp",
+    "url":  "https://www.techousecorp.com",
+    "brand_color":  "#0f172a",
+    "output_dir":  "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/TechouseCorp",
+    "max_pages":  60,
+    "ignore_paths":  [
+                         "/cdn-cgi/",
+                         "?hs",
+                         "#"
+                     ],
+    "gsc_property":  "https://www.techousecorp.com/"
+}

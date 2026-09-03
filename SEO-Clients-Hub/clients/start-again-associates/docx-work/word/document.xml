@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:body>
+
+<!-- TITLE -->
+<w:p>
+  <w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="140"/></w:pPr>
+  <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="28"/><w:szCs w:val="28"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Start Again Associates &#x2013; Services Proposal</w:t></w:r>
+</w:p>
+
+<!-- TABLE -->
+<w:tbl>
+<w:tblPr>
+  <w:tblW w:w="10080" w:type="dxa"/>
+  <w:tblLayout w:type="fixed"/>
+</w:tblPr>
+<w:tblGrid>
+  <w:gridCol w:w="5040"/>
+  <w:gridCol w:w="5040"/>
+</w:tblGrid>
+
+<!-- ROW 1: Column Headers -->
+<w:tr>
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="1B3A5C"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="1B3A5C"/><w:left w:val="single" w:sz="4" w:color="1B3A5C"/><w:bottom w:val="single" w:sz="4" w:color="1B3A5C"/><w:right w:val="single" w:sz="4" w:color="FFFFFF"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="60" w:after="60"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="FFFFFF"/><w:sz w:val="30"/><w:szCs w:val="30"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Enterprise Web Design</w:t></w:r>
+    </w:p>
+  </w:tc>
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="028090"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="028090"/><w:left w:val="single" w:sz="4" w:color="FFFFFF"/><w:bottom w:val="single" w:sz="4" w:color="028090"/><w:right w:val="single" w:sz="4" w:color="028090"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="60" w:after="60"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="FFFFFF"/><w:sz w:val="30"/><w:szCs w:val="30"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>SEO Digital Growth Package</w:t></w:r>
+    </w:p>
+  </w:tc>
+</w:tr>
+
+<!-- ROW 2: Pricing -->
+<w:tr>
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="EFF6FF"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="CCCCCC"/><w:left w:val="single" w:sz="4" w:color="CCCCCC"/><w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/><w:right w:val="single" w:sz="4" w:color="CCCCCC"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="60" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>One-time setup fee</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="4"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="48"/><w:szCs w:val="48"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>$700</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="16" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="6B7280"/><w:sz w:val="18"/><w:szCs w:val="18"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;&#x2015;</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="16" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>then Year 1:</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="028090"/><w:sz w:val="44"/><w:szCs w:val="44"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>$299</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>includes hosting &amp; maintenance</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="16" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="26"/><w:szCs w:val="26"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Year 2+: $159/year</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="80"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="18"/><w:szCs w:val="18"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>includes hosting</w:t></w:r>
+    </w:p>
+  </w:tc>
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="F0FDF9"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="CCCCCC"/><w:left w:val="single" w:sz="4" w:color="CCCCCC"/><w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/><w:right w:val="single" w:sz="4" w:color="CCCCCC"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="60" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>One-time setup fee</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="028090"/><w:sz w:val="48"/><w:szCs w:val="48"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>$700</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="16" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="28"/><w:szCs w:val="28"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>then $199/month</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="4" w:after="80"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>12-month agreement</w:t></w:r>
+    </w:p>
+  </w:tc>
+</w:tr>
+
+<!-- ROW 3: Deliverables -->
+<w:tr>
+  <!-- COLUMN 1 deliverables -->
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="CCCCCC"/><w:left w:val="single" w:sz="4" w:color="CCCCCC"/><w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/><w:right w:val="single" w:sz="4" w:color="CCCCCC"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="40"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>What&#x2019;s Included:</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Secure hosting + SSL certificate</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Mobile-friendly, custom design</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Blog-ready structure</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Basic copywriting</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Contact form</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>SEO setup (titles, meta, image alts, etc.)</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Google Maps + local search &amp; AI Search Optimization</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Analytics integration</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Local keyword research + targeting</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Optimized titles, meta tags, and headings</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Image optimization for SEO &amp; accessibility</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Monthly updates and monitoring</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="16" w:after="20"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Advanced SEO Services:</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Specialty keyword strategy (IFS, trauma, couples, EMDR, etc.)</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Optimized blog posts or resources (up to 3/month)</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Competitor insights</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Ongoing support</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Monthly reporting</w:t></w:r>
+    </w:p>
+  </w:tc>
+
+  <!-- COLUMN 2 deliverables -->
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="5040" w:type="dxa"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="FFFFFF"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="CCCCCC"/><w:left w:val="single" w:sz="4" w:color="CCCCCC"/><w:bottom w:val="single" w:sz="4" w:color="CCCCCC"/><w:right w:val="single" w:sz="4" w:color="CCCCCC"/></w:tcBorders>
+      <w:tcMar><w:top w:w="120" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="120" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="40"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>What&#x2019;s Included:</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Full technical SEO audit</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Keyword research and mapping</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>On-page optimization (all pages)</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Google Business Profile optimization</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Monthly performance reporting</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Content strategy and recommendations</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Local SEO and map-pack targeting</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>E-E-A-T authority building</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>On-page updates + schema maintenance</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Search Console + Analytics reporting</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Keyword rank tracking</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Quarterly strategy call</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Squarespace optimization tweaks</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="16" w:after="20"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="1B3A5C"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>One-Time Launch Work Included:</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Complete homepage rebuild + CTAs</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>New landing pages (Part I, II, MET(T)A)</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Title tags + meta descriptions overhaul</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Mobile performance optimization</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Schema markup + technical fixes</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="0" w:after="28"/><w:ind w:left="240" w:hanging="240"/></w:pPr>
+      <w:r><w:rPr><w:color w:val="028090"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t xml:space="preserve">+ </w:t></w:r>
+      <w:r><w:rPr><w:color w:val="374151"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Google Search Console + GBP setup</w:t></w:r>
+    </w:p>
+    <w:p><w:pPr><w:spacing w:before="16" w:after="8"/></w:pPr>
+      <w:r><w:rPr><w:i/><w:iCs/><w:color w:val="6B7280"/><w:sz w:val="18"/><w:szCs w:val="18"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Note: No content writing included</w:t></w:r>
+    </w:p>
+  </w:tc>
+</w:tr>
+
+<!-- ROW 4: Bundle footer (merged) -->
+<w:tr>
+  <w:tc>
+    <w:tcPr>
+      <w:tcW w:w="10080" w:type="dxa"/>
+      <w:gridSpan w:val="2"/>
+      <w:shd w:val="clear" w:color="auto" w:fill="1B3A5C"/>
+      <w:tcBorders><w:top w:val="single" w:sz="4" w:color="1B3A5C"/><w:left w:val="single" w:sz="4" w:color="1B3A5C"/><w:bottom w:val="single" w:sz="4" w:color="1B3A5C"/><w:right w:val="single" w:sz="4" w:color="1B3A5C"/></w:tcBorders>
+      <w:tcMar><w:top w:w="140" w:type="dxa"/><w:left w:w="180" w:type="dxa"/><w:bottom w:w="140" w:type="dxa"/><w:right w:w="180" w:type="dxa"/></w:tcMar>
+    </w:tcPr>
+    <w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="0" w:after="0"/></w:pPr>
+      <w:r><w:rPr><w:b/><w:bCs/><w:color w:val="FFFFFF"/><w:sz w:val="22"/><w:szCs w:val="22"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Bundle Both Services and Save &#x2014; Ask About Our Combined Package Rate</w:t></w:r>
+    </w:p>
+  </w:tc>
+</w:tr>
+
+</w:tbl>
+
+<!-- FOOTER -->
+<w:p><w:pPr><w:jc w:val="center"/><w:spacing w:before="120" w:after="0"/></w:pPr>
+  <w:r><w:rPr><w:color w:val="6B7280"/><w:sz w:val="18"/><w:szCs w:val="18"/><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri"/></w:rPr><w:t>Prepared by Richard | May 2026 | Contact us to get started</w:t></w:r>
+</w:p>
+
+<w:sectPr>
+  <w:pgSz w:w="12240" w:h="15840"/>
+  <w:pgMar w:top="1080" w:right="1080" w:bottom="1080" w:left="1080" w:header="720" w:footer="720" w:gutter="0"/>
+</w:sectPr>
+</w:body>
+</w:document>

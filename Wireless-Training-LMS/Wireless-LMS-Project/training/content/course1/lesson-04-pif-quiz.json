@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: An Agent is submitting a new application. The project is a colocation on an existing tower that is already in the WTS database. The Agent is in a hurry and selects 'New Tower' as the project type because it seems like the most complete option. What is the consequence of this mistake?",
+      "options": {
+        "A": "Nothing significant — the Analyst will catch the error and correct it during review.",
+        "B": "The project type selection determines which components are required, what fees apply, and how the Shot Clock is calculated. Selecting New Tower on a colocation project will trigger the wrong components (NWF, extra forms), generate incorrect fees, and apply the wrong Shot Clock timeline. Everything downstream is wrong.",
+        "C": "The only issue is the fee amount — the Analyst can adjust the components manually.",
+        "D": "The Jurisdiction will notice and ask the Agent to reselect the project type before review begins."
+      },
+      "answer": "B",
+      "explanation": "Project type is the most critical field in the PIF. AMP uses it to determine required components, fees, and Shot Clock length. A wrong selection cascades through every step that follows — wrong forms, wrong fees, wrong deadline. It must be corrected at the source, which typically requires starting over or submitting a formal revision."
+    },
+    {
+      "question": "An Agent's PIF has been approved. The Agent logs back into AMP and tries to submit the NCM component but the Submit button is grayed out. The Analyst confirmed the NCM looks complete. What is the most likely reason the Agent cannot submit?",
+      "options": {
+        "A": "The Analyst needs to unlock the component before the Agent can submit.",
+        "B": "There is a system error and the Admin should be contacted.",
+        "C": "Payment on the invoice has not yet been confirmed. After PIF approval, AMP generates an invoice. Components can be filled out and saved immediately, but cannot be submitted until payment clears. The Agent should continue saving work and wait for payment confirmation.",
+        "D": "The NCM is missing a required field. The Agent should review each section carefully."
+      },
+      "answer": "C",
+      "explanation": "After PIF approval, AMP generates an invoice before components can be submitted. Since the May 2026 platform update, Agents can open and complete all components immediately — but the Submit button remains locked until payment is confirmed. This is expected behavior, not an error. The Agent should save all their work and wait for payment to clear."
+    }
+  ]
+}

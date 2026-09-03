@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer logs into AMP and sees 12 active projects. She sorts them by submission date and begins reviewing the oldest first. Three weeks later she discovers that two Small Wireless Facility applications submitted more recently are now past their Shot Clock deadline and have been deemed approved. What was her error?",
+      "options": {
+        "A": "She should have contacted the Analyst to manage her queue for her.",
+        "B": "She prioritized by submission date instead of Shot Clock urgency. SWF applications have a 60-day clock compared to 150 days for standard applications. Reviewing oldest-first without accounting for project type and remaining clock time will consistently result in SWF projects expiring while older standard applications still have weeks remaining.",
+        "C": "She had too many projects. The jurisdiction should have assigned a second reviewer.",
+        "D": "The Analyst should have flagged the SWF deadlines before they expired."
+      },
+      "answer": "B",
+      "explanation": "Dashboard workload must be prioritized by Shot Clock urgency, not submission order. SWF applications have a 60-day clock -- less than half the 150-day clock for standard projects. A queue managed by submission date will routinely allow SWF deadlines to expire. The correct approach is to sort by days remaining on the Shot Clock and act on the most urgent projects first regardless of when they were submitted."
+    },
+    {
+      "question": "A Jurisdiction reviewer looks at a project row on the dashboard and sees the PIF column shows green (Approved) and the NCM column shows blue (In Review). She tells a colleague the project is approved and just waiting on a formality. What is wrong with her assessment?",
+      "options": {
+        "A": "Nothing. Green PIF approval is the most important status and indicates the project is on track.",
+        "B": "She should check the Shot Clock value before drawing any conclusions.",
+        "C": "She read only two columns and drew a conclusion. The NCM is In Review -- meaning the Jurisdiction has not yet made a decision on the most critical technical component. The project is not approved. It is actively under review and requires her attention. A single green status in an earlier column does not mean the project is complete.",
+        "D": "The Analyst should have updated the status before she reviewed the dashboard."
+      },
+      "answer": "C",
+      "explanation": "Dashboard rows must be read left to right in their entirety. A green PIF approval means that stage is done -- it says nothing about subsequent stages. The NCM in blue (In Review) means the Jurisdiction needs to act on it. The project is not approved and is not a formality. Stopping at the first green column is one of the most common dashboard misreads in AMP."
+    }
+  ]
+}

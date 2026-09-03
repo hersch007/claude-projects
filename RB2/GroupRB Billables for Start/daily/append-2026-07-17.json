@@ -1,0 +1,11 @@
+{
+  "date": "2026-07-17",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Fruth": 7,
+    "Automotive Service Products": 1
+  },
+  "nonBillable": {
+    "Start Performance": 1.5
+  }
+}

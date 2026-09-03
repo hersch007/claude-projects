@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pickleball Tournament Scheduler 2</title>
+<link rel="stylesheet" href="assets/scheduler.css">
+<style>
+  /* page-level shell (the widget itself lives inside .pbts-app and is fully self-contained) */
+  body{margin:0;background:#F7F9F4;padding:16px}
+  @media (prefers-color-scheme: dark){body{background:#12160f}}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     To rebrand for another club, change the two lines below
+     ("Rock Hill Pickleball" and the subtitle). That's it.
+     ============================================================ -->
+<div id="pbts-root" class="pbts-app">
+
+  <div class="pbts-header">
+    <h1>🎾 Rock Hill Pickleball</h1>
+    <p>Tournament Scheduler — Round Robin &amp; Pool Play + Playoffs</p>
+  </div>
+
+  <div id="pbts-setup" class="pbts-section pbts-setup-sec">
+    <h2>Set Up Your Tournament <span class="pbts-tag">Step 1</span></h2>
+
+    <div class="pbts-fmt" id="pbts-fmt">
+      <button data-fmt="rr" class="pbts-active">Round Robin<small>Everyone plays everyone</small></button>
+      <button data-fmt="pool">Pool Play &rarr; Playoffs<small>Pools, then a bracket</small></button>
+    </div>
+
+    <div class="pbts-row">
+      <div>
+        <label for="pbts-numTeams">Teams</label>
+        <select id="pbts-numTeams"></select>
+      </div>
+      <div>
+        <label for="pbts-perTeam">Players / Team</label>
+        <select id="pbts-perTeam">
+          <option value="1">1 (singles)</option>
+          <option value="2" selected>2 (doubles)</option>
+          <option value="3">3</option><option value="4">4</option>
+        </select>
+      </div>
+      <div>
+        <label for="pbts-numCourts">Courts</label>
+        <select id="pbts-numCourts"></select>
+      </div>
+      <div>
+        <label for="pbts-target">Games To</label>
+        <select id="pbts-target"><option>11</option><option>15</option><option>21</option></select>
+      </div>
+    </div>
+
+    <div class="pbts-row" id="pbts-poolOpts" style="margin-top:14px;display:none">
+      <div>
+        <label for="pbts-numPools">Number of Pools</label>
+        <select id="pbts-numPools"></select>
+      </div>
+      <div>
+        <label for="pbts-advance">Advance / Pool</label>
+        <select id="pbts-advance"></select>
+      </div>
+    </div>
+
+    <p class="pbts-hint" id="pbts-summaryHint"></p>
+
+    <label style="margin-top:16px">Team Names &amp; Rosters <span style="font-weight:500;text-transform:none;letter-spacing:0">(rosters optional)</span></label>
+    <div class="pbts-teamgrid" id="pbts-teamInputs"></div>
+
+    <button class="pbts-btn pbts-btn-primary" id="pbts-genBtn">Generate Schedule &rarr;</button>
+    <p class="pbts-hint" id="pbts-modeHelp"></p>
+  </div>
+
+  <div id="pbts-results" class="pbts-section pbts-hidden">
+    <div class="pbts-tabs" id="pbts-tabs"></div>
+    <div id="pbts-tab-a"></div>
+    <div id="pbts-tab-b"></div>
+    <div class="pbts-controls pbts-no-print" style="margin-top:20px">
+      <button class="pbts-btn pbts-btn-ghost" id="pbts-printBtn">🖨️ Print / PDF</button>
+      <button class="pbts-btn pbts-btn-ghost" id="pbts-editBtn">✏️ Edit Setup</button>
+      <button class="pbts-btn pbts-btn-ghost" id="pbts-resetBtn">↺ New Tournament</button>
+    </div>
+  </div>
+
+  <p class="pbts-footer-note pbts-no-print">
+    Scores save automatically in this browser on this device. Bookmark the page to pick up where you left off.
+  </p>
+
+</div>
+
+<script src="assets/scheduler.js"></script>
+</body>
+</html>

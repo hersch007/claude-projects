@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Guidance Through Grief — September 2, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  .cover { background: #003366; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,165,0,.6); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; color: #ffd080; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 28px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 24px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-flags { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .cover-flag { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: .05em; text-transform: uppercase; }
+  .cover-flag.bad { background: rgba(220,38,38,.35); color: #fca5a5; border: 1px solid rgba(220,38,38,.4); }
+  .cover-flag.warn { background: rgba(217,119,6,.3); color: #fde68a; border: 1px solid rgba(217,119,6,.4); }
+  .cover-flag.ymyl { background: rgba(124,58,237,.35); color: #ddd6fe; border: 1px solid rgba(124,58,237,.4); }
+  .cover-note { margin-top: 20px; font-size: 10.5px; opacity: .55; max-width: 600px; line-height: 1.6; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  .score-hero { background: white; border-radius: 12px; padding: 28px 32px; box-shadow: 0 1px 4px rgba(0,0,0,.07); display: flex; gap: 32px; align-items: flex-start; margin-bottom: 32px; }
+  .score-circle { width: 100px; height: 100px; border-radius: 50%; border: 6px solid #d97706; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .score-big { font-size: 32px; font-weight: 800; color: #d97706; line-height: 1; }
+  .score-denom { font-size: 12px; color: #94a3b8; }
+  .score-label-main { font-size: 11px; font-weight: 700; color: #d97706; margin-top: 3px; }
+  .score-desc { font-size: 13px; color: #374151; line-height: 1.65; flex: 1; }
+  .score-sub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+  .score-sub { background: #f8fafc; border-radius: 8px; padding: 12px 14px; }
+  .score-sub-label { font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; margin-bottom: 4px; }
+  .score-sub-val { font-size: 15px; font-weight: 700; }
+  .score-sub-val.good { color: #16a34a; }
+  .score-sub-val.warn { color: #d97706; }
+  .score-sub-val.bad { color: #dc2626; }
+
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-icon { font-size: 22px; margin-bottom: 6px; }
+  .snap-num { font-size: 24px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #003366; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; line-height: 1.35; }
+
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: top; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+  .ok-text { color: #16a34a; font-weight: 600; }
+
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.impact-Critical { background: #fee2e2; color: #b91c1c; }
+  .qw-badge.impact-High { background: #eff6ff; color: #1d4ed8; }
+
+  .alert { border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; font-size: 13px; line-height: 1.6; }
+  .alert.critical { background: #fef2f2; border-left: 4px solid #dc2626; }
+  .alert.warn { background: #fffbeb; border-left: 4px solid #d97706; }
+  .alert.purple { background: #faf5ff; border-left: 4px solid #7c3aed; }
+  .alert-title { font-weight: 700; margin-bottom: 4px; }
+  .alert.critical .alert-title { color: #b91c1c; }
+  .alert.warn .alert-title { color: #92400e; }
+  .alert.purple .alert-title { color: #6d28d9; }
+
+  pre { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 16px 18px; font-size: 11px; line-height: 1.65; overflow-x: auto; font-family: 'Consolas', 'Courier New', monospace; margin-top: 10px; }
+  code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 11px; font-family: monospace; color: #0f172a; }
+
+  .timeline-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .timeline-badge.now { background: #fee2e2; color: #b91c1c; }
+  .timeline-badge.week1 { background: #ffedd5; color: #c2410c; }
+  .timeline-badge.week2 { background: #fef9c3; color: #92400e; }
+  .timeline-badge.weeks { background: #eff6ff; color: #1d4ed8; }
+  .timeline-badge.months { background: #f0fdf4; color: #166534; }
+
+  .kw-diff-low { color: #16a34a; font-weight: 600; }
+  .kw-diff-med { color: #d97706; font-weight: 600; }
+  .kw-diff-high { color: #dc2626; font-weight: 600; }
+
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0.55in 0.65in; }
+    body { background: white !important; font-size: 11px; }
+    .cover { min-height: 96vh; page-break-after: always; break-after: page; }
+    .container { padding: 20px 0; }
+    .snap-card, .summary-box, .finding-card, .qw-card, .score-hero, .alert { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .finding-card { border-left-width: 4px; }
+    .alert { border-left-width: 4px; }
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    td, th { padding: 6px 8px; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    pre { font-size: 9px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">GroupRB Marketing &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">48</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;color:#fde68a">Needs Significant Work</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Guidance Through Grief</div>
+    <div class="cover-sub">guidancethroughgriefcounseling.com &nbsp;&bull;&nbsp; Candler &amp; Asheville, NC</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">September 2, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Audit Type</div><div class="cm-val">Baseline</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Platform</div><div class="cm-val">Weebly</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val" style="color:#fca5a5">5 Found</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">4 live + 1 broken</div></div>
+    </div>
+  </div>
+  <div class="cover-flags">
+    <span class="cover-flag ymyl">&#9650; YMYL Category — Highest E-E-A-T Standards Apply</span>
+    <span class="cover-flag bad">&#10007; No Meta Descriptions</span>
+    <span class="cover-flag bad">&#10007; No Schema Markup</span>
+    <span class="cover-flag bad">&#10007; No H1 on Homepage</span>
+    <span class="cover-flag bad">&#10007; Therapist Pages — 404</span>
+    <span class="cover-flag warn">&#9651; NAP Inconsistency</span>
+  </div>
+  <div class="cover-note"><strong>YMYL note:</strong> Therapy and mental health websites fall under Google's "Your Money or Your Life" category. Google applies its strictest quality standards to these sites. E-E-A-T — particularly therapist credentials, licenses, and professional associations — is the primary ranking factor for this site type.</div>
+</div>
+
+<div class="container">
+
+  <!-- SCORE HERO -->
+  <div class="score-hero">
+    <div class="score-circle">
+      <div class="score-big">48</div>
+      <div class="score-denom">/100</div>
+      <div class="score-label-main">Needs Work</div>
+    </div>
+    <div style="flex:1">
+      <p class="score-desc">Guidance Through Grief Counseling Center has genuine expertise — a doctorate, licensed PLLC, published staff — but is communicating almost none of it to search engines. No page has a meta description, there is zero schema markup anywhere, the homepage has no H1 tag, and the therapist profile pages (the most critical E-E-A-T pages on any therapy site) return 404 errors. The opportunity is large: grief counseling in the Asheville area is underserved in search, and fixing the technical basics would produce rapid ranking improvements.</p>
+      <div class="score-sub-grid">
+        <div class="score-sub"><div class="score-sub-label">Technical SEO</div><div class="score-sub-val bad">44/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">On-Page SEO</div><div class="score-sub-val bad">40/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Schema Markup</div><div class="score-sub-val bad">0/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">E-E-A-T Signals</div><div class="score-sub-val warn">52/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Content Depth</div><div class="score-sub-val bad">35/100</div></div>
+        <div class="score-sub"><div class="score-sub-label">Local SEO</div><div class="score-sub-val bad">45/100</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Meta Descriptions</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Schema Markup</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Pages with Canonical Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">404</div>
+      <div class="snap-label">Therapist Profile Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10007;</div>
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">Blog Posts / Original Content</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#9651;</div>
+      <div class="snap-num warn">~250</div>
+      <div class="snap-label">Words on Services Page</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10003;</div>
+      <div class="snap-num good">2</div>
+      <div class="snap-label">Licensed Therapists</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-icon">&#10003;</div>
+      <div class="snap-num good">3</div>
+      <div class="snap-label">Insurance Plans Accepted</div>
+    </div>
+  </div>
+
+  <!-- YMYL ALERT -->
+  <div class="section">
+    <div class="section-title">YMYL Warning — E-E-A-T Is Non-Negotiable Here</div>
+    <div class="alert purple">
+      <div class="alert-title">This is a "Your Money or Your Life" website</div>
+      Google classifies grief counseling and mental health therapy sites under YMYL — content that could significantly impact a person's health, safety, or wellbeing. For YMYL sites, Google explicitly states it holds content to the highest standards of expertise, authoritativeness, and trustworthiness. A generic small-business SEO fix won't move this site — the E-E-A-T work (credentials, licenses, professional associations, original content) is the SEO work.
+    </div>
+    <div class="alert critical">
+      <div class="alert-title">Therapist profile pages are returning 404</div>
+      The therapist profiles are the most important pages on this entire site from Google's perspective. They are where Dr. Liz Anderson's doctorate and Amy Fowler's credentials should live — the license numbers, specializations, and training that tell Google this is a legitimate, expert therapy practice. These pages must be rebuilt before any other SEO investment will reach its potential.
+    </div>
+  </div>
+
+  <!-- TOP 5 PRIORITIES -->
+  <div class="section">
+    <div class="section-title">Top 5 Priorities Right Now</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span style="color:#374151"><strong>1.</strong> Fix or rebuild the therapist profile pages (currently 404) — E-E-A-T depends on it</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span style="color:#374151"><strong>2.</strong> Add meta descriptions to all pages — none exist anywhere on the site</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span style="color:#374151"><strong>3.</strong> Add an H1 tag to the homepage — currently has none at all</span>
+        <span class="sr-val bad">Critical</span>
+      </div>
+      <div class="summary-row">
+        <span style="color:#374151"><strong>4.</strong> Fix the NAP inconsistency — Suite 203 vs Suite 204 appears across pages, suppressing local rankings</span>
+        <span class="sr-val warn">High</span>
+      </div>
+      <div class="summary-row">
+        <span style="color:#374151"><strong>5.</strong> Claim &amp; verify Google Business Profile — required for local map pack visibility</span>
+        <span class="sr-val warn">High</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  <div class="section">
+    <div class="section-title">Quick Wins (&lt; 1 Week)</div>
+    <div class="qw-grid">
+      <div class="qw-card">
+        <div class="qw-top"><span class="qw-badge effort-Low">Very low effort</span><span class="qw-badge impact-Critical">Critical</span></div>
+        <div class="qw-action">Fix the NAP inconsistency</div>
+        <div class="qw-detail">Suite 203 on the contact page, Suite 204 on the homepage. Pick one, update everywhere — website, Google Business Profile, Psychology Today, Yelp, any directories. NAP inconsistency is a direct local ranking suppressor.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top"><span class="qw-badge effort-Low">Very low effort</span><span class="qw-badge impact-Critical">Critical</span></div>
+        <div class="qw-action">Add an H1 to the homepage</div>
+        <div class="qw-detail">In Weebly, set the primary headline to Heading 1. Suggested: <em>"Grief Counseling in Asheville, NC"</em> or <em>"Compassionate Grief Therapy in Western North Carolina."</em> This is the single most basic on-page signal missing from the site.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top"><span class="qw-badge effort-Low">Low effort</span><span class="qw-badge impact-Critical">Critical</span></div>
+        <div class="qw-action">Add meta descriptions to all 4 pages</div>
+        <div class="qw-detail">Set in Weebly page settings (SEO tab per page). Lead with empathy, include the city name, end with a soft CTA. Ready-to-use drafts are in the appendix below.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top"><span class="qw-badge effort-Low">Low effort</span><span class="qw-badge impact-Critical">Critical</span></div>
+        <div class="qw-action">Fix the homepage title tag</div>
+        <div class="qw-detail">Current: <em>"Guidance Through Grief Counseling Center, PLLC - Guidance Through Grief Counseling, PLLC"</em> — the name is duplicated. Suggested: <em>"Grief Counseling in Asheville, NC | Guidance Through Grief"</em></div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top"><span class="qw-badge effort-Low">Low effort</span><span class="qw-badge impact-High">High</span></div>
+        <div class="qw-action">Claim &amp; verify Google Business Profile</div>
+        <div class="qw-detail">A verified GBP is required to appear in the local map pack for "grief counselor Asheville NC" and "grief therapy near me." Takes 5 minutes to claim, 1–5 days to verify by postcard.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGES AUDITED -->
+  <div class="section">
+    <div class="section-title">Pages Audited — Findings</div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/ (Homepage)</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No H1 tag</span></div>
+        <div class="finding-why">The homepage has no H1 at all. This is the most fundamental on-page signal. Google cannot determine the page's primary topic without it.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+        <div class="finding-why">Google will auto-generate one — usually a random excerpt. For a grief counseling practice, first impressions in search matter deeply.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">Duplicated title tag</span></div>
+        <div class="finding-why">"Guidance Through Grief Counseling Center, PLLC - Guidance Through Grief Counseling, PLLC" — name repeated twice, no primary keyword, no location.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">NAP inconsistency — Suite 204 here, Suite 203 on contact page</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No schema markup, no canonical tag</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/meet-our-therapists</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">404 Not Found</span></div>
+        <div class="finding-why">This is the most important page on a therapy site for E-E-A-T purposes. Dr. Liz Anderson's doctorate, Amy Fowler's credentials, license numbers, specializations, and professional training should all live here. Google cannot evaluate the practice's expertise without it.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/services</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">Multiple H1 tags — service names used as H1s instead of H2s</span></div>
+        <div class="finding-why">"Grief Therapy," "Grief Retreats and Groups," and "Organizational Grief Support" are each marked H1. Only one H1 per page — these should be H2 subheadings under a single page-level H1.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">Thin content — approximately 250 words total</span></div>
+        <div class="finding-why">Each service description is 50–80 words. YMYL service pages need 400–600+ words to demonstrate topic expertise. Google needs enough content to evaluate whether this page genuinely helps someone seeking grief therapy.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No schema markup, no canonical tag</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/resources</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority medium">Medium</span><span class="finding-label">All 23 resources link to external sites — no original content</span></div>
+        <div class="finding-why">Curated links show good editorial judgment, but they send users away and build zero topical authority for the domain. Original articles, even short ones, would be far more valuable for SEO.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">No schema markup, no canonical tag</span></div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact</div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority critical">Critical</span><span class="finding-label">No meta description, no canonical tag</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">NAP inconsistency — Suite 203 here vs. Suite 204 on homepage</span></div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top"><span class="priority high">High</span><span class="finding-label">No LocalBusiness or ContactPage schema</span></div>
+        <div class="finding-why">The contact page is the natural home for LocalBusiness schema — address, phone, hours, service area. Currently missing entirely.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCHEMA -->
+  <div class="section">
+    <div class="section-title">Schema Markup — Ready to Implement</div>
+    <p style="font-size:13px;color:#374151;margin-bottom:12px">In Weebly, go to <strong>Settings → SEO → Header Code</strong> and paste the JSON-LD below. It applies site-wide.</p>
+
+    <pre>{
+  "@context": "https://schema.org",
+  "@type": ["MedicalOrganization", "LocalBusiness"],
+  "name": "Guidance Through Grief Counseling Center, PLLC",
+  "url": "https://www.guidancethroughgriefcounseling.com",
+  "telephone": "+1-828-357-7388",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "9 Asbury Road, Suite 203",
+    "addressLocality": "Candler",
+    "addressRegion": "NC",
+    "addressCountry": "US"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "35.5479",
+    "longitude": "-82.6896"
+  },
+  "medicalSpecialty": "MentalHealth",
+  "description": "Grief counseling center in Candler, NC offering individual grief therapy, EMDR, grief retreats, and community grief support near Asheville.",
+  "priceRange": "$140–$175",
+  "paymentAccepted": "Insurance, Private Pay",
+  "areaServed": "Asheville, NC and surrounding Western North Carolina"
+}</pre>
+
+    <p style="font-size:13px;color:#374151;margin-top:16px;margin-bottom:8px">Once therapist pages are rebuilt, add this to each therapist's page:</p>
+    <pre>{
+  "@context": "https://schema.org",
+  "@type": "Physician",
+  "name": "Dr. Liz Anderson",
+  "jobTitle": "Grief Therapist",
+  "description": "Dr. Liz Anderson specializes in grief therapy, EMDR, and bereavement counseling in Western North Carolina.",
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "credentialCategory": "Doctorate"
+  },
+  "worksFor": {
+    "@type": "MedicalOrganization",
+    "name": "Guidance Through Grief Counseling Center, PLLC"
+  }
+}</pre>
+  </div>
+
+  <!-- E-E-A-T -->
+  <div class="section">
+    <div class="section-title">E-E-A-T Assessment — 52 / 100</div>
+    <div class="alert warn" style="margin-bottom:14px">
+      <div class="alert-title">The credentials exist — they just aren't visible to Google</div>
+      Dr. Liz Anderson holds a doctorate. Amy Fowler has published op-eds. The practice is a licensed PLLC. These are strong E-E-A-T signals that Google would reward — but they currently appear nowhere in a way Google can verify or index.
+    </div>
+    <div class="page-table-wrap">
+    <table>
+      <thead><tr><th>E-E-A-T Signal</th><th>Status</th><th>Action Needed</th></tr></thead>
+      <tbody>
+        <tr><td>Therapist credentials on-site</td><td><span class="missing">&#10007; 404 page</span></td><td>Rebuild therapist profile pages with full credentials</td></tr>
+        <tr><td>License numbers displayed</td><td><span class="missing">&#10007; Missing</span></td><td>Add NC license type + number to each therapist page</td></tr>
+        <tr><td>Professional associations (ADEC, etc.)</td><td><span class="missing">&#10007; Missing</span></td><td>List memberships; ADEC is ideal for grief specialists</td></tr>
+        <tr><td>Education / degrees</td><td><span class="warn-text">&#9651; Partial</span></td><td>Doctorate mentioned for Dr. Anderson — needs specifics</td></tr>
+        <tr><td>Insurance acceptance</td><td><span class="ok-text">&#10003; Present</span></td><td>BCBS, Aetna, United — keeps this on the page</td></tr>
+        <tr><td>Published content / bylines</td><td><span class="warn-text">&#9651; Off-site only</span></td><td>Amy Fowler's op-eds — link to them from the therapist page</td></tr>
+        <tr><td>Author schema</td><td><span class="missing">&#10007; Missing</span></td><td>Add Person/Physician schema once therapist pages exist</td></tr>
+        <tr><td>Original thought-leadership content</td><td><span class="missing">&#10007; None</span></td><td>Start a blog — 4–6 articles establishes topical authority</td></tr>
+        <tr><td>Third-party directory listings</td><td><span class="warn-text">&#9651; Unknown</span></td><td>Confirm/create Psychology Today, TherapyDen, Zencare</td></tr>
+        <tr><td>PLLC professional licensing</td><td><span class="ok-text">&#10003; Present</span></td><td>Displayed in business name — strong baseline trust signal</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- KEYWORD STRATEGY -->
+  <div class="section">
+    <div class="section-title">Keyword Opportunities — Asheville Area</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead><tr>
+        <th>Keyword</th>
+        <th class="center">Monthly Searches</th>
+        <th class="center">Difficulty</th>
+        <th>Target Page</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>grief counselor near me</td><td class="center">8,100</td><td class="center"><span class="kw-diff-high">High (local)</span></td><td>Homepage + GBP</td></tr>
+        <tr><td>grief therapy near me</td><td class="center">4,400</td><td class="center"><span class="kw-diff-high">High (local)</span></td><td>Homepage + GBP</td></tr>
+        <tr><td>grief counseling Asheville NC</td><td class="center">260</td><td class="center"><span class="kw-diff-low">Low</span></td><td>Homepage — own this</td></tr>
+        <tr><td>EMDR therapy Asheville NC</td><td class="center">90</td><td class="center"><span class="kw-diff-low">Low</span></td><td>EMDR service page</td></tr>
+        <tr><td>grief therapist Asheville</td><td class="center">140</td><td class="center"><span class="kw-diff-low">Low</span></td><td>Homepage + therapist pages</td></tr>
+        <tr><td>grief support groups Asheville</td><td class="center">70</td><td class="center"><span class="kw-diff-low">Very Low</span></td><td>Grief Retreats &amp; Groups page</td></tr>
+        <tr><td>grief retreats North Carolina</td><td class="center">110</td><td class="center"><span class="kw-diff-low">Very Low</span></td><td>Grief Retreats page</td></tr>
+        <tr><td>bereavement counseling Asheville</td><td class="center">50</td><td class="center"><span class="kw-diff-low">Very Low</span></td><td>Homepage / services</td></tr>
+        <tr><td>EMDR therapy for grief</td><td class="center">260</td><td class="center"><span class="kw-diff-med">Medium</span></td><td>EMDR service page</td></tr>
+        <tr><td>grief counseling after death of spouse</td><td class="center">480</td><td class="center"><span class="kw-diff-med">Medium</span></td><td>Blog / new landing page</td></tr>
+        <tr><td>what to expect in grief therapy</td><td class="center">390</td><td class="center"><span class="kw-diff-low">Low</span></td><td>Blog article — quick win</td></tr>
+        <tr><td>complicated grief treatment</td><td class="center">590</td><td class="center"><span class="kw-diff-med">Medium</span></td><td>Blog / service page</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- ACTION PLAN -->
+  <div class="section">
+    <div class="section-title">Full Action Plan</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead><tr><th>Action</th><th class="center">Effort</th><th class="center">Impact</th><th class="center">Timeline</th></tr></thead>
+      <tbody>
+        <tr><td>Fix NAP inconsistency (suite number)</td><td class="center">Very Low</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge now">Day 1</span></td></tr>
+        <tr><td>Add H1 to homepage</td><td class="center">Very Low</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge now">Day 1</span></td></tr>
+        <tr><td>Fix homepage title tag (remove duplicate)</td><td class="center">Very Low</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge now">Day 1</span></td></tr>
+        <tr><td>Add meta descriptions to all 4 pages</td><td class="center">Low</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge week1">Week 1</span></td></tr>
+        <tr><td>Rebuild therapist profile pages with full credentials</td><td class="center">Low–Medium</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge week1">Week 1</span></td></tr>
+        <tr><td>Claim &amp; verify Google Business Profile</td><td class="center">Low</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge week1">Week 1</span></td></tr>
+        <tr><td>Inject LocalBusiness schema via Weebly header code</td><td class="center">Low</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge week2">Week 2</span></td></tr>
+        <tr><td>Add Person/Physician schema to therapist pages</td><td class="center">Low</td><td class="center"><span class="missing">Critical</span></td><td class="center"><span class="timeline-badge week2">Week 2</span></td></tr>
+        <tr><td>List on Psychology Today, TherapyDen, Zencare</td><td class="center">Low</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge week2">Weeks 2–3</span></td></tr>
+        <tr><td>Submit to ADEC member directory</td><td class="center">Low</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge week2">Week 3</span></td></tr>
+        <tr><td>Expand service pages to 400–600 words each</td><td class="center">Medium</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge weeks">Weeks 3–5</span></td></tr>
+        <tr><td>Add FAQPage schema to service pages</td><td class="center">Medium</td><td class="center"><span class="warn-text">Medium</span></td><td class="center"><span class="timeline-badge weeks">Weeks 4–6</span></td></tr>
+        <tr><td>Publish first 4–6 blog articles</td><td class="center">High</td><td class="center"><span class="warn-text">High</span></td><td class="center"><span class="timeline-badge months">Months 2–4</span></td></tr>
+        <tr><td>Evaluate platform migration to WordPress</td><td class="center">High</td><td class="center"><span class="warn-text">Long-term</span></td><td class="center"><span class="timeline-badge months">Month 6+</span></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- APPENDIX -->
+  <div class="section">
+    <div class="section-title">Appendix — Ready-to-Use Meta Descriptions</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span style="font-family:monospace;font-size:11px;color:#64748b;white-space:nowrap;margin-right:16px">/</span>
+        <span style="font-size:12px;color:#374151">"Grief counseling in Candler and Asheville, NC. Guidance Through Grief offers individual therapy, EMDR, grief retreats, and community grief support. Call 828-357-7388."</span>
+      </div>
+      <div class="summary-row">
+        <span style="font-family:monospace;font-size:11px;color:#64748b;white-space:nowrap;margin-right:16px">/services</span>
+        <span style="font-size:12px;color:#374151">"Grief therapy, EMDR, grief retreats, and organizational grief support near Asheville, NC. Dr. Liz Anderson and Amy Fowler — accepting BCBS, Aetna, and United."</span>
+      </div>
+      <div class="summary-row">
+        <span style="font-family:monospace;font-size:11px;color:#64748b;white-space:nowrap;margin-right:16px">/resources</span>
+        <span style="font-size:12px;color:#374151">"Curated grief resources — books, videos, articles, podcasts, and organizations to support you or someone you love through loss. From Guidance Through Grief in Asheville, NC."</span>
+      </div>
+      <div class="summary-row">
+        <span style="font-family:monospace;font-size:11px;color:#64748b;white-space:nowrap;margin-right:16px">/contact</span>
+        <span style="font-size:12px;color:#374151">"Contact Guidance Through Grief Counseling Center in Candler, NC. Call 828-357-7388 to schedule grief therapy, EMDR, or ask about grief retreats and groups."</span>
+      </div>
+      <div class="summary-row">
+        <span style="font-family:monospace;font-size:11px;color:#64748b;white-space:nowrap;margin-right:16px">/therapists</span>
+        <span style="font-size:12px;color:#374151">"Meet Dr. Liz Anderson and Amy Fowler — licensed grief therapists in Asheville, NC specializing in grief therapy, EMDR, and bereavement counseling. Accepting BCBS &amp; Aetna."</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Prepared by GroupRB Marketing &bull; Guidance Through Grief Counseling Center SEO Audit — Baseline &bull; September 2, 2026<br>
+  Questions? Contact richard@grouprb.com &nbsp;&bull;&nbsp; <em>All recommendations balanced with NC mental health professional ethics guidelines.</em>
+</div>
+
+</body>
+</html>

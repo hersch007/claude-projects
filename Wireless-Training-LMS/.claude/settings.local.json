@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pandoc \"context/AMP Online Training LMS Specs.docx\" -t plain)",
+      "Bash(python3 -c ' *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm list -g docx 2>$null)",
+      "PowerShell(Get-Job | Where-Object { $_.State -eq 'Running' } | Format-Table Name, State, Id)",
+      "PowerShell(Get-Process WINWORD -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue; Start-Sleep -Seconds 2; Write-Host \"Killed. Lesson 2 size:\"; \\(Get-Item \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Wireless-Training-LMS\\\\Wireless-LMS-Project\\\\lms\\\\Lesson-02-User-Roles-Responsibilities.docx\"\\).Length)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell(ls \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\start-performance-platform\\\\plugin\\\\start-performance-operations\\\\templates\\\\views\\\\\")",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__file_upload",
+      "mcp__claude-in-chrome__read_page",
+      "Bash(cat \"/c/Users/richa/AppData/Local/Temp/kb106.b64.txt\")",
+      "Bash(Select-String -Path \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\start-performance-platform\\\\plugin\\\\start-performance\\\\start-performance.php\" -Pattern \"Version:\")",
+      "Bash(Select-Object -First 1)",
+      "mcp__claude-in-chrome__javascript_tool",
+      "mcp__claude-in-chrome__read_network_requests",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__find",
+      "Bash(rm -f start-performance-wts-1.0.0.zip start-performance-wts-1.0.1.zip start-performance-wts-1.0.2.zip)",
+      "Bash(zip -r start-performance-wts-1.0.2.zip start-performance-wts/)",
+      "mcp__claude-in-chrome__get_page_text",
+      "mcp__claude-in-chrome__tabs_create_mcp",
+      "Bash(nslookup mail.startadvertising.com)",
+      "mcp__claude-in-chrome__form_input",
+      "Bash(pandoc -t markdown \"C:\\\\Users\\\\richa\\\\Downloads\\\\WTS Client On Boarding Questionaire 09-12-23.docx\")",
+      "PowerShell(pandoc -t markdown \"C:\\\\Users\\\\richa\\\\Downloads\\\\WTS Client On Boarding Questionaire 09-12-23.docx\")"
+    ]
+  }
+}

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rules — American Mahjong</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<nav id="nav">
+  <span class="logo">🀄 American Mahjong</span>
+  <a href="index.html">Game</a>
+  <a href="rules.html" class="active">Rules</a>
+  <a href="faq.html">FAQ</a>
+</nav>
+
+<div class="content-page">
+  <h1>American Mahjong — Rules Directory</h1>
+  <p>Based on the <strong>National Mah Jongg League (NMJL)</strong> standard. The official card changes annually; purchase the current year's card at <em>nationalmahjonggleague.org</em>.</p>
+
+  <div class="search-bar">
+    <input type="text" id="rules-search" placeholder="Search rules… (e.g. joker, charleston, pung)">
+  </div>
+
+  <div id="rules-content">
+
+  <!-- ─── The Tiles ──────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="tiles deck suits numbers">
+    <h2>1. The Tile Set (152 Tiles)</h2>
+    <p>American Mahjong uses a <strong>152-tile set</strong>, larger than Chinese sets:</p>
+    <table style="width:100%;border-collapse:collapse;color:#d0e8d8;font-size:0.9rem;margin-top:8px">
+      <tr style="border-bottom:1px solid rgba(255,255,255,0.15)">
+        <th style="text-align:left;padding:6px 0;color:var(--gold)">Category</th>
+        <th style="text-align:left;padding:6px 0;color:var(--gold)">Tiles</th>
+        <th style="text-align:left;padding:6px 0;color:var(--gold)">Count</th>
+      </tr>
+      <tr><td style="padding:5px 0"><strong style="color:#e57373">Craks</strong> (Characters)</td><td>1–9, four of each</td><td>36</td></tr>
+      <tr><td style="padding:5px 0"><strong style="color:#81c784">Bams</strong> (Bamboo)</td><td>1–9, four of each</td><td>36</td></tr>
+      <tr><td style="padding:5px 0"><strong style="color:#64b5f6">Dots</strong> (Circles)</td><td>1–9, four of each</td><td>36</td></tr>
+      <tr><td style="padding:5px 0"><strong>Winds</strong></td><td>East, South, West, North — four of each</td><td>16</td></tr>
+      <tr><td style="padding:5px 0"><strong>Dragons</strong></td><td>Red (中), Green (發), White/Soap (白) — four each</td><td>12</td></tr>
+      <tr><td style="padding:5px 0"><strong>Flowers</strong></td><td>Plum, Orchid, Chrysanthemum, Bamboo, Spring, Summer, Autumn, Winter</td><td>8</td></tr>
+      <tr style="border-top:1px solid rgba(255,255,255,0.15)"><td style="padding:5px 0"><strong style="color:#e74c3c">Jokers</strong></td><td>Wild cards</td><td>8</td></tr>
+      <tr style="border-top:1px solid rgba(212,160,23,0.4);font-weight:700;color:var(--gold)"><td style="padding:6px 0">Total</td><td></td><td>152</td></tr>
+    </table>
+  </div>
+
+  <!-- ─── Setup ─────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="setup deal seats wind">
+    <h2>2. Setup &amp; Dealing</h2>
+    <h3>Seating</h3>
+    <p>Four players sit at a table: <strong>East, South, West, North</strong>. East deals first and goes first each hand. Seats rotate clockwise after each hand (East becomes South, etc.).</p>
+    <h3>Building the Wall</h3>
+    <p>All 152 tiles are shuffled face-down and arranged into four walls (two rows of tiles), one per player side. In this digital version the wall is a single shuffled stack.</p>
+    <h3>Dealing</h3>
+    <ol>
+      <li>Each player draws <strong>13 tiles</strong>.</li>
+      <li>Any <strong>Flower</strong> tiles drawn are set aside (exposed to the flower rack) and replaced by drawing another tile.</li>
+      <li>Jokers are kept in the hand and are wild.</li>
+    </ol>
+  </div>
+
+  <!-- ─── Charleston ────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="charleston pass exchange tiles">
+    <h2>3. The Charleston</h2>
+    <p>The Charleston is a tile-passing ceremony unique to American Mahjong. It occurs <em>before</em> regular play begins.</p>
+    <h3>First Charleston (mandatory)</h3>
+    <ol>
+      <li><strong>First Right</strong> — pass 3 tiles to the player on your right.</li>
+      <li><strong>First Across</strong> — pass 3 tiles to the player across from you.</li>
+      <li><strong>First Left</strong> — pass 3 tiles to the player on your left.</li>
+    </ol>
+    <h3>Second Charleston (optional)</h3>
+    <p>After the First Charleston, each player may agree to continue:</p>
+    <ol start="4">
+      <li><strong>Second Left</strong></li>
+      <li><strong>Second Across</strong> — you may "steal" up to 3 tiles from the blind pass before they go across.</li>
+      <li><strong>Second Right</strong></li>
+    </ol>
+    <p>Any player may <strong>stop</strong> the second Charleston before it begins. The second Charleston is optional and all players must agree to continue.</p>
+    <h3>Optional Pass</h3>
+    <p>After all Charleston passes are complete, there is an optional courtesy pass: you may pass 1, 2, or 3 tiles to any one player (and receive the same number back).</p>
+    <div class="hand-example">Rules: You must pass exactly 3 tiles per pass. You cannot pass Jokers during the Charleston.</div>
+    <p><strong>Joker rule:</strong> Jokers <em>cannot</em> be passed during the Charleston. If you receive one, it stays.</p>
+  </div>
+
+  <!-- ─── The NMJL Card ──────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="card hands winning nmjl patterns categories">
+    <h2>4. The NMJL Card</h2>
+    <p>The <strong>National Mah Jongg League card</strong> is published each year and lists all valid winning hands. You must match <em>exactly</em> one hand on the card to win. The card changes annually.</p>
+    <h3>Card Categories (typical)</h3>
+    <ul>
+      <li><strong>2024 / Year Hands</strong> — hands using the digits of the current year</li>
+      <li><strong>Consecutive Runs</strong> — e.g., 123 456 789 in one suit</li>
+      <li><strong>Like Numbers</strong> — same number in multiple suits (e.g., 1111C 1111B 1111D)</li>
+      <li><strong>3-6-9</strong> — hands using multiples of 3</li>
+      <li><strong>Singles &amp; Pairs</strong> — seven unique pairs (No Jokers allowed)</li>
+      <li><strong>Winds &amp; Dragons</strong> — hands built from honor tiles</li>
+      <li><strong>Addition Hands</strong> — tile values that sum to a target</li>
+      <li><strong>Any Like Numbers</strong> — flexible same-number hands</li>
+      <li><strong>Quints</strong> — five of a kind (requires Jokers)</li>
+    </ul>
+    <h3>Hand Structure Notation</h3>
+    <div class="hand-example">FF 123 456 789 DD
+= 2 Flowers + pung 1–3 + pung 4–6 + pung 7–9 + pair Dragons</div>
+    <div class="hand-example">1111 2222 3333 DD
+= kong of 1s + kong of 2s + kong of 3s + pair of Dragons (14 tiles)</div>
+    <p>Each hand on the card specifies <strong>exactly 14 tiles</strong> and whether Jokers, Flowers, and specific suits are allowed.</p>
+    <h3>Hand Values</h3>
+    <p>Hands are valued at 25¢, 30¢, 35¢, 40¢, 50¢, or 75¢. Higher-value hands are generally harder to achieve. Players pay the winner the face value of their hand.</p>
+  </div>
+
+  <!-- ─── Play ───────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="play turn draw discard wall">
+    <h2>5. Regular Play</h2>
+    <h3>Turn Order</h3>
+    <p>East goes first. Play proceeds <strong>counter-clockwise</strong> (East → North → West → South → East…).</p>
+    <h3>A Player's Turn</h3>
+    <ol>
+      <li><strong>Draw</strong> one tile from the wall.</li>
+      <li>If you draw a <strong>Flower</strong>, expose it and draw a replacement.</li>
+      <li><strong>Discard</strong> one tile face-up in the center.</li>
+    </ol>
+    <h3>Calling a Discard</h3>
+    <p>After any player discards, the other players may <strong>call</strong> that tile to complete a set:</p>
+    <ul>
+      <li><strong>Pung</strong> — claim a discard to make a set of 3 (you hold 2 matching tiles)</li>
+      <li><strong>Kong</strong> — claim a discard to make a set of 4 (you hold 3 matching tiles)</li>
+      <li><strong>Quint</strong> — claim a discard to make a set of 5 (you hold 4 matching or joker-assisted tiles)</li>
+      <li><strong>Mahjong</strong> — claim a discard to complete your winning hand</li>
+    </ul>
+    <p>When you call a tile, you <strong>expose the completed set</strong> and then discard a tile (except when calling Mahjong).</p>
+    <h3>Priority</h3>
+    <p>Mahjong takes priority over any other call. Otherwise, the player closest in turn order gets priority (though in American Mahjong, any player may call for Mahjong regardless of position).</p>
+  </div>
+
+  <!-- ─── Jokers ─────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="joker wild card rule steal restriction">
+    <h2>6. Joker Rules</h2>
+    <p>Jokers are the most powerful tiles in American Mahjong.</p>
+    <h3>What Jokers Can Do</h3>
+    <ul>
+      <li>Substitute for <strong>any tile</strong> in a set of 3 or more (Pung, Kong, Quint).</li>
+      <li>Cannot be used for <strong>singles or pairs</strong> unless a specific hand on the card allows it.</li>
+      <li>Can be used in exposed sets.</li>
+    </ul>
+    <h3>Joker Stealing</h3>
+    <p>If a Joker is in an <strong>exposed set</strong>, any player on their turn may swap the Joker out by providing the real tile it represents:</p>
+    <ol>
+      <li>On your draw turn, before discarding, you may steal a Joker from any exposed set by placing the correct tile into that set.</li>
+      <li>The Joker comes into your hand.</li>
+      <li>You still must discard a tile this turn.</li>
+    </ol>
+    <h3>Joker Restrictions</h3>
+    <ul>
+      <li>Jokers <strong>cannot</strong> be discarded (in most rule sets). If you must discard a Joker, it is a dead tile.</li>
+      <li>Jokers <strong>cannot</strong> be passed during the Charleston.</li>
+      <li>A hand using only Jokers in pairs/singles (where the card says "No Jokers") is invalid.</li>
+    </ul>
+    <div class="hand-example">Example: Exposed set is [3B][3B][JOKER].
+A player holding a 3B may swap it in: [3B][3B][3B],
+taking the Joker into their own hand.</div>
+  </div>
+
+  <!-- ─── Winning ────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="win mahjong declare complete hand">
+    <h2>7. Winning — Declaring Mahjong</h2>
+    <h3>How to Win</h3>
+    <p>You win when your <strong>14-tile hand exactly matches</strong> one of the patterns on the NMJL card. You declare <strong>"Mahjong!"</strong></p>
+    <h3>Self-Draw Win</h3>
+    <p>If you draw the tile you need from the wall, declare Mahjong immediately before discarding.</p>
+    <h3>Claiming Win from Discard</h3>
+    <p>When another player discards your winning tile, call "Mahjong!" and show your complete hand.</p>
+    <h3>Payment</h3>
+    <ul>
+      <li>If you win by <strong>self-draw</strong>: all three other players pay the full hand value.</li>
+      <li>If you win from a <strong>discard</strong>: only the player who discarded pays.</li>
+      <li>Joker hands are sometimes double value (consult your house rules).</li>
+    </ul>
+    <h3>Dead Hands</h3>
+    <p>A hand is declared <strong>dead</strong> (you cannot win) if you:</p>
+    <ul>
+      <li>Expose tiles that do not match your declared hand pattern.</li>
+      <li>Have the wrong number of tiles.</li>
+      <li>Declare Mahjong with an invalid hand.</li>
+    </ul>
+    <p>A dead hand continues playing (drawing and discarding) but cannot win.</p>
+  </div>
+
+  <!-- ─── Flowers ────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="flower season special tile">
+    <h2>8. Flowers &amp; Seasons</h2>
+    <p>Flower tiles (Plum, Orchid, Chrysanthemum, Bamboo) and Season tiles (Spring, Summer, Autumn, Winter) are <strong>bonus tiles</strong>:</p>
+    <ul>
+      <li>When drawn, they are immediately <strong>placed face-up</strong> in your flower rack and you draw a replacement tile.</li>
+      <li>Some NMJL hands require <strong>FF</strong> (a pair of flowers) — any two flower tiles count as the pair.</li>
+      <li>Flowers cannot be called from the discard pile.</li>
+      <li>Flowers do not count toward your 13-tile hand.</li>
+    </ul>
+  </div>
+
+  <!-- ─── Scoring ────────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="scoring points value payment">
+    <h2>9. Scoring</h2>
+    <p>American Mahjong uses a flat payment system based on hand values printed on the NMJL card:</p>
+    <ul>
+      <li><strong>25¢</strong> — easier hands</li>
+      <li><strong>30¢, 35¢, 40¢</strong> — intermediate hands</li>
+      <li><strong>50¢</strong> — difficult hands</li>
+      <li><strong>75¢</strong> — the most difficult "joker-free" hands</li>
+    </ul>
+    <p>The discarder pays the winner for a discard win. All three players pay for a self-draw win. Some groups play for higher stakes — adjust as desired.</p>
+  </div>
+
+  <!-- ─── Glossary ───────────────────────────────────────────────────────── -->
+  <div class="section-card" data-tags="glossary terms vocabulary">
+    <h2>10. Glossary</h2>
+    <table style="width:100%;border-collapse:collapse;color:#d0e8d8;font-size:0.88rem">
+      <tr><td style="padding:5px 0;width:140px;color:var(--gold-light);font-weight:600">Kong</td><td>A set of 4 identical tiles</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Pung</td><td>A set of 3 identical tiles</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Quint</td><td>A set of 5 identical tiles (requires Jokers)</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Pair (Eyes)</td><td>2 identical tiles; usually the "head" of a hand</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Mahjong</td><td>Declaring a complete winning hand</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Wall</td><td>The remaining tiles to be drawn</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Charleston</td><td>Pre-game tile-passing ceremony</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Exposed</td><td>A set of tiles placed face-up on the table after calling</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Dead Hand</td><td>A hand that can no longer win</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">NMJL Card</td><td>National Mah Jongg League annual winning-hand card</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Joker Steal</td><td>Swapping a real tile into an exposed set to claim the Joker</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Soap</td><td>The White Dragon tile (blank face)</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Crak</td><td>The Characters suit (red Chinese numerals)</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Bam</td><td>The Bamboo suit (green bamboo stalks)</td></tr>
+      <tr><td style="padding:5px 0;color:var(--gold-light);font-weight:600">Dot</td><td>The Circles suit (round pips)</td></tr>
+    </table>
+  </div>
+
+  </div><!-- #rules-content -->
+</div>
+
+<script>
+  // Searchable rules
+  const input = document.getElementById('rules-search');
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase();
+    document.querySelectorAll('#rules-content .section-card').forEach(card => {
+      const text = (card.textContent + ' ' + (card.dataset.tags || '')).toLowerCase();
+      card.style.display = text.includes(q) ? '' : 'none';
+    });
+  });
+
+  // FAQ accordion-style toggle for glossary
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => q.closest('.faq-item').classList.toggle('open'));
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "seo-tool",
+  "version": "1.0.0",
+  "description": "Custom SEO audit and reporting tool",
+  "main": "audit.js",
+  "scripts": {
+    "audit": "node audit.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "googleapis": "^174.0.1",
+    "node-fetch": "^2.7.0"
+  }
+}

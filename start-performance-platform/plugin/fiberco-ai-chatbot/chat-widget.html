@@ -1,0 +1,307 @@
+<!-- FiberCo AI Chatbot Widget -->
+<style>
+#fc-chat-launcher{position:fixed;bottom:24px;right:24px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#1a4a8a 0%,#00b4d8 100%);border:none;cursor:pointer;box-shadow:0 4px 18px rgba(26,74,138,.45);z-index:99999;display:flex;align-items:center;justify-content:center;transition:transform .2s,box-shadow .2s;outline:none}
+#fc-chat-launcher:hover{transform:scale(1.08);box-shadow:0 6px 24px rgba(26,74,138,.55)}
+#fc-chat-launcher svg{width:26px;height:26px;fill:#fff;transition:opacity .2s}
+#fc-chat-launcher .fc-close-icon{display:none}
+#fc-chat-launcher.fc-open .fc-chat-icon{display:none}
+#fc-chat-launcher.fc-open .fc-close-icon{display:block}
+#fc-chat-badge{position:absolute;top:-3px;right:-3px;width:18px;height:18px;background:#ff3b30;border-radius:50%;border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;font-family:sans-serif}
+#fc-chat-window{position:fixed;bottom:96px;right:24px;width:370px;max-width:calc(100vw - 32px);height:560px;max-height:calc(100vh - 120px);background:#fff;border-radius:18px;box-shadow:0 12px 48px rgba(0,0,0,.18);z-index:99998;display:none;flex-direction:column;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;border:1px solid rgba(0,0,0,.07)}
+#fc-chat-window.fc-visible{display:flex}
+#fc-chat-header{background:linear-gradient(135deg,#1a4a8a 0%,#163d75 100%);padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.fc-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#00b4d8,#0090b0);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;letter-spacing:.5px}
+.fc-header-info{flex:1;min-width:0}
+.fc-header-name{color:#fff;font-weight:700;font-size:15px;line-height:1.2}
+.fc-header-sub{color:rgba(255,255,255,.75);font-size:11.5px;display:flex;align-items:center;gap:5px;margin-top:2px}
+.fc-online-dot{width:7px;height:7px;background:#34c759;border-radius:50%;flex-shrink:0}
+.fc-header-close{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.7);padding:4px;border-radius:6px;display:flex;line-height:1;transition:color .15s}
+.fc-header-close:hover{color:#fff}
+#fc-chips-row{padding:9px 12px 8px;display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0;background:#f7f8fc;border-bottom:1px solid #eef0f5}
+.fc-chip{white-space:nowrap;padding:5px 11px;border-radius:20px;border:1.5px solid #1a4a8a;background:#fff;color:#1a4a8a;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s,color .15s;flex-shrink:0}
+.fc-chip:hover{background:#1a4a8a;color:#fff}
+.fc-chip.fc-chip-link{border-color:#00b4d8;color:#00b4d8;text-decoration:none;display:inline-flex;align-items:center}
+.fc-chip.fc-chip-link:hover{background:#00b4d8;color:#fff}
+#fc-messages{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:10px;scroll-behavior:smooth}
+#fc-messages::-webkit-scrollbar{width:4px}
+#fc-messages::-webkit-scrollbar-track{background:transparent}
+#fc-messages::-webkit-scrollbar-thumb{background:#d0d5e0;border-radius:4px}
+.fc-msg{display:flex;align-items:flex-end;gap:8px;max-width:100%}
+.fc-msg.fc-user{flex-direction:row-reverse}
+.fc-msg-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#00b4d8,#0090b0);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;flex-shrink:0}
+.fc-msg-bubble{padding:9px 13px;border-radius:16px;font-size:13.5px;line-height:1.5;max-width:82%;word-break:break-word}
+.fc-user .fc-msg-bubble{background:#1a4a8a;color:#fff;border-bottom-right-radius:4px}
+.fc-bot .fc-msg-bubble{background:#f0f2f7;color:#1a1a2e;border-bottom-left-radius:4px;border:1px solid #e4e7ef}
+.fc-bot .fc-msg-bubble a{color:#1a4a8a;font-weight:600}
+.fc-bot .fc-msg-bubble a:hover{color:#00b4d8}
+.fc-typing{display:flex;align-items:center;gap:5px;padding:10px 14px}
+.fc-typing span{width:7px;height:7px;background:#708090;border-radius:50%;animation:fc-bounce .9s infinite}
+.fc-typing span:nth-child(2){animation-delay:.15s}
+.fc-typing span:nth-child(3){animation-delay:.3s}
+@keyframes fc-bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+#fc-input-row{display:flex;gap:8px;padding:10px 12px 14px;background:#fff;border-top:1px solid #eef0f5;flex-shrink:0}
+#fc-input{flex:1;border:1.5px solid #d0d5e0;border-radius:22px;padding:9px 16px;font-size:13.5px;outline:none;background:#f7f8fc;transition:border-color .2s;font-family:inherit;resize:none;line-height:1.4}
+#fc-input:focus{border-color:#1a4a8a;background:#fff}
+#fc-send{width:38px;height:38px;border-radius:50%;background:#00b4d8;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s,transform .15s;align-self:flex-end}
+#fc-send:hover{background:#0090b0;transform:scale(1.08)}
+#fc-send svg{width:17px;height:17px;fill:#fff}
+#fc-footer{text-align:center;font-size:10.5px;color:#a0a8b8;padding:0 12px 10px;flex-shrink:0}
+@media(max-width:420px){#fc-chat-window{width:calc(100vw - 16px);right:8px;bottom:80px;height:calc(100vh - 110px);border-radius:14px}#fc-chat-launcher{bottom:16px;right:16px}}
+</style>
+
+<!-- FiberCo Chat Widget HTML -->
+<div id="fc-chat-launcher" role="button" aria-label="Open FiberCo chat support" tabindex="0">
+  <span id="fc-badge-wrap"><span id="fc-chat-badge" style="display:none">1</span></span>
+  <svg class="fc-chat-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.03 2 11c0 2.68 1.24 5.09 3.2 6.78L4 22l4.56-1.52A10.64 10.64 0 0012 21c5.52 0 10-4.03 10-9S17.52 2 12 2z"/></svg>
+  <svg class="fc-close-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6l12 12" stroke="#fff" stroke-width="2.5" stroke-linecap="round" fill="none"/></svg>
+</div>
+
+<div id="fc-chat-window" role="dialog" aria-label="FiberCo Support Chat" aria-modal="true">
+  <div id="fc-chat-header">
+    <div class="fc-avatar">FC</div>
+    <div class="fc-header-info">
+      <div class="fc-header-name">Finn — FiberCo Support</div>
+      <div class="fc-header-sub"><span class="fc-online-dot"></span> Online · Typically replies instantly</div>
+    </div>
+    <button class="fc-header-close" id="fc-close-btn" aria-label="Close chat">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div id="fc-chips-row">
+    <button class="fc-chip" data-msg="My internet is down">📡 Internet is down</button>
+    <button class="fc-chip" data-msg="Show me plans and pricing">📋 Plans &amp; pricing</button>
+    <button class="fc-chip" data-msg="I need to pay my bill">💳 Pay my bill</button>
+    <a class="fc-chip fc-chip-link" href="https://startwebservicesbackup.com/fiber/" target="_blank" rel="noopener">🏠 Get a quote ↗</a>
+    <button class="fc-chip" data-msg="I want to talk to a person">👤 Talk to a person</button>
+  </div>
+
+  <div id="fc-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+  <div id="fc-input-row">
+    <textarea id="fc-input" placeholder="Type your message…" rows="1" aria-label="Type your message" maxlength="500"></textarea>
+    <button id="fc-send" aria-label="Send message">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+
+  <div id="fc-footer">FiberCo Support · Available 24/7</div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var sessionId = null;
+  var isOpen    = false;
+  var isTyping  = false;
+
+  var launcher   = document.getElementById('fc-chat-launcher');
+  var chatWindow = document.getElementById('fc-chat-window');
+  var closeBtn   = document.getElementById('fc-close-btn');
+  var messages   = document.getElementById('fc-messages');
+  var input      = document.getElementById('fc-input');
+  var sendBtn    = document.getElementById('fc-send');
+  var badge      = document.getElementById('fc-chat-badge');
+  var chips      = document.querySelectorAll('.fc-chip[data-msg]');
+
+  function genId() {
+    return 'fc_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+  }
+
+  function openChat() {
+    isOpen = true;
+    chatWindow.classList.add('fc-visible');
+    launcher.classList.add('fc-open');
+    badge.style.display = 'none';
+    if (messages.children.length === 0) { showWelcome(); }
+    setTimeout(function() { input.focus(); }, 100);
+  }
+
+  function closeChat() {
+    isOpen = false;
+    chatWindow.classList.remove('fc-visible');
+    launcher.classList.remove('fc-open');
+  }
+
+  function showWelcome() {
+    addBotMessage("Hey there! 👋 I'm <strong>Finn</strong>, your FiberCo support assistant. I can help with tech support, billing, plan info, or getting a quote. Tap a quick option below or type your question!");
+  }
+
+  function addUserMessage(text) {
+    var wrap = document.createElement('div');
+    wrap.className = 'fc-msg fc-user';
+    var bubble = document.createElement('div');
+    bubble.className = 'fc-msg-bubble';
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    messages.appendChild(wrap);
+    scrollBottom();
+  }
+
+  function addBotMessage(html) {
+    var wrap = document.createElement('div');
+    wrap.className = 'fc-msg fc-bot';
+    var avatarEl = document.createElement('div');
+    avatarEl.className = 'fc-msg-avatar';
+    avatarEl.textContent = 'FC';
+    var bubble = document.createElement('div');
+    bubble.className = 'fc-msg-bubble';
+    bubble.innerHTML = html;
+    var links = bubble.querySelectorAll('a');
+    links.forEach(function(a) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener');
+    });
+    wrap.appendChild(avatarEl);
+    wrap.appendChild(bubble);
+    messages.appendChild(wrap);
+    scrollToMsgTop(wrap);
+  }
+
+  function showTyping() {
+    if (isTyping) return;
+    isTyping = true;
+    var wrap = document.createElement('div');
+    wrap.className = 'fc-msg fc-bot';
+    wrap.id = 'fc-typing-indicator';
+    var avatarEl = document.createElement('div');
+    avatarEl.className = 'fc-msg-avatar';
+    avatarEl.textContent = 'FC';
+    var dots = document.createElement('div');
+    dots.className = 'fc-typing';
+    dots.innerHTML = '<span></span><span></span><span></span>';
+    wrap.appendChild(avatarEl);
+    wrap.appendChild(dots);
+    messages.appendChild(wrap);
+    scrollBottom();
+  }
+
+  function hideTyping() {
+    isTyping = false;
+    var indicator = document.getElementById('fc-typing-indicator');
+    if (indicator) indicator.remove();
+  }
+
+  function scrollBottom() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+  function scrollToMsgTop(el) {
+    // Land the reader at the TOP of the new answer (not the bottom) so long
+    // responses start from the beginning. Uses a container-relative measure
+    // (offsetTop is unreliable — #fc-messages isn't the offset parent) and runs
+    // after layout settles so the scroll target is correct.
+    if (!el) return;
+    // Let the answer (and any links/cards) finish laying out, then jump the
+    // container so the answer's top sits at the top. We temporarily force
+    // scroll-behavior:auto and set scrollTop directly — scrollTo({behavior:'auto'})
+    // actually means "use the CSS behavior" (smooth here) and silently no-ops.
+    setTimeout(function () {
+      var prev = messages.style.scrollBehavior;
+      messages.style.scrollBehavior = 'auto';
+      var delta = el.getBoundingClientRect().top - messages.getBoundingClientRect().top;
+      messages.scrollTop = Math.max(0, messages.scrollTop + delta - 12);
+      messages.style.scrollBehavior = prev;
+    }, 60);
+  }
+
+  function sendMessage(text) {
+    text = (text || input.value || '').trim();
+    if (!text) return;
+    input.value = '';
+    autoResize();
+
+    if (!sessionId) sessionId = genId();
+
+    addUserMessage(text);
+    showTyping();
+    sendBtn.disabled = true;
+
+    var config  = window.fibercoChatConfig || {};
+    var ajaxUrl = config.ajaxUrl || '/FiberCo/wp-admin/admin-ajax.php';
+    var nonce   = config.nonce   || '';
+
+    var params = new URLSearchParams();
+    params.append('action',     'fiberco_chat');
+    params.append('message',    text);
+    params.append('session_id', sessionId);
+    params.append('nonce',      nonce);
+
+    fetch(ajaxUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      hideTyping();
+      sendBtn.disabled = false;
+      if (data.success && data.data && data.data.message) {
+        sessionId = data.data.session_id || sessionId;
+        addBotMessage(data.data.message);
+      } else {
+        var errMsg = (data.data && data.data.message) ? data.data.message : "Sorry, something went wrong. Please try again or call <strong>1-800-FIBERCO</strong>.";
+        addBotMessage(errMsg);
+      }
+    })
+    .catch(function() {
+      hideTyping();
+      sendBtn.disabled = false;
+      addBotMessage("I'm having trouble connecting. Please call <strong>1-800-FIBERCO</strong> or visit <a href='https://fiberco.com/support' target='_blank'>fiberco.com/support</a>.");
+    });
+  }
+
+  function autoResize() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 100) + 'px';
+  }
+
+  launcher.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (isOpen) { closeChat(); } else { openChat(); }
+  });
+
+  launcher.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (isOpen) { closeChat(); } else { openChat(); }
+    }
+  });
+
+  closeBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    closeChat();
+  });
+
+  sendBtn.addEventListener('click', function() { sendMessage(); });
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  input.addEventListener('input', autoResize);
+
+  chips.forEach(function(chip) {
+    chip.addEventListener('click', function() {
+      var msg = chip.getAttribute('data-msg');
+      if (msg) sendMessage(msg);
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (isOpen && !chatWindow.contains(e.target) && !launcher.contains(e.target)) {
+      closeChat();
+    }
+  });
+
+  setTimeout(function() {
+    if (!isOpen && messages.children.length === 0) {
+      badge.style.display = 'flex';
+    }
+  }, 8000);
+
+})();
+</script>

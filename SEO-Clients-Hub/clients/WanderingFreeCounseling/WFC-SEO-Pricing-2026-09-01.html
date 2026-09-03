@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Investment Guide — Wandering Free Counseling</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:   #003366;
+    --amber:  #f59e0b;
+    --bg:     #f5f6fa;
+    --white:  #ffffff;
+    --text:   #1e293b;
+    --muted:  #64748b;
+    --border: #e2e8f0;
+    --green:  #16a34a;
+  }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Print bar ── */
+  .print-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 9px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .print-bar-label { font-size: 11.5px; color: var(--muted); }
+  .print-bar-label strong { color: var(--text); }
+  .print-btn {
+    background: var(--navy);
+    color: var(--white);
+    border: none;
+    padding: 7px 18px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .print-btn:hover { background: #004a8f; }
+  .print-btn svg { width: 13px; height: 13px; fill: white; }
+
+  /* ── Cover ── */
+  .cover {
+    background: var(--navy);
+    color: white;
+    padding: 56px 64px 52px;
+    page-break-after: always;
+    break-after: page;
+  }
+  .cover-agency { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; opacity: .5; margin-bottom: 32px; }
+  .cover-practice { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
+  .cover-tagline { font-size: 13px; opacity: .55; margin-bottom: 40px; }
+  .cover-divider { height: 1px; background: rgba(255,255,255,.15); margin: 32px 0; }
+  .cover-headline { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 30px; font-weight: 600; margin-bottom: 12px; }
+  .cover-sub { font-size: 13px; opacity: .65; max-width: 560px; line-height: 1.75; }
+  .cover-meta { display: flex; gap: 32px; margin-top: 40px; flex-wrap: wrap; }
+  .cm-label { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; opacity: .45; }
+  .cm-val { font-size: 14px; font-weight: 600; margin-top: 4px; }
+
+  /* ── Container ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 44px 40px 52px; }
+
+  /* ── Intro ── */
+  .intro-band {
+    background: var(--white);
+    border-radius: 10px;
+    padding: 22px 26px;
+    margin-bottom: 32px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07);
+    border-left: 4px solid var(--navy);
+  }
+  .intro-label { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; color: var(--navy); font-weight: 700; margin-bottom: 6px; }
+  .intro-band p { font-size: 12.5px; color: #374151; line-height: 1.72; max-width: 740px; }
+
+  /* ── Section title ── */
+  .section-title {
+    font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--navy);
+    padding-bottom: 8px; border-bottom: 2px solid var(--navy);
+    margin-bottom: 20px;
+  }
+
+  /* ── Plans grid ── */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+    align-items: start;
+  }
+
+  /* ── Plan card ── */
+  .plan-card {
+    background: var(--white);
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ── Plan header — fixed height, price anchored bottom ── */
+  .plan-header {
+    background: var(--bg);
+    padding: 18px 20px 16px;
+    border-bottom: 1.5px solid var(--border);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+  }
+  .badge-row { height: 22px; margin-bottom: 6px; }
+  .recommend-badge {
+    display: inline-block;
+    background: var(--amber);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .plan-name { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--navy); margin-bottom: 3px; }
+  .plan-subtitle { font-size: 11px; color: var(--muted); line-height: 1.4; flex: 1; }
+  .plan-price { display: flex; align-items: baseline; gap: 4px; margin-top: 12px; }
+  .price-num { font-size: 32px; font-weight: 800; color: var(--navy); line-height: 1; }
+  .price-per { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  /* ── Feature rows — uniform ── */
+  .plan-body { padding: 12px 20px 16px; }
+  .feat {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 5px 0;
+    border-bottom: 1px solid #f8fafc;
+    font-size: 11.5px;
+    color: #374151;
+    line-height: 1.3;
+  }
+  .feat:last-child { border: none; }
+  .feat-icon { flex-shrink: 0; font-size: 13px; width: 14px; text-align: center; }
+  .feat-icon.yes  { color: var(--green); }
+  .feat-icon.no   { color: #cbd5e1; font-size: 11px; }
+  .feat-icon.note { color: var(--amber); font-size: 11px; }
+  .feat-text { flex: 1; }
+  .feat.key { background: #fffbeb; border-radius: 5px; padding: 5px 7px; margin: 1px -7px; border-bottom: none; border-left: 2.5px solid var(--amber); }
+  .feat.key .feat-text { color: #1e293b; font-weight: 500; }
+
+  /* ── Squarespace note ── */
+  .sq-note {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-left: 4px solid #0284c7;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 12px;
+    color: #075985;
+    line-height: 1.65;
+  }
+  .sq-note-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .sq-note strong { color: #0c4a6e; }
+
+  /* ── Comparison table ── */
+  .compare-wrap { overflow-x: auto; margin-bottom: 32px; page-break-inside: avoid; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 11.5px; }
+  thead th { background: var(--navy); color: white; padding: 10px 12px; text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  thead th.center { text-align: center; }
+  thead th.hl { background: #d97706; }
+  tbody tr:nth-child(even) td { background: #fafbfc; }
+  td { padding: 7px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; color: #374151; }
+  tr:last-child td { border: none; }
+  td.center { text-align: center; }
+  td.fn { font-weight: 500; }
+  .icon-yes  { color: var(--green); font-size: 14px; }
+  .icon-no   { color: #cbd5e1; font-size: 11px; }
+  .icon-note { color: var(--amber); font-size: 10px; font-weight: 700; }
+
+  /* ── Why grid ── */
+  .why-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 32px; }
+  .why-card { background: var(--white); border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid var(--navy); page-break-inside: avoid; break-inside: avoid; }
+  .why-title { font-size: 11.5px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+  .why-body  { font-size: 11px; color: var(--muted); line-height: 1.6; }
+
+  /* ── CTA ── */
+  .cta-block { background: var(--navy); color: white; border-radius: 12px; padding: 32px 36px; text-align: center; page-break-inside: avoid; break-inside: avoid; }
+  .cta-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .cta-body  { font-size: 12.5px; opacity: .7; max-width: 480px; margin: 0 auto 22px; line-height: 1.7; }
+  .cta-meta  { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+  .ci-label  { font-size: 9px; text-transform: uppercase; letter-spacing: .12em; opacity: .45; }
+  .ci-val    { font-size: 14px; font-weight: 700; margin-top: 3px; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 22px 0 14px; border-top: 1px solid var(--border); margin-top: 14px; }
+
+  /* ════════════════════════════════
+     PRINT
+  ════════════════════════════════ */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page        { size: letter portrait; margin: 0.7in 0.75in; }
+    @page :first { margin: 0; }
+
+    html, body { background: white !important; }
+    .print-bar { display: none !important; }
+
+    .cover {
+      min-height: 100vh;
+      padding: 72px 80px 64px;
+      page-break-after: always;
+      break-after: page;
+      margin: 0;
+    }
+
+    .container { max-width: 100%; padding: 24px 0 36px; }
+
+    .intro-band  { box-shadow: none; border: 1px solid var(--border); border-left: 4px solid var(--navy); margin-bottom: 22px; padding: 16px 20px; }
+    .section-title { margin-bottom: 14px; }
+
+    .plans-grid { gap: 10px; margin-bottom: 20px; }
+    .plan-card  { border: 1.5px solid var(--border) !important; page-break-inside: avoid; break-inside: avoid; }
+    .plan-header { min-height: 130px; padding: 14px 16px 12px; }
+    .plan-body   { padding: 10px 16px 12px; }
+    .price-num   { font-size: 26px; }
+    .feat        { padding: 4px 0; font-size: 10.5px; }
+    .feat.key    { padding: 4px 6px; margin: 1px -6px; }
+
+    .sq-note { margin-bottom: 22px; padding: 12px 16px; font-size: 11px; }
+
+    .compare-wrap { overflow: visible; margin-bottom: 22px; }
+    table    { box-shadow: none; border: 1.5px solid var(--border); font-size: 10.5px; }
+    td, th   { padding: 6px 10px; }
+    thead    { display: table-header-group; }
+    tr       { page-break-inside: avoid; break-inside: avoid; }
+
+    .why-grid   { gap: 10px; margin-bottom: 22px; }
+    .why-card   { box-shadow: none; border: 1px solid var(--border); border-top: 3px solid var(--navy); padding: 12px 14px; }
+    .why-title  { font-size: 11px; }
+    .why-body   { font-size: 10.5px; }
+
+    .cta-block  { padding: 24px 32px; border-radius: 8px; }
+    .cta-title  { font-size: 20px; }
+    .report-footer { padding: 12px 0; font-size: 10px; }
+    a { text-decoration: none; color: inherit; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <div class="print-bar-label"><strong>SEO Investment Guide</strong> &mdash; Wandering Free Counseling &nbsp;&bull;&nbsp; Parts of Practice</div>
+  <button class="print-btn" onclick="window.print()">
+    <svg viewBox="0 0 24 24"><path d="M6 2h12v5H6V2zm-2 7h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v3H6v-3H4a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2zm2 9v-3h8v3H8zm10-7a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+    Print / Save as PDF
+  </button>
+</div>
+
+<div class="cover">
+  <div class="cover-agency">Parts of Practice &bull; SEO Investment Guide</div>
+  <div class="cover-practice">Wandering Free Counseling, LLC</div>
+  <div class="cover-tagline">Erin Zarlino, LPCC &mdash; Dublin, Ohio</div>
+  <div class="cover-divider"></div>
+  <div class="cover-headline">Your SEO Investment Options</div>
+  <div class="cover-sub">Three flexible plans designed to build your search presence, attract more clients, and grow your practice. Every plan is built around your goals as a therapist.</div>
+  <div class="cover-meta">
+    <div><div class="cm-label">Prepared By</div><div class="cm-val">Parts of Practice</div></div>
+    <div><div class="cm-label">Date</div><div class="cm-val">September 2026</div></div>
+    <div><div class="cm-label">Website</div><div class="cm-val">wanderingfreecounseling.com</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="intro-band">
+    <div class="intro-label">Where You Stand Right Now</div>
+    <p>Your recent SEO audit scored wanderingfreecounseling.com <strong>47 out of 100 — Critical.</strong> All 6 pages are missing meta descriptions. No pages have schema markup. Your EMDR Intensives page — your strongest differentiator — has a title tag with zero keywords. The right plan turns these gaps into rankings, helping Dublin and Columbus clients find you when they search for trauma therapy, EMDR, and perinatal counseling.</p>
+  </div>
+
+  <div class="section-title">Choose Your Plan</div>
+
+  <div class="plans-grid">
+
+    <!-- ── SPARK ── -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <div class="badge-row"></div>
+        <div class="plan-name">Spark SEO</div>
+        <div class="plan-subtitle">The Foundation — build a strong local SEO base to get started.</div>
+        <div class="plan-price"><span class="price-num">$55</span><span class="price-per">/ month</span></div>
+      </div>
+      <div class="plan-body">
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">On-Page SEO (titles, meta, headings)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Local Keyword Research &amp; Targeting</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Image Optimization (SEO &amp; alt text)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Google Business Profile Optimization</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Monthly Monitoring &amp; Reporting</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Technical SEO Improvements</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Analytics &amp; Search Console Setup</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Schema Markup (LocalBusiness &amp; Therapist)</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Content &amp; SEO Recommendations</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Web Page Additions</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Blog Post Drafts</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Competitor Research &amp; Insights</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Advanced SEO Strategy</span></div>
+      </div>
+    </div>
+
+    <!-- ── WEBSITE + SEO ── -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <div class="badge-row"><span class="recommend-badge">&#9733; Most Popular</span></div>
+        <div class="plan-name">Website + SEO Support</div>
+        <div class="plan-subtitle">Ongoing support to strengthen your presence and fix critical gaps.</div>
+        <div class="plan-price"><span class="price-num">$99</span><span class="price-per">/ month</span></div>
+      </div>
+      <div class="plan-body">
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">On-Page SEO (titles, meta, headings)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Local Keyword Research &amp; Targeting</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Image Optimization (SEO &amp; alt text)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Google Business Profile Optimization</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Monthly Monitoring &amp; Reporting</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Technical SEO Improvements</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Analytics &amp; Search Console Setup</span></div>
+        <div class="feat key"><span class="feat-icon yes">✓</span><span class="feat-text">Schema Markup (LocalBusiness &amp; Therapist)</span></div>
+        <div class="feat key"><span class="feat-icon yes">✓</span><span class="feat-text">Content &amp; SEO Recommendations</span></div>
+        <div class="feat key"><span class="feat-icon note">◎</span><span class="feat-text">Web Page Additions (3 first 2 mo, then 1&ndash;2/mo)</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Blog Post Drafts</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Competitor Research &amp; Insights</span></div>
+        <div class="feat"><span class="feat-icon no">—</span><span class="feat-text" style="color:#94a3b8">Advanced SEO Strategy</span></div>
+      </div>
+    </div>
+
+    <!-- ── GROWTH ── -->
+    <div class="plan-card">
+      <div class="plan-header">
+        <div class="badge-row"></div>
+        <div class="plan-name">Growth SEO Plan</div>
+        <div class="plan-subtitle">For therapists ready to grow visibility, attract more clients, and build authority.</div>
+        <div class="plan-price"><span class="price-num">$149</span><span class="price-per">/ month</span></div>
+      </div>
+      <div class="plan-body">
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">On-Page SEO (titles, meta, headings)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Advanced Specialty Keyword Targeting</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Image Optimization (SEO &amp; alt text)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Google Business Profile Optimization</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Monthly Monitoring &amp; Reporting</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Technical SEO Improvements</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Analytics &amp; Search Console Setup</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Schema Markup (LocalBusiness &amp; Therapist)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Content &amp; SEO Recommendations</span></div>
+        <div class="feat"><span class="feat-icon note">◎</span><span class="feat-text">Web Page Additions (2/mo first 6 mo, then 1/mo)</span></div>
+        <div class="feat"><span class="feat-icon note">◎</span><span class="feat-text">Blog Post Drafts (2 SEO posts/month)</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Competitor Research &amp; Insights</span></div>
+        <div class="feat"><span class="feat-icon yes">✓</span><span class="feat-text">Advanced SEO Strategy (AI search + growth)</span></div>
+      </div>
+    </div>
+
+  </div><!-- /plans-grid -->
+
+  <!-- Squarespace note -->
+  <div class="sq-note">
+    <div class="sq-note-icon">&#9432;</div>
+    <div><strong>Squarespace Compatible —</strong> All features in the $99 plan work on Squarespace. Schema markup requires a <strong>Business plan or higher</strong> (needed for custom code injection). Everything else — meta descriptions, titles, GBP, Analytics, page additions — works on all Squarespace plans.</div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="section-title" style="page-break-before: auto;">Full Feature Comparison</div>
+  <div class="compare-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="width:44%">Feature</th>
+        <th class="center">Spark<br><span style="font-size:10px;opacity:.8">$55/mo</span></th>
+        <th class="center hl">Website + SEO<br><span style="font-size:10px;opacity:.9">$99/mo</span></th>
+        <th class="center">Growth<br><span style="font-size:10px;opacity:.8">$149/mo</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="fn">On-Page SEO (titles, meta, headings)</td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Keyword Research &amp; Targeting</td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-note">Advanced</span></td></tr>
+      <tr><td class="fn">Image Optimization (SEO &amp; alt text)</td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Google Business Profile Optimization</td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Monthly Monitoring &amp; Reporting</td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Technical SEO Improvements</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Google Analytics &amp; Search Console Setup</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Schema Markup (LocalBusiness &amp; Therapist)</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Content &amp; SEO Recommendations</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Web Page Additions</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-note">3 then 1–2/mo</span></td><td class="center"><span class="icon-note">2/mo → 1/mo</span></td></tr>
+      <tr><td class="fn">Blog Post Drafts</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-note">2/month</span></td></tr>
+      <tr><td class="fn">Competitor Research &amp; Insights</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+      <tr><td class="fn">Advanced SEO Strategy (AI search + growth)</td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-no">—</span></td><td class="center"><span class="icon-yes">✓</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Why -->
+  <div class="section-title">Why Parts of Practice</div>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-title">Therapist-Focused Expertise</div><div class="why-body">We specialize in mental health practices. We understand YMYL, E-E-A-T, and what Google requires from therapy websites.</div></div>
+    <div class="why-card"><div class="why-title">Fixes That Actually Move Rankings</div><div class="why-body">Your audit found 16 specific issues. Every month's work targets the gaps that are actively limiting your visibility.</div></div>
+    <div class="why-card"><div class="why-title">Clear Communication &amp; Reporting</div><div class="why-body">Monthly reports in plain English. You'll always know what was done, what it means, and what comes next.</div></div>
+    <div class="why-card"><div class="why-title">Results That Compound Over Time</div><div class="why-body">Schema added in month one still works in month twelve. Every improvement is permanent and cumulative.</div></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div class="cta-title">Ready to get started?</div>
+    <div class="cta-body">The Website + SEO Support plan ($99/mo) is the recommended starting point — it covers everything your audit identified as critical, including schema markup, technical SEO, and Analytics setup.</div>
+    <div class="cta-meta">
+      <div><div class="ci-label">Contact</div><div class="ci-val">PartsofPractice@gmail.com</div></div>
+      <div><div class="ci-label">Recommended Plan</div><div class="ci-val">Website + SEO &mdash; $99/mo</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">Parts of Practice &bull; SEO Investment Guide &bull; Wandering Free Counseling, LLC &bull; September 2026</div>
+
+</body>
+</html>

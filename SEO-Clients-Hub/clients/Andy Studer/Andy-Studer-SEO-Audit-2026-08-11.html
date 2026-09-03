@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Andy Studer — August 11, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #1a1a2e; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #1a1a2e; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #1a1a2e; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #1a1a2e; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">89</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Good</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Andy Studer</div>
+    <div class="cover-sub">https://andystuder.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">August 11, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">20</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">5</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">20 of 20 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">0 of 20 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">1</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">4</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">0</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">20</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fill in empty image alt text on 20 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Optimize title tag length on 5 pages</div>
+        <div class="qw-detail" style="margin-top:6px">5 titles exceed 65 characters and will be cut off in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on 5 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Rewrite meta descriptions on 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">1 meta descriptions are too short to persuade clicks. 1 are too long and get truncated in search results.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val good">89 / 100 &mdash; Good</span>
+      </div>
+      
+      <div class="summary-row"><span class="sr-label">Pages missing a meta description</span><span class="sr-val bad">1 page affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">4 pages affected</span></div>
+      
+      
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">20 of 20 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">0 of 20 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 89/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (20 pages need attention)</div>
+    
+    <div class="finding-card has-critical">
+      <div class="finding-url">/ocd-therapy-for-creatives-in-los-angeles</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (97 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">6 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/emdr</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">4 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/asian-american-therapy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">3 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/multicultural-therapy-why-it-matters</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">3 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/therapy-for-creatives-los-angeles</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (82 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/depth-psychology</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (107 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/frequently-asked-questions-about-therapy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (89 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/adolescent-family-therapy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">5 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/complex-ptsd-attachment-trauma</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">5 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/cookie-policy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (88 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/blade-runner-2049-the-search-for-a-real-self</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (125 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">3 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/the-fawn-and-people-pleasing-in-la</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (216 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">6 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">6 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/resources</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/about-andy-studer</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">5 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/terms-of-use</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/creatives-and-ocd</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/dissociation-and-attachment-causes-and-how-to-heal</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">3 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com" target="_blank">/</a></td>
+      <td>Therapy for Creatives in Los Angeles</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/therapy-for-creatives-los-angeles" target="_blank">/therapy-for-creatives-los-angeles</a></td>
+      <td>Therapy for Creatives in Los Angeles - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://andystuder.com/ocd-therapy-for-creatives-in-los-angeles" target="_blank">/ocd-therapy-for-creatives-in-los-angeles</a></td>
+      <td>EMDR Therapy in Los Angeles | Heal Trauma & Anxiety - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/resources" target="_blank">/resources</a></td>
+      <td>Andy Studer Resources – Therapist for Creatives</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/frequently-asked-questions-about-therapy" target="_blank">/frequently-asked-questions-about-therapy</a></td>
+      <td>FAQS for Andy Studer Therapy in Los Angeles - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown, Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://andystuder.com/blog" target="_blank">/blog</a></td>
+      <td>Blog - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/depth-psychology" target="_blank">/depth-psychology</a></td>
+      <td>Depth Psychology & the Creative Process | Explore Inner World - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://andystuder.com/emdr" target="_blank">/emdr</a></td>
+      <td>EMDR Therapy in Los Angeles | Heal Trauma & Anxiety</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/adolescent-family-therapy" target="_blank">/adolescent-family-therapy</a></td>
+      <td>Adolescent and Family Therapy in Los Angeles | Teen Therapist</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://andystuder.com/asian-american-therapy" target="_blank">/asian-american-therapy</a></td>
+      <td>Asian American Therapist in LA | Culturally Responsive Care</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/complex-ptsd-attachment-trauma" target="_blank">/complex-ptsd-attachment-trauma</a></td>
+      <td>Complex PTSD & Attachment Trauma Therapy in Los Angeles</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/contact" target="_blank">/contact</a></td>
+      <td>Contact Andy Studer – Therapist for Creatives</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/about-andy-studer" target="_blank">/about-andy-studer</a></td>
+      <td>About Andy - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/cookie-policy" target="_blank">/cookie-policy</a></td>
+      <td>Cookie Policy | [practice_name]</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/terms-of-use" target="_blank">/terms-of-use</a></td>
+      <td>Privacy Policy | - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/blade-runner-2049-the-search-for-a-real-self" target="_blank">/blade-runner-2049-the-search-for-a-real-self</a></td>
+      <td>Blade Runner 2049: The Search for a Real Self (An Object Relations Perspective) - Andy Studer, AMFT – EMDR & Trauma Therapist</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/the-fawn-and-people-pleasing-in-la" target="_blank">/the-fawn-and-people-pleasing-in-la</a></td>
+      <td>The Fawn Response & People-Pleasing | EMDR Therapy Los Angeles</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/creatives-and-ocd" target="_blank">/creatives-and-ocd</a></td>
+      <td>Creatives & OCD: Creative Process vs Obsessional Doubts</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://andystuder.com/dissociation-and-attachment-causes-and-how-to-heal" target="_blank">/dissociation-and-attachment-causes-and-how-to-heal</a></td>
+      <td>Dissociation and Attachment: Causes, and How to Heal</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://andystuder.com/multicultural-therapy-why-it-matters" target="_blank">/multicultural-therapy-why-it-matters</a></td>
+      <td>Multicultural Therapy: Why It Matters</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-title">Pages That Could Not Be Crawled (1)</div>
+    <table>
+      <thead><tr><th>URL</th><th>Reason</th></tr></thead>
+      <tbody><tr><td>https://andystuder.com/privacy-policy</td><td style="color:#dc2626">HTTP 403</td></tr></tbody>
+    </table>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Prepared by Start Advertising &bull; Andy Studer SEO Audit &bull; August 11, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "echo64-wireframe",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4200", "-s", "wireframe"],
+      "port": 4200
+    },
+    {
+      "name": "echo64-brand",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "4201", "brand"],
+      "port": 4201
+    }
+  ]
+}

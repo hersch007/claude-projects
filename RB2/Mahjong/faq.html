@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — American Mahjong</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<nav id="nav">
+  <span class="logo">🀄 American Mahjong</span>
+  <a href="index.html">Game</a>
+  <a href="rules.html">Rules</a>
+  <a href="faq.html" class="active">FAQ</a>
+</nav>
+
+<div class="content-page">
+  <h1>Frequently Asked Questions</h1>
+  <p>Common questions about American Mahjong rules, strategy, and how this game works.</p>
+
+  <div class="search-bar">
+    <input type="text" id="faq-search" placeholder="Search FAQs… (e.g. joker, charleston, chinese)">
+  </div>
+
+  <div id="faq-content">
+
+  <!-- ─── Jokers ──────────────────────────── -->
+  <h2>Jokers</h2>
+
+  <div class="faq-item" data-tags="joker wild discard">
+    <div class="faq-q">How do Jokers work in American Mahjong?</div>
+    <div class="faq-a">
+      <p>Jokers are <strong>wild cards</strong> — they can substitute for any tile in a set of 3 or more (Pung, Kong, or Quint). Key restrictions:</p>
+      <ul>
+        <li>Jokers <strong>cannot</strong> be used in pairs or single tiles.</li>
+        <li>Jokers <strong>cannot</strong> be passed during the Charleston.</li>
+        <li>Jokers can be <strong>stolen</strong> from exposed sets (see below).</li>
+        <li>Some hands on the card are marked "No Jokers" — those require all real tiles.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="joker steal exposed set">
+    <div class="faq-q">Can I steal a Joker from someone's exposed set?</div>
+    <div class="faq-a">
+      <p>Yes! On your turn (after drawing, before discarding), if an opponent has an <strong>exposed set that contains a Joker</strong>, you may replace that Joker with the real tile it represents.</p>
+      <p>For example: if the exposed set is <code>[4B][4B][Joker]</code> and you hold a <code>4B</code>, you can place your <code>4B</code> into their set and take the Joker into your own hand. You still discard a tile this turn.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="joker discard dead">
+    <div class="faq-q">What happens if I have to discard a Joker?</div>
+    <div class="faq-a">
+      <p>In standard NMJL rules, you should never be in a position where you must discard a Joker — hold them until you can use them. In most house rules, <strong>discarding a Joker ends your hand as dead</strong> (you can no longer win that hand). This game treats discarded Jokers as dead tiles.</p>
+    </div>
+  </div>
+
+  <!-- ─── NMJL Card ─────────────────────── -->
+  <h2>The NMJL Card</h2>
+
+  <div class="faq-item" data-tags="card nmjl current year hands patterns">
+    <div class="faq-q">What is the current year's NMJL card like?</div>
+    <div class="faq-a">
+      <p>The <strong>National Mah Jongg League</strong> publishes a new card every year. The 2024 card (and this game's representative hands) typically includes these categories:</p>
+      <ul>
+        <li><strong>2024</strong> — hands using the digits 2, 0, 2, 4</li>
+        <li><strong>Consecutive Runs</strong> — sequences like 123 456 789</li>
+        <li><strong>Like Numbers</strong> — same number across three suits (e.g. 1111C 1111B 1111D)</li>
+        <li><strong>3-6-9</strong> — multiples of three</li>
+        <li><strong>Singles &amp; Pairs</strong> — seven pairs (no Jokers allowed)</li>
+        <li><strong>Winds &amp; Dragons</strong> — honor tile hands</li>
+        <li><strong>Quints</strong> — five of a kind (requires Jokers)</li>
+        <li><strong>Evens (2468)</strong> — even-numbered tile hands</li>
+      </ul>
+      <p>For the official current card, visit <strong>nationalmahjonggleague.org</strong>. This game ships with representative hands in each category — they are not guaranteed to exactly match the current official card.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="card hand flowers FF">
+    <div class="faq-q">What does "FF" mean on the card?</div>
+    <div class="faq-a">
+      <p><code>FF</code> means a <strong>pair of Flower tiles</strong>. Any two Flower or Season tiles (Plum, Orchid, Chrysanthemum, Bamboo, Spring, Summer, Autumn, Winter) count as the FF pair — they don't have to match. Jokers <em>cannot</em> substitute for Flowers in an FF pair.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="card notation suit C B D">
+    <div class="faq-q">What do C, B, D mean in hand notation?</div>
+    <div class="faq-a">
+      <p>These are suit abbreviations on the card:</p>
+      <ul>
+        <li><strong>C</strong> = Craks (Characters, red tiles)</li>
+        <li><strong>B</strong> = Bams (Bamboo, green tiles)</li>
+        <li><strong>D</strong> = Dots (Circles, blue tiles)</li>
+      </ul>
+      <p>A hand marked "any suit" means all tiles in that hand must be the same suit (C, B, or D — your choice). A hand marked with specific suit letters requires those exact suits.</p>
+    </div>
+  </div>
+
+  <!-- ─── Charleston ──────────────────────── -->
+  <h2>The Charleston</h2>
+
+  <div class="faq-item" data-tags="charleston mandatory optional stop second">
+    <div class="faq-q">Is the Charleston mandatory?</div>
+    <div class="faq-a">
+      <p>The <strong>First Charleston</strong> (Right → Across → Left) is always mandatory. All players must participate.</p>
+      <p>The <strong>Second Charleston</strong> is optional. Any player may stop it before it begins. If anyone declines, the second Charleston does not happen.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="charleston joker pass restriction">
+    <div class="faq-q">Can I pass Jokers during the Charleston?</div>
+    <div class="faq-a">
+      <p><strong>No.</strong> Jokers cannot be passed during the Charleston. If you receive a Joker, it stays with you. Plan your passes around keeping your Jokers.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="charleston blind pass across second steal">
+    <div class="faq-q">What is the "blind pass" in the Second Charleston?</div>
+    <div class="faq-a">
+      <p>During the <strong>Second Across</strong> pass, you may look at the tiles coming your way (before passing yours across) and "steal" up to 3 of them — keeping those and substituting other tiles from your hand in their place. This is purely optional.</p>
+    </div>
+  </div>
+
+  <!-- ─── Gameplay ─────────────────────────── -->
+  <h2>Gameplay</h2>
+
+  <div class="faq-item" data-tags="call pung kong quint priority who">
+    <div class="faq-q">Who can call a discarded tile?</div>
+    <div class="faq-a">
+      <p>Any player may call a discarded tile for:</p>
+      <ul>
+        <li><strong>Mahjong</strong> — to win</li>
+        <li><strong>Kong (4), Quint (5)</strong> — to form an exposed set, then discard</li>
+        <li><strong>Pung (3)</strong> — to form an exposed set, then discard</li>
+      </ul>
+      <p><strong>Mahjong always wins priority</strong> over other calls. If two players want to call Pung/Kong at the same time, the player whose turn comes next gets priority (play is counter-clockwise, so the player to the left of the discarder has first priority).</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="expose meld set show tiles call">
+    <div class="faq-q">What happens when I expose tiles (call a set)?</div>
+    <div class="faq-a">
+      <p>When you call a Pung, Kong, or Quint from a discard:</p>
+      <ol>
+        <li>Place the claimed tile plus your matching hand tiles face-up on the table (exposed).</li>
+        <li>Discard one tile from your remaining hand.</li>
+        <li>Exposed tiles <em>cannot</em> be taken back into your hand.</li>
+        <li>Your remaining hand must still complete a valid NMJL hand pattern to win.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="wall exhausted draw no winner">
+    <div class="faq-q">What happens if the wall runs out?</div>
+    <div class="faq-a">
+      <p>If the wall is exhausted with no winner, the hand is a <strong>draw</strong>. No one pays. The deal passes to the next East player and a new hand begins.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="dead hand invalid cannot win">
+    <div class="faq-q">When is a hand "dead"?</div>
+    <div class="faq-a">
+      <p>A dead hand means you <em>cannot</em> win that hand. Common causes:</p>
+      <ul>
+        <li>Exposing a set that doesn't fit any valid NMJL hand pattern.</li>
+        <li>Claiming a tile and then discovering your remaining tiles can't complete any hand.</li>
+        <li>Declaring Mahjong with an invalid hand (you pay a penalty instead).</li>
+      </ul>
+      <p>You continue playing (drawing and discarding to help others read your tiles), but you cannot declare Mahjong.</p>
+    </div>
+  </div>
+
+  <!-- ─── American vs Chinese ─────────────── -->
+  <h2>American vs. Chinese Mahjong</h2>
+
+  <div class="faq-item" data-tags="chinese japanese difference comparison">
+    <div class="faq-q">How is American Mahjong different from Chinese/Japanese Mahjong?</div>
+    <div class="faq-a">
+      <p>Key differences:</p>
+      <table style="width:100%;border-collapse:collapse;color:#d0e8d8;font-size:0.88rem;margin-top:8px">
+        <tr style="border-bottom:1px solid rgba(255,255,255,0.1)">
+          <th style="text-align:left;padding:5px 0;color:var(--gold)">Feature</th>
+          <th style="text-align:left;padding:5px 0;color:var(--gold)">American (NMJL)</th>
+          <th style="text-align:left;padding:5px 0;color:var(--gold)">Chinese / Japanese</th>
+        </tr>
+        <tr><td style="padding:4px 0">Tile set</td><td>152 (includes 8 Jokers)</td><td>144 (no Jokers)</td></tr>
+        <tr><td style="padding:4px 0">Winning hands</td><td>From annual NMJL card only</td><td>Flexible patterns</td></tr>
+        <tr><td style="padding:4px 0">Charleston</td><td>Yes — pre-game passing</td><td>No</td></tr>
+        <tr><td style="padding:4px 0">Jokers</td><td>8 Jokers (wild)</td><td>None (Riichi: none)</td></tr>
+        <tr><td style="padding:4px 0">Sequences (Chow)</td><td>Not commonly used</td><td>Common in Chinese MJ</td></tr>
+        <tr><td style="padding:4px 0">Scoring</td><td>Flat (25¢–75¢ per hand)</td><td>Complex point system</td></tr>
+        <tr><td style="padding:4px 0">Direction</td><td>Counter-clockwise</td><td>Counter-clockwise (same)</td></tr>
+        <tr><td style="padding:4px 0">Win condition</td><td>Exact match to card pattern</td><td>Any valid combination</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="chow sequence chinese run not allowed">
+    <div class="faq-q">Can I make a sequence (Chow) like in Chinese Mahjong?</div>
+    <div class="faq-a">
+      <p>In American NMJL Mahjong, you <strong>do not call for a Chow</strong> (sequential run from another player's discard). Sequences still appear as part of specific winning hand patterns on the card, but you must build them entirely from your own drawn tiles — you cannot claim a discard to extend a sequence.</p>
+    </div>
+  </div>
+
+  <!-- ─── This Game ─────────────────────── -->
+  <h2>About This Game</h2>
+
+  <div class="faq-item" data-tags="ai computer player smart strategy">
+    <div class="faq-q">How smart is the AI?</div>
+    <div class="faq-a">
+      <p>The AI uses a <strong>heuristic scoring</strong> approach: it prefers to keep tiles that form pairs and groups, discards isolated tiles first, and always calls Mahjong when it can win. It won't always play optimally — it won't read your hand or bluff — but it makes reasonable decisions. AI opponents:</p>
+      <ul>
+        <li>Automatically complete the Charleston</li>
+        <li>Discard isolated honor tiles early</li>
+        <li>Keep Jokers and high-value sets</li>
+        <li>Call for Pung/Kong when it helps them win</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="official card year hands update">
+    <div class="faq-q">Are the winning hands in this game from the official 2024 card?</div>
+    <div class="faq-a">
+      <p>The hands in this game are <strong>representative patterns</strong> based on common NMJL categories. They do not exactly reproduce any specific year's card (which is copyrighted by the NMJL). For official competitive play, always use the current NMJL card available from <em>nationalmahjonggleague.org</em>.</p>
+    </div>
+  </div>
+
+  <div class="faq-item" data-tags="hot seat pass device multiplayer">
+    <div class="faq-q">Can multiple humans play?</div>
+    <div class="faq-a">
+      <p>This game supports <strong>hot-seat play</strong>: by default you play as South against 3 AI opponents. To play multiple humans, replace the AI players in <code>js/game-logic.js</code> by making their seats human-controlled (the architecture fully supports it — the <code>MJ.HUMAN_SEAT</code> constant and event system are designed to be extensible).</p>
+    </div>
+  </div>
+
+  </div><!-- #faq-content -->
+</div>
+
+<script>
+  // Search
+  const input = document.getElementById('faq-search');
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase();
+    document.querySelectorAll('#faq-content .faq-item').forEach(item => {
+      const text = (item.textContent + ' ' + (item.dataset.tags || '')).toLowerCase();
+      item.style.display = text.includes(q) ? '' : 'none';
+    });
+    // Show/hide h2 headings based on whether any siblings are visible
+    document.querySelectorAll('#faq-content h2').forEach(h2 => {
+      let next = h2.nextElementSibling;
+      let anyVisible = false;
+      while (next && next.tagName !== 'H2') {
+        if (next.style.display !== 'none') anyVisible = true;
+        next = next.nextElementSibling;
+      }
+      h2.style.display = anyVisible || !q ? '' : 'none';
+    });
+  });
+
+  // Accordion toggle
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => q.closest('.faq-item').classList.toggle('open'));
+  });
+
+  // Open all items on load so they're visible before any search
+  document.querySelectorAll('.faq-item').forEach(item => item.classList.add('open'));
+</script>
+</body>
+</html>

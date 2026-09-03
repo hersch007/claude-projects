@@ -1,0 +1,463 @@
+<title>AI Chat Suite — Product Comparison</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #e8e6f0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 32px 16px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet {
+    background: #fff;
+    width: 780px;
+    border-radius: 4px;
+    box-shadow: 0 4px 32px rgba(0,0,0,.18);
+    overflow: hidden;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #1c1a2e;
+  }
+
+  /* ── Header ── */
+  .hd {
+    background: linear-gradient(135deg, #13112a 0%, #6559b1 100%);
+    padding: 28px 32px 24px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .hd-left {}
+  .hd-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.55);
+    margin-bottom: 5px;
+  }
+  .hd-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.3px;
+  }
+  .hd-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,.6);
+    margin-top: 4px;
+  }
+  .hd-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .hd-badge-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.45);
+  }
+  .hd-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: #a9c33f;
+    letter-spacing: .01em;
+  }
+
+  /* ── Product column headers ── */
+  .col-heads {
+    display: grid;
+    grid-template-columns: 210px 1fr 1fr;
+    border-bottom: 2px solid #f0eef8;
+  }
+  .col-spacer { background: #faf9fd; }
+  .col-head {
+    padding: 16px 22px;
+    border-left: 1px solid #f0eef8;
+    position: relative;
+  }
+  .col-head::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .col-head.base::before { background: #3d7abf; }
+  .col-head.full::before { background: linear-gradient(90deg, #6559b1, #a9c33f); }
+
+  .ch-name {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1c1a2e;
+    margin-bottom: 2px;
+  }
+  .ch-tag {
+    font-size: 10px;
+    color: #9490b0;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+  .ch-prices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .price-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 20px;
+  }
+  .base .price-setup { background: #e8f0fa; color: #2d5f9e; }
+  .base .price-mo    { background: #f0f5fb; color: #4a7dc0; }
+  .full .price-setup { background: #eeecfb; color: #5548a5; }
+  .full .price-mo    { background: #f5f8e8; color: #6a841a; }
+
+  /* ── Feature body ── */
+  .feat-body { display: flex; flex-direction: column; }
+
+  .cat-row {
+    display: grid;
+    grid-template-columns: 210px 1fr 1fr;
+    background: #f7f5fc;
+    border-top: 1px solid #ece9f7;
+    border-bottom: 1px solid #ece9f7;
+  }
+  .cat-label {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #8580a8;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+  }
+  .cat-col { border-left: 1px solid #ece9f7; }
+
+  .feat-row {
+    display: grid;
+    grid-template-columns: 210px 1fr 1fr;
+    border-bottom: 1px solid #f2f0fa;
+  }
+  .feat-row:last-child { border-bottom: none; }
+  .feat-name {
+    padding: 8px 16px;
+    font-size: 12.5px;
+    color: #2e2a46;
+    display: flex;
+    align-items: center;
+  }
+  .feat-cell {
+    padding: 8px 22px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    border-left: 1px solid #f2f0fa;
+    font-size: 11.5px;
+    color: #6a6688;
+  }
+
+  /* Indicators */
+  .ind {
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 9px;
+    font-weight: 900;
+  }
+  .y { background: #e4f5ec; color: #2e9e58; }
+  .n { background: #faeaea; color: #c94040; }
+  .p { background: #fdf3e3; color: #b87c1a; }
+  .y::before { content: '✓'; }
+  .n::before { content: '✕'; }
+  .p::before { content: '~'; }
+
+  .feat-note { font-size: 10.5px; color: #a09cc0; font-style: italic; }
+
+  /* ── Bottom cards ── */
+  .bottom {
+    display: grid;
+    grid-template-columns: 210px 1fr 1fr;
+    background: #faf9fd;
+    border-top: 2px solid #ece9f7;
+  }
+  .bottom-label {
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+  }
+  .bl-inner {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #8580a8;
+  }
+  .bottom-card {
+    padding: 16px 22px;
+    border-left: 1px solid #ece9f7;
+  }
+  .bc-heading {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .base .bc-heading { color: #3d7abf; }
+  .full .bc-heading { color: #6559b1; }
+  .bc-text {
+    font-size: 12px;
+    color: #3a3660;
+    line-height: 1.55;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    background: #13112a;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left { font-size: 10.5px; color: rgba(255,255,255,.45); }
+  .footer-right {
+    font-size: 10.5px;
+    color: #a9c33f;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .sheet { box-shadow: none; border-radius: 0; width: 100%; }
+  }
+</style>
+
+<div class="sheet">
+
+  <!-- Header -->
+  <div class="hd">
+    <div class="hd-left">
+      <div class="hd-eyebrow">Product Comparison · AI Chat Suite</div>
+      <div class="hd-title">Chat Base vs. Full Build</div>
+      <div class="hd-sub">Two versions. One decision. Here's what's in each.</div>
+    </div>
+    <div class="hd-badge">
+      <div class="hd-badge-label">Produced by</div>
+      <div class="hd-brand">Start Performance</div>
+    </div>
+  </div>
+
+  <!-- Column headers -->
+  <div class="col-heads">
+    <div class="col-spacer"></div>
+    <div class="col-head base">
+      <div class="ch-name">AI Chat Base</div>
+      <div class="ch-tag">Chat-only · White-label ready</div>
+      <div class="ch-prices">
+        <span class="price-pill price-setup">$800–1,000 setup</span>
+        <span class="price-pill price-mo">$79–99 / mo</span>
+      </div>
+    </div>
+    <div class="col-head full">
+      <div class="ch-name">Full Build</div>
+      <div class="ch-tag">Analytics + dashboard included</div>
+      <div class="ch-prices">
+        <span class="price-pill price-setup">$1,500–2,000 setup</span>
+        <span class="price-pill price-mo">$149–199 / mo</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="feat-body">
+
+    <!-- Chat -->
+    <div class="cat-row">
+      <div class="cat-label">Chat & Conversation</div>
+      <div class="cat-col"></div><div class="cat-col"></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Claude AI responses</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Starter chip buttons</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Photo upload (vision AI)</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Proactive nudge trigger</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Message timestamps</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Hours & seasonal logic</div>
+      <div class="feat-cell"><span class="ind y"></span><span class="feat-note">via prompt</span></div>
+      <div class="feat-cell"><span class="ind y"></span><span class="feat-note">auto-injected</span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Conversation ratings</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Sound notification</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+
+    <!-- Lead Capture -->
+    <div class="cat-row">
+      <div class="cat-label">Lead Capture</div>
+      <div class="cat-col"></div><div class="cat-col"></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Lead capture flow</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Instant email alert</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Full conversation in email</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Lead database (WP)</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">CSV export</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+
+    <!-- Analytics -->
+    <div class="cat-row">
+      <div class="cat-label">Analytics & Insights</div>
+      <div class="cat-col"></div><div class="cat-col"></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Admin dashboard</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Conversation logs</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Topic + ZIP analytics</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Peak hours chart</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">AI business insights</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Drop-off analysis</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+
+    <!-- Config -->
+    <div class="cat-row">
+      <div class="cat-label">Configuration & Deployment</div>
+      <div class="cat-col"></div><div class="cat-col"></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">WP settings page</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Brand color pickers</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind p"></span><span class="feat-note">in CSS file</span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Prompt editor in admin</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind n"></span><span class="feat-note">PHP file only</span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">White-label / rebrand</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind n"></span><span class="feat-note">client-specific</span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Self-update via zip upload</div>
+      <div class="feat-cell"><span class="ind n"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">Rate limiting</div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+      <div class="feat-cell"><span class="ind y"></span></div>
+    </div>
+    <div class="feat-row">
+      <div class="feat-name">AI API cost (billed at cost)</div>
+      <div class="feat-cell"><span class="ind y"></span><span class="feat-note">~$5–15/mo</span></div>
+      <div class="feat-cell"><span class="ind y"></span><span class="feat-note">~$5–15/mo</span></div>
+    </div>
+
+  </div>
+
+  <!-- Bottom summary -->
+  <div class="bottom">
+    <div class="bottom-label"><div class="bl-inner">Best For</div></div>
+    <div class="bottom-card base">
+      <div class="bc-heading">AI Chat Base</div>
+      <div class="bc-text">New clients who need a fast, affordable start. Rebrand in under an hour — no dev work per client. Sell this when speed matters more than data.</div>
+    </div>
+    <div class="bottom-card full">
+      <div class="bc-heading">Full Build</div>
+      <div class="bc-text">Clients who need proof it's working. The dashboard is the retention tool — clients who can see leads and analytics don't cancel. Sell this when longevity matters.</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-left">AI API (Claude) billed at cost on every invoice · Typical $5–15/mo · Shown transparently</div>
+    <div class="footer-right">startadvertising.com</div>
+  </div>
+
+</div>

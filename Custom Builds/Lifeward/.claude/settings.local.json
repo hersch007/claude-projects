@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\start-performance-platform\")",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(mkdir -p \"/c/Users/richa/Documents/Claude Projects/Custom Builds/Lifeward/standalone/assets/brand/fonts\")",
+      "Bash(curl -sL -o logo.svg \"https://golifeward.com/wp-content/uploads/2024/01/Group-1248.svg\")",
+      "Bash(curl -sL -o hero.jpg \"https://golifeward.com/wp-content/uploads/2025/10/DSCF2746-1.jpg\")",
+      "Bash(curl -sL -o hero-alt.png \"https://golifeward.com/wp-content/uploads/2023/04/20220726_ReWalk_Stairs_US_5065.png\")",
+      "Bash(curl -sL -o fonts/AvenirNextLTPro-Regular.otf \"https://golifeward.com/wp-content/uploads/2024/01/AvenirNextLTPro-Regular.otf\")",
+      "Bash(mkdir -p \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/lawnace\" \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/fiberco\")",
+      "Bash(unzip -o \"/c/Users/richa/Documents/Claude Projects/start-performance-platform/current-plugins/lawnace-chatbot-v3.17.0.zip\" -d \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/lawnace\")",
+      "Bash(unzip -o \"/c/Users/richa/Documents/Claude Projects/start-performance-platform/current-plugins/FiberCo-AI-Chatbot-Plugin-v1.3.3-rate-limit-300.zip\" -d \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/fiberco\")",
+      "Bash(sort -k2)",
+      "Read(//c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/fiberco/**)",
+      "Bash(curl -sL -o hero-candidate2.png \"https://golifeward.com/wp-content/uploads/2023/04/085-26701-ReWalk-Robotics-ReStore-Front-View-Cane-High-Res-1-1.png\")",
+      "Bash(curl -sL -o hero-candidate3.png \"https://golifeward.com/wp-content/uploads/2023/04/20220726_ReWalk_Stairs_US_5065.png\")",
+      "Bash(find / -newermt \"10 minutes ago\" -type f \\\\\\( -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.png\" \\\\\\) 2>/dev/null | grep -v \"Custom Builds/Lifeward\" | head -30)",
+      "Bash(pandoc -t markdown \"C:\\\\Users\\\\richa\\\\Downloads\\\\Guidance for Start queue follow-up v3.docx\")",
+      "PowerShell(Get-Command pandoc -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command soffice -ErrorAction SilentlyContinue)",
+      "Bash(mkdir -p \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Custom-Builds-Lifeward/93c6daa2-234c-4e76-83b9-72d445680b95/scratchpad/faq-docx\")",
+      "Bash(unzip -o -q \"C:\\\\Users\\\\richa\\\\Downloads\\\\Guidance for Start queue follow-up v3.docx\" -d unpacked)"
+    ]
+  }
+}

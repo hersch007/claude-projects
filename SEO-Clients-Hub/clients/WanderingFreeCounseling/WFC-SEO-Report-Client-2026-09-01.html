@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Health Report: Wandering Free Counseling</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover ── */
+  .cover { background: #003366; color: white; min-height: 100vh; padding: 64px 72px 56px; display: flex; flex-direction: column; page-break-after: always; break-after: page; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 0 40px; }
+  .cover-title { font-size: 38px; font-weight: 800; margin-bottom: 10px; line-height: 1.15; }
+  .cover-sub { font-size: 15px; opacity: .65; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 32px 0; }
+  .cover-meta { display: flex; gap: 0; flex-wrap: wrap; }
+  .cover-meta-item { flex: 1; padding-right: 20px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 20px; min-width: 130px; margin-bottom: 8px; }
+  .cover-meta-item:last-child { border: none; margin-right: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .5; }
+  .cover-meta-item .cm-val { font-size: 16px; font-weight: 700; margin-top: 5px; }
+  .cover-trend { margin-top: 32px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .5; margin-bottom: 10px; }
+  .cover-note { margin-top: 28px; font-size: 11px; opacity: .5; max-width: 600px; line-height: 1.7; }
+
+  /* ── Print bar (screen only) ── */
+  .print-bar { background: white; border-bottom: 1px solid #e2e8f0; padding: 10px 32px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 6px rgba(0,0,0,.07); }
+  .print-bar-label { font-size: 12px; color: #64748b; }
+  .print-bar-label strong { color: #0f172a; }
+  .print-btn { background: #003366; color: white; border: none; padding: 8px 20px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; letter-spacing: .02em; font-family: inherit; }
+  .print-btn:hover { background: #004a8f; }
+  .print-btn svg { width: 14px; height: 14px; fill: white; flex-shrink: 0; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 48px 40px; }
+  .section { margin-bottom: 44px; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.bad  { color: #dc2626; }
+  .snap-num.warn { color: #d97706; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .sr-label { color: #374151; flex-shrink: 0; }
+  .sr-val { font-weight: 700; text-align: right; }
+  .sr-val.bad  { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Impact callout ── */
+  .impact-box { background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 18px 22px; margin-bottom: 14px; }
+  .impact-box-title { font-size: 11px; font-weight: 700; color: #9a3412; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+  .impact-box p { font-size: 12.5px; color: #7c2d12; line-height: 1.65; }
+
+  /* ── Severity badges ── */
+  .severity { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .severity.critical { background: #fee2e2; color: #b91c1c; }
+  .severity.high     { background: #ffedd5; color: #c2410c; }
+  .severity.medium   { background: #fef9c3; color: #92400e; }
+
+  /* ── Issue cards ── */
+  .issue-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid; }
+  .issue-card.has-critical { border-left-color: #dc2626; }
+  .issue-card.has-warn     { border-left-color: #f59e0b; }
+  .issue-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .issue-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .issue-item:last-child { border: none; padding-bottom: 0; }
+  .issue-top { display: flex; align-items: center; gap: 10px; }
+  .issue-label  { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .issue-impact { font-size: 12px; color: #64748b; margin-top: 4px; padding-left: 2px; line-height: 1.5; }
+
+  /* ── What Google expects grid ── */
+  .expects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 12px; }
+  .expects-card { background: white; border-radius: 10px; padding: 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); page-break-inside: avoid; break-inside: avoid; }
+  .expects-card.red    { border-top: 3px solid #dc2626; }
+  .expects-card.amber  { border-top: 3px solid #f59e0b; }
+  .expects-card-title  { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+  .expects-card-body   { font-size: 12px; color: #64748b; line-height: 1.55; }
+
+  /* ── Page table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  .url-cell { font-family: monospace; font-size: 11px; color: #003366; }
+  .missing  { color: #dc2626; font-weight: 600; }
+  .warn-text{ color: #d97706; font-weight: 600; }
+  .ok-text  { color: #16a34a; font-weight: 600; }
+  .cell-icon { font-size: 15px; }
+  .cell-icon.bad  { color: #dc2626; }
+  .cell-icon.warn { color: #d97706; }
+  .cell-icon.ok   { color: #16a34a; }
+  .legend { display: flex; gap: 20px; margin-top: 10px; font-size: 11px; color: #64748b; flex-wrap: wrap; }
+
+  /* ── CTA ── */
+  .cta-block { background: #003366; color: white; border-radius: 12px; padding: 36px 40px; margin-top: 40px; text-align: center; page-break-inside: avoid; break-inside: avoid; }
+  .cta-title { font-size: 22px; font-weight: 800; margin-bottom: 10px; }
+  .cta-body  { font-size: 13px; opacity: .75; max-width: 520px; margin: 0 auto 24px; line-height: 1.65; }
+  .cta-meta  { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+  .cta-item .ci-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .5; }
+  .cta-item .ci-val   { font-size: 15px; font-weight: 700; margin-top: 4px; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 28px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 16px; }
+
+  /* ═══════════════════════════════════════════
+     PRINT STYLES
+     Open this file in Chrome → Ctrl+P →
+     Destination: Save as PDF → Save
+  ═══════════════════════════════════════════ */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page          { size: letter portrait; margin: 0.7in 0.75in; }
+    @page :first   { margin: 0; }
+
+    html, body { background: white !important; margin: 0; padding: 0; }
+
+    /* Hide print bar */
+    .print-bar { display: none !important; }
+
+    /* Cover — full first page, navy fills edge to edge */
+    .cover {
+      min-height: 100vh;
+      padding: 72px 80px 64px;
+      page-break-after: always;
+      break-after: page;
+      margin: 0;
+    }
+
+    /* Content pages — @page margin handles the gutters */
+    .container {
+      max-width: 100%;
+      padding: 24px 0 40px;
+    }
+
+    /* Tighten spacing for print */
+    .section         { margin-bottom: 28px; }
+    .section-title   { font-size: 11px; padding-bottom: 7px; margin-bottom: 12px; }
+    .snapshot        { gap: 10px; margin-bottom: 20px; }
+    .snap-card       { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 14px 10px; }
+    .snap-num        { font-size: 22px; }
+    .summary-box     { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 14px 18px; }
+    .summary-row     { padding: 5px 0; font-size: 12px; }
+    .impact-box      { margin-bottom: 10px; }
+    .issue-card      { box-shadow: none !important; border: 1px solid #e2e8f0; border-left-width: 4px; padding: 11px 15px; margin-bottom: 8px; page-break-inside: avoid; break-inside: avoid; }
+    .expects-card    { box-shadow: none !important; border-color: inherit; border-width: 1px; page-break-inside: avoid; break-inside: avoid; }
+    table            { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10.5px; }
+    thead            { display: table-header-group; }
+    tr               { page-break-inside: avoid; break-inside: avoid; }
+    td, th           { padding: 7px 10px; }
+    .page-table-wrap { overflow: visible; }
+    .cta-block       { padding: 28px 36px; margin-top: 24px; border-radius: 8px; }
+    .report-footer   { padding: 14px 0; font-size: 10px; }
+    a                { text-decoration: none; color: inherit; }
+    tr:hover td      { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PRINT BAR — screen only, hidden when printing -->
+<div class="print-bar">
+  <div class="print-bar-label"><strong>SEO Health Report</strong> &mdash; Wandering Free Counseling &nbsp;&bull;&nbsp; September 2026</div>
+  <button class="print-btn" onclick="window.print()">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 2h12v5H6V2zm-2 7h16a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v3H6v-3H4a2 2 0 0 1-2-2V11a2 2 0 0 1 2-2zm2 9v-3h8v3H8zm10-7a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+    Print / Save as PDF
+  </button>
+</div>
+
+<!-- COVER PAGE -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Parts of Practice &bull; SEO Health Report</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">47</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.85">Critical</div>
+    </div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-title">Wandering Free Counseling, LLC</div>
+    <div class="cover-sub">wanderingfreecounseling.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Prepared For</div><div class="cm-val">Erin Zarlino, LPCC</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">September 1, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Reviewed</div><div class="cm-val">6</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Issues Found</div><div class="cm-val">16</div></div>
+    </div>
+  </div>
+
+  <div class="cover-trend">
+    <div class="trend-label">Score: 47 / 100 — Baseline Audit</div>
+    <svg viewBox="0 0 520 60" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;">
+      <rect x="0" y="20" width="520" height="6" rx="3" fill="rgba(255,255,255,0.1)"/>
+      <rect x="0" y="20" width="245" height="6" rx="3" fill="#fbbf24"/>
+      <circle cx="245" cy="23" r="7" fill="#fbbf24" stroke="white" stroke-width="2"/>
+      <text x="0"   y="48" font-size="9" fill="rgba(255,255,255,0.4)">0 — Critical</text>
+      <text x="196" y="48" font-size="9" fill="rgba(255,255,255,0.4)">50 — Needs Work</text>
+      <text x="375" y="48" font-size="9" fill="rgba(255,255,255,0.4)">70 — Needs Attention</text>
+    </svg>
+  </div>
+
+  <div class="cover-note">This report covers the SEO health of wanderingfreecounseling.com as of September 2026. Scores below 50 indicate foundational issues that are actively limiting your visibility in Google search results.</div>
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">What This Score Means for Your Practice</div>
+    <div class="impact-box">
+      <div class="impact-box-title">Why this matters</div>
+      <p>A score of 47/100 means your website has significant gaps that make it difficult for Google to understand, trust, and rank your pages. When someone in Dublin or Columbus searches for "EMDR therapy" or "trauma therapist," your site is not positioned to appear — even though you offer exactly what they're looking for.</p>
+    </div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Pages with missing meta descriptions</span>
+        <span class="sr-val bad">6 of 6 pages — 100%</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Pages without structured data (schema)</span>
+        <span class="sr-val bad">6 of 6 pages — 100%</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Pages with broken or missing title tags</span>
+        <span class="sr-val bad">2 of 6 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Pages with thin content (under 500 words)</span>
+        <span class="sr-val warn">2 of 6 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Location mismatch in search listings</span>
+        <span class="sr-val warn">Yes — title says "Columbus" but address is Dublin</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">URL with a typo</span>
+        <span class="sr-val warn">Yes — Insurance page URL has a spelling error</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Therapist credentials visible to Google</span>
+        <span class="sr-val bad">No — LPCC and EMDR certification are not machine-readable</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Dedicated therapist bio page</span>
+        <span class="sr-val bad">No — "Meet Erin" nav link goes to homepage</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages</span>
+        <span class="sr-val bad">0 of 6</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card"><div class="snap-num bad">6/6</div><div class="snap-label">Pages Missing Meta Descriptions</div></div>
+    <div class="snap-card"><div class="snap-num bad">6/6</div><div class="snap-label">Pages Without Schema</div></div>
+    <div class="snap-card"><div class="snap-num warn">2</div><div class="snap-label">Broken Title Tags</div></div>
+    <div class="snap-card"><div class="snap-num bad">0</div><div class="snap-label">Fully Optimized Pages</div></div>
+  </div>
+
+  <!-- ISSUES BY PAGE -->
+  <div class="section">
+    <div class="section-title">Issues Found — Page by Page</div>
+
+    <div class="issue-card has-critical">
+      <div class="issue-url">/ — Homepage</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+        <div class="issue-impact">Google has nothing to show in search results under your link. This directly reduces clicks from potential clients.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No structured data (schema)</span></div>
+        <div class="issue-impact">Google can't confirm who you are, where you're located, or what services you offer. This affects local search and map visibility.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity high">High</span><span class="issue-label">Main heading doesn't describe what you do</span></div>
+        <div class="issue-impact">Your homepage heading is just your practice name — missing the opportunity to tell both Google and new visitors what you specialize in.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity high">High</span><span class="issue-label">Location mismatch — "Columbus" in title, Dublin is your address</span></div>
+        <div class="issue-impact">Inconsistent location signals confuse Google and hurt local search rankings for Dublin-area clients.</div>
+      </div>
+    </div>
+
+    <div class="issue-card has-critical">
+      <div class="issue-url">/emdr — EMDR Therapy + Intensives</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">Page title contains no keywords — just your practice name</span></div>
+        <div class="issue-impact">The browser tab title and the blue link Google shows in search currently reads "Wandering Free Counseling, LLC." Someone searching for EMDR therapy won't know this page is for them.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+        <div class="issue-impact">This is your strongest page — great content, excellent heading, real pricing. Without a meta description, Google auto-generates one that often undersells you.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">No structured data</span></div>
+        <div class="issue-impact">Your EMDR intensive pricing ($300, $600, $1,200) and service details aren't visible to search engines in a readable format.</div>
+      </div>
+    </div>
+
+    <div class="issue-card has-critical">
+      <div class="issue-url">/childhoodtrauma — Childhood Trauma Therapy</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+        <div class="issue-impact">Anyone searching for "childhood trauma therapy Columbus Ohio" who sees your link won't have enough information to click through.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">Page content is thin — approximately 675 words</span></div>
+        <div class="issue-impact">Google favors pages that thoroughly cover a topic. Competing therapy sites in Columbus often have 1,000+ words on specialty pages.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">No structured data</span></div>
+      </div>
+    </div>
+
+    <div class="issue-card has-critical">
+      <div class="issue-url">/perinatal-trauma — Perinatal Trauma Therapy</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">Very thin content — approximately 375 words</span></div>
+        <div class="issue-impact">One of your key specialty pages has less content than most blog posts. At 375 words, the page struggles to rank for any meaningful search terms.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">No structured data</span></div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">Missing alt text on images</span></div>
+        <div class="issue-impact">Images without alt text are invisible to search engines and create accessibility issues.</div>
+      </div>
+    </div>
+
+    <div class="issue-card has-warn">
+      <div class="issue-url">/insurancesandfeees — Insurance &amp; Fees</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">URL has a typo — "feees" has three e's</span></div>
+        <div class="issue-impact">The typo is visible when you share this link with prospective clients and undermines trust. It also limits how well the page can rank.</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">Page title missing practice name and location</span></div>
+        <div class="issue-impact">Title reads "Insurances and Fees" — no location, no brand. Insurance-seeking clients in Dublin searching Google won't find this page.</div>
+      </div>
+    </div>
+
+    <div class="issue-card has-critical">
+      <div class="issue-url">/contactme — Contact</div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">Page title is a tagline, not a search term</span></div>
+        <div class="issue-impact">The title "Healing Starts Here" is meaningful to visitors but tells search engines nothing. This page will not rank for local searches like "contact trauma therapist Dublin Ohio."</div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity critical">Critical</span><span class="issue-label">No meta description</span></div>
+      </div>
+      <div class="issue-item">
+        <div class="issue-top"><span class="severity medium">Medium</span><span class="issue-label">No structured data</span></div>
+        <div class="issue-impact">This page has your full address, phone, and hours — exactly what Google needs — but not in a format it can read.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT GOOGLE EXPECTS -->
+  <div class="section">
+    <div class="section-title">What Google Expects from a Mental Health Website</div>
+    <p style="font-size:12.5px;color:#475569;margin-bottom:16px;line-height:1.7">Google holds therapy and mental health websites to a higher standard — they call this YMYL (Your Money or Your Life). Here's what's currently absent from wanderingfreecounseling.com:</p>
+    <div class="expects-grid">
+      <div class="expects-card red">
+        <div class="expects-card-title">Dedicated Therapist Bio Page</div>
+        <div class="expects-card-body">The "Meet Erin" nav link goes to your homepage. Google expects a standalone page establishing credentials, training, and experience — especially for a health site.</div>
+      </div>
+      <div class="expects-card red">
+        <div class="expects-card-title">Machine-Readable Credentials</div>
+        <div class="expects-card-body">Your LPCC license and EMDRIA certification exist on the site, but not in a format Google can read and verify. Without schema markup, your credentials are invisible to search engines.</div>
+      </div>
+      <div class="expects-card red">
+        <div class="expects-card-title">Local Business Verification Signals</div>
+        <div class="expects-card-body">No structured data exists on any page. Google uses this to confirm your business name, address, phone, and hours — all of which affect your local map ranking.</div>
+      </div>
+      <div class="expects-card amber">
+        <div class="expects-card-title">Content Depth on Specialty Pages</div>
+        <div class="expects-card-body">Two specialty pages have very thin content. When someone searches "perinatal trauma therapy Ohio," Google needs enough content to determine your page is the best answer.</div>
+      </div>
+      <div class="expects-card amber">
+        <div class="expects-card-title">Blog or Resource Content</div>
+        <div class="expects-card-body">Your site has no ongoing content. Therapists who publish educational articles consistently outrank those who don't — Google rewards demonstrated, ongoing expertise.</div>
+      </div>
+      <div class="expects-card amber">
+        <div class="expects-card-title">Consistent Location Signals</div>
+        <div class="expects-card-body">Your homepage says "Columbus Ohio" but your office is in Dublin, OH. Every location reference needs to match — across your site, Google Business Profile, and directories.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Page</th>
+          <th class="center">Title Tag</th>
+          <th class="center">Meta Description</th>
+          <th class="center">Heading (H1)</th>
+          <th class="center">Schema</th>
+          <th class="center">Content Depth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="url-cell">/ &nbsp; Homepage</td>
+          <td class="center"><span class="cell-icon warn">&#9651;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon warn">&#9651;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="warn-text">—</span></td>
+        </tr>
+        <tr>
+          <td class="url-cell">/emdr &nbsp; EMDR Therapy</td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="ok-text">~2,200 words</span></td>
+        </tr>
+        <tr>
+          <td class="url-cell">/childhoodtrauma &nbsp; Childhood Trauma</td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="warn-text">~675 words</span></td>
+        </tr>
+        <tr>
+          <td class="url-cell">/perinatal-trauma &nbsp; Perinatal Trauma</td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="missing">~375 words</span></td>
+        </tr>
+        <tr>
+          <td class="url-cell">/insurancesandfeees &nbsp; <span class="warn-text">(URL typo)</span></td>
+          <td class="center"><span class="cell-icon warn">&#9651;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="warn-text">~300 words</span></td>
+        </tr>
+        <tr>
+          <td class="url-cell">/contactme &nbsp; Contact</td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="cell-icon ok">&#10003;</span></td>
+          <td class="center"><span class="cell-icon bad">&#10007;</span></td>
+          <td class="center"><span class="warn-text">~200 words</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="legend">
+      <span><span style="color:#16a34a;font-weight:700">&#10003;</span> Present and correct</span>
+      <span><span style="color:#d97706;font-weight:700">&#9651;</span> Present but needs improvement</span>
+      <span><span style="color:#dc2626;font-weight:700">&#10007;</span> Missing or broken</span>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-block">
+    <div class="cta-title">Ready to fix this?</div>
+    <div class="cta-body">Every issue on this report is fixable. Most of the high-impact changes can be implemented in a matter of days — and the results compound over time as Google learns to trust and rank your site.</div>
+    <div class="cta-meta">
+      <div class="cta-item"><div class="ci-label">Prepared by</div><div class="ci-val">Parts of Practice</div></div>
+      <div class="cta-item"><div class="ci-label">Contact</div><div class="ci-val">PartsofPractice@gmail.com</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Parts of Practice &bull; SEO Health Report &bull; Wandering Free Counseling, LLC &bull; September 2026
+</div>
+
+</body>
+</html>

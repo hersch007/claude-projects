@@ -1,0 +1,10 @@
+# Block all direct web access to this folder — it holds the SQLite database and
+# settings.json (which contains the admin password hash). The app reads/writes
+# these via PHP on the server side only; nothing in here should ever be served.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

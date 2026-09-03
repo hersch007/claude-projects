@@ -1,0 +1,32 @@
+{
+  "date": "2026-07-06",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "GAR", "note": "Flexible pkg Design and Cons Seo", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Flexible pkg Design and Cons Seo", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Flexible pkg Design and Cons Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Flexible pkg Design anF SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Flexible pkg Design Prepress Imp", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Flexible pkg Design Prepress Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouches Seo", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouches Seo Imp", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Laser-Scored Pouches Seo Schema", "job": "0790149", "billable": true },
+    { "client": "SMT", "note": "Quote Builder", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "Quote Builder", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "Quote Builder", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "Quote Builder", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "Quote Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "Tickets Updates Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "Tickets Updates Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "Tickets Updates Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "Tickets Updates Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "Tickets Updates Builder", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "AI Integration", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "AI Integration", "job": "0900078", "billable": true },
+    { "client": "SMT", "note": "AI Integration", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "AI Integration", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "AI Integration Intellegence Core", "job": "0900077", "billable": true },
+    { "client": "SMT", "note": "AI Integration Intellegence Core", "job": "0900077", "billable": true }
+  ]
+}

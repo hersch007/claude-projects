@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "mcp__google-ads__google_ads_list_campaigns",
+      "mcp__google-ads__google_ads_gaql_query",
+      "mcp__google-ads__google_ads_search_term_report",
+      "mcp__google-ads__google_ads_list_conversion_actions",
+      "mcp__google-ads__google_ads_list_ad_groups",
+      "mcp__google-ads__google_ads_keyword_performance",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/xlsx/**)",
+      "Bash(python -c ' *)"
+    ]
+  }
+}

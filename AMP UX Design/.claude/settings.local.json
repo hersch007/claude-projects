@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx puppeteer *)",
+      "Bash(node capture.mjs)",
+      "Read(//c/Program Files/Google/Chrome/Application/**)",
+      "Read(//c/Program Files \\(x86\\)/Google/Chrome/Application/**)",
+      "Bash(pip install *)",
+      "Bash(python3 -m pip install reportlab pillow)",
+      "PowerShell(python --version 2>&1)",
+      "PowerShell(py --version 2>&1)",
+      "PowerShell(head -3)",
+      "Bash(node make-pdf.mjs)",
+      "Bash(npm list *)",
+      "PowerShell($f = Get-Item \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\AMP UX Design\\\\AMP Dashboard Preview.pdf\"; Write-Output \"$\\([math]::Round\\($f.Length/1KB, 1\\)\\) KB — $\\($f.FullName\\)\")",
+      "Bash(node capture-dark.mjs)"
+    ]
+  }
+}

@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Fruth Custom Packaging — August 14, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #003366; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #003366; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #003366; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Keyword tracker ── */
+  .kw-change.improved { color: #16a34a; font-weight: 700; }
+  .kw-change.declined { color: #dc2626; font-weight: 700; }
+  .kw-change.new      { color: #7c3aed; font-weight: 700; }
+  .kw-change.same     { color: #94a3b8; }
+  .kw-pos             { font-weight: 700; color: #0f172a; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">85</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Good</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Fruth Custom Packaging</div>
+    <div class="cover-sub">https://www.fruth.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">August 14, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">48</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">None</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">23 of 48 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">25 of 48 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-trend">
+    <div class="trend-label">Score History</div>
+    <svg viewBox="0 0 520 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;overflow:visible">
+      <defs>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+      </defs>
+      <polygon points="36,82 36,53.666666666666664 152,50.833333333333336 268,36.66666666666667 384,28.16666666666667 500,28.16666666666667 500,82" fill="url(#tg)"/>
+      <polyline points="36,53.666666666666664 152,50.833333333333336 268,36.66666666666667 384,28.16666666666667 500,28.16666666666667" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linejoin="round"/>
+      
+      <circle cx="36" cy="53.666666666666664" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="36" y="44.666666666666664" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">76</text>
+    
+      <circle cx="152" cy="50.833333333333336" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="152" y="41.833333333333336" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">77</text>
+    
+      <circle cx="268" cy="36.66666666666667" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="268" y="27.66666666666667" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">82</text>
+    
+      <circle cx="384" cy="28.16666666666667" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="384" y="19.16666666666667" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">85</text>
+    
+      <circle cx="500" cy="28.16666666666667" r="5" fill="#fff" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="500" y="19.16666666666667" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,1)">85</text>
+    
+      <text x="36" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">May 28</text><text x="152" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jun 30</text><text x="268" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jul 30</text><text x="384" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Aug 11</text><text x="500" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Aug 14</text>
+    </svg>
+  </div>
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">16</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">2</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">25</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">48</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Performance Highlights</div>
+      <div class="perf-period">Live data &bull; 2026-07-15 to 2026-08-11 &bull; vs. prior 28 days</div>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-value">177</div>
+        <div class="perf-label">Organic Clicks</div>
+        <span class="perf-change up">
+          <span class="perf-arrow">▲</span> +31.1%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">10,586</div>
+        <div class="perf-label">Impressions</div>
+        <span class="perf-change up">
+          <span class="perf-arrow">▲</span> +12.6%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">17</div>
+        <div class="perf-label">Avg. Position</div>
+        <span class="perf-change down">
+          <span class="perf-arrow">▼</span> -2.8%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">700</div>
+        <div class="perf-label">Organic Keywords</div>
+        
+      </div></div>
+    
+      <div style="margin-top:20px">
+        <div class="section-title" style="font-size:12px;margin-bottom:10px">Top Organic Keywords (Last 28 Days)</div>
+        <div class="page-table-wrap">
+        <table>
+          <thead><tr>
+            <th>Keyword</th>
+            <th class="center">Clicks</th>
+            <th class="center">Impressions</th>
+            <th class="center">Avg. Position</th>
+            <th class="center">CTR</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td>fruth custom packaging</td>
+              <td class="center">27</td>
+              <td class="center">96</td>
+              <td class="center">4</td>
+              <td class="center">28.1%</td>
+            </tr><tr>
+              <td>fruth</td>
+              <td class="center">16</td>
+              <td class="center">358</td>
+              <td class="center">2</td>
+              <td class="center">4.5%</td>
+            </tr><tr>
+              <td>fruth plastics</td>
+              <td class="center">16</td>
+              <td class="center">66</td>
+              <td class="center">1</td>
+              <td class="center">24.2%</td>
+            </tr><tr>
+              <td>food plastic bag gusset</td>
+              <td class="center">3</td>
+              <td class="center">14</td>
+              <td class="center">9</td>
+              <td class="center">21.4%</td>
+            </tr><tr>
+              <td>fruth custom plastics</td>
+              <td class="center">3</td>
+              <td class="center">27</td>
+              <td class="center">1</td>
+              <td class="center">11.1%</td>
+            </tr><tr>
+              <td>fruth packaging</td>
+              <td class="center">3</td>
+              <td class="center">14</td>
+              <td class="center">1</td>
+              <td class="center">21.4%</td>
+            </tr><tr>
+              <td>cleanroom bag</td>
+              <td class="center">2</td>
+              <td class="center">44</td>
+              <td class="center">10</td>
+              <td class="center">4.5%</td>
+            </tr><tr>
+              <td>plastic bag pots for plants</td>
+              <td class="center">2</td>
+              <td class="center">10</td>
+              <td class="center">9</td>
+              <td class="center">20%</td>
+            </tr><tr>
+              <td>plastic grow bags for plants</td>
+              <td class="center">2</td>
+              <td class="center">9</td>
+              <td class="center">10</td>
+              <td class="center">22.2%</td>
+            </tr><tr>
+              <td>black conductive film</td>
+              <td class="center">1</td>
+              <td class="center">5</td>
+              <td class="center">4</td>
+              <td class="center">20%</td>
+            </tr><tr>
+              <td>emi static shield</td>
+              <td class="center">1</td>
+              <td class="center">14</td>
+              <td class="center">4</td>
+              <td class="center">7.1%</td>
+            </tr><tr>
+              <td>grow bags plastic</td>
+              <td class="center">1</td>
+              <td class="center">9</td>
+              <td class="center">12</td>
+              <td class="center">11.1%</td>
+            </tr><tr>
+              <td>mil-prf-131k</td>
+              <td class="center">1</td>
+              <td class="center">14</td>
+              <td class="center">12</td>
+              <td class="center">7.1%</td>
+            </tr><tr>
+              <td>mil-prf-131k class 1</td>
+              <td class="center">1</td>
+              <td class="center">9</td>
+              <td class="center">13</td>
+              <td class="center">11.1%</td>
+            </tr><tr>
+              <td>nylon film</td>
+              <td class="center">1</td>
+              <td class="center">21</td>
+              <td class="center">22</td>
+              <td class="center">4.8%</td>
+            </tr><tr>
+              <td>plastic bag for plants price</td>
+              <td class="center">1</td>
+              <td class="center">2</td>
+              <td class="center">11</td>
+              <td class="center">50%</td>
+            </tr><tr>
+              <td>plastic grow bags</td>
+              <td class="center">1</td>
+              <td class="center">58</td>
+              <td class="center">11</td>
+              <td class="center">1.7%</td>
+            </tr><tr>
+              <td>plastic packaging factory</td>
+              <td class="center">1</td>
+              <td class="center">1</td>
+              <td class="center">16</td>
+              <td class="center">100%</td>
+            </tr><tr>
+              <td>plastic potting bags</td>
+              <td class="center">1</td>
+              <td class="center">8</td>
+              <td class="center">9</td>
+              <td class="center">12.5%</td>
+            </tr><tr>
+              <td>scrim foil</td>
+              <td class="center">1</td>
+              <td class="center">27</td>
+              <td class="center">6</td>
+              <td class="center">3.7%</td>
+            </tr><tr>
+              <td>static shielding film</td>
+              <td class="center">1</td>
+              <td class="center">16</td>
+              <td class="center">11</td>
+              <td class="center">6.3%</td>
+            </tr><tr>
+              <td>10 gallon plastic grow bags</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">34</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>131 k</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">11</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>131k</td>
+              <td class="center">0</td>
+              <td class="center">17</td>
+              <td class="center">8</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>131k class 1 barrier</td>
+              <td class="center">0</td>
+              <td class="center">3</td>
+              <td class="center">31</td>
+              <td class="center">-</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+  </div>
+
+  <!-- KEYWORD RANKINGS -->
+  
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Keyword Rankings</div>
+      <div class="perf-period">Last 28 days &nbsp;&bull;&nbsp; vs. Aug 12</div>
+    </div>
+    <div class="page-table-wrap" style="margin-top:14px">
+    <table>
+      <thead><tr>
+        <th>Keyword</th>
+        <th class="center">Position</th>
+        <th class="center">vs. Aug 12</th>
+        <th class="center">Clicks</th>
+        <th class="center">Impressions</th>
+        <th class="center">CTR</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>fruth custom packaging</td>
+        <td class="center kw-pos">4</td>
+        <td class="center"><span class="kw-change improved">▲ 1</span></td>
+        <td class="center">27</td>
+        <td class="center">96</td>
+        <td class="center">28.1%</td>
+      </tr><tr>
+        <td>fruth</td>
+        <td class="center kw-pos">2</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">16</td>
+        <td class="center">358</td>
+        <td class="center">4.5%</td>
+      </tr><tr>
+        <td>fruth plastics</td>
+        <td class="center kw-pos">1</td>
+        <td class="center"><span class="kw-change improved">▲ 1</span></td>
+        <td class="center">16</td>
+        <td class="center">66</td>
+        <td class="center">24.2%</td>
+      </tr><tr>
+        <td>food plastic bag gusset</td>
+        <td class="center kw-pos">9</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">3</td>
+        <td class="center">14</td>
+        <td class="center">21.4%</td>
+      </tr><tr>
+        <td>fruth custom plastics</td>
+        <td class="center kw-pos">1</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">3</td>
+        <td class="center">27</td>
+        <td class="center">11.1%</td>
+      </tr><tr>
+        <td>fruth packaging</td>
+        <td class="center kw-pos">1</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">3</td>
+        <td class="center">14</td>
+        <td class="center">21.4%</td>
+      </tr><tr>
+        <td>cleanroom bag</td>
+        <td class="center kw-pos">10</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">2</td>
+        <td class="center">44</td>
+        <td class="center">4.5%</td>
+      </tr><tr>
+        <td>plastic bag pots for plants</td>
+        <td class="center kw-pos">9</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">2</td>
+        <td class="center">10</td>
+        <td class="center">20%</td>
+      </tr><tr>
+        <td>plastic grow bags for plants</td>
+        <td class="center kw-pos">10</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">2</td>
+        <td class="center">9</td>
+        <td class="center">22.2%</td>
+      </tr><tr>
+        <td>black conductive film</td>
+        <td class="center kw-pos">4</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">5</td>
+        <td class="center">20%</td>
+      </tr><tr>
+        <td>emi static shield</td>
+        <td class="center kw-pos">4</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">14</td>
+        <td class="center">7.1%</td>
+      </tr><tr>
+        <td>grow bags plastic</td>
+        <td class="center kw-pos">12</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">9</td>
+        <td class="center">11.1%</td>
+      </tr><tr>
+        <td>mil-prf-131k</td>
+        <td class="center kw-pos">12</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">14</td>
+        <td class="center">7.1%</td>
+      </tr><tr>
+        <td>mil-prf-131k class 1</td>
+        <td class="center kw-pos">13</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">9</td>
+        <td class="center">11.1%</td>
+      </tr><tr>
+        <td>nylon film</td>
+        <td class="center kw-pos">22</td>
+        <td class="center"><span class="kw-change declined">▼ 2</span></td>
+        <td class="center">1</td>
+        <td class="center">21</td>
+        <td class="center">4.8%</td>
+      </tr><tr>
+        <td>plastic bag for plants price</td>
+        <td class="center kw-pos">11</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">2</td>
+        <td class="center">50%</td>
+      </tr><tr>
+        <td>plastic grow bags</td>
+        <td class="center kw-pos">11</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">58</td>
+        <td class="center">1.7%</td>
+      </tr><tr>
+        <td>plastic packaging factory</td>
+        <td class="center kw-pos">16</td>
+        <td class="center"><span class="kw-change declined">▼ 6</span></td>
+        <td class="center">1</td>
+        <td class="center">1</td>
+        <td class="center">100%</td>
+      </tr><tr>
+        <td>plastic potting bags</td>
+        <td class="center kw-pos">9</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">1</td>
+        <td class="center">8</td>
+        <td class="center">12.5%</td>
+      </tr><tr>
+        <td>scrim foil</td>
+        <td class="center kw-pos">6</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">1</td>
+        <td class="center">27</td>
+        <td class="center">3.7%</td>
+      </tr><tr>
+        <td>static shielding film</td>
+        <td class="center kw-pos">11</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">1</td>
+        <td class="center">16</td>
+        <td class="center">6.3%</td>
+      </tr><tr>
+        <td>10 gallon plastic grow bags</td>
+        <td class="center kw-pos">34</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>131 k</td>
+        <td class="center kw-pos">11</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">2</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>131k</td>
+        <td class="center kw-pos">8</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">17</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>131k class 1 barrier</td>
+        <td class="center kw-pos">31</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">3</td>
+        <td class="center">-</td>
+      </tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Rewrite meta descriptions on 6 pages</div>
+        <div class="qw-detail" style="margin-top:6px">3 meta descriptions are too short to persuade clicks. 3 are too long and get truncated in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Add canonical tags to 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fill in empty image alt text on 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on 1 page</div>
+        <div class="qw-detail" style="margin-top:6px">Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Medium">Medium effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Add structured data (schema) to 16 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Schema markup helps Google display rich results (star ratings, FAQs, product details). Product and service pages especially benefit from this.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val good">85 / 100 &mdash; Good</span>
+      </div>
+      
+      
+      
+      <div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">16 pages affected</span></div>
+      
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">23 of 48 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">25 of 48 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 85/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (23 pages need attention)</div>
+    
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (77 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/author/fruth-custom-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (77 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/barrier-films/scrim-foil-barrier-film</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (90 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/tamper-evident-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (86 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/multi-pocket-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (83 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/zipper-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (129 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/side-seal-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (148 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/vacuum-seal-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (95 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/films/nylon-film</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (145 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/wicketed-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (107 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/barrier-films/cushion-packaging-barrier-film</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (118 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (4)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/fruth-360</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (171 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/custom-medical-packaging-for-catheter-syringe-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (182 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/barrier-films/mil-prf-131k-barrier-film</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (103 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/header-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (95 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (26 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/lip-and-tape-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/barrier-films</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/films/anti-static-film</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (171 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/barrier-films/foam-sheets-rolls</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/films</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/square-bottom-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com" target="_blank">/</a></td>
+      <td>Fruth Custom Packaging | Plastic Bags & Barrier Films</td>
+      <td class="center"><span class="warn-text">4</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">VideoObject, WebPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products" target="_blank">/products</a></td>
+      <td>Custom Plastic Bags, Films & Barrier Materials | Fruth Products</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage, BreadcrumbList, FAQPage, CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/cleanroom-bags" target="_blank">/products/bags/cleanroom-bags</a></td>
+      <td>ISO Cleanroom Packaging for Electronics & Medical</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/fruth-360" target="_blank">/fruth-360</a></td>
+      <td>Fruth 360 | Vertically Integrated Packaging Manufacturing</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">VideoObject, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/our-story" target="_blank">/our-story</a></td>
+      <td>Our Story | 100% American Made Custom Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">VideoObject, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags" target="_blank">/products/bags</a></td>
+      <td>Custom Plastic Bags for Medical, Food & Industrial Use | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center/custom-medical-packaging-for-catheter-syringe-bags" target="_blank">/learning-center/custom-medical-packaging-for-catheter-syringe-bags</a></td>
+      <td>Custom Medical Packaging for Catheter Syringe Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/polypropylene-film" target="_blank">/products/films/polypropylene-film</a></td>
+      <td>Polypropylene Film | Custom PP Film for Autoclave & Medical</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/gusset-bags" target="_blank">/products/bags/gusset-bags</a></td>
+      <td>Gusset Bags | Expandable Custom Plastic Packaging Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/bakery-bags" target="_blank">/products/bags/bakery-bags</a></td>
+      <td>Custom Bakery Bags | Food Safe Packaging for Baked Goods</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/mil-prf-131k-barrier-film" target="_blank">/products/barrier-films/mil-prf-131k-barrier-film</a></td>
+      <td>MIL-PRF-131K Barrier Film | Military-Grade Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Product</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/emi-static-shielding-barrier-film" target="_blank">/products/barrier-films/emi-static-shielding-barrier-film</a></td>
+      <td>EMI Static Shielding Barrier Film | ESD Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/fresh-produce-bags" target="_blank">/products/bags/fresh-produce-bags</a></td>
+      <td>Fresh Produce Bags | Custom Food Packaging for Produce</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/capabilities" target="_blank">/capabilities</a></td>
+      <td>Custom Packaging Capabilities | Vertically Integrated | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/scrim-foil-barrier-film" target="_blank">/products/barrier-films/scrim-foil-barrier-film</a></td>
+      <td>Scrim Foil Barrier Film | Reinforced Moisture Barrier Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/tamper-evident-bags" target="_blank">/products/bags/tamper-evident-bags</a></td>
+      <td>Tamper Evident Bags | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/flame-retardant-polyethylene-film" target="_blank">/products/films/flame-retardant-polyethylene-film</a></td>
+      <td>Flame Retardant Polyethylene Film | NFPA 701 Compliant | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/lay-flat-bags" target="_blank">/products/bags/lay-flat-bags</a></td>
+      <td>Lay Flat Poly Bags | Custom Sizes | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/header-bags" target="_blank">/products/bags/header-bags</a></td>
+      <td>Header Bags | Custom Plastic Packaging Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/multi-pocket-bags" target="_blank">/products/bags/multi-pocket-bags</a></td>
+      <td>Multi Pocket Bags | Custom Compartment Packaging Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/zipper-bags" target="_blank">/products/bags/zipper-bags</a></td>
+      <td>Zipper Bags | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/contact" target="_blank">/contact</a></td>
+      <td>Contact Fruth Custom Packaging | Request a Quote</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">ContactPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/nuclear-green-polyethylene-film" target="_blank">/products/films/nuclear-green-polyethylene-film</a></td>
+      <td>Nuclear Green Polyethylene Film | MIL-DTL-24466 Spec | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/lip-and-tape-bags" target="_blank">/products/bags/lip-and-tape-bags</a></td>
+      <td>Lip & Tape Bags | Resealable Protective Packaging Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/ffp-barrier-film" target="_blank">/products/barrier-films/ffp-barrier-film</a></td>
+      <td>FFP Barrier Film | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/side-seal-bags" target="_blank">/products/bags/side-seal-bags</a></td>
+      <td>Side Seal Bags | Durable Custom Plastic Packaging Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center/fruth-custom-packaging-adds-capacity-to-serve-increasing-demand-for-biohazard-bags-and-autoclave-bags" target="_blank">/learning-center/fruth-custom-packaging-adds-capacity-to-serve-increasing-demand-for-biohazard-bags-and-autoclave-bags</a></td>
+      <td>Fruth Expands Biohazard & Autoclave Bag Manufacturing Capacity</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center/3-questions-to-be-asking-your-medical-packaging-manufacturer" target="_blank">/learning-center/3-questions-to-be-asking-your-medical-packaging-manufacturer</a></td>
+      <td>3 Questions to be Asking Your Medical Packaging Manufacturer</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films" target="_blank">/products/barrier-films</a></td>
+      <td>Barrier Films | Foil & ESD | Anti-Static EMI Bubble Wrap</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/kraft-foil-barrier-film" target="_blank">/products/barrier-films/kraft-foil-barrier-film</a></td>
+      <td>Kraft Foil Barrier Film | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/bottom-seal-bags" target="_blank">/products/bags/bottom-seal-bags</a></td>
+      <td>Bottom Seal Bags | Custom Industrial & Food Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/anti-static-film" target="_blank">/products/films/anti-static-film</a></td>
+      <td>Custom Anti-Static Bags | ESD Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/industries" target="_blank">/industries</a></td>
+      <td>Industries We Serve | Custom Packaging Solutions | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/vacuum-seal-bags" target="_blank">/products/bags/vacuum-seal-bags</a></td>
+      <td>Vacuum Seal Bags | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center/questions-to-ask-medical-packaging-suppliers-to-reduce-lead-time" target="_blank">/learning-center/questions-to-ask-medical-packaging-suppliers-to-reduce-lead-time</a></td>
+      <td>Medical Packaging Suppliers Questions to Reduce Lead Time</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/nylon-film" target="_blank">/products/films/nylon-film</a></td>
+      <td>Nylon Film | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/foam-sheets-rolls" target="_blank">/products/barrier-films/foam-sheets-rolls</a></td>
+      <td>Foam Sheets & Rolls | Protective Packaging Foam Materials</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/consumer-request" target="_blank">/consumer-request</a></td>
+      <td>Consumer Privacy Request | Data Rights & Opt-Out | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">ContactPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/wicketed-bags" target="_blank">/products/bags/wicketed-bags</a></td>
+      <td>Wicketed Bags | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/autoclave-bags" target="_blank">/products/bags/autoclave-bags</a></td>
+      <td>Autoclave Bags | Biohazard & Sterilization Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">VideoObject, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films" target="_blank">/products/films</a></td>
+      <td>Plastic Packaging Film | Polypropylene, Polyethylene Products</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center" target="_blank">/learning-center</a></td>
+      <td>Learning Center | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/films/black-conductive-film" target="_blank">/products/films/black-conductive-film</a></td>
+      <td>Black Conductive Film | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/foam-bags" target="_blank">/products/bags/foam-bags</a></td>
+      <td>Foam Bags | Polyethylene Foam Protective Packaging | Fruth</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/grow-bags" target="_blank">/products/bags/grow-bags</a></td>
+      <td>Grow Bags | Plastic Plant Bags for Nurseries & Commercial Growers</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/bags/square-bottom-bags" target="_blank">/products/bags/square-bottom-bags</a></td>
+      <td>Square Bottom Bags | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/products/barrier-films/cushion-packaging-barrier-film" target="_blank">/products/barrier-films/cushion-packaging-barrier-film</a></td>
+      <td>Cushion Packaging Barrier Film | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.fruth.com/learning-center/author/fruth-custom-packaging" target="_blank">/learning-center/author/fruth-custom-packaging</a></td>
+      <td>Learning Center | Fruth Custom Packaging | Fruth Custom Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+</div>
+
+<div class="report-footer">
+  Prepared by Start Advertising &bull; Fruth Custom Packaging SEO Audit &bull; August 14, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+</body>
+</html>

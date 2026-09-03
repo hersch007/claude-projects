@@ -1,0 +1,13 @@
+{
+    "name":  "CFB Cleanroom Film",
+    "url":  "https://www.cleanroomfilm.com",
+    "brand_color":  "#0057a8",
+    "output_dir":  "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/CFB",
+    "max_pages":  60,
+    "ignore_paths":  [
+                         "/cdn-cgi/",
+                         "?hs",
+                         "#"
+                     ],
+    "gsc_property":  "https://www.cleanroomfilm.com/"
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-08-14",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "GAR", "note": "GAR Fond du loc Page - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "GAR Fond du loc Page - AISEO / SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "GAR Fond du loc Page - Schema Develop", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "GAR Fond du loc Page - Web Updates", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "GAR Placentia Page - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "GAR Placentia Page - AISEO / SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "GAR Placentia Page - Schema Develop", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "GAR Placentia Page - Web Updates", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "GAR Extrusion Page - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "GAR Extrusion Page - AISEO / SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "GAR Extrusion Page - Schema Develop", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "GAR Extrusion Page - Web Updates", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "GAR Premade Pouches Pg - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "GAR Premade Pouches Pg - AISEO / SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "GAR Premade Pouches Pg - Schema Develop", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "GAR Premade Pouches Pg - Web Updates", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "GAR Printed Rollstock - SEO Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "GAR Printed Rollstock - AI / SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "GAR Printed Rollstock - Schema Dev", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "GAR Printed Rollstock - Web Updates", "job": "0790166", "billable": true }
+  ]
+}

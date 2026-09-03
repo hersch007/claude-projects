@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import reportlab; print\\('ok'\\)\")",
+      "Bash(python3 -c \"import reportlab; print\\('ok'\\)\")",
+      "Bash(py -c \"import reportlab; print\\('ok'\\)\")",
+      "PowerShell(python3 -c \"import reportlab; print\\('ok'\\)\")",
+      "PowerShell($skillBase = \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\"; node -e \"require\\('docx'\\)\" --require \"$skillBase\\\\node_modules\\\\.bin\\\\..\" 2>&1 | Select-String \"docx\"; Get-ChildItem \"$skillBase\\\\node_modules\\\\docx\" -ErrorAction SilentlyContinue | Select-Object -First 1 Name)",
+      "PowerShell($env:NODE_PATH = \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\"; node \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Karen Hubbars Therapy\\\\build-pricing.js\" 2>&1)"
+    ]
+  }
+}

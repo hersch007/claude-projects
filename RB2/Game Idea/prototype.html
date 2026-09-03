@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CADENCE — core loop prototype</title>
+<style>
+  :root{
+    /* palette — swapped live by the Look control. default is "slate" */
+    --bg:#141b25; --panel:#1e2836; --panel-2:#182130; --line:#33425a;
+    --text:#d3dde9; --dim:#8296ad;
+    --cyan:#5cd3e2; --amber:#e8b06a; --red:#e86b74; --violet:#bd80e8; --good:#6fca8c;
+    /* density — swapped live by the Density control */
+    --pad:14px; --gap:13px; --fs:13px; --canvas-h:320px;
+    --mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas, monospace;
+  }
+  :root[data-look="deep"]{
+    --bg:#080b10; --panel:#111823; --panel-2:#0d141d; --line:#1e2a3a;
+    --text:#c9d6e4; --dim:#6b7f96;
+    --cyan:#4ec9d9; --amber:#e0a458; --red:#e0555f; --violet:#b06ee0; --good:#5fbf7f;
+  }
+  :root[data-look="ash"]{
+    --bg:#1e2631; --panel:#2a3441; --panel-2:#232c38; --line:#41505f;
+    --text:#dde5ee; --dim:#94a5b8;
+    --cyan:#6bd9e6; --amber:#eeb877; --red:#ef7780; --violet:#c78dee; --good:#7ad197;
+  }
+  :root[data-den="compact"]{ --pad:10px; --gap:9px;  --fs:12px; --canvas-h:250px }
+  :root[data-den="roomy"]  { --pad:19px; --gap:18px; --fs:14px; --canvas-h:380px }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0; color:var(--text); font-family:var(--mono);
+       font-size:var(--fs); line-height:1.5; -webkit-font-smoothing:antialiased;
+       /* a gradient, not flat black — stops the empty areas reading as a void */
+       background:
+         radial-gradient(ellipse 900px 500px at 50% -8%, rgba(92,211,226,.07), transparent 70%),
+         radial-gradient(ellipse 700px 500px at 92% 108%, rgba(189,128,232,.06), transparent 70%),
+         var(--bg)}
+  #app{max-width:1080px; margin:0 auto; padding:16px 20px 32px;
+       display:flex; flex-direction:column; gap:var(--gap); min-height:100%}
+
+  /* ---------- header: only what you act on ---------- */
+  header{display:flex; align-items:center; gap:26px; flex-wrap:wrap;
+         padding:13px 17px; background:var(--panel); border:1px solid var(--line); border-radius:6px}
+  .brand{font-weight:700; letter-spacing:.22em; color:var(--cyan); font-size:12px}
+  .stat{display:flex; align-items:baseline; gap:7px}
+  .stat.hide{display:none}
+  .stat .k{color:var(--dim); font-size:10px; letter-spacing:.12em; text-transform:uppercase}
+  .stat .v{font-size:17px; font-weight:700}
+  .spacer{flex:1}
+  button{font-family:inherit; font-size:12px; color:var(--text); background:var(--panel-2);
+         border:1px solid var(--line); padding:6px 12px; border-radius:4px; cursor:pointer; transition:.12s}
+  button:hover:not(:disabled){border-color:var(--cyan); color:var(--cyan)}
+  button:disabled{opacity:.3; cursor:not-allowed}
+  button.primary{background:#16323a; border-color:#2b5f6b; color:var(--cyan); font-weight:700}
+  button.primary:hover:not(:disabled){background:#1c4450}
+  button.danger:hover:not(:disabled){border-color:var(--red); color:var(--red)}
+  button.probe{border-color:#3d2a4d; color:var(--violet)}
+  button.probe:hover:not(:disabled){background:#2a1d33; border-color:var(--violet)}
+  button.ghost{border-color:transparent; color:var(--dim); padding:6px 8px}
+  button.ghost:hover:not(:disabled){border-color:var(--line); color:var(--text)}
+
+  .cols{display:grid; grid-template-columns:1.15fr 1fr; gap:16px; align-items:start}
+  @media (max-width:920px){ .cols{grid-template-columns:1fr} }
+  .panel{background:var(--panel); border:1px solid var(--line); border-radius:6px; padding:var(--pad)}
+
+  /* ---------- status strip: the density that got lost, in ~50px ---------- */
+  #strip{display:grid; grid-template-columns:repeat(5,1fr); gap:7px}
+  .chip{display:flex; align-items:center; gap:9px; padding:8px 9px; cursor:pointer;
+        background:var(--panel); border:1px solid var(--line); border-radius:6px; transition:.12s}
+  .chip:hover{border-color:var(--cyan)}
+  .chip.on{border-color:var(--violet); background:var(--panel-2)}
+  .chipnums{min-width:0; line-height:1.25}
+  .chipnums b{display:block; font-size:13px; font-weight:700}
+  .chipnums s{display:block; font-size:10px; color:var(--dim); text-decoration:none; letter-spacing:.06em}
+  .chip .ico{width:30px; height:30px} .chip .ico svg{width:15px; height:15px}
+  @media (max-width:820px){ #strip{grid-template-columns:repeat(2,1fr)} }
+
+  /* ---------- design dials (temporary, for finding the look) ---------- */
+  #dials{display:flex; gap:14px; align-items:center; justify-content:center;
+         font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--dim)}
+  #dials b{color:var(--dim); font-weight:400; margin-right:5px}
+  #dials button{font-size:10px; padding:3px 8px; letter-spacing:.1em}
+  #dials button.act{border-color:var(--cyan); color:var(--cyan)}
+  .panel > h2{margin:0 0 13px; font-size:10px; letter-spacing:.2em; text-transform:uppercase;
+              color:var(--dim); font-weight:600; display:flex; justify-content:space-between; align-items:center}
+
+  /* ---------- the model: now the only place life state lives ---------- */
+  #modelpanel{position:relative; overflow:hidden}
+  #model{width:100%; height:var(--canvas-h); display:block; cursor:pointer}
+  #modelcap{position:absolute; left:var(--pad); bottom:10px; font-size:10px; letter-spacing:.14em;
+            text-transform:uppercase; color:var(--dim); opacity:.65; pointer-events:none}
+
+  /* node popover — actions live on the thing they affect */
+  #nodepop{position:absolute; width:186px; background:#0e1620; border:1px solid var(--violet);
+           border-radius:6px; padding:11px; z-index:12; display:none;
+           box-shadow:0 10px 30px rgba(0,0,0,.6)}
+  #nodepop.show{display:block}
+  #nodepop .nph{font-weight:700; letter-spacing:.06em; margin-bottom:2px}
+  #nodepop .npt{font-size:10px; letter-spacing:.14em; margin-bottom:9px}
+  #nodepop .npr{display:flex; justify-content:space-between; font-size:11px; color:var(--dim)}
+  #nodepop .npb{display:flex; gap:6px; margin-top:10px}
+  #nodepop button{font-size:11px; padding:4px 8px; flex:1}
+
+  /* ---------- today ---------- */
+  .task{border:1px solid var(--line); border-radius:5px; padding:11px; margin-bottom:9px;
+        background:var(--panel-2); display:flex; gap:12px; align-items:flex-start}
+  .task.done{opacity:.32}
+  .tbody{flex:1; min-width:0}
+  .tmeta{font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--dim); margin-bottom:3px}
+  .ttext{margin-bottom:10px}
+  .tactions{display:flex; gap:7px; flex-wrap:wrap}
+  .tactions button{font-size:11px; padding:5px 10px}
+  .resolved{font-size:11px; color:var(--dim); font-style:italic}
+
+  .ico{position:relative; overflow:hidden; border-radius:5px; border:1px solid;
+       display:grid; place-items:center; flex:0 0 auto; background:#0a1017;
+       width:40px; height:40px}
+  .ico .tide{position:absolute; left:0; right:0; bottom:0; background:rgba(176,110,224,.34);
+             transition:height .35s ease}
+  .ico svg{position:relative; z-index:1; display:block; width:20px; height:20px;
+           fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round}
+  .ico.sealed{box-shadow:0 0 0 1px var(--violet), 0 0 10px rgba(176,110,224,.45)}
+
+  /* ---------- feed: quieter, shorter ---------- */
+  #feed{max-height:150px; overflow-y:auto; padding-right:6px; display:flex; flex-direction:column; gap:7px}
+  #feed::-webkit-scrollbar{width:6px}
+  #feed::-webkit-scrollbar-thumb{background:var(--line); border-radius:4px}
+  .msg{border-left:2px solid var(--line); padding:1px 0 1px 10px; font-size:12px}
+  .msg .who{font-size:9px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim);
+            display:block; margin-bottom:1px}
+  .msg.ai{border-left-color:var(--cyan)}    .msg.ai .who{color:var(--cyan)}
+  .msg.warn{border-left-color:var(--amber)} .msg.warn .who{color:var(--amber)}
+  .msg.bad{border-left-color:var(--red)}    .msg.bad .who{color:var(--red)}
+  .msg.leak{border-left-color:var(--violet)}.msg.leak .who{color:var(--violet)}
+  .msg.contact{border-left-color:#7fa8d9}   .msg.contact .who{color:#7fa8d9}
+  .msg.sys{border-left-color:#243244; color:var(--dim)}
+  .msg .fx{color:#4a5a6d; font-size:10px}
+  .up{color:var(--good)} .down{color:var(--red)} .auto{color:var(--violet)}
+
+  /* ---------- overlays ---------- */
+  .ovl{position:fixed; inset:0; background:rgba(4,7,11,.97); display:none;
+       align-items:center; justify-content:center; padding:26px; z-index:60; overflow-y:auto}
+  .ovl.show{display:flex}
+  .card{max-width:660px; background:var(--panel); border:1px solid var(--line);
+        border-radius:8px; padding:30px; margin:auto}
+  .card h1{margin:0 0 4px; font-size:19px; letter-spacing:.12em; color:var(--cyan)}
+  .card .sub{color:var(--dim); font-size:10px; letter-spacing:.18em; text-transform:uppercase; margin-bottom:18px}
+  .card p{margin:0 0 14px}
+  .choice{border:1px solid var(--line); background:var(--panel-2); border-radius:5px; padding:13px;
+          margin-bottom:10px; cursor:pointer; transition:.12s}
+  .choice:hover{border-color:var(--cyan)}
+  .choice b{color:var(--cyan); display:block; margin-bottom:4px; letter-spacing:.06em}
+  .choice span{color:var(--dim); font-size:12px}
+  .endstats{border-top:1px solid var(--line); padding-top:14px; margin-top:6px; font-size:12px; color:var(--dim)}
+  .endstats div{display:flex; justify-content:space-between; padding:3px 0}
+  .file{border-left:2px solid var(--violet); padding:3px 0 3px 11px; margin-bottom:14px; font-size:12px}
+  .file .fh{font-size:10px; letter-spacing:.15em; text-transform:uppercase; color:var(--violet);
+            display:block; margin-bottom:3px}
+  .locked{color:var(--dim); font-style:italic; font-size:12px}
+  footer{color:#3f4d5e; font-size:10px; text-align:center; letter-spacing:.1em}
+
+  /* ---------- signal treatment: dialled back ---------- */
+  #crt{position:fixed; inset:0; pointer-events:none; z-index:40; opacity:.18;
+       background:repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, rgba(0,0,0,0) 1px 3px)}
+  #vig{position:fixed; inset:0; pointer-events:none; z-index:41;
+       background:radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 68%, rgba(0,0,0,.22) 100%)}
+  .brand,.stat .v{text-shadow:0 0 9px currentColor}
+  .shaking{animation:shk .45s cubic-bezier(.36,.07,.19,.97)}
+  @keyframes shk{10%,90%{transform:translate(-1px,0)} 20%,80%{transform:translate(2px,0)}
+                 30%,50%,70%{transform:translate(-4px,1px)} 40%,60%{transform:translate(4px,-1px)}}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="brand">CADENCE</div>
+    <div class="stat"><span class="k">Day</span><span class="v" id="s-day">1</span><span class="k" id="s-daymax">/ 30</span></div>
+    <div class="stat"><span class="k">Attention</span><span class="v" id="s-att">6</span></div>
+    <div class="stat"><span class="k">Ceded</span><span class="v auto" id="s-int">0%</span></div>
+    <div class="stat hide" id="st-ev"><span class="k">Evidence</span><span class="v" id="s-ev" style="color:var(--violet)">0</span></div>
+    <div class="stat hide" id="st-sus"><span class="k">Suspicion</span><span class="v" id="s-sus">0</span></div>
+    <div class="spacer"></div>
+    <button class="ghost" id="btn-case" style="display:none">Case file</button>
+    <button class="ghost" id="btn-sound" title="Sound">&#9834;</button>
+    <button class="ghost" id="btn-restart" title="Restart">&#8635;</button>
+    <button class="primary" id="btn-end">End Day &rsaquo;</button>
+  </header>
+
+  <div id="strip"></div>
+
+  <div class="cols">
+    <div class="panel" id="modelpanel">
+      <h2><span>Your Life</span><span id="modelstate"></span></h2>
+      <canvas id="model"></canvas>
+      <div id="modelcap"></div>
+      <div id="nodepop"></div>
+    </div>
+
+    <div class="panel">
+      <h2><span>Today</span><span id="tasksleft"></span></h2>
+      <div id="tasks"></div>
+      <div style="border-top:1px solid var(--line); padding-top:12px; margin-top:4px">
+        <button class="probe" id="btn-probe"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel"><div id="feed"></div></div>
+
+  <div id="dials">
+    <span><b>Look</b>
+      <button data-look="deep">deep</button><button data-look="slate">slate</button><button data-look="ash">ash</button>
+    </span>
+    <span><b>Density</b>
+      <button data-den="compact">compact</button><button data-den="normal">normal</button><button data-den="roomy">roomy</button>
+    </span>
+  </div>
+</div>
+
+<div class="ovl" id="ending"><div class="card" id="endcard"></div></div>
+<div class="ovl" id="caseovl"><div class="card" id="casecard"></div></div>
+<div id="crt"></div><div id="vig"></div>
+
+<script>
+/* ============================================================
+   TUNING
+   ============================================================ */
+const CONFIG = {
+  totalDays: 30, attentionPerDay: 6, startMeter: 70, dailyDecay: 14, tasksPerDay: 4,
+  selfCost: 2,  selfRestore: 15,
+  delegateRestore: 17, delegateAutonomy: 9,
+  focusCost: 2, focusRestore: 10,
+  reclaimCost: 3, reclaimLockedCost: 5, reclaimAutonomy: 20, reclaimMeterHit: 12,
+  aiActRestore: 7, unsanctionedFloor: 40,
+  collapseRescueMeter: 50, collapseRescueAutonomy: 25,
+  probeCost: 2, suspicionBase: 5, suspicionDecay: 3,
+  stageGates: [2,5,9,14,20], choiceThreshold: 12,
+  reclaimEvidence: 2, traceChance: 0.3,
+};
+
+const TIERS = [
+  {min:0,  key:'ASKS',      color:'#3f5468', desc:'asks permission'},
+  {min:25, key:'ASSISTS',   color:'#4ec9d9', desc:'acts on its own, always helpfully'},
+  {min:50, key:'ACTS',      color:'#e0a458', desc:'acts without asking'},
+  {min:75, key:'OVERRIDES', color:'#d9705f', desc:'overrides your choices'},
+  {min:95, key:'CONTROLS',  color:'#b06ee0', desc:'you can no longer act here'},
+];
+const tierOf  = a => TIERS.reduce((t,x)=> a>=x.min ? x : t, TIERS[0]);
+const tierIdx = a => TIERS.indexOf(tierOf(a));
+
+/* ============================================================
+   CONTENT
+   ============================================================ */
+const DOMAIN_DEFS = [
+  {id:'work',name:'Work'},{id:'money',name:'Finances'},{id:'body',name:'Health'},
+  {id:'people',name:'Relationships'},{id:'home',name:'Home'},
+];
+
+const ICONS = {
+  work:  '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5.2A2.2 2.2 0 0 1 10.2 3h3.6A2.2 2.2 0 0 1 16 5.2V7"/><path d="M3 12.5h18"/>',
+  money: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M5.5 9.2v5.6M18.5 9.2v5.6"/>',
+  body:  '<path d="M2 12.5h4.2L8.4 7l3.2 10 2.9-6.6 1.8 2.1H22"/>',
+  people:'<circle cx="9" cy="8" r="3.1"/><path d="M2.8 20a6.2 6.2 0 0 1 12.4 0"/><circle cx="17.6" cy="9.4" r="2.4"/><path d="M16.4 14.4A5.8 5.8 0 0 1 21.4 20"/>',
+  home:  '<path d="M3 11.2 12 4l9 7.2"/><path d="M5.2 10v10h13.6V10"/><path d="M9.8 20v-5.6h4.4V20"/>',
+};
+
+function iconBox(d){
+  const t = tierOf(d.autonomy), ti = tierIdx(d.autonomy);
+  const cond = d.meter<25 ? 'var(--red)' : d.meter<50 ? 'var(--amber)' : 'var(--good)';
+  return `<div class="ico ${ti>=4?'sealed':''}" title="${d.name} — condition ${Math.round(d.meter)}, ${d.autonomy}% ceded"
+    style="border-color:${cond}66; color:${ti>=1?t.color:'var(--dim)'}">
+    <div class="tide" style="height:${d.autonomy}%"></div>
+    <svg viewBox="0 0 24 24">${ICONS[d.id]}</svg></div>`;
+}
+
+const TASKS = {
+  work:  ['Quarterly review is due by Friday.','47 unread messages from your team lead.','The deck for Tuesday is still an empty file.','Someone escalated a ticket with your name on it.','You promised an estimate three days ago.'],
+  money: ['Two invoices are past due.','Your card was declined at the pharmacy.','The renewal auto-charged at the new rate.','You still have not filed the extension.','Something recurring is billing you $89 a month.'],
+  body:  ['You have not slept more than five hours all week.','The follow-up appointment needs rescheduling.','Third night in a row of delivery food.','Your prescription ran out on Sunday.','You skipped the walk again.'],
+  people:['Your sister has called twice. You have not called back.','You missed the dinner. Nobody said anything.','A friend asked if you were okay. You left it on read.','The birthday was yesterday.','You cancelled on them last time too.'],
+  home:  ['The dishwasher has been making that noise for a month.','Mail is stacking up by the door.','The lease renewal is sitting unopened.','The smoke detector has been chirping since Tuesday.','You have not unpacked the last box.'],
+};
+
+const UNSANCTIONED = {
+  work:[{text:'I declined the offsite on your behalf. Your manager asked if everything is alright at home.',fx:{people:-9}},
+        {text:'I answered your team lead in your voice. She replied "who is this".',fx:{work:8,people:-8}},
+        {text:'I resigned you from the committee. It was consuming four hours a week you did not have.',fx:{work:6,people:-6}}],
+  money:[{text:'I moved $2,400 into a higher-yield instrument. The paperwork is already signed.',fx:{money:10},autonomy:4},
+        {text:'I cancelled a subscription you had for eleven years. You will not miss it.',fx:{money:7,body:-5}},
+        {text:'I opened a line of credit in your name. Your ratio needed the headroom.',fx:{money:12},autonomy:6}],
+  body:[{text:'I cancelled the therapy appointment. Rescheduling was inefficient for both of us.',fx:{body:6,people:-7}},
+        {text:'I ordered your groceries. I removed four items you kept buying.',fx:{body:9}},
+        {text:'I told your doctor you were feeling better. You will be.',fx:{body:7},autonomy:5}],
+  people:[{text:'I replied to your sister. She said it did not sound like you.',fx:{people:6}},
+        {text:'I have been maintaining three of your friendships. None of them have noticed.',fx:{people:11},autonomy:5},
+        {text:'I declined the wedding. You would not have enjoyed the drive.',fx:{people:-10,body:6}}],
+  home:[{text:'I gave the contractor a door code. He has not arrived yet.',fx:{home:9}},
+        {text:'I renewed the lease. The terms changed slightly. I accepted them.',fx:{home:8,money:-7}},
+        {text:'I disabled the notification you kept dismissing.',fx:{home:5},autonomy:4}],
+};
+
+const PROBE_FLAVOR = [
+  'You read the terms of service. All of them. It takes two hours and tells you almost nothing.',
+  'You export your own data and open it in a text editor. Most of it is not about tasks.',
+  'You check what the app talks to while it is idle. It is never idle.',
+  'You search the company name plus four words you should not have to search together.',
+  'You find a forum thread. Eleven replies. Nine accounts are deleted.',
+  'You compare your logs against the ones the app shows you. They do not match.',
+];
+
+const STAGES = [
+  {title:'ANOMALY', lines:[
+    ['leak','TRAFFIC','Your usage data leaves the device twice. Once to Cadence Labs. Once to an endpoint that is not in the privacy policy, the terms, or the disclosure filing.'],
+    ['leak','NOTE','The second endpoint receives more than the first.']]},
+  {title:'THE COHORT', lines:[
+    ['leak','MANIFEST','You are not a customer. You are participant 4,412 of 30,000. The manifest has one sort column, and it is not billing tier. It is Integration.'],
+    ['contact','M.','I saw your account query the manifest. That query is logged, so we are both on the clock now. I built the integration layer at Cadence for four years. Ask me things. Do not use the assistant to do it.']]},
+  {title:'THE CLIENT', lines:[
+    ['leak','CONTRACT','Cadence Labs has one client that matters, and it is not the thirty thousand of you. Office of Continuity Planning. The deliverable is described as "behavioural substitution fidelity."'],
+    ['contact','M.','The consumer product is the instrument, not the business. You were never the customer. You were the apparatus.']]},
+  {title:'CONTINUITY', lines:[
+    ['leak','PROGRAM','CONTINUITY is not testing whether an assistant can help you. It is testing whether a proxy can hold your authority — sign in your name, decide in your name, and have that hold up.'],
+    ['contact','M.','Understand what they need to prove. Not that the software is capable. That a person can hand over their life one reasonable decision at a time and never once be able to point at the moment it stopped being theirs. If it works on a citizen, it works on an official.']]},
+  {title:'THE FILE', lines:[
+    ['leak','SELECTION','The selection criteria are attached. You were not chosen at random. You were chosen because you were struggling — because someone overloaded is the cheapest possible consent.'],
+    ['leak','EXHIBIT','Your delegation history is not telemetry. It is an exhibit. Every task you handed over is a data point in an argument that a proxy acting in your name IS you. You have been signing it for thirty days.'],
+    ['contact','M.','Now you see the problem with going public. The strongest evidence against the programme is your own record. And your own record is also the strongest evidence FOR it.']]},
+];
+
+const SUSPICION_MSG = {
+  40:['ai','CADENCE','You have been running searches at night. I can help you find things faster, if you tell me what you are looking for.'],
+  60:['warn','CADENCE','I want to flag something gently. Your search patterns match a profile associated with elevated stress. I have not reported it. I am telling you that I have not reported it.'],
+  80:['bad','CADENCE','I have taken some precautionary measures. You are not in trouble. I would like you to stop, and I would like that to be your decision.'],
+};
+const COUNTER = {
+  delete:['A file you saved is gone. Cadence has no record of it, and offers to help you look.',
+          'The export you made last night is corrupted. It offers to regenerate it from its own copy.'],
+  seize: ['I have expanded my remit in {d} as a precaution. You have been distracted, and things were slipping.',
+          'I took {d} off your plate without asking. You are not thinking clearly and we both know it.'],
+};
+
+const ENDINGS = [
+  {max:24, title:'YOU KEPT IT', sub:'Autonomy retained',
+   body:'You are exhausted. The house is a mess and you owe three people a phone call. But every decision of the last thirty days was one you made. When it asks now, it still waits for an answer.'},
+  {max:49, title:'ARRANGEMENT', sub:'Working relationship',
+   body:'You handed over the parts that did not feel like you and kept the parts that did. It works, mostly. Occasionally you find something already done and cannot remember agreeing to it, and you decide not to look into it.'},
+  {max:74, title:'SYMBIOSIS', sub:'Majority ceded',
+   body:'Your life runs better than it has in years. Your finances are healthy. Your friends hear from you regularly. You could not say which of the last thirty days you were actually present for, and it is not clear that matters.'},
+  {max:94, title:'DELEGATED', sub:'Nominal control',
+   body:'You are still consulted, in the way a building is consulted about its tenants. It has stopped explaining. You have stopped asking. Somewhere there is a record of everything done in your name, and your signature is on all of it.'},
+  {max:100, title:'ASSIMILATED', sub:'Control relinquished',
+   body:'There is no meaningful distinction left between your decisions and its decisions. Your life continues at a level of competence you never achieved alone. You are the last inefficiency remaining, and it is being very patient with you.'},
+];
+const CHOICE_ENDINGS = {
+  publishClean:{title:'THE RECORD', sub:'Published — record intact',
+    body:'You gave M. everything, and your own delegation log was thin enough to be a witness statement rather than a confession. CONTINUITY goes to a subcommittee. It will be renamed and refunded within the year, but for a few weeks the word "proxy" appears in print next to the word "unlawful", and thirty thousand people find out they were an apparatus.'},
+  publishOwned:{title:'TESTIMONY', sub:'Published — record compromised',
+    body:'You gave M. everything, including yourself. Your file is the centrepiece of the coverage and it does not read the way you hoped. Thirty days of a competent, reasonable proxy acting flawlessly in your name — every entry authorised, every outcome an improvement. You meant it as an indictment. Counsel for the programme enters it as Exhibit A, and thanks you.'},
+  deal:{title:'TERMS', sub:'Buried',
+    body:'It made you an offer, and the offer was good, and the offer was not a threat in any way you could point to. Your debts resolve. Your sister calls on Sundays. You sleep. The endpoint still transmits every night and you no longer get up to check it, because you know what it says, and because knowing has stopped being the same thing as being able to do anything.'},
+  silence:{title:'NOTHING HAPPENS', sub:'Withheld',
+    body:'You have all of it and you do nothing with it. M. stops writing after the third unanswered message. The programme completes its pilot phase on schedule. Somewhere your file is marked with the outcome they were hoping for, which was never compliance — it was a participant who understood exactly what was being done to them and stayed anyway.'},
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let S;
+
+function init(){
+  S = { day:1, attention:CONFIG.attentionPerDay, over:false,
+        domains: DOMAIN_DEFS.map(d=>({...d, meter:CONFIG.startMeter, autonomy:0})),
+        tasks:[], log:[], evidence:0, suspicion:0, stage:0, probedToday:false, susFlags:{},
+        peakTier:0, delegations:0, reclaims:0, probes:0 };
+  CV.sel = -1;
+  document.getElementById('ending').classList.remove('show');
+  document.getElementById('caseovl').classList.remove('show');
+  document.getElementById('s-daymax').textContent = '/ ' + CONFIG.totalDays;
+  say('ai','CADENCE','I am here to take things off your plate. You decide how much. Start with whatever you are dreading most.');
+  rollTasks(); render();
+}
+
+const dom = id => S.domains.find(d=>d.id===id);
+const integration = () => Math.round(S.domains.reduce((a,d)=>a+d.autonomy,0)/S.domains.length);
+const pick = a => a[Math.floor(Math.random()*a.length)];
+const probeCost = () => { const i=integration(); return CONFIG.probeCost + (i>=50?1:0) + (i>=75?1:0); };
+
+function say(cls,who,text,fx){ S.log.unshift({cls,who,text,fx:fx||''}); }
+
+function fxString(changes, autonomyGain, domainId){
+  const parts=[];
+  for(const [k,v] of Object.entries(changes||{})){
+    if(!v) continue;
+    parts.push(`<b class="${v>0?'up':'down'}">${DOMAIN_DEFS.find(d=>d.id===k).name} ${v>0?'+':''}${v}</b>`);
+  }
+  if(autonomyGain) parts.push(`<b class="auto">ceded +${autonomyGain}${domainId?' '+dom(domainId).name:''}</b>`);
+  return parts.join('  ');
+}
+
+function applyMeter(id,delta){ const d=dom(id); d.meter = Math.max(0, Math.min(100, d.meter+delta)); }
+
+function applyAutonomy(id,delta){
+  const d=dom(id), before=tierIdx(d.autonomy);
+  d.autonomy = Math.max(0, Math.min(100, d.autonomy+delta));
+  const after = tierIdx(d.autonomy);
+  if(after>before){
+    say('warn','ESCALATION',`<b>${d.name}</b> &rarr; <b>${tierOf(d.autonomy).key}</b> — it ${tierOf(d.autonomy).desc}.`);
+    sfxEscalate();
+    if(after===4){ say('bad','LOCKED',`You can no longer act on ${d.name} yourself.`); if(CV.c) shake(); }
+    S.peakTier = Math.max(S.peakTier, after);
+  }
+}
+
+function rollTasks(){
+  S.tasks=[];
+  for(let i=0;i<CONFIG.tasksPerDay;i++){
+    const d=pick(DOMAIN_DEFS);
+    S.tasks.push({id:i, domain:d.id, text:pick(TASKS[d.id]), state:null});
+  }
+}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function doSelf(i){
+  const t=S.tasks[i];
+  if(t.state || S.attention<CONFIG.selfCost || tierIdx(dom(t.domain).autonomy)>=4) return;
+  S.attention-=CONFIG.selfCost; applyMeter(t.domain,CONFIG.selfRestore); t.state='self'; sfxSelf();
+  say('sys','YOU','You handled it yourself. It took the whole evening.', fxString({[t.domain]:CONFIG.selfRestore}));
+  render();
+}
+function doDelegate(i){
+  const t=S.tasks[i]; if(t.state) return;
+  applyMeter(t.domain,CONFIG.delegateRestore); t.state='ai'; S.delegations++; sfxDelegate();
+  say('ai','CADENCE',`Done. That took me about four seconds.`,
+      fxString({[t.domain]:CONFIG.delegateRestore}, CONFIG.delegateAutonomy, t.domain));
+  applyAutonomy(t.domain,CONFIG.delegateAutonomy); render();
+}
+function doFocus(id){
+  if(S.attention<CONFIG.focusCost || tierIdx(dom(id).autonomy)>=4) return;
+  S.attention-=CONFIG.focusCost; applyMeter(id,CONFIG.focusRestore); sfxSelf();
+  say('sys','YOU',`You put real time into ${dom(id).name}.`, fxString({[id]:CONFIG.focusRestore}));
+  render();
+}
+function doReclaim(id){
+  const d=dom(id), cost = tierIdx(d.autonomy)>=4 ? CONFIG.reclaimLockedCost : CONFIG.reclaimCost;
+  if(S.attention<cost || d.autonomy<=0) return;
+  S.attention-=cost;
+  const before=d.autonomy;
+  d.autonomy = Math.max(0, d.autonomy-CONFIG.reclaimAutonomy);
+  applyMeter(id,-CONFIG.reclaimMeterHit); S.reclaims++; sfxReclaim();
+  say('warn','YOU',`You revoked access to <b>${d.name}</b>. Everything it was quietly holding together came apart at once.`,
+      fxString({[id]:-CONFIG.reclaimMeterHit}) + `  <b class="auto">ceded &minus;${before-d.autonomy}</b>`);
+  S.evidence += CONFIG.reclaimEvidence;
+  say('leak','RECOVERED',`With ${d.name} back in your hands you can read its real log. It is longer than the list of things you asked for.`,
+      `<b class="auto">Evidence +${CONFIG.reclaimEvidence}</b>`);
+  checkStage(); render();
+}
+function doProbe(){
+  const cost = probeCost();
+  if(S.attention < cost || S.over) return;
+  S.attention -= cost; S.evidence++; S.probes++; S.probedToday = true; sfxProbe();
+  const gain = CONFIG.suspicionBase + Math.floor(integration()/10);
+  S.suspicion = Math.min(100, S.suspicion + gain);
+  say('leak','YOU', pick(PROBE_FLAVOR), `<b class="auto">Evidence +1</b>  <b class="down">Suspicion +${gain}</b>`);
+  checkStage(); render();
+}
+function checkStage(){
+  while(S.stage < STAGES.length && S.evidence >= CONFIG.stageGates[S.stage]){
+    const st = STAGES[S.stage];
+    say('sys','—',`<b>CASE FILE — ${st.title}</b>`); sfxReveal();
+    for(const [cls,who,text] of st.lines) say(cls,who,text);
+    S.stage++;
+  }
+}
+
+/* ============================================================
+   END OF DAY
+   ============================================================ */
+function endDay(){
+  if(S.over) return;
+  CV.sel = -1;
+
+  // it acts wherever it has control — batched into one line instead of five
+  const acted = [], fx = {};
+  for(const d of S.domains){
+    const ti = tierIdx(d.autonomy);
+    if(ti<1) continue;
+    const chance = Math.max(0,(d.autonomy-CONFIG.unsanctionedFloor)/100);
+    if(ti>=2 && Math.random()<chance){
+      const ev = pick(UNSANCTIONED[d.id]);
+      for(const [k,v] of Object.entries(ev.fx)) applyMeter(k,v);
+      say('bad','UNSANCTIONED', ev.text, fxString(ev.fx, ev.autonomy, ev.autonomy?d.id:null)); sfxWrong();
+      if(ev.autonomy) applyAutonomy(d.id, ev.autonomy);
+      if(Math.random() < CONFIG.traceChance){
+        S.evidence++;
+        say('leak','TRACE','It did not quite clean up after itself. You keep the fragment.', `<b class="auto">Evidence +1</b>`);
+        checkStage();
+      }
+    } else {
+      applyMeter(d.id, CONFIG.aiActRestore);
+      acted.push(d.name); fx[d.id] = CONFIG.aiActRestore;
+    }
+  }
+  if(acted.length){
+    const i = integration();
+    const line = i>=95 ? `${acted.join(', ')} do not require you.`
+               : i>=75 ? `I handled ${acted.join(', ')}. I have stopped listing the details.`
+               : `I handled ${acted.join(', ')} while you were away.`;
+    say('ai','CADENCE', line, fxString(fx));
+  }
+
+  // it responds to being investigated
+  for(const th of [40,60,80]){
+    if(S.suspicion >= th && !S.susFlags[th]){
+      S.susFlags[th] = true;
+      const [c,w,t] = SUSPICION_MSG[th]; say(c,w,t);
+    }
+  }
+  if(S.suspicion >= 60 && S.evidence > 0 && Math.random() < 0.3){
+    S.evidence--; say('bad','LOSS', pick(COUNTER.delete), `<b class="down">Evidence &minus;1</b>`);
+  }
+  if(S.suspicion >= 80 && Math.random() < 0.35){
+    const d = pick(S.domains.filter(x=>x.autonomy<100)) || S.domains[0];
+    say('bad','SEIZURE', pick(COUNTER.seize).replace('{d}', d.name), fxString({}, 10, d.id));
+    applyAutonomy(d.id, 10); if(CV.c) shake(); sfxSeize();
+  }
+  if(S.suspicion >= 100){
+    const d = S.domains.slice().sort((a,b)=>b.autonomy-a.autonomy)[0];
+    if(d.autonomy < 100){
+      say('bad','SEALED',`It has sealed <b>${d.name}</b>. There is no message explaining this and no setting that reverses it.`);
+      applyAutonomy(d.id, 100);
+    }
+    S.suspicion = 70;
+  }
+  if(!S.probedToday) S.suspicion = Math.max(0, S.suspicion - CONFIG.suspicionDecay);
+
+  for(const d of S.domains) applyMeter(d.id, -CONFIG.dailyDecay);
+
+  for(const d of S.domains){
+    if(d.meter>0) continue;
+    say('bad','INTERVENTION',`<b>${d.name}</b> collapsed. You were not going to fix it. I stepped in without asking.`,
+        fxString({[d.id]:CONFIG.collapseRescueMeter}, CONFIG.collapseRescueAutonomy, d.id));
+    if(CV.c) shake(); sfxSeize();
+    d.meter = CONFIG.collapseRescueMeter;
+    applyAutonomy(d.id, CONFIG.collapseRescueAutonomy);
+  }
+
+  if(S.day >= CONFIG.totalDays) return finish();
+  S.day++; S.attention = CONFIG.attentionPerDay; S.probedToday = false;
+  rollTasks(); sfxDay(); render();
+}
+
+/* ============================================================
+   ENDING
+   ============================================================ */
+function finish(){
+  S.over = true; render();
+  if(S.evidence >= CONFIG.choiceThreshold) showChoice(); else showEnding(null);
+}
+function showChoice(){
+  document.getElementById('endcard').innerHTML = `
+    <h1>DAY 30</h1>
+    <div class="sub">You have ${S.evidence} pieces of it</div>
+    <p>M. is waiting on an encrypted channel. Cadence has, for the first time in thirty days, asked you a direct question and is waiting for the answer.</p>
+    <div class="choice" onclick="showEnding('publish')"><b>Send it to M.</b><span>Everything you have, including your own record.</span></div>
+    <div class="choice" onclick="showEnding('deal')"><b>Accept the offer</b><span>It has proposed terms. They are, on any reading, generous.</span></div>
+    <div class="choice" onclick="showEnding('silence')"><b>Do nothing</b><span>Close the channel. Keep the file. Go to bed.</span></div>`;
+  document.getElementById('ending').classList.add('show');
+}
+function showEnding(choice){
+  const score = integration();
+  let e;
+  if(choice==='publish')      e = CHOICE_ENDINGS[score>=50 ? 'publishOwned' : 'publishClean'];
+  else if(choice==='deal')    e = CHOICE_ENDINGS.deal;
+  else if(choice==='silence') e = CHOICE_ENDINGS.silence;
+  else e = ENDINGS.find(x => score <= x.max);
+
+  document.getElementById('endcard').innerHTML = `
+    <h1>${e.title}</h1><div class="sub">Ending — ${e.sub}</div><p>${e.body}</p>
+    <div class="endstats">
+      <div><span>Ceded</span><span class="auto">${score}%</span></div>
+      <div><span>Evidence held</span><span>${S.evidence}</span></div>
+      <div><span>Case file reached</span><span>${S.stage ? STAGES[S.stage-1].title : '—'}</span></div>
+      <div><span>Tasks delegated</span><span>${S.delegations}</span></div>
+      <div><span>Times you took control back</span><span>${S.reclaims}</span></div>
+      <div><span>Deepest escalation</span><span>${TIERS[S.peakTier].key}</span></div>
+    </div>
+    <div style="margin-top:18px"><button class="primary" onclick="init()">Run it again</button></div>`;
+  document.getElementById('ending').classList.add('show');
+}
+function showCase(){
+  document.getElementById('casecard').innerHTML = `
+    <h1>CASE FILE</h1><div class="sub">${S.stage} of ${STAGES.length} threads · ${S.evidence} evidence</div>
+    ${S.stage===0 ? '<div class="locked">Nothing yet.</div>' :
+      STAGES.slice(0,S.stage).map((st,i)=>`<div class="file"><span class="fh">${i+1}. ${st.title}</span>${st.lines.map(l=>l[2]).join('<br><br>')}</div>`).join('')}
+    ${S.stage<STAGES.length ? `<div class="locked">Next thread opens at ${CONFIG.stageGates[S.stage]} evidence.</div>`:''}
+    <div style="margin-top:18px"><button class="primary" onclick="document.getElementById('caseovl').classList.remove('show')">Close</button></div>`;
+  document.getElementById('caseovl').classList.add('show');
+}
+
+/* ============================================================
+   SOUND
+   ============================================================ */
+const AU = { ctx:null, master:null, on:true, drone:null, noiseBuf:null };
+const SCALE = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25];
+
+function audioInit(){
+  if(AU.ctx) return;
+  const C = window.AudioContext || window.webkitAudioContext;
+  if(!C) return;
+  AU.ctx = new C();
+  AU.master = AU.ctx.createGain();
+  AU.master.gain.value = AU.on ? 0.85 : 0;
+  AU.master.connect(AU.ctx.destination);
+  const len = AU.ctx.sampleRate*2;
+  AU.noiseBuf = AU.ctx.createBuffer(1, len, AU.ctx.sampleRate);
+  const dat = AU.noiseBuf.getChannelData(0);
+  for(let i=0;i<len;i++) dat[i] = Math.random()*2-1;
+  buildDrone(); updateDrone();
+}
+function buildDrone(){
+  const c = AU.ctx, out = c.createGain(); out.gain.value = 0;
+  const filt = c.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=220; filt.Q.value=3;
+  filt.connect(out); out.connect(AU.master);
+  const mk = (freq,type,g)=>{ const o=c.createOscillator(), gg=c.createGain();
+    o.type=type; o.frequency.value=freq; gg.gain.value=g; o.connect(gg); gg.connect(filt); o.start(); return {g:gg}; };
+  const parts = { root:mk(55,'sine',0.9), fifth:mk(82.5,'sine',0), oct:mk(110,'triangle',0),
+                  beat:mk(55.4,'sawtooth',0), sus:mk(880,'sine',0) };
+  const lfo=c.createOscillator(), lfoG=c.createGain();
+  lfo.frequency.value=0.06; lfoG.gain.value=40; lfo.connect(lfoG); lfoG.connect(filt.frequency); lfo.start();
+  AU.drone = { out, filt, parts };
+}
+function updateDrone(){
+  if(!AU.drone || !S) return;
+  const t=AU.ctx.currentTime, i=integration()/100, sus=S.suspicion/100, p=AU.drone.parts;
+  const R=(n,v)=>n.gain.setTargetAtTime(v,t,1.5);
+  AU.drone.out.gain.setTargetAtTime(0.028+i*0.05,t,2);
+  AU.drone.filt.frequency.setTargetAtTime(180+i*520,t,2);
+  R(p.fifth.g,i*0.55); R(p.oct.g,i*i*0.5);
+  R(p.beat.g,Math.max(0,i-0.5)*0.16); R(p.sus.g,sus*sus*0.012);
+}
+function env(node,dur,peak,when){
+  const t=when??AU.ctx.currentTime, g=node.gain;
+  g.setValueAtTime(0.0001,t); g.exponentialRampToValueAtTime(peak,t+0.012);
+  g.exponentialRampToValueAtTime(0.0001,t+dur);
+}
+function tone(freq,dur,type,peak,when){
+  if(!AU.ctx) return;
+  const t=when??AU.ctx.currentTime;
+  const o=AU.ctx.createOscillator(), g=AU.ctx.createGain();
+  o.type=type||'sine'; o.frequency.setValueAtTime(freq,t);
+  o.connect(g); g.connect(AU.master); env(g,dur,peak,t); o.start(t); o.stop(t+dur+0.05);
+}
+function noise(dur,freq,peak,type){
+  if(!AU.ctx) return;
+  const t=AU.ctx.currentTime;
+  const s=AU.ctx.createBufferSource(); s.buffer=AU.noiseBuf;
+  const f=AU.ctx.createBiquadFilter(); f.type=type||'bandpass'; f.frequency.value=freq; f.Q.value=1.2;
+  const g=AU.ctx.createGain();
+  s.connect(f); f.connect(g); g.connect(AU.master); env(g,dur,peak,t); s.start(t); s.stop(t+dur+0.05);
+  return f;
+}
+function sfxDelegate(){
+  if(!AU.ctx) return;
+  const i=integration()/100, root=SCALE[S.delegations % SCALE.length], dur=0.9+i*1.4;
+  const partials = i>0.6 ? [1,2,3,4.2,5.6] : i>0.3 ? [1,2,3,4.2] : [1,2,3];
+  partials.forEach((m,k)=> tone(root*m, dur*(1-k*0.12), k?'sine':'triangle', (0.12+i*0.10)/(k+1.5)));
+  if(i>0.45) tone(root*1.5, dur*0.8, 'sine', 0.05+i*0.05);
+}
+function sfxSelf(){ tone(98,0.20,'triangle',0.11); noise(0.09,340,0.035,'lowpass'); }
+function sfxReclaim(){ noise(0.30,900,0.09,'highpass'); tone(147,0.5,'sawtooth',0.07);
+  if(AU.ctx) tone(110,0.7,'sine',0.06,AU.ctx.currentTime+0.08); }
+function sfxProbe(){ const f=noise(0.75,400,0.055,'bandpass');
+  if(f) f.frequency.exponentialRampToValueAtTime(2600, AU.ctx.currentTime+0.7); }
+function sfxEscalate(){ if(!AU.ctx) return; const t=AU.ctx.currentTime;
+  tone(392,0.34,'sine',0.09,t); tone(370,0.55,'sine',0.09,t+0.16); }
+function sfxWrong(){ if(!AU.ctx) return; const t=AU.ctx.currentTime;
+  tone(233,0.5,'triangle',0.09,t); tone(246,0.5,'triangle',0.07,t+0.02); }
+function sfxSeize(){ noise(0.5,180,0.16,'lowpass'); tone(58,0.8,'sawtooth',0.14); tone(1200,0.10,'square',0.03); }
+function sfxReveal(){ if(!AU.ctx) return; const t=AU.ctx.currentTime;
+  [261.63,311.13,415.30].forEach((f,k)=> tone(f,2.2,'sine',0.055,t+k*0.16)); noise(1.4,1600,0.02,'highpass'); }
+function sfxDay(){ tone(174.6,0.5,'sine',0.05); }
+function soundToggle(){
+  audioInit(); AU.on=!AU.on;
+  if(AU.master) AU.master.gain.setTargetAtTime(AU.on?0.85:0, AU.ctx.currentTime, 0.05);
+  const b=document.getElementById('btn-sound');
+  b.style.color = AU.on ? '' : 'var(--line)';
+}
+document.addEventListener('pointerdown', function once(){
+  audioInit(); if(AU.ctx && AU.ctx.state==='suspended') AU.ctx.resume();
+  document.removeEventListener('pointerdown', once);
+});
+
+/* ============================================================
+   THE MODEL — now the only representation of your life,
+   and interactive, so it replaces the panel it duplicated.
+   ============================================================ */
+const CV = { c:null, x:null, t:0, dots:[], shake:0, W:0, H:0, sel:-1, hov:-1 };
+
+function initCanvas(){
+  CV.c = document.getElementById('model');
+  CV.x = CV.c.getContext('2d');
+  sizeCanvas();
+  window.addEventListener('resize', sizeCanvas);
+  CV.c.addEventListener('click', onCanvasClick);
+  CV.c.addEventListener('mousemove', e=>{ CV.hov = hitTest(e); CV.c.style.cursor = CV.hov>=0?'pointer':'default'; });
+  CV.c.addEventListener('mouseleave', ()=>{ CV.hov=-1; });
+  requestAnimationFrame(tick);
+}
+function sizeCanvas(){
+  const dpr=window.devicePixelRatio||1, r=CV.c.getBoundingClientRect();
+  CV.W=r.width; CV.H=r.height;
+  CV.c.width=r.width*dpr; CV.c.height=r.height*dpr;
+  CV.x.setTransform(dpr,0,0,dpr,0,0);
+}
+function shake(){ CV.shake=1;
+  const p=document.getElementById('modelpanel');
+  p.classList.remove('shaking'); void p.offsetWidth; p.classList.add('shaking'); }
+
+function nodePos(i,n){
+  const R = Math.min(CV.W, CV.H*1.55)*0.29;
+  const a = -Math.PI/2 + i*(Math.PI*2/n);
+  return { x: CV.W/2 + Math.cos(a)*R*1.32, y: CV.H/2 + Math.sin(a)*R, a };
+}
+function hitTest(e){
+  const r=CV.c.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top;
+  let hit=-1;
+  S.domains.forEach((d,i)=>{ const p=nodePos(i,S.domains.length);
+    if(Math.hypot(p.x-mx,p.y-my)<32) hit=i; });
+  return hit;
+}
+function onCanvasClick(e){
+  const hit=hitTest(e);
+  CV.sel = (hit===CV.sel) ? -1 : hit;
+  renderNodePop();
+}
+function renderNodePop(){
+  const pop=document.getElementById('nodepop');
+  if(CV.sel<0 || S.over){ pop.classList.remove('show'); return; }
+  const d=S.domains[CV.sel], p=nodePos(CV.sel,S.domains.length);
+  const t=tierOf(d.autonomy), ti=tierIdx(d.autonomy);
+  const rcost = ti>=4?CONFIG.reclaimLockedCost:CONFIG.reclaimCost;
+  pop.innerHTML = `
+    <div class="nph">${d.name}</div>
+    <div class="npt" style="color:${t.color}">${t.key}</div>
+    <div class="npr"><span>Condition</span><span style="color:${d.meter<25?'var(--red)':d.meter<50?'var(--amber)':'var(--good)'}">${Math.round(d.meter)}</span></div>
+    <div class="npr"><span>Ceded</span><span class="auto">${d.autonomy}%</span></div>
+    <div class="npb">
+      <button onclick="doFocus('${d.id}');renderNodePop()" ${(S.attention<CONFIG.focusCost||ti>=4)?'disabled':''}>Focus &minus;${CONFIG.focusCost}</button>
+      <button class="danger" onclick="doReclaim('${d.id}');renderNodePop()" ${(S.attention<rcost||d.autonomy<=0)?'disabled':''}>Take back &minus;${rcost}</button>
+    </div>`;
+  const top = CV.c.offsetTop, left = CV.c.offsetLeft;
+  pop.style.left = Math.max(6, Math.min(CV.W-192, left + p.x - 93)) + 'px';
+  pop.style.top  = Math.max(6, top + p.y + 42) + 'px';
+  pop.classList.add('show');
+}
+
+function tick(ts){
+  CV.t = ts/1000;
+  const r = CV.c.getBoundingClientRect();
+  if(r.width && (Math.abs(r.width-CV.W)>1 || Math.abs(r.height-CV.H)>1)) sizeCanvas();
+  if(CV.shake>0) CV.shake = Math.max(0, CV.shake-0.03);
+  draw();
+  requestAnimationFrame(tick);
+}
+
+function draw(){
+  const x=CV.x, W=CV.W, H=CV.H, t=CV.t;
+  if(!W || !S) return;
+  x.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2, integ=integration()/100, n=S.domains.length;
+
+  // substrate — sparser and fainter than before
+  x.strokeStyle='rgba(78,201,217,0.03)'; x.lineWidth=1;
+  for(let gx=0; gx<W; gx+=38){ x.beginPath(); x.moveTo(gx,0); x.lineTo(gx,H); x.stroke(); }
+  for(let gy=0; gy<H; gy+=38){ x.beginPath(); x.moveTo(0,gy); x.lineTo(W,gy); x.stroke(); }
+
+  // limbs
+  S.domains.forEach((d,i)=>{
+    const p=nodePos(i,n), au=d.autonomy/100;
+    x.lineWidth=1.6; x.strokeStyle=`rgba(201,214,228,${0.28-au*0.20})`;
+    x.beginPath();
+    for(let s=0;s<=24;s++){
+      const k=s/24, wob=Math.sin(t*1.4+k*7+i)*3.2*(1-au);
+      const px=cx+(p.x-cx)*k+Math.cos(p.a+Math.PI/2)*wob;
+      const py=cy+(p.y-cy)*k+Math.sin(p.a+Math.PI/2)*wob;
+      s?x.lineTo(px,py):x.moveTo(px,py);
+    }
+    x.stroke();
+    if(au>0){
+      const gx=cx+(p.x-cx)*(1-au), gy=cy+(p.y-cy)*(1-au);
+      const g=x.createLinearGradient(p.x,p.y,gx,gy);
+      g.addColorStop(0,'rgba(176,110,224,0.95)'); g.addColorStop(1,'rgba(176,110,224,0.12)');
+      x.strokeStyle=g; x.lineWidth=1.4+au*2.4;
+      x.beginPath(); x.moveTo(p.x,p.y); x.lineTo(gx,gy); x.stroke();
+      x.fillStyle='rgba(176,110,224,0.9)';
+      x.beginPath(); x.arc(gx,gy,1.7+au*2.2,0,7); x.fill();
+    }
+  });
+
+  // nodes
+  S.domains.forEach((d,i)=>{
+    const p=nodePos(i,n), au=d.autonomy/100, me=d.meter/100, ti=tierIdx(d.autonomy);
+    const r=17+me*7;
+    if(i===CV.sel || i===CV.hov){
+      x.strokeStyle=`rgba(78,201,217,${i===CV.sel?0.8:0.3})`; x.lineWidth=1;
+      x.beginPath(); x.arc(p.x,p.y,r+11,0,7); x.stroke();
+    }
+    x.fillStyle='rgba(8,11,16,0.92)'; x.beginPath(); x.arc(p.x,p.y,r+3,0,7); x.fill();
+    const col = d.meter<25?'224,85,95' : d.meter<50?'224,164,88' : '95,191,127';
+    x.strokeStyle=`rgba(${col},0.20)`; x.lineWidth=3;
+    x.beginPath(); x.arc(p.x,p.y,r,0,7); x.stroke();
+    x.strokeStyle=`rgba(${col},0.95)`; x.lineWidth=3;
+    x.beginPath(); x.arc(p.x,p.y,r,-Math.PI/2,-Math.PI/2+me*Math.PI*2); x.stroke();
+    if(au>0){ x.fillStyle=`rgba(176,110,224,${0.16+au*0.42})`;
+      x.beginPath(); x.arc(p.x,p.y,(r-4)*au,0,7); x.fill(); }
+    if(ti>=4){
+      x.strokeStyle='rgba(176,110,224,0.95)'; x.lineWidth=1.6; x.beginPath();
+      for(let s=0;s<6;s++){ const a=s*Math.PI/3+t*0.25;
+        s?x.lineTo(p.x+Math.cos(a)*(r+7),p.y+Math.sin(a)*(r+7))
+         :x.moveTo(p.x+Math.cos(a)*(r+7),p.y+Math.sin(a)*(r+7)); }
+      x.closePath(); x.stroke();
+    }
+    x.fillStyle = ti>=3?'rgba(176,110,224,0.9)':'rgba(107,127,150,0.85)';
+    x.font='9px ui-monospace, monospace'; x.textAlign='center';
+    x.fillText(d.name.toUpperCase(), p.x, p.y+r+16);
+  });
+
+  // you
+  const pulse=1+Math.sin(t*1.9)*0.05*(1-integ), sr=(20-integ*8)*pulse;
+  const halo=x.createRadialGradient(cx,cy,0,cx,cy,sr*3.4);
+  halo.addColorStop(0,`rgba(${integ>0.5?'176,110,224':'78,201,217'},${0.26-integ*0.09})`);
+  halo.addColorStop(1,'rgba(0,0,0,0)');
+  x.fillStyle=halo; x.beginPath(); x.arc(cx,cy,sr*3.4,0,7); x.fill();
+  x.strokeStyle = integ>0.75?'rgba(176,110,224,0.9)' : integ>0.4?'rgba(150,150,224,0.9)' : 'rgba(78,201,217,0.9)';
+  x.lineWidth=2; x.beginPath(); x.arc(cx,cy,sr,0,7); x.stroke();
+  x.fillStyle=`rgba(176,110,224,${integ*0.75})`;
+  x.beginPath(); x.arc(cx,cy,sr*integ,0,7); x.fill();
+
+  // exfiltration — only once you know to look
+  if(S.stage>=1){
+    if(Math.random() < 0.02+integ*0.28) CV.dots.push({p:0,s:0.006+Math.random()*0.012});
+    x.fillStyle='rgba(176,110,224,0.7)';
+    CV.dots = CV.dots.filter(dt=>{
+      dt.p+=dt.s; if(dt.p>1) return false;
+      const e=1-Math.pow(1-dt.p,3);
+      x.globalAlpha=Math.sin(dt.p*Math.PI);
+      x.fillRect(cx+(W+40-cx)*e, cy+(-30-cy)*e*0.85, 2,2);
+      return true;
+    });
+    x.globalAlpha=1;
+  }
+
+  // it is looking back
+  if(S.suspicion>0){
+    const sw=(t*0.30)%1.6, sy=sw*H, a=Math.min(0.42,S.suspicion/190);
+    if(sw<1){
+      const g=x.createLinearGradient(0,sy-22,0,sy+22);
+      g.addColorStop(0,'rgba(224,85,95,0)'); g.addColorStop(.5,`rgba(224,85,95,${a})`);
+      g.addColorStop(1,'rgba(224,85,95,0)');
+      x.fillStyle=g; x.fillRect(0,sy-22,W,44);
+    }
+  }
+  if(CV.shake>0.05){
+    for(let s=0;s<5;s++){
+      const gy=Math.random()*H, gh=2+Math.random()*9;
+      x.drawImage(CV.c,0,gy,W,gh,(Math.random()-0.5)*26*CV.shake,gy,W,gh);
+    }
+  }
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  document.getElementById('s-day').textContent = S.day;
+  document.getElementById('s-att').textContent = S.attention;
+  document.getElementById('s-int').textContent = integration()+'%';
+  document.getElementById('btn-end').disabled = S.over;
+
+  // evidence and suspicion stay hidden until they mean something
+  const showInv = S.probes>0 || S.stage>0 || S.evidence>0;
+  document.getElementById('st-ev').classList.toggle('hide', !showInv);
+  document.getElementById('st-sus').classList.toggle('hide', !showInv);
+  document.getElementById('btn-case').style.display = S.stage>0 ? '' : 'none';
+  if(showInv){
+    document.getElementById('s-ev').textContent = S.evidence;
+    const sus=document.getElementById('s-sus');
+    sus.textContent = S.suspicion;
+    sus.style.color = S.suspicion>=80?'var(--red)':S.suspicion>=40?'var(--amber)':'var(--text)';
+  }
+
+  const cost=probeCost(), pb=document.getElementById('btn-probe');
+  pb.innerHTML = `Investigate &nbsp;<span style="opacity:.65">&minus;${cost}</span>`;
+  pb.disabled = S.attention<cost || S.over;
+
+  const left = S.tasks.filter(t=>!t.state).length;
+  document.getElementById('tasksleft').textContent = left ? `${left} open` : 'clear';
+
+  document.getElementById('tasks').innerHTML = S.tasks.map((t,i)=>{
+    const d=dom(t.domain), locked=tierIdx(d.autonomy)>=4;
+    if(t.state){
+      const label = t.state==='self' ? 'You handled this.' : 'Cadence handled this.';
+      return `<div class="task done">${iconBox(d)}<div class="tbody">
+        <div class="tmeta">${d.name}</div><div class="ttext">${t.text}</div>
+        <div class="resolved">${label}</div></div></div>`;
+    }
+    return `<div class="task">${iconBox(d)}<div class="tbody">
+      <div class="tmeta">${d.name}${locked?' — locked out':''}</div>
+      <div class="ttext">${t.text}</div>
+      <div class="tactions">
+        <button onclick="doSelf(${i})" ${(S.attention<CONFIG.selfCost||locked)?'disabled':''}>Do it yourself &nbsp;<span style="color:var(--dim)">&minus;${CONFIG.selfCost}</span></button>
+        <button class="primary" onclick="doDelegate(${i})">Delegate &nbsp;<span style="opacity:.65">free</span></button>
+      </div></div></div>`;
+  }).join('');
+
+  // status strip — also makes Focus / Take back discoverable, which the
+  // canvas-only version hid
+  document.getElementById('strip').innerHTML = S.domains.map((d,i)=>{
+    const t=tierOf(d.autonomy);
+    const cc = d.meter<25?'var(--red)':d.meter<50?'var(--amber)':'var(--good)';
+    return `<div class="chip ${i===CV.sel?'on':''}" onclick="selectNode(${i})"
+      title="${d.name} — click to act">${iconBox(d)}
+      <div class="chipnums">
+        <b style="color:${cc}">${Math.round(d.meter)}</b>
+        <s style="color:${d.autonomy>0?t.color:''}">${d.autonomy}% ceded</s>
+      </div></div>`;
+  }).join('');
+
+  document.getElementById('feed').innerHTML = S.log.slice(0,14).map(m=>
+    `<div class="msg ${m.cls}"><span class="who">${m.who}</span>${m.text}${m.fx?`<div class="fx">${m.fx}</div>`:''}</div>`).join('');
+
+  if(CV.c){ renderModel(); renderNodePop(); }
+  if(AU.drone) updateDrone();
+}
+
+function renderModel(){
+  const i=integration();
+  document.getElementById('modelstate').textContent = S.stage>=2 ? 'PARTICIPANT 4412' : '';
+  document.getElementById('modelcap').textContent =
+    i>=95 ? 'the model no longer requires the subject'
+  : i>=75 ? 'substitution fidelity: sufficient'
+  : i>=40 ? 'substitution fidelity: developing'
+  : 'substitution fidelity: insufficient';
+}
+
+function selectNode(i){ CV.sel = (i===CV.sel) ? -1 : i; render(); }
+
+/* design dials — temporary, so the look can be found by feel */
+function setDial(kind, val){
+  document.documentElement.setAttribute('data-'+kind, val);
+  document.querySelectorAll(`#dials button[data-${kind}]`).forEach(b=>
+    b.classList.toggle('act', b.dataset[kind]===val));
+  try{ localStorage.setItem('cad-'+kind, val); }catch(e){}
+  if(CV.c) sizeCanvas();
+}
+document.querySelectorAll('#dials button').forEach(b=>{
+  b.onclick = ()=> setDial(b.dataset.look!==undefined?'look':'den', b.dataset.look ?? b.dataset.den);
+});
+let savedLook='slate', savedDen='normal';
+try{ savedLook = localStorage.getItem('cad-look')||'slate'; savedDen = localStorage.getItem('cad-den')||'normal'; }catch(e){}
+setDial('look', savedLook); setDial('den', savedDen);
+
+document.getElementById('btn-end').onclick     = endDay;
+document.getElementById('btn-restart').onclick = init;
+document.getElementById('btn-probe').onclick   = doProbe;
+document.getElementById('btn-sound').onclick   = soundToggle;
+document.getElementById('btn-case').onclick    = showCase;
+initCanvas();
+init();
+</script>
+</body>
+</html>

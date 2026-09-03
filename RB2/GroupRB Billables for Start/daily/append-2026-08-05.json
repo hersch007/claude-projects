@@ -1,0 +1,11 @@
+{
+  "date": "2026-08-05",
+  "employee": "Richard Brashear",
+  "billable": {
+    "TriCoGo": 3.5,
+    "Advernology": 3.75
+  },
+  "nonBillable": {
+    "Start Performance": 2.25
+  }
+}

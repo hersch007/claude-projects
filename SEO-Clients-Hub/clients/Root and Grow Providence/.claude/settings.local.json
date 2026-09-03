@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:rootandgrowprovidence.com)",
+      "Bash(extract-text \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Root and Grow Providence\\\\RAG-SEO-Report-2026-05-31.docx\")",
+      "Bash(pandoc \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Root and Grow Providence\\\\RAG-SEO-Report-2026-05-31.docx\" -o /tmp/rag-report.md)",
+      "Read(//tmp/**)",
+      "Bash(python \"C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Root and Grow Providence/RAG-SEO-Report-2026-05-31.docx\")",
+      "Bash(where python3 *)",
+      "Bash(where python *)",
+      "Bash(where py *)",
+      "Bash(ls \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\" 2>/dev/null | tail -20)",
+      "Bash(npm list *)",
+      "Bash(node build-report.js)",
+      "Bash(mkdir -p \"C:/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/seo-client-onboard\")",
+      "WebFetch(domain:www.guidancethroughgriefcounseling.com)",
+      "Bash(ls \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\")",
+      "Bash(ls \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\")",
+      "Bash(node generate-reports.js)",
+      "Bash(NODE_PATH=\"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\npm\\\\node_modules\" node \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Guidance Through Grief Counseling\\\\generate-reports.js\")",
+      "Read(//c/Users/richa/.claude/**)",
+      "Read(//c/tmp/**)",
+      "Bash(zip -r seo-audit.skill seo-audit/)",
+      "Read(//c/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/.claude/**)",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/**)"
+    ]
+  }
+}

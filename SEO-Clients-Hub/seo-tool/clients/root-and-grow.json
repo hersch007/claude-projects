@@ -1,0 +1,13 @@
+{
+    "name":  "Root and Grow Providence",
+    "url":  "https://www.rootandgrowprovidence.com",
+    "brand_color":  "#2d6a4f",
+    "output_dir":  "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Root and Grow Providence",
+    "max_pages":  60,
+    "ignore_paths":  [
+                         "/cdn-cgi/",
+                         "?hs",
+                         "#"
+                     ],
+    "gsc_property":  "https://www.rootandgrowprovidence.com"
+}

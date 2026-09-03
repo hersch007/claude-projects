@@ -1,0 +1,136 @@
+{
+  "questions": [
+    {
+      "question": "Lesson 1 â€” Scenario: A local government receives a wireless facility application by email. The planning director reviews the attachments, asks clarifying questions by email, and sends an approval letter by mail. A carrier later disputes the decision. What is the fundamental problem with this process?",
+      "options": {
+        "A": "Email is acceptable for application review as long as both parties keep copies.",
+        "B": "The only issue is the paper approval letter. Email review is acceptable.",
+        "C": "The entire process bypassed AMP. All submissions, all communications, and all decisions must occur inside AMP to be part of the Official Record. Nothing in this process exists in the legally required record.",
+        "D": "The process is fine as long as the Jurisdiction enters the email correspondence into AMP afterward."
+      },
+      "answer": "C",
+      "explanation": "AMP is the system of record. All application activity â€” submission, review, communication, and decisions â€” must happen inside AMP. Communications and decisions made outside AMP do not exist in the Official Record and have no legal standing under federal telecommunications law."
+    },
+    {
+      "question": "Lesson 1 â€” A Small Wireless Facility application is submitted to a local government. The Jurisdiction takes no action for 65 days. What has happened legally?",
+      "options": {
+        "A": "Nothing yet. The Jurisdiction has 150 days to act on any wireless facility application.",
+        "B": "The application is deemed approved by operation of federal law. The Shot Clock for a single-site SWF application is 60 days. Inaction after the clock expires results in automatic approval without any formal decision from the Jurisdiction.",
+        "C": "The carrier must file a complaint before any legal consequence takes effect.",
+        "D": "The Jurisdiction has missed a deadline but can still issue a decision."
+      },
+      "answer": "B",
+      "explanation": "The Shot Clock for a single-site Small Wireless Facility application is 60 days. When a local government fails to act within that window, the application is deemed approved by operation of federal law. The carrier gains the right to build without waiting for formal approval. This consequence cannot be undone once the clock expires."
+    },
+    {
+      "question": "Lesson 2 â€” A Jurisdiction reviewer tells her WTS Analyst: 'Go ahead and approve the colocation project in AMP â€” I trust your judgment and I'll back you up.' The Analyst approves the project. Is this a valid approval?",
+      "options": {
+        "A": "Yes. The Analyst acted with the Jurisdiction's verbal authorization.",
+        "B": "Yes, as long as the Jurisdiction documents her agreement afterward.",
+        "C": "No. Only the Jurisdiction (Client role) can approve applications in AMP. The Analyst role has no approval authority, and the system enforces this technically. Even if the Analyst took the action, it would have no legal standing. The Jurisdiction reviewer must personally take the approval action.",
+        "D": "Yes, if the Analyst is a senior Analyst with more than two years of experience."
+      },
+      "answer": "C",
+      "explanation": "Approval authority in AMP belongs exclusively to the Jurisdiction (Client role). This is a legal requirement enforced at the system level. It cannot be delegated verbally or otherwise. The Analyst role is advisory only â€” Analysts review for completeness and support Clients but cannot make final decisions."
+    },
+    {
+      "question": "Lesson 2 â€” An Agent submits a project. The Analyst reviews it thoroughly, finds no issues, and calls the Agent saying 'Everything looks great â€” you should be approved soon.' Three weeks later the project is still In Review. What most likely happened?",
+      "options": {
+        "A": "The system has a bug. The Analyst's approval should have moved the project forward.",
+        "B": "The Analyst reviewed for completeness and found no issues â€” but only the Jurisdiction can approve. The project remains In Review until the Jurisdiction takes the formal approval action in AMP.",
+        "C": "The Agent needs to resubmit the application to trigger the approval.",
+        "D": "The Analyst needs to enter the verbal approval into AMP."
+      },
+      "answer": "B",
+      "explanation": "Analyst review is not approval. The Analyst's role is advisory â€” they check for completeness and flag issues. Approval only happens when the Jurisdiction (Client) takes the formal approval action in AMP. Until then, the project remains In Review regardless of what the Analyst communicated verbally."
+    },
+    {
+      "question": "Lesson 3 â€” A Jurisdiction reviewer looks at a dashboard row and sees the PIF column is green (Approved) and the NCM column is red (Revise). She tells a colleague the project is in good shape because the PIF is approved. What is wrong with her assessment?",
+      "options": {
+        "A": "Nothing. A green PIF is the most important status and means the project is progressing correctly.",
+        "B": "She read only one column. The NCM is red â€” meaning the Agent must make corrections and resubmit. The project is not in good shape. It is stopped at the NCM stage waiting for Agent action. Dashboard reading requires scanning the entire row, not a single column.",
+        "C": "She should check the Shot Clock value before making any determination.",
+        "D": "The Analyst should have flagged the red NCM status before she reviewed the dashboard."
+      },
+      "answer": "B",
+      "explanation": "Never read status from a single column. Each column represents a different stage of the workflow. A green status in one column does not override a red status in another. The entire row must be read left to right to understand the true state of the project and who needs to act next."
+    },
+    {
+      "question": "Lesson 3 â€” A project on the dashboard shows Invoiced status (orange). The Jurisdiction has been waiting two weeks for the application to advance. What does this status mean and what should happen next?",
+      "options": {
+        "A": "The Jurisdiction needs to issue the invoice â€” they have not completed this step.",
+        "B": "There is a system error. The Admin should be notified.",
+        "C": "Invoiced means AMP has generated a fee invoice and sent it to the Agent. The Jurisdiction does not need to act. The project advances once the Agent pays the invoice.",
+        "D": "The Analyst needs to review and clear the invoice before the project can proceed."
+      },
+      "answer": "C",
+      "explanation": "Invoiced (orange) means the system has generated the fee invoice and delivered it to the Agent. This status requires Agent action â€” payment â€” not Jurisdiction action. Once payment is confirmed, the project moves to the next stage automatically."
+    },
+    {
+      "question": "Lesson 4 â€” An Agent selects 'New Tower' as the project type on a PIF for what is actually a colocation on an existing structure. The PIF is approved without the error being caught. What is the consequence?",
+      "options": {
+        "A": "Minor â€” the Analyst can adjust the components manually after the fact.",
+        "B": "The wrong project type triggers the wrong components, wrong fees, and wrong Shot Clock length. Everything downstream is affected. The error must be corrected at the source, which typically requires withdrawing and resubmitting the application.",
+        "C": "The Jurisdiction will catch the error during component review and correct it then.",
+        "D": "No consequence â€” AMP adjusts automatically once components are submitted."
+      },
+      "answer": "B",
+      "explanation": "Project type is the most critical field in the PIF. AMP uses it to determine required components, applicable fees, Shot Clock length, and regulatory pathway. An incorrect project type cascades errors through every subsequent stage. It must be corrected at the PIF level."
+    },
+    {
+      "question": "Lesson 4 â€” After PIF approval, an Agent tries to submit the NCM component but the Submit button is grayed out. The Analyst confirmed the NCM is complete. What is the most likely cause?",
+      "options": {
+        "A": "The Analyst needs to unlock the component for submission.",
+        "B": "There is a system error â€” the Admin should be contacted.",
+        "C": "Payment on the invoice has not yet been confirmed. Components can be completed and saved immediately after PIF approval, but cannot be submitted until payment clears.",
+        "D": "The NCM is missing a required field the Agent has not yet found."
+      },
+      "answer": "C",
+      "explanation": "After PIF approval, AMP generates an invoice. Since the May 2026 platform update, Agents can open and complete all components immediately â€” but the Submit button remains locked until payment is confirmed. This is expected behavior. The Agent should save all work and wait for payment to clear."
+    },
+    {
+      "question": "Lesson 5 â€” A Jurisdiction reviewer is evaluating an NCM structural analysis. The document is signed and stamped by a PE licensed in a different state than where the tower is located. The engineering is thorough and detailed. Should the reviewer approve it?",
+      "options": {
+        "A": "Yes. PE licensure in any state demonstrates professional competence sufficient for review.",
+        "B": "Yes, with a note flagging the license issue for the record.",
+        "C": "No. PE certification requires licensure in the state where the work is performed. An out-of-state stamp does not meet the certification standard. The NCM should be sent back for revision requiring a properly licensed PE.",
+        "D": "It depends on whether the local ordinance specifically requires in-state PE licensure."
+      },
+      "answer": "C",
+      "explanation": "A certified structural document must be stamped by a Professional Engineer licensed in the state where the work is performed. Out-of-state licensure alone does not satisfy this requirement regardless of the PE's competence. Approving a document with an out-of-state PE stamp creates a compliance gap in the Official Record."
+    },
+    {
+      "question": "Lesson 5 â€” A colocation application includes an NCM. The Jurisdiction reviewer wants to approve it but is waiting for a phone call from the Analyst to confirm the structural analysis looks acceptable. Is this the right approach?",
+      "options": {
+        "A": "Yes. Getting the Analyst's input before approving is best practice.",
+        "B": "No. The Analyst's role is advisory. Any Analyst input should be communicated inside AMP, not by phone. The reviewer makes the decision based on the documented record. A phone call from the Analyst is not part of the Official Record and should not be the basis for a formal approval action.",
+        "C": "Yes, as long as the reviewer documents the phone call in AMP afterward.",
+        "D": "Yes. Analyst sign-off is required before the Jurisdiction can approve any component."
+      },
+      "answer": "B",
+      "explanation": "The Analyst role is advisory â€” their input does not authorize or require approval. More importantly, any Analyst guidance relevant to the decision should be entered into AMP so it becomes part of the Official Record. A verbal phone call from the Analyst has no standing in the record. The Jurisdiction reviewer makes decisions based on what is documented in AMP, not on conversations outside the system."
+    },
+    {
+      "question": "Lesson 6 â€” An Agent logs into AMP from a new device and is prompted for a Two-Factor Authentication step. The Agent asks if this can be turned off since it slows down their workflow. What is the correct answer?",
+      "options": {
+        "A": "Yes â€” the Admin can disable 2FA for individual users upon request.",
+        "B": "Yes â€” 2FA can be bypassed on trusted networks.",
+        "C": "No. Two-Factor Authentication is mandatory for all AMP logins and cannot be disabled. It ensures every action in AMP is attributed to a verified, authenticated user â€” which is essential to the integrity of the Official Record.",
+        "D": "Yes â€” the Agent can request a waiver from WTS if 2FA creates workflow problems."
+      },
+      "answer": "C",
+      "explanation": "2FA is mandatory for all AMP logins and cannot be turned off or waived. Every action in AMP is permanently attributed to the authenticated user who took it. 2FA ensures that attribution is accurate â€” protecting the integrity of the Official Record and ensuring accountability for every decision, submission, and approval."
+    },
+    {
+      "question": "Lesson 6 â€” A Jurisdiction reviewer approves a wireless facility application after a detailed phone call with the Agent in which several issues were discussed and resolved. She enters the approval in AMP but does not document the phone conversation or the issues that were addressed. The decision is later challenged. What is the problem?",
+      "options": {
+        "A": "No problem. The approval action in AMP is what matters legally.",
+        "B": "The approval exists in AMP, but the basis for the decision does not. The issues discussed on the phone â€” and the reasons they were resolved â€” are not in the Official Record. If the decision is challenged, there is no documented record of what was reviewed, what concerns existed, or why they were found acceptable. The approval has no evidentiary foundation in the record.",
+        "C": "The Agent should have entered a summary of the phone call into AMP.",
+        "D": "The reviewer can reconstruct the basis for the decision from memory if the challenge is filed within 90 days."
+      },
+      "answer": "B",
+      "explanation": "An approval action in AMP creates a record that a decision was made â€” but not necessarily why. When substantive issues are identified and resolved in a phone call outside AMP, the reasoning behind the approval is missing from the Official Record. Federal law requires decisions to be supported by a documented record. An approval with no documented basis for how identified issues were resolved is legally vulnerable."
+    }
+  ]
+}

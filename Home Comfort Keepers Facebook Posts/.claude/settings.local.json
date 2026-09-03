@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.homecomfortkeepers.com)",
+      "WebSearch",
+      "WebFetch(domain:hookagency.com)",
+      "WebFetch(domain:anthonylouismedia.com)",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__list-brand-kits",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__generate-design",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__start-editing-transaction",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__create-design-from-candidate",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__perform-editing-operations"
+    ]
+  }
+}

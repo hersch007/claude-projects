@@ -1,0 +1,21 @@
+{
+  "date": "2026-07-18",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "CFB", "note": "", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true },
+    { "client": "CFB", "note": "Update to New Spreadsheet forms/pricing", "job": "0920003", "billable": true }
+  ]
+}

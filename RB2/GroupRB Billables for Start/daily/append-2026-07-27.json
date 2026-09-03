@@ -1,0 +1,11 @@
+{
+  "date": "2026-07-27",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Garlock": 5.75,
+    "TriCoGo": 2.75
+  },
+  "nonBillable": {
+    "STA": 0.75
+  }
+}

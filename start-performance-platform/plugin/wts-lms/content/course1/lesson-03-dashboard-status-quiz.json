@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer opens the AMP dashboard and sees a project where the PIF column shows 'Approved' (green) and the NCM column shows 'Revise' (red). She glances at the green PIF status and tells a colleague the project is approved and moving along fine. What is the error in her assessment?",
+      "options": {
+        "A": "She is correct. Green means approved and the project is on track.",
+        "B": "She should check the Shot Clock value before making any determination.",
+        "C": "She read only one column. The NCM column shows red (Revise), which means the Agent must make corrections and resubmit that component. The project is not moving along fine — it is stopped at the NCM stage waiting for Agent action. Dashboard reading requires scanning the entire row, not a single column.",
+        "D": "The PIF approval is what matters most. Component statuses are secondary."
+      },
+      "answer": "C",
+      "explanation": "Never read status from a single column. Each column represents a different stage of the workflow. A green status in one column does not override a red status in another. The entire row must be read left to right to understand the true state of the project and who needs to act next."
+    },
+    {
+      "question": "A project on the Jurisdiction's dashboard shows 'Invoiced' status (orange). The Jurisdiction reviewer has been waiting two weeks for the application to advance. What does this status mean, and what should happen next?",
+      "options": {
+        "A": "The Jurisdiction needs to issue the invoice — they have not completed this step yet.",
+        "B": "The project is stuck in the system and the Admin should be notified.",
+        "C": "Invoiced means AMP has generated a fee invoice and sent it to the Agent. The Jurisdiction does not need to act. The project will advance once the Agent pays the invoice. Payment can take several days to confirm.",
+        "D": "The Analyst needs to review and clear the invoice before the project can proceed."
+      },
+      "answer": "C",
+      "explanation": "Invoiced (orange) means the system has generated the fee invoice and delivered it to the Agent. This status requires Agent action — payment — not Jurisdiction action. The Jurisdiction should monitor the project but does not need to intervene. Once payment is confirmed, the project moves to the next stage automatically."
+    }
+  ]
+}

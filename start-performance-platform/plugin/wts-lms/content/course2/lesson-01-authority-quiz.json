@@ -1,0 +1,37 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A WTS Analyst reviews a submitted application and calls the Agent to explain that the structural analysis is missing a required PE certification. The Agent faxes a corrected document to the Analyst, who reviews it and considers the issue resolved. Nothing about the phone call, the fax, or the resolution is entered into AMP. Two years later there is a structural failure and your jurisdiction is named in litigation. The carrier's attorney argues the certification review was conducted improperly outside the official record. What is your jurisdiction's legal position?",
+      "options": {
+        "A": "The jurisdiction is protected because the Analyst reviewed the document and found it acceptable. The method of submission does not matter as long as the certification exists.",
+        "B": "The jurisdiction has limited exposure because the Analyst acted in good faith. Courts generally allow review records to be reconstructed from fax logs and phone records.",
+        "C": "The jurisdiction is in a difficult legal position. The review occurred outside AMP and is not part of the Official Record. There is no logged revision request, no document uploaded by the Agent in AMP, and no recorded determination that the certification was accepted. Every step of that review should have happened inside AMP.",
+        "D": "The jurisdiction is not responsible because the Analyst is a WTS employee. WTS bears the legal exposure, not the Jurisdiction."
+      },
+      "answer": "C",
+      "explanation": "The Official Record exists precisely for situations like this. When a document is reviewed outside AMP, submitted outside AMP, and approved outside AMP, those actions have no standing in the administrative record. In litigation, what matters is what the record shows. The correct procedure: issue a formal revision request in AMP, have the Agent upload the corrected document in AMP, and log the review and determination in AMP."
+    },
+    {
+      "question": "A Jurisdiction reviewer is unsure whether a carrier's application meets a specific setback requirement in the local ordinance. The WTS Analyst assigned to the jurisdiction says by phone: 'That setback doesn't apply to this tower type -- you're fine to approve it.' The reviewer approves the project based on that guidance. Later, the decision is challenged. What is the problem with how this was handled?",
+      "options": {
+        "A": "Nothing. The Analyst is an expert and the reviewer was reasonable to rely on their guidance.",
+        "B": "The Analyst's verbal guidance is not part of the Official Record and does not constitute a documented basis for the decision. The Jurisdiction reviewer must document their own reasoning in AMP. If the Analyst's interpretation was relevant, it should have been entered into AMP as a formal communication, not given by phone.",
+        "C": "The problem is that the Analyst should have approved the project directly rather than just giving advice.",
+        "D": "The reviewer should have emailed the Analyst to create a written record outside AMP before approving."
+      },
+      "answer": "B",
+      "explanation": "Analyst verbal guidance outside AMP has no official standing. The Jurisdiction reviewer is the decision-maker and must document their own reasoning in AMP. If the Analyst's interpretation factored into the decision, it needed to be communicated inside AMP so it became part of the Official Record. A decision supported only by a phone call the reviewer remembers is not a legally defensible decision."
+    },
+    {
+      "question": "A Jurisdiction reviewer receives two nearly identical Small Wireless Facility applications from two different carriers for the same street corridor. She approves the first without requesting any revisions. For the second, she requests extensive documentation she did not ask for in the first application and ultimately denies it. What federal legal risk does this create?",
+      "options": {
+        "A": "No risk. The Jurisdiction has broad discretion to evaluate each application independently.",
+        "B": "Minor risk. As long as the denial is documented in writing, the Jurisdiction is protected.",
+        "C": "Significant risk of an unreasonable discrimination claim under federal telecommunications law. Applying different documentation requirements and outcomes to materially similar applications from different carriers -- without documented distinguishing reasons -- is a basis for federal challenge. The Jurisdiction must apply its requirements consistently across carriers.",
+        "D": "No risk as long as the Jurisdiction can show the second carrier's application had at least one deficiency."
+      },
+      "answer": "C",
+      "explanation": "Federal telecommunications law prohibits local governments from unreasonably discriminating between carriers of the same service type. Approving one carrier's application while denying a materially similar application from another -- without documented, distinguishing reasons grounded in the ordinance -- is a textbook discrimination claim. Consistency across carriers is not optional. Every variation in treatment must be documented and justified in the Official Record."
+    }
+  ]
+}

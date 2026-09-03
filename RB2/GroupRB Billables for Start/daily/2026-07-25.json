@@ -1,0 +1,15 @@
+{
+  "date": "2026-07-25",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "GAR", "note": "Shrink Sleeves SEO Research Dev", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Research Dev", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Research Dev", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Schema", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Schema", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Schema", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Shrink Sleeves SEO Schema", "job": "0790149", "billable": true }
+  ]
+}

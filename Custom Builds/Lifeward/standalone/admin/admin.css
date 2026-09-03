@@ -1,0 +1,220 @@
+:root {
+    --lw-purple: #3c1053;
+    --lw-purple-light: #6b3f8f;
+    --lw-teal: #27998a;
+    --lw-teal-bright: #34b39f;
+    --lw-teal-light: #84c4c0;
+
+    --lw-bg: #ffffff;
+    --lw-page-heading: #3c1053;
+    --lw-page-ink: #2b2530;
+    --lw-page-muted: #5a5560;
+    --lw-page-border: #ecdff2;
+
+    /* Purple "hero" cards — reserved for the small headline stat tiles and the
+       login/settings forms, not for tables or dashboard panels (see below). */
+    --lw-card-bg: #3c1053;
+    --lw-ink: #ffffff;
+    --lw-card-muted: #ddc9ec;
+
+    /* White "content" cards — tables and dashboard panels, where people are
+       scanning rows/labels rather than reading one headline number. */
+    --lw-content-bg: #ffffff;
+    --lw-content-border: #e6dcee;
+    --lw-content-track: #f1eaf5;
+    --lw-content-stripe: #eaf6f3;
+
+    --lw-input-ink: #2b2530;
+    --lw-input-border: #e2d5ea;
+
+    --lw-btn-bg: var(--lw-teal-bright);
+    --lw-btn-bg-hover: #3fcab5;
+
+    --lw-bar-start: var(--lw-purple);
+    --lw-bar-end: var(--lw-teal-bright);
+
+    --lw-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    background: var(--lw-bg);
+    font-family: var(--lw-font);
+    color: var(--lw-page-ink);
+}
+
+.lw-admin-narrow {
+    max-width: 380px;
+    margin: 80px auto;
+    background: var(--lw-card-bg);
+    color: var(--lw-ink);
+    border-top: 4px solid var(--lw-teal-bright);
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: 0 14px 34px rgba(60, 16, 83, .28);
+}
+
+.lw-admin-narrow h1 { font-size: 1.3rem; margin: 0 0 8px; color: var(--lw-ink); }
+.lw-admin-narrow form { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+.lw-admin-narrow label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 700; color: var(--lw-card-muted); }
+
+/* ── Login / setup screens — full-bleed hero photo behind a glass card ──── */
+
+body.lw-login-page {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background:
+        linear-gradient(160deg, rgba(60, 16, 83, .93), rgba(39, 153, 138, .55)),
+        url('../assets/brand/Anouk-and-Marcel-on-bridge_highres.jpg') center / cover no-repeat fixed;
+}
+
+body.lw-login-page .lw-admin-narrow {
+    margin: 0;
+    width: 100%;
+    background: rgba(60, 16, 83, .74);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, .16);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .45), 0 0 0 1px rgba(52, 179, 159, .2);
+}
+
+.lw-login-logo-wrap {
+    display: block;
+    width: fit-content;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 0 auto 22px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, .3);
+}
+.lw-login-logo { height: 28px; width: auto; display: block; }
+
+body.lw-login-page .lw-admin-narrow h1 {
+    font-size: 1.5rem;
+    text-align: center;
+    text-shadow: 0 0 22px rgba(52, 179, 159, .45);
+}
+
+body.lw-login-page input:focus,
+body.lw-login-page textarea:focus,
+body.lw-login-page select:focus {
+    box-shadow: 0 0 0 3px rgba(52, 179, 159, .3);
+}
+
+.lw-admin-wrap { max-width: 900px; margin: 0 auto; padding: 32px 24px 64px; }
+
+.lw-admin-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--lw-page-border);
+}
+
+.lw-admin-brand { display: inline-flex; align-items: center; text-decoration: none; }
+.lw-admin-logo { height: 30px; width: auto; display: block; }
+.lw-admin-links a { color: var(--lw-page-muted); text-decoration: none; font-size: .9rem; font-weight: 600; margin-left: 18px; }
+.lw-admin-links a:hover { color: var(--lw-teal); }
+
+.lw-admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.lw-admin-header h1, .lw-admin-wrap > h1 { font-size: 1.5rem; margin: 0; color: var(--lw-page-heading); }
+
+input, textarea, select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid var(--lw-input-border);
+    border-radius: 9px;
+    font-size: .92rem;
+    font-family: inherit;
+    color: var(--lw-input-ink);
+    background: #fff;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--lw-teal); }
+
+.lw-btn-primary {
+    display: inline-block;
+    background: var(--lw-btn-bg);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 11px 20px;
+    font-size: .92rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+}
+.lw-btn-primary:hover { background: var(--lw-btn-bg-hover); }
+
+.lw-alert { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 8px; padding: 10px 14px; font-size: .85rem; margin-bottom: 10px; }
+.lw-alert-ok { background: #f0fdf4; border-color: #86efac; color: #15803d; }
+
+.lw-hint { color: var(--lw-page-muted); font-size: .92rem; margin-bottom: 20px; }
+.lw-admin-narrow .lw-hint { color: var(--lw-card-muted); }
+.lw-hint-small { color: var(--lw-card-muted); font-size: .82rem; font-weight: 400; }
+.lw-panel-card .lw-hint-small { color: var(--lw-page-muted); }
+.lw-muted { color: var(--lw-page-muted); }
+
+/* ── Purple "hero" stat tiles ─────────────────────────────────────────── */
+
+.lw-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.lw-stat {
+    background: var(--lw-card-bg);
+    color: var(--lw-ink);
+    border-top: 3px solid var(--lw-teal-bright);
+    border-radius: 14px;
+    padding: 18px 20px;
+    box-shadow: 0 6px 18px rgba(60, 16, 83, .18);
+}
+.lw-stat-value { font-size: 1.9rem; font-weight: 800; line-height: 1; color: var(--lw-ink); }
+.lw-stat-label { margin-top: 6px; color: var(--lw-card-muted); font-size: .84rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+
+.lw-stat-link { display: block; text-decoration: none; color: inherit; cursor: pointer; transition: transform .12s ease, box-shadow .12s ease; }
+.lw-stat-link:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(60, 16, 83, .32); }
+
+/* ── White "content" cards — tables and dashboard panels ─────────────── */
+
+.lw-empty { background: var(--lw-content-bg); border: 1px solid var(--lw-content-border); color: var(--lw-page-muted); border-radius: 14px; padding: 48px 24px; text-align: center; }
+
+.lw-table { width: 100%; border-collapse: collapse; background: var(--lw-content-bg); border: 1px solid var(--lw-content-border); color: var(--lw-page-ink); border-radius: 14px; overflow: hidden; font-size: .86rem; }
+.lw-table th { background: var(--lw-content-track); text-align: left; padding: 12px 16px; font-size: .76rem; text-transform: uppercase; letter-spacing: .05em; color: var(--lw-page-muted); }
+.lw-table td { padding: 12px 16px; border-top: 1px solid var(--lw-content-border); vertical-align: top; }
+.lw-table tbody tr:nth-child(even) { background: var(--lw-content-stripe); }
+
+.lw-badge { display: inline-block; border-radius: 20px; padding: 3px 10px; font-size: .72rem; font-weight: 800; white-space: nowrap; }
+
+.lw-form { display: flex; flex-direction: column; gap: 18px; max-width: 560px; background: var(--lw-card-bg); color: var(--lw-ink); border-radius: 14px; padding: 24px; }
+.lw-form label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 700; color: var(--lw-card-muted); }
+.lw-form a { color: var(--lw-teal-bright); font-weight: 600; }
+
+.lw-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 24px; }
+.lw-panel-card {
+    background: var(--lw-content-bg);
+    border: 1px solid var(--lw-content-border);
+    color: var(--lw-page-ink);
+    border-top: 3px solid var(--lw-teal-bright);
+    border-radius: 14px;
+    padding: 20px 22px;
+    box-shadow: 0 1px 6px rgba(60, 16, 83, .06);
+}
+.lw-panel-card h2 { margin: 0 0 16px; font-size: .95rem; color: var(--lw-page-heading); }
+
+.lw-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: .88rem; }
+.lw-bar-row:last-child { margin-bottom: 0; }
+.lw-bar-label { flex: 0 0 150px; color: var(--lw-page-muted); font-weight: 600; }
+.lw-bar-track { flex: 1; background: var(--lw-content-track); border-radius: 20px; height: 10px; overflow: hidden; }
+.lw-bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, var(--lw-bar-start), var(--lw-bar-end)); }
+.lw-bar-count { flex: 0 0 28px; text-align: right; font-weight: 700; color: var(--lw-page-ink); }
+
+.lw-bar-row-link { text-decoration: none; color: inherit; cursor: pointer; border-radius: 8px; transition: background .12s ease; }
+.lw-bar-row-link:hover { background: var(--lw-content-track); }
+
+.lw-ticker { list-style: none; margin: 0; padding: 0; }
+.lw-ticker li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--lw-content-border); font-size: .86rem; }
+.lw-ticker li:first-child { border-top: none; }
+.lw-ticker time { color: var(--lw-page-muted); font-size: .8rem; white-space: nowrap; }

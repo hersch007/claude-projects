@@ -1,0 +1,31 @@
+<!-- =========================================================
+     Rock Hill Pickleball - SITE-WIDE FOOTER CODE (scroll fade-in)
+     Paste into WPCode:  + Add Snippet -> "Add Your Custom Code (HTML)"
+     Location: "Site Wide Footer"  ->  Save + Activate.
+     Optional - the site works fine without it (content just shows without the animation).
+     ========================================================= -->
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  if(!("IntersectionObserver" in window)) return;
+  var items = [];
+  document.querySelectorAll(".rh-section > .rh-container, .rh-statsband > .rh-container").forEach(function(cont){
+    Array.prototype.forEach.call(cont.children, function(child){
+      if(child.classList.contains("rh-grid") || child.classList.contains("rh-steps")){
+        Array.prototype.forEach.call(child.children, function(g){ items.push(g); });
+      } else { items.push(child); }
+    });
+  });
+  if(!items.length) return;
+  items.forEach(function(el){ el.classList.add("rh-reveal"); });
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ items.forEach(function(el){ el.classList.add("rh-in"); }); return; }
+  items.forEach(function(el){
+    var sibs = Array.prototype.filter.call(el.parentNode.children, function(c){ return c.classList.contains("rh-reveal"); });
+    el.style.transitionDelay = Math.min(sibs.indexOf(el), 5) * 70 + "ms";
+  });
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add("rh-in"); io.unobserve(e.target); } });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+  items.forEach(function(el){ io.observe(el); });
+});
+</script>

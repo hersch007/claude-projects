@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-22",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Fruth": 5.5,
+    "ANS": 1,
+    "TriCoGo": 1,
+    "Automotive Service Products": 0.5
+  },
+  "nonBillable": {
+    "STA": 0.5,
+    "Start Performance": 1.5
+  }
+}

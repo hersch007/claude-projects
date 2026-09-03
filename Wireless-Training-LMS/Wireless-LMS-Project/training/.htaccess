@@ -1,0 +1,11 @@
+# Bypass WordPress routing for this folder
+RewriteEngine On
+RewriteBase /wts_documentation/training/
+
+# If the file exists, serve it directly — do not pass to WordPress
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# If the directory exists, serve it directly
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]

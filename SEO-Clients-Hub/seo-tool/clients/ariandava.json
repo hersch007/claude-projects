@@ -1,0 +1,9 @@
+{
+  "name": "Ari + Ava",
+  "url": "https://www.shopariandava.com",
+  "brand_color": "#1F3864",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/AriAndAva",
+  "max_pages": 5000,
+  "ignore_paths": ["/cdn-cgi/", "?", "#", "/account", "/cart", "/checkout", "/collections/vendors", "/collections/types"],
+  "gsc_property": "https://www.shopariandava.com/"
+}

@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction staff member is reviewing a wireless facility application. The Agent calls her on the phone to explain why the project should be approved, and she verbally agrees it sounds reasonable. She tells the Agent she will approve it in AMP. Later, the carrier challenges the approval process in court. What is the legal risk the Jurisdiction faces?",
+      "options": {
+        "A": "No risk — the verbal agreement is documented by the Agent's call log.",
+        "B": "Minor risk — the Jurisdiction can reconstruct the conversation in writing afterward and add it to the file.",
+        "C": "Significant risk. The phone call is not part of the Official Record. Federal telecommunications law requires that all communications and the basis for approval decisions be documented in the Official Record. A verbal conversation outside AMP does not legally exist as part of the application process. The Jurisdiction cannot defend a decision that has no documented basis in AMP.",
+        "D": "No risk — the formal approval action in AMP is what matters legally, not the communication that preceded it."
+      },
+      "answer": "C",
+      "explanation": "All communication about an application must happen inside AMP. Phone calls, emails, and conversations outside the platform are not part of the Official Record and therefore do not legally exist as part of the application process. If the Jurisdiction's decision is ever challenged, the only evidence that matters is what is documented in AMP. A decision made based on a phone call, with no documented review basis in the system, is legally indefensible."
+    },
+    {
+      "question": "An Agent logs into AMP from a new device and is prompted for a second verification step before accessing the dashboard. The Agent is frustrated by the extra step and asks if it can be turned off. What is the correct response?",
+      "options": {
+        "A": "The 2FA step can be disabled by the Admin if the Agent submits a request.",
+        "B": "2FA can be bypassed if the Agent is logging in from a trusted network.",
+        "C": "Two-Factor Authentication is mandatory for all AMP logins and cannot be disabled. It protects the integrity of the Official Record by ensuring every action in AMP is attributed to a verified, authenticated user. If the 2FA credential were compromised, an unauthorized party could take actions in AMP that would be permanently recorded as if the legitimate user had taken them.",
+        "D": "The Agent can request a waiver from WTS if 2FA creates workflow problems."
+      },
+      "answer": "C",
+      "explanation": "2FA is mandatory for all AMP logins — it cannot be turned off or waived. Every action in AMP is attributed to an authenticated user and becomes part of the permanent Official Record. 2FA ensures that attribution is accurate — that the person who took the action is who AMP says it was. Allowing 2FA bypass would undermine the integrity of the entire Official Record."
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Force \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\lavender-healing-collective\")",
+      "WebFetch(domain:www.lavenderhealingcollective.com)",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\\\\\" -ErrorAction SilentlyContinue | Select-Object -First 5 Name; Get-ChildItem \"C:\\\\Program Files \\(x86\\)\\\\nodejs\\\\\" -ErrorAction SilentlyContinue | Select-Object -First 3 Name; $env:PATH -split \";\" | Where-Object { $_ -match \"node\" })",
+      "PowerShell(Get-ChildItem \"$env:APPDATA\\\\npm\\\\node_modules\\\\docx\" -ErrorAction SilentlyContinue | Select-Object -First 3 Name; Get-ChildItem \"$env:LOCALAPPDATA\\\\Programs\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object -First 5 Name)",
+      "Bash(ls \"C:\\\\Users\\\\richa\\\\AppData\\\\Roaming\\\\Claude\\\\local-agent-mode-sessions\\\\skills-plugin\\\\801c963b-07ea-4bdd-885e-1bd6f747d3ae\\\\675484ba-821d-477d-9d86-416ea161abcb\\\\skills\\\\docx\\\\scripts\\\\office\")",
+      "PowerShell(Get-Command node -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command npm -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command python -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Command python3 -ErrorAction SilentlyContinue)",
+      "PowerShell($env:PATH -split \";\" | Where-Object { $_ -match \"node|npm|python|conda|nvm\" })",
+      "PowerShell(Get-ChildItem \"C:\\\\Program Files\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object -First 5; Get-ChildItem \"C:\\\\Program Files \\(x86\\)\\\\nodejs\" -ErrorAction SilentlyContinue | Select-Object -First 5; Get-ChildItem \"$env:APPDATA\\\\npm\\\\node_modules\\\\docx\" -ErrorAction SilentlyContinue | Select-Object -First 3)",
+      "Bash(python -c ' *)",
+      "PowerShell(python3 -c \"import pdfplumber; print\\('pdfplumber ok'\\)\" 2>&1)",
+      "Bash(python3 -c \"import pdfplumber; print\\('ok'\\)\")",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe -c \"import pdfplumber; print\\('pdfplumber ok'\\)\")",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe -m pip install pdfplumber --quiet)",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/**)",
+      "Bash(node -e \"const docx = require\\('docx'\\); console.log\\(Object.keys\\(docx\\).slice\\(0,10\\).join\\(', '\\)\\)\")",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe -e 'const d = require\\('\\\\''./node_modules/docx'\\\\''\\); console.log\\('\\\\''docx ok'\\\\''\\)')",
+      "Bash(ls \"/c/Users/richa/AppData/Local/Packages/Claude_pzs8sxrjxfjjc/LocalCache/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/\")",
+      "Bash(NODE=\"/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe\" *)",
+      "Bash(mkdir -p '/c/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Fruth/docx-build')",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/npm init *)",
+      "Read(//c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin//**)",
+      "Read(//c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node//**)",
+      "Bash(ls /c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/ | head -20 *)",
+      "Bash(NODE_PATH=/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules /c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe build-report.js)",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe /c/Users/richa/AppData/Local/Packages/Claude_pzs8sxrjxfjjc/LocalCache/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/scripts/office/validate.py 'C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Fruth/Fruth-SEO-Progress-Report-2026-05-27.docx')",
+      "Bash(/c/Users/richa/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node.exe build-report.js)"
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":"0.0.1","configurations":[{"name":"mahjong","runtimeExecutable":"npx","runtimeArgs":["serve","-p","3131","."],"port":3131}]}

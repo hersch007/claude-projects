@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(node 'C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-Web-Clients-Tricogo\\\\5772b200-9b79-42f8-8b09-7ca674ba5dc8\\\\scratchpad/reskin.js' 'C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-Web-Clients-Tricogo\\\\5772b200-9b79-42f8-8b09-7ca674ba5dc8\\\\scratchpad/tricogo-referral-page-draft.html' 'C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-Web-Clients-Tricogo\\\\5772b200-9b79-42f8-8b09-7ca674ba5dc8\\\\scratchpad/circles.b64.txt')"
+    ]
+  }
+}

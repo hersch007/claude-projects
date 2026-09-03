@@ -1,0 +1,7 @@
+{
+  "siteUrl": "https://rockhillpickleball.com",
+  "username": "YOUR_WORDPRESS_LOGIN_USERNAME",
+  "appPassword": "PASTE-YOUR-NEW-APPLICATION-PASSWORD-HERE",
+  "status": "draft",
+  "setHomepage": true
+}

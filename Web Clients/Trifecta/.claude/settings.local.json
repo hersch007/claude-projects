@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Web-Clients-Trifecta/2b140672-c313-47e9-9a65-fb3ae8d330d8/scratchpad/trifecta-scope\")",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/**)",
+      "Read(//c//**)",
+      "Bash(npm install *)",
+      "Bash(node build.js)",
+      "Bash(python \"C:/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/scripts/office/soffice.py\" --headless --convert-to pdf trifecta-scope.docx)",
+      "Bash(where python3 *)",
+      "Bash(where py *)",
+      "Bash(where python *)",
+      "Bash(py --version)",
+      "Bash(\"/c/Users/richa/AppData/Local/Microsoft/WindowsApps/python3.exe\" --version)",
+      "Bash(where soffice *)",
+      "Bash(where pandoc *)",
+      "Bash(pandoc -t markdown \"C:/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Web-Clients-Trifecta/2b140672-c313-47e9-9a65-fb3ae8d330d8/scratchpad/trifecta-scope/trifecta-scope.docx\")",
+      "Bash(unzip -l trifecta-scope.docx)",
+      "Bash(node -e ' *)",
+      "Bash(cp \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Web-Clients-Trifecta/2b140672-c313-47e9-9a65-fb3ae8d330d8/scratchpad/trifecta-scope/trifecta-scope.docx\" \"/c/Users/richa/Downloads/TRIFECTA-Website-Scope-v3.docx\" && cp \"/c/Users/richa/AppData/Local/Temp/claude/C--Users-richa-Documents-Claude-Projects-Web-Clients-Trifecta/2b140672-c313-47e9-9a65-fb3ae8d330d8/scratchpad/trifecta-scope/trifecta-scope.docx\" \"/c/Users/richa/Documents/Claude Projects/Web Clients/Trifecta/TRIFECTA-Website-Scope-Customer.docx\")"
+    ]
+  }
+}

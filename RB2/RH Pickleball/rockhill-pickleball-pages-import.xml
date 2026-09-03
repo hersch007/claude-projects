@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Rock Hill Pickleball — WordPress page import file (WXR 1.2)
+  Import via: WordPress Admin → Tools → Import → WordPress → Run Importer → upload this file.
+  All pages import as DRAFTS so nothing goes live until you review and publish each one.
+  Internal links are root-relative (e.g. /courts) so they work on any domain once pages are published.
+  Search each page for [FILL IN: ...] and replace with your real details before publishing.
+-->
+<rss version="2.0"
+  xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+  <title>Rock Hill Pickleball</title>
+  <link>https://rockhillpickleball.com</link>
+  <description>Resource site pages</description>
+  <pubDate>Mon, 27 Jul 2026 12:00:00 +0000</pubDate>
+  <language>en-US</language>
+  <wp:wxr_version>1.2</wp:wxr_version>
+  <wp:base_site_url>https://rockhillpickleball.com</wp:base_site_url>
+  <wp:base_blog_url>https://rockhillpickleball.com</wp:base_blog_url>
+  <wp:author>
+    <wp:author_id>1</wp:author_id>
+    <wp:author_login><![CDATA[admin]]></wp:author_login>
+    <wp:author_email><![CDATA[]]></wp:author_email>
+    <wp:author_display_name><![CDATA[admin]]></wp:author_display_name>
+    <wp:author_first_name><![CDATA[]]></wp:author_first_name>
+    <wp:author_last_name><![CDATA[]]></wp:author_last_name>
+  </wp:author>
+
+  <!-- ===================== HOME ===================== -->
+  <item>
+    <title>Home</title>
+    <link>https://rockhillpickleball.com/home</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Your Complete Guide to Pickleball in Rock Hill &amp; York County</h2>
+<p>Where to play, how to find people, and everything you need to get started — the straight truth on every court in York County, all in one place.</p>
+<p><strong><a href="/start">🆕 New to the Game? Start Here</a></strong> &nbsp; | &nbsp; <strong><a href="/courts">🏓 Show Me the Courts</a></strong></p>
+<hr>
+<h3>🆕 New to the Game? Start Here</h3>
+<p>Never held a paddle — or new to the area? We'll get you from zero to your first game: the rules in plain English, what the skill numbers mean, what to bring, and the friendliest places to start. <a href="/start">Start Here →</a></p>
+<h3>🏓 Show Me the Courts</h3>
+<p>You know the game — you just want the real scoop. Indoor vs. outdoor, how many courts, what it costs, how to book, and the honest pros and cons of every spot in York County. <a href="/courts">See the Courts Guide →</a></p>
+<h3>The Courts at a Glance</h3>
+<figure class="wp-block-table"><table>
+<thead><tr><th>Court</th><th>Indoor/Outdoor</th><th>Courts</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td>Boyd Hill</td><td>Outdoor</td><td>Limited</td><td>Close-in casual play</td></tr>
+<tr><td>Bleachery Fieldhouse</td><td>Indoor</td><td>12</td><td>Rain-or-shine, group play</td></tr>
+<tr><td>Shield of Faith</td><td>Indoor</td><td>—</td><td>Weekday mornings, beginners</td></tr>
+<tr><td>Peachtree (Fort Mill)</td><td>Varies</td><td>—</td><td>Consistency (worth the drive)</td></tr>
+</tbody></table></figure>
+<p><a href="/courts">See the full Courts Guide →</a></p>
+<h3>Find Your People</h3>
+<p>The games are already happening — here's how to plug in. We've gathered every CourtReserve, Group.Me, and Facebook link in one place. <a href="/scene/find-players">Find players &amp; groups →</a></p>
+<h3>Quick Start</h3>
+<ul>
+<li><a href="/start/skill-levels">Skill Levels Explained</a> — what 2.5 to 5.0 actually means</li>
+<li><a href="/scene/coaches-clinics">Coaches &amp; Clinics</a> — local lessons</li>
+<li><a href="/scene/gear-guide">Beginner Gear Guide</a> — paddles &amp; where to buy</li>
+<li><a href="/start/faq">FAQ</a> — every question a new player asks</li>
+</ul>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>50</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[home]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>0</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== START HERE (parent) ===================== -->
+  <item>
+    <title>Start Here</title>
+    <link>https://rockhillpickleball.com/start</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Welcome — you picked a great time to start.</h2>
+<p>Pickleball is the easiest racquet sport to pick up and one of the hardest to put down. Here in Rock Hill and York County there's a friendly, fast-growing community, and you can genuinely be rallying within your first hour. Here's your no-stress path in.</p>
+<h3>Step 1 — Learn the basics (15 minutes).</h3>
+<p>It's played on a court smaller than tennis, with a paddle and a plastic ball. Games go to 11, win by 2. There's a "kitchen" (no-volley zone) at the net, and you serve underhand. That's enough to start — you'll pick up the rest by playing. <a href="/start/faq">Full rules FAQ →</a></p>
+<h3>Step 2 — Know what the numbers mean.</h3>
+<p>You'll hear people say "I'm a 3.0" or "that's a 4.0 game." Those are skill ratings from 2.5 (brand new) to 5.0+ (highly competitive). Don't worry about yours yet — most beginners are a 2.5–3.0. <a href="/start/skill-levels">Skill levels explained →</a></p>
+<h3>Step 3 — Grab a paddle (you don't need a fancy one).</h3>
+<p>A $40–$80 beginner paddle is perfect to start. Many groups have loaner paddles too — you can play your first few times without buying anything. <a href="/scene/gear-guide">Beginner gear guide →</a></p>
+<h3>Step 4 — Show up to a beginner-friendly session.</h3>
+<p>The easiest way in is open play or a beginner clinic. <a href="/courts">See which courts are best for beginners →</a> and <a href="/scene/find-players">find the local groups →</a> — folks here are welcoming, and "I'm new" is the fastest way to get pulled into a game.</p>
+<h3>Step 5 — Find your people.</h3>
+<p>The community organizes through CourtReserve, Group.Me, and Facebook. We've rounded up all the links so you're not hunting. <a href="/scene/find-players">Find players &amp; groups →</a></p>
+<p><em>That's it. Come out, say hi, and don't worry about being new — everyone here was, once.</em></p>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>10</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[start]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== SKILL LEVELS ===================== -->
+  <item>
+    <title>Skill Levels Explained</title>
+    <link>https://rockhillpickleball.com/start/skill-levels</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p>Ever heard someone say "I'm a 3.0" or "that's a 4.0 game" and wondered what it meant? Pickleball uses skill ratings, usually from <strong>2.5 to 5.0+</strong>, to help players find evenly-matched games. Even matches are more fun for everyone — nobody enjoys a 15–2 blowout on either side.</p>
+<p>Here's the honest, plain-English version. <strong>Don't stress about your exact number</strong> — most people improve fast at the start, and the friendly move is to under-rate yourself and play up.</p>
+<h3>🟢 2.5 — Brand New</h3>
+<p>You're learning. You know the basic rules, can serve and return sometimes, and you're still getting a feel for the kitchen and keeping score. This is where nearly everyone starts — and it's a great place to be. Look for beginner sessions and clinics.</p>
+<h3>🟢 3.0 — Advancing Beginner</h3>
+<p>You can keep a rally going, get most serves and returns in, and you're starting to understand <em>where</em> to stand and hit. You're learning to "dink" (those soft shots at the net) and not just bang every ball. Consistency is the next step.</p>
+<h3>🟡 3.5 — Solid Intermediate</h3>
+<p>You sustain rallies, move to the net as a team, and mix in soft shots and drives on purpose. You know the strategy of "get to the kitchen line," and your third-shot drop is a work in progress. This is where a huge chunk of active club players live.</p>
+<h3>🟡 4.0 — Strong Intermediate</h3>
+<p>You're consistent, you place your shots, and you have a reliable third-shot drop and dinking game. You force errors, cover the court well with a partner, and rarely beat yourself. Games get tactical.</p>
+<h3>🟠 4.5 — Advanced</h3>
+<p>Few unforced errors, strong control on both soft and power shots, smart shot selection, and real teamwork. You anticipate, you attack the right balls, and you can adjust mid-game. Competitive tournament territory.</p>
+<h3>🔴 5.0+ — Highly Competitive / Pro-Level</h3>
+<p>Elite consistency, power, touch, and strategy. Rarely makes mistakes, punishes any that opponents make. Regional and national tournament players.</p>
+<h3>📊 DUPR — the modern rating</h3>
+<p>You may also hear about <strong>DUPR</strong> (Dynamic Universal Pickleball Rating), a more precise rating (roughly 2.0–8.0) based on your actual match results. Many leagues and tournaments use it. If you want one, [FILL IN: link to our club DUPR, or dupr.com]. For casual play, the 2.5–5.0 scale above is all you need.</p>
+<blockquote><p><strong>Not sure where you land?</strong> Come to an open-play or beginner session and just play — regulars will help you find your level fast. See the friendliest spots to start in our <a href="/courts">Courts Guide →</a>.</p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>11</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[skill-levels]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>10</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== FAQ ===================== -->
+  <item>
+    <title>FAQ</title>
+    <link>https://rockhillpickleball.com/start/faq</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p>Everything a new (or curious) Rock Hill pickleball player wants to know. Can't find your answer? <a href="/contact">Contact us →</a> — we're happy to help.</p>
+<h3>The Basics</h3>
+<p><strong>What is pickleball?</strong><br>A paddle sport that mixes tennis, ping-pong, and badminton. It's played on a court smaller than tennis, with a solid paddle and a plastic ball with holes. It's easy to learn, easy on the body, and ridiculously fun — which is why it's the fastest-growing sport in the country.</p>
+<p><strong>Is it hard to learn?</strong><br>No — that's the magic of it. Most people are rallying within their first hour. The basics take minutes; the strategy takes a lifetime (in a good way).</p>
+<p><strong>What are the basic rules?</strong><br>Games are usually to 11, win by 2. You serve underhand, diagonally. There's a "kitchen" (the no-volley zone) right at the net — you can't smash the ball out of the air while standing in it. The ball must bounce once on each side before players can volley. That's enough to start; you'll pick up the rest by playing. New to it all? Start with our <a href="/start">Start Here guide →</a>.</p>
+<p><strong>What's "the kitchen"?</strong><br>It's the 7-foot no-volley zone on each side of the net. You can stand in it, but you can't hit the ball out of the air while you're there — you'd have to let it bounce first. It keeps the game from becoming all smashes at the net.</p>
+<h3>Getting Started</h3>
+<p><strong>Do I need my own paddle?</strong><br>Not to start. Many groups and sessions have loaner paddles, so you can try it for free first. When you're ready to buy, a $40–$80 beginner paddle is plenty. See our <a href="/scene/gear-guide">Gear Guide →</a>.</p>
+<p><strong>What should I wear?</strong><br>Comfortable athletic clothes and court shoes (tennis or dedicated court shoes — not running shoes, which don't handle the side-to-side movement well). Bring water.</p>
+<p><strong>Do I need to bring a partner?</strong><br>Nope. Most open-play and club sessions rotate partners and opponents, so you can show up solo and play all day. Want to line someone up ahead of time? Use <a href="/scene/find-players">Find Players &amp; Groups →</a>.</p>
+<p><strong>I've never played. Where do I start?</strong><br>Come to a beginner-friendly session or clinic — [FILL IN: name your best beginner spots, e.g., Shield of Faith mornings]. Read <a href="/start">Start Here →</a> first, then just show up. "I'm new" is the fastest way to get welcomed into a game.</p>
+<h3>Playing in Rock Hill</h3>
+<p><strong>Where can I play in Rock Hill?</strong><br>There are several options — Boyd Hill, Bleachery Fieldhouse, Shield of Faith, and Peachtree in Fort Mill. Each has its pros and cons, which we lay out honestly in the <a href="/courts">Courts Guide →</a>.</p>
+<p><strong>How much does it cost to play?</strong><br>It varies by location — some are free or low-cost, others charge for court time. Check each court's page in the <a href="/courts">Courts Guide →</a> for details.</p>
+<p><strong>How do I reserve a court?</strong><br>Most local courts use CourtReserve for bookings and open-play sign-ups. We've linked the right pages for each court in the <a href="/courts">Courts Guide →</a> and <a href="/scene/find-players">Find Players &amp; Groups →</a>.</p>
+<p><strong>What is "open play"?</strong><br>Open play is drop-in pickleball — you show up during a scheduled block, and players rotate on and off the courts. It's the easiest, most social way to get games, especially as a newcomer.</p>
+<p><strong>Indoor or outdoor — what's the difference?</strong><br>Outdoor is weather-dependent but breezy and free-feeling; indoor (like Bleachery or Shield of Faith) means you play rain or shine and out of the summer heat. Both are great — it just depends on the day and your schedule.</p>
+<p><strong>How do I find people to play with?</strong><br>The Rock Hill community organizes through CourtReserve, Group.Me, and Facebook. We've gathered all the links in one place — <a href="/scene/find-players">Find Players &amp; Groups →</a>.</p>
+<h3>Skills &amp; Community</h3>
+<p><strong>What do the skill numbers (2.5, 3.0, 3.5…) mean?</strong><br>They're skill ratings that help match players for even, fun games. We break them all down in <a href="/start/skill-levels">Skill Levels Explained →</a>. Short version: nearly everyone starts around 2.5–3.0, and you'll improve fast.</p>
+<p><strong>Is pickleball good exercise?</strong><br>Yes — it's a genuine workout (agility, reflexes, cardio) that's easier on the joints than running or tennis, which is part of why players of every age love it.</p>
+<p><strong>Can kids / seniors / total beginners play?</strong><br>Absolutely — all of the above, often on the same court. It's one of the most age-friendly sports there is.</p>
+<p><strong>How do I get better?</strong><br>Play a lot, take a clinic, and play with people slightly better than you. Check <a href="/scene/coaches-clinics">Coaches &amp; Clinics →</a> for local lessons.</p>
+<p><strong>How do I get involved with the club?</strong><br>Start by joining our community links and our newsletter so you always know what's happening. [FILL IN: newsletter signup / membership link]. Then just come play — that's really all it takes.</p>
+<p><strong>Something on this site is out of date. Can I tell you?</strong><br>Please do! We keep this resource accurate with help from players like you. <a href="/contact">Suggest an update →</a>.</p>
+<blockquote><p>Still have a question? <a href="/contact">Contact us →</a> — a real local player will get back to you.</p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>12</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[faq]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>10</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== COURTS GUIDE (parent) ===================== -->
+  <item>
+    <title>Courts Guide</title>
+    <link>https://rockhillpickleball.com/courts</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Every court in York County — the honest version.</h2>
+<p>We tell it straight: how many courts, indoor or outdoor, what it costs, how to book, and the real pros and cons. No hype. Use the table to compare at a glance, then tap any court for the full rundown.</p>
+<figure class="wp-block-table"><table>
+<thead><tr><th>Court</th><th>Indoor/Outdoor</th><th>Courts</th><th>Booking</th><th>Best for</th></tr></thead>
+<tbody>
+<tr><td><a href="/courts/boyd-hill">Boyd Hill</a></td><td>Outdoor</td><td>Limited</td><td>CourtReserve</td><td>Close-in casual play</td></tr>
+<tr><td><a href="/courts/bleachery-fieldhouse">Bleachery Fieldhouse</a></td><td>Indoor</td><td>12</td><td>CourtReserve</td><td>Rain-or-shine, group play</td></tr>
+<tr><td><a href="/courts/shield-of-faith">Shield of Faith</a></td><td>Indoor</td><td>—</td><td>Church schedule</td><td>Weekday mornings, beginners</td></tr>
+<tr><td><a href="/courts/peachtree-fort-mill">Peachtree (Fort Mill)</a></td><td>Varies</td><td>—</td><td>CourtReserve</td><td>Consistency (worth the drive)</td></tr>
+</tbody></table></figure>
+<p><em>Notice a court is missing or something's changed? <a href="/contact">Tell us →</a> — this guide stays accurate because the community keeps us honest.</em></p>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>20</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[courts]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== BOYD HILL ===================== -->
+  <item>
+    <title>Boyd Hill</title>
+    <link>https://rockhillpickleball.com/courts/boyd-hill</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p><em>Outdoor · [FILL IN: # of courts] courts · Rock Hill, SC</em></p>
+<p><strong>The quick take:</strong> Boyd Hill is one of the most convenient outdoor spots in Rock Hill — when it's up and running, it's a great place to get a game in close to town. The trade-off is consistency: court time here can get scheduled, moved, or cancelled with little notice, and there aren't many courts, so it fills up. Our advice: love it for what it is, but <strong>always check the schedule before you drive over.</strong></p>
+<h3>👍 Pros</h3>
+<ul>
+<li>Close-in, convenient Rock Hill location</li>
+<li>Outdoor play in nice weather</li>
+<li>Good for casual, drop-in games</li>
+<li>[FILL IN: free / low cost? add if true]</li>
+</ul>
+<h3>👎 Honest cons</h3>
+<ul>
+<li>Court availability can be <strong>inconsistent</strong> — sessions get cancelled or rescheduled</li>
+<li><strong>Limited number of courts</strong>, so it fills up at peak times</li>
+<li>Weather-dependent (outdoor)</li>
+<li>[FILL IN: lighting for evening play? shade? parking?]</li>
+</ul>
+<h3>Details</h3>
+<ul>
+<li><strong>Surface:</strong> [FILL IN: e.g., outdoor hard court]</li>
+<li><strong>Cost:</strong> [FILL IN]</li>
+<li><strong>How to book:</strong> [FILL IN: CourtReserve link, or "drop-in / first come" if that's how it works]</li>
+<li><strong>Lights for evening play?</strong> [FILL IN: yes / no]</li>
+<li><strong>Best times:</strong> [FILL IN: e.g., weekday mornings tend to be open]</li>
+</ul>
+<h3>Getting there</h3>
+<p>[FILL IN: address]<br>[Embed a Google Map here — Custom HTML block]</p>
+<blockquote><p>💡 <strong>Before you go:</strong> Boyd Hill's schedule can change. Check the latest on CourtReserve and see what fellow players are reporting.<br><em>Played here recently? <a href="/contact">Suggest an update →</a> so we keep this page honest for everyone.</em></p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>21</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[boyd-hill]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>20</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== BLEACHERY FIELDHOUSE ===================== -->
+  <item>
+    <title>Bleachery Fieldhouse</title>
+    <link>https://rockhillpickleball.com/courts/bleachery-fieldhouse</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p><em>Indoor · 12 courts · Rock Hill, SC</em></p>
+<p><strong>The quick take:</strong> The biggest indoor option around — 12 courts means you can almost always get on, rain or shine. It's the workhorse of Rock Hill indoor play. Just go in knowing its quirks.</p>
+<h3>👍 Pros</h3>
+<ul>
+<li>12 indoor courts — great capacity, weather-proof</li>
+<li>Central Rock Hill location</li>
+<li>Good for groups and larger sessions</li>
+</ul>
+<h3>👎 Honest cons</h3>
+<ul>
+<li>Lighting is uneven in spots — some courts play darker than others</li>
+<li>Known dead spots on the floor (locals learn which courts to favor)</li>
+<li>Can be competitive to book at peak times</li>
+</ul>
+<h3>Details</h3>
+<ul>
+<li><strong>Surface:</strong> [FILL IN: indoor gym floor]</li>
+<li><strong>Cost:</strong> [FILL IN]</li>
+<li><strong>How to book:</strong> CourtReserve → [FILL IN: direct booking link]</li>
+<li><strong>Best times:</strong> [FILL IN: e.g., weekday mornings quieter]</li>
+<li><strong>Good for beginners?</strong> [FILL IN: yes / with caveats]</li>
+</ul>
+<h3>Getting there</h3>
+<p>[FILL IN: address]<br>[Embed a Google Map here — Custom HTML block]</p>
+<blockquote><p><em>Been recently? <a href="/contact">Suggest an update →</a></em></p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>22</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[bleachery-fieldhouse]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>20</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== SHIELD OF FAITH ===================== -->
+  <item>
+    <title>Shield of Faith Church</title>
+    <link>https://rockhillpickleball.com/courts/shield-of-faith</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p><em>Indoor · [FILL IN: # of courts] courts · Rock Hill, SC</em></p>
+<p><strong>The quick take:</strong> A genuine community gem. Shield of Faith opens its doors for indoor pickleball in a friendly, welcoming atmosphere — it's one of the best spots in town for beginners and anyone who likes a laid-back game out of the weather. The catch is availability: play is limited to <strong>weekday mornings and Sundays after church</strong>, so it's ideal if that fits your schedule (great for retirees, remote workers, and early birds) and less useful if you need evenings or weekends.</p>
+<h3>👍 Pros</h3>
+<ul>
+<li>Indoor — play regardless of weather</li>
+<li>Warm, <strong>welcoming, beginner-friendly</strong> vibe</li>
+<li>Great for morning players and flexible schedules</li>
+<li>[FILL IN: free / donation / low cost? add if true]</li>
+</ul>
+<h3>👎 Honest cons</h3>
+<ul>
+<li><strong>Limited hours</strong> — weekday mornings and Sunday after service only</li>
+<li>Not an option for evening or Saturday players</li>
+<li>[FILL IN: # of courts / how busy it gets]</li>
+</ul>
+<h3>Details</h3>
+<ul>
+<li><strong>When:</strong> Weekday mornings [FILL IN: exact days/times] and Sundays after service [FILL IN: approx. start time]</li>
+<li><strong>Surface:</strong> [FILL IN: e.g., gym floor]</li>
+<li><strong>Cost:</strong> [FILL IN]</li>
+<li><strong>How it works:</strong> [FILL IN: just show up? sign-up? contact person?]</li>
+<li><strong>Good for beginners?</strong> Yes — one of our top picks to start.</li>
+</ul>
+<h3>Getting there</h3>
+<p>[FILL IN: address]<br>[Embed a Google Map here — Custom HTML block]</p>
+<blockquote><p>💡 <strong>New to the game?</strong> This is one of the friendliest places in Rock Hill to play your first few times. Read our <a href="/start">Start Here guide →</a> and come say hi.<br><em>Know the current schedule or a change? <a href="/contact">Suggest an update →</a></em></p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>23</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[shield-of-faith]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>20</wp:post_parent>
+    <wp:menu_order>3</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== PEACHTREE ===================== -->
+  <item>
+    <title>Peachtree – Fort Mill</title>
+    <link>https://rockhillpickleball.com/courts/peachtree-fort-mill</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<p><em>[FILL IN: Indoor / Outdoor] · [FILL IN: # of courts] courts · Fort Mill, SC · ~20–25 min from Rock Hill</em></p>
+<p><strong>The quick take:</strong> Enough Rock Hill players make the trip to Peachtree that we'd be leaving something out if we didn't list it. The draw is <strong>consistency</strong> — reliable court availability and quality that's hard to beat locally. Yes, it's a drive (roughly 20–25 minutes up toward Fort Mill), but for a guaranteed good game a lot of folks think it's worth it. Grab a carpool and make an afternoon of it.</p>
+<h3>👍 Pros</h3>
+<ul>
+<li><strong>Consistent, reliable</strong> court availability and quality</li>
+<li>A favorite of many serious Rock Hill players</li>
+<li>Good for a dependable game when local courts are booked or cancelled</li>
+<li>[FILL IN: indoor? # of courts? amenities?]</li>
+</ul>
+<h3>👎 Honest cons</h3>
+<ul>
+<li><strong>The drive</strong> — ~20–25 minutes from Rock Hill</li>
+<li>Not the pick for a quick, spur-of-the-moment local game</li>
+<li>[FILL IN: cost? booking competition?]</li>
+</ul>
+<h3>Details</h3>
+<ul>
+<li><strong>Surface:</strong> [FILL IN]</li>
+<li><strong>Cost:</strong> [FILL IN]</li>
+<li><strong>How to book:</strong> [FILL IN: CourtReserve link]</li>
+<li><strong>Drive time:</strong> ~20–25 min from central Rock Hill</li>
+<li><strong>Best times:</strong> [FILL IN]</li>
+</ul>
+<h3>Getting there</h3>
+<p>[FILL IN: address]<br>[Embed a Google Map here — Custom HTML block]</p>
+<blockquote><p>🚗 <strong>Save gas, split the drive.</strong> A lot of our crew carpools to Peachtree. Find a ride or offer one in <a href="/scene/find-players">Find Players &amp; Groups →</a>.<br><em>Been recently? <a href="/contact">Suggest an update →</a></em></p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>24</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[peachtree-fort-mill]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>20</wp:post_parent>
+    <wp:menu_order>4</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== THE SCENE (parent) ===================== -->
+  <item>
+    <title>The Scene</title>
+    <link>https://rockhillpickleball.com/scene</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Where the Rock Hill pickleball community actually lives.</h2>
+<p>We're the map, not the host. Here's how to plug into the games, the people, the lessons, and the gear around York County.</p>
+<ul>
+<li><a href="/scene/find-players">Find Players &amp; Groups</a> — CourtReserve, Group.Me, and Facebook links in one place</li>
+<li><a href="/scene/coaches-clinics">Coaches &amp; Clinics</a> — local lessons and beginner clinics</li>
+<li><a href="/scene/gear-guide">Gear Guide</a> — beginner paddles and where to buy or demo</li>
+</ul>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>30</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[scene]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>3</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== FIND PLAYERS & GROUPS ===================== -->
+  <item>
+    <title>Find Players and Groups</title>
+    <link>https://rockhillpickleball.com/scene/find-players</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>The games are already happening. Here's how to plug in.</h2>
+<p>You don't need us to run a schedule — the Rock Hill pickleball community is active across a few platforms. Here's every place worth joining, in one list, so you're not hunting through screenshots and word-of-mouth.</p>
+<ul>
+<li><strong>📅 CourtReserve</strong> — how most local courts handle open play and reservations. [FILL IN: set-up link] and direct links for [FILL IN: Boyd Hill], [FILL IN: Bleachery], [FILL IN: Peachtree].</li>
+<li><strong>💬 Group.Me chats</strong> — where a lot of the day-to-day "who's playing" happens. [FILL IN: join the main group link] (and skill-specific groups: [FILL IN: 3.0–3.5], [FILL IN: 4.0+]).</li>
+<li><strong>📘 Facebook groups</strong> — events, photos, and bigger announcements. [FILL IN: Rock Hill Pickleball Facebook link].</li>
+<li><strong>🎓 Beginner clinics &amp; lessons</strong> — new players start here. <a href="/scene/coaches-clinics">See coaches &amp; clinics →</a></li>
+</ul>
+<p><em>New to all of this? Start with CourtReserve and one Group.Me — that's enough to find a game this week.</em></p>
+<blockquote><p>Know a group we're missing? <a href="/contact">Tell us →</a> and we'll add it.</p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>31</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[find-players]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>30</wp:post_parent>
+    <wp:menu_order>1</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== GEAR GUIDE (starter) ===================== -->
+  <item>
+    <title>Gear Guide</title>
+    <link>https://rockhillpickleball.com/scene/gear-guide</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Beginner gear, without the overwhelm.</h2>
+<p>You do not need expensive gear to start — in fact, you don't need to buy anything at all for your first few games. Here's the honest rundown.</p>
+<h3>Paddles</h3>
+<p>A <strong>$40–$80 beginner paddle</strong> is all you need to start, and it'll serve you well for a long time. Skip the $200+ paddles until you know you're hooked and know your style.</p>
+<ul>
+<li><strong>Good starter picks:</strong> [FILL IN: 2–3 beginner paddle recommendations]</li>
+<li><strong>Try before you buy:</strong> many groups have loaner paddles — ask around before spending a dime.</li>
+</ul>
+<h3>Shoes</h3>
+<p>The one thing worth getting right early: <strong>court shoes</strong> (tennis or dedicated court shoes), not running shoes. Running shoes aren't built for side-to-side movement and can roll an ankle.</p>
+<h3>Balls</h3>
+<p>Indoor and outdoor pickleballs are slightly different. [FILL IN: note which the local courts use, if helpful.]</p>
+<h3>Where to buy or demo locally</h3>
+<ul>
+<li>[FILL IN: local sporting goods store / pro shop]</li>
+<li>[FILL IN: online options you recommend]</li>
+</ul>
+<blockquote><p>Not sure what to get? Come to a session and ask — players love talking gear, and you can try a few paddles before buying. <a href="/scene/find-players">Find a group →</a></p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>32</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[gear-guide]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>30</wp:post_parent>
+    <wp:menu_order>2</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== COACHES & CLINICS (starter) ===================== -->
+  <item>
+    <title>Coaches and Clinics</title>
+    <link>https://rockhillpickleball.com/scene/coaches-clinics</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Want to level up? Start with a local coach or clinic.</h2>
+<p>Lessons are the fastest way to improve — and beginner clinics are the friendliest way to start if you've never played. Here's who and what's available around Rock Hill and York County.</p>
+<h3>Beginner clinics</h3>
+<ul>
+<li>[FILL IN: name of clinic / who runs it / where / how to sign up]</li>
+<li>[FILL IN: another clinic if available]</li>
+</ul>
+<h3>Local coaches &amp; lessons</h3>
+<ul>
+<li>[FILL IN: coach name — skill focus — contact / booking]</li>
+<li>[FILL IN: coach name — skill focus — contact / booking]</li>
+</ul>
+<p><em>Are you a local coach, or know a great one? <a href="/contact">Let us know →</a> and we'll add you to this list.</em></p>
+<blockquote><p>Brand new? You don't have to take a lesson to start — just come play. See <a href="/start">Start Here →</a>.</p></blockquote>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>33</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[coaches-clinics]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>30</wp:post_parent>
+    <wp:menu_order>3</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== ABOUT ===================== -->
+  <item>
+    <title>About</title>
+    <link>https://rockhillpickleball.com/about</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Built by local players who got tired of the runaround.</h2>
+<p>Getting into pickleball around Rock Hill used to mean piecing things together — a Group.Me screenshot here, a "which court is even open?" text there, and no straight answer on what any of the courts were actually like. Newcomers had it worst: a fun, welcoming sport hidden behind a wall of insider knowledge.</p>
+<p>So we built the guide we wish we'd had.</p>
+<p>This site isn't a booking system or a schedule — it's a <strong>resource.</strong> Honest information about every court, plain-English help for anyone new, and a directory of where the community actually lives online. Our goal is simple: <strong>make it easy for anyone in York County to find a game and fall in love with this sport.</strong></p>
+<p>We keep it accurate with help from players like you. Spot something outdated? <a href="/contact">Tell us</a>.</p>
+<p><strong>Welcome to the community. Now go play.</strong></p>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>40</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[about]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>4</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+  <!-- ===================== CONTACT ===================== -->
+  <item>
+    <title>Contact</title>
+    <link>https://rockhillpickleball.com/contact</link>
+    <dc:creator><![CDATA[admin]]></dc:creator>
+    <content:encoded><![CDATA[
+<h2>Get in touch / suggest an update.</h2>
+<p>Question, correction, a court change, or a group we should add? We keep this resource accurate with help from players like you — drop us a note.</p>
+<p>[FILL IN: add a contact form here using your forms plugin — e.g., a Fluent Forms or WPForms block. Set the form to email your club address.]</p>
+<p>Prefer email? [FILL IN: club email address]</p>
+]]></content:encoded>
+    <excerpt:encoded><![CDATA[]]></excerpt:encoded>
+    <wp:post_id>41</wp:post_id>
+    <wp:post_date><![CDATA[2026-07-27 08:00:00]]></wp:post_date>
+    <wp:post_date_gmt><![CDATA[2026-07-27 12:00:00]]></wp:post_date_gmt>
+    <wp:comment_status><![CDATA[closed]]></wp:comment_status>
+    <wp:ping_status><![CDATA[closed]]></wp:ping_status>
+    <wp:post_name><![CDATA[contact]]></wp:post_name>
+    <wp:status><![CDATA[draft]]></wp:status>
+    <wp:post_parent>0</wp:post_parent>
+    <wp:menu_order>5</wp:menu_order>
+    <wp:post_type><![CDATA[page]]></wp:post_type>
+    <wp:post_password><![CDATA[]]></wp:post_password>
+    <wp:is_sticky>0</wp:is_sticky>
+  </item>
+
+</channel>
+</rss>

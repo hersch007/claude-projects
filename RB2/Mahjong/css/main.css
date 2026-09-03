@@ -1,0 +1,214 @@
+/* main.css — Global styles, navigation, typography */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-felt:    #2d6a4f;
+  --felt-dark:     #1b4332;
+  --felt-light:    #40916c;
+  --gold:          #d4a017;
+  --gold-light:    #f0c040;
+  --ivory:         #fdf6e3;
+  --tile-bg:       #fffdf5;
+  --tile-border:   #c8a96e;
+  --tile-shadow:   rgba(0,0,0,0.35);
+  --text-dark:     #1a1a2e;
+  --text-light:    #f5f5f0;
+  --crak-color:    #c0392b;
+  --bam-color:     #1e7e34;
+  --dot-color:     #1565c0;
+  --flower-color:  #7b2d8b;
+  --joker-color:   #e74c3c;
+  --wind-color:    #555;
+  --radius:        8px;
+  --radius-sm:     4px;
+  --shadow:        0 4px 16px rgba(0,0,0,0.4);
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--felt-dark);
+  color: var(--text-light);
+  overflow: hidden;
+}
+
+/* ─── Navigation bar ───────────────────────────────────────────────────────── */
+
+#nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(90deg, #0d2c1a, #1b4332, #0d2c1a);
+  border-bottom: 2px solid var(--gold);
+  padding: 0 16px;
+  height: 48px;
+  flex-shrink: 0;
+  z-index: 100;
+  position: relative;
+}
+
+#nav .logo {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-right: auto;
+}
+
+#nav a {
+  color: var(--text-light);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  transition: background 0.2s, color 0.2s;
+  border: 1px solid transparent;
+}
+#nav a:hover  { background: rgba(255,255,255,0.12); }
+#nav a.active { background: rgba(212,160,23,0.25); border-color: var(--gold); color: var(--gold-light); }
+
+/* ─── Button system ────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s, filter 0.1s;
+  user-select: none;
+}
+.btn:active   { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-primary {
+  background: linear-gradient(135deg, #d4a017, #b8860b);
+  color: #1a1200;
+  box-shadow: 0 2px 8px rgba(212,160,23,0.4);
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  box-shadow: 0 2px 8px rgba(231,76,60,0.4);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.12);
+  color: var(--text-light);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+.btn-mahjong {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+  color: white;
+  font-size: 1rem;
+  padding: 10px 24px;
+  box-shadow: 0 3px 12px rgba(243,156,18,0.5);
+  animation: pulse-gold 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 3px 12px rgba(243,156,18,0.5); }
+  50%       { box-shadow: 0 6px 20px rgba(243,156,18,0.8); }
+}
+
+.hidden { display: none !important; }
+
+/* ─── Status message ───────────────────────────────────────────────────────── */
+
+#status-msg {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: center;
+  min-height: 28px;
+  transition: all 0.3s;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.status-info    { border-color: rgba(255,255,255,0.15); }
+.status-success { background: rgba(39,174,96,0.25); border-color: #27ae60; color: #a8ffcc; }
+.status-error   { background: rgba(231,76,60,0.25);  border-color: #e74c3c; color: #ffaaaa; }
+.status-win     { background: rgba(243,156,18,0.3);  border-color: #f39c12; color: #ffe083; font-weight: 700; }
+
+/* ─── Scrollbar ─────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: rgba(0,0,0,0.2); }
+::-webkit-scrollbar-thumb  { background: var(--gold); border-radius: 3px; }
+
+/* ─── Rules / FAQ pages ────────────────────────────────────────────────────── */
+
+.content-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  overflow-y: auto;
+  height: calc(100vh - 48px);
+}
+.content-page h1 { font-size: 2rem; color: var(--gold-light); margin-bottom: 8px; }
+.content-page h2 { font-size: 1.3rem; color: var(--gold); margin: 32px 0 12px; padding-bottom: 6px; border-bottom: 1px solid rgba(212,160,23,0.4); }
+.content-page h3 { font-size: 1.05rem; color: #c8f0d0; margin: 20px 0 8px; }
+.content-page p  { line-height: 1.7; color: #d0e8d8; margin-bottom: 12px; }
+.content-page ul, .content-page ol { padding-left: 24px; color: #d0e8d8; line-height: 1.8; margin-bottom: 12px; }
+.content-page li { margin-bottom: 4px; }
+.content-page strong { color: var(--gold-light); }
+.content-page code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; font-size: 0.9em; color: #a8ffcc; }
+
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin: 20px 0;
+}
+.search-bar input {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.3);
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+.search-bar input::placeholder { color: rgba(255,255,255,0.4); }
+.search-bar input:focus { outline: none; border-color: var(--gold); }
+
+.section-card {
+  background: rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+}
+
+.hand-example {
+  background: rgba(0,0,0,0.35);
+  border-left: 3px solid var(--gold);
+  padding: 12px 16px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 10px 0;
+  font-family: monospace;
+  font-size: 0.92rem;
+  color: #c8f0d0;
+}
+
+.faq-item { margin-bottom: 24px; }
+.faq-q { font-weight: 700; color: var(--gold-light); margin-bottom: 6px; cursor: pointer; }
+.faq-q::before { content: '▶ '; font-size: 0.75em; }
+.faq-a { display: none; padding-left: 16px; }
+.faq-item.open .faq-q::before { content: '▼ '; }
+.faq-item.open .faq-a { display: block; }
+
+/* ─── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .content-page { padding: 16px; }
+  #nav .logo    { font-size: 1rem; }
+}

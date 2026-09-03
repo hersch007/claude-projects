@@ -1,0 +1,13 @@
+{
+  "date": "2026-08-12",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Fruth": 2.75,
+    "MISC": 2.75,
+    "Click Broadband": 0.5,
+    "Advernology": 2.75
+  },
+  "nonBillable": {
+    "Start Performance": 1.75
+  }
+}

@@ -1,0 +1,171 @@
+/* tiles.css — Tile visual design */
+
+/* ─── Base tile ─────────────────────────────────────────────────────────────── */
+
+.tile {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width:  52px;
+  height: 72px;
+  background: linear-gradient(160deg, #fffdf5 60%, #f5e8c8 100%);
+  border: 2px solid var(--tile-border);
+  border-radius: 6px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.08),
+    2px 4px 8px var(--tile-shadow);
+  padding: 3px 4px;
+  user-select: none;
+  cursor: default;
+  font-family: 'Segoe UI', 'Noto Sans', system-ui, sans-serif;
+  overflow: hidden;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  flex-shrink: 0;
+}
+
+/* Small variant (AI racks, discard pile, exposed sets) */
+.tile-sm {
+  width:  38px;
+  height: 52px;
+  border-width: 1.5px;
+  border-radius: 4px;
+  padding: 2px 3px;
+  box-shadow: 1px 2px 4px var(--tile-shadow);
+}
+
+/* ─── Tile face elements ────────────────────────────────────────────────────── */
+
+.tile-corner {
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+  width: 100%;
+}
+.tile-corner-tl { text-align: left;  }
+.tile-corner-br { text-align: right; transform: rotate(180deg); }
+
+.tile-main-sym {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tile-sm .tile-corner   { font-size: 0.55rem; }
+.tile-sm .tile-main-sym { font-size: 1.1rem;  }
+
+/* ─── Suit colors ─────────────────────────────────────────────────────────── */
+
+.tile-crak .tile-corner,
+.tile-crak .tile-main-sym { color: var(--crak-color); }
+
+.tile-bam .tile-corner,
+.tile-bam .tile-main-sym  { color: var(--bam-color); }
+
+.tile-dot .tile-corner,
+.tile-dot .tile-main-sym  { color: var(--dot-color); }
+
+/* Winds */
+.tile-east   .tile-main-sym { color: #27ae60; font-size: 1.3rem; }
+.tile-south  .tile-main-sym { color: #e74c3c; font-size: 1.3rem; }
+.tile-west   .tile-main-sym { color: #2980b9; font-size: 1.3rem; }
+.tile-north  .tile-main-sym { color: #8e44ad; font-size: 1.3rem; }
+.tile-east   .tile-corner   { color: #27ae60; }
+.tile-south  .tile-corner   { color: #e74c3c; }
+.tile-west   .tile-corner   { color: #2980b9; }
+.tile-north  .tile-corner   { color: #8e44ad; }
+
+/* Dragons */
+.tile-red-dragon .tile-corner,
+.tile-red-dragon .tile-main-sym   { color: var(--crak-color); font-weight: 800; }
+
+.tile-green-dragon .tile-corner,
+.tile-green-dragon .tile-main-sym { color: var(--bam-color);  font-weight: 800; }
+
+.tile-white-dragon .tile-corner   { color: #555; }
+.tile-white-dragon .tile-main-sym {
+  color: #888;
+  text-shadow: 0 0 0 #aaa;
+  font-weight: 800;
+}
+
+/* Flowers */
+.tile-flower .tile-corner   { color: var(--flower-color); }
+.tile-flower .tile-main-sym { font-size: 1.25rem; }
+
+/* Joker */
+.tile-joker {
+  background: linear-gradient(135deg, #fff0f0 50%, #ffe0e0 100%);
+  border-color: #e74c3c;
+}
+.tile-joker .tile-corner   { color: var(--joker-color); font-size: 0.7rem; }
+.tile-joker .tile-main-sym { color: var(--joker-color); font-size: 1rem; font-weight: 900; letter-spacing: -1px; }
+
+/* ─── Interactive states ─────────────────────────────────────────────────────── */
+
+.tile-selectable {
+  cursor: pointer;
+}
+.tile-selectable:hover {
+  transform: translateY(-5px);
+  box-shadow: 2px 8px 16px rgba(0,0,0,0.45);
+  border-color: var(--gold);
+}
+
+.tile-selected {
+  transform: translateY(-10px) !important;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.5), 0 0 0 2px var(--gold) !important;
+  border-color: var(--gold) !important;
+  background: linear-gradient(160deg, #fff9e0 60%, #f5e090 100%) !important;
+}
+
+.tile-dragging {
+  opacity: 0.3;
+  transform: none !important;
+}
+
+.tile-ghost {
+  pointer-events: none;
+  transition: none !important;
+}
+
+.tile-last-discard {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 2px #e74c3c, 1px 2px 4px var(--tile-shadow) !important;
+}
+
+/* ─── Face-down tile (AI rack) ──────────────────────────────────────────────── */
+
+.tile-back {
+  background: linear-gradient(135deg, #1b4332 25%, #2d6a4f 75%);
+  border-color: #d4a017;
+}
+.tile-back-inner {
+  width:  100%;
+  height: 100%;
+  border: 1px solid rgba(212,160,23,0.4);
+  border-radius: 3px;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(212,160,23,0.12) 0px,
+      rgba(212,160,23,0.12) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+}
+
+/* ─── Meld (exposed set) ─────────────────────────────────────────────────────── */
+
+.meld {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(212,160,23,0.25);
+}

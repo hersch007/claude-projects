@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer receives a PIF for a project labeled as a Colocation. She approves it quickly because colocation projects are common and she trusts the Agent. After components are submitted and reviewed, the Analyst flags that the proposed work actually involves adding a new tower to a location with no existing structure -- which should have been submitted as a New Tower project. What is the consequence of the PIF approval error?",
+      "options": {
+        "A": "No significant consequence. The Analyst can correct the project type in the system and the review continues.",
+        "B": "The error triggered the wrong components, wrong fees, and the wrong Shot Clock length. The application may need to be withdrawn and resubmitted correctly. Work completed on the wrong components may need to be redone. The Shot Clock may have been miscalculated from the start.",
+        "C": "The carrier is responsible for the error since they selected the wrong project type.",
+        "D": "The Jurisdiction can issue a correction notice without restarting the application."
+      },
+      "answer": "B",
+      "explanation": "Project type is the most critical field in the PIF because AMP uses it to determine required components, applicable fees, Shot Clock length, and regulatory pathway. Approving an incorrect project type without catching the error cascades through every subsequent stage. PIF review is not a formality -- it is the best opportunity to catch errors before they compound into a much larger problem."
+    },
+    {
+      "question": "A Jurisdiction reviewer is reviewing a PIF and notices the site address places the proposed tower in an industrial zone, but the carrier's project description references a residential neighborhood by name. The Analyst says everything looks complete on paper. What should the reviewer do?",
+      "options": {
+        "A": "Approve it -- if the Analyst says it is complete, the reviewer's job is to approve.",
+        "B": "Flag the inconsistency and issue a revision request asking the Agent to clarify and correct the site information before the PIF is approved. An inconsistency between the address and the project description is a completeness deficiency -- approving it carries the error forward into every subsequent stage.",
+        "C": "Approve it with a note in the comments section flagging the discrepancy.",
+        "D": "Deny the application -- inconsistencies in the PIF are grounds for outright denial."
+      },
+      "answer": "B",
+      "explanation": "The Analyst reviews for completeness -- but the Jurisdiction reviewer makes the decision. An inconsistency between the site address and the project description is a red flag that the application may have incorrect location data. Approving it before the discrepancy is resolved carries the error into components, fees, and the official record. The correct action is a revision request asking the Agent to confirm and correct the site information."
+    }
+  ]
+}

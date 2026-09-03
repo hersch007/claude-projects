@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.karenwelchtherapist.com)",
+      "Read(//c/Users/richa/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/801c963b-07ea-4bdd-885e-1bd6f747d3ae/675484ba-821d-477d-9d86-416ea161abcb/skills/docx/**)",
+      "Bash(python scripts/office/unpack.py \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\lavender-healing-collective\\\\LHC-SEO-Report-2026-05-26.docx\" unpacked-ref/)",
+      "PowerShell(node --version)",
+      "PowerShell(npm list -g docx 2>$null)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\SEO-Clients-Hub\\\\clients\\\\Root and Grow Providence\")",
+      "WebFetch(domain:www.rootandgrowprovidence.com)",
+      "WebFetch(domain:rootandgrowprovidence.com)"
+    ]
+  }
+}

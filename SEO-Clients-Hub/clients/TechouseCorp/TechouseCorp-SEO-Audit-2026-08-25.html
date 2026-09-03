@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: TechouseCorp — August 25, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #0f172a; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #0f172a; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #0f172a; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #0f172a; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Keyword tracker ── */
+  .kw-change.improved { color: #16a34a; font-weight: 700; }
+  .kw-change.declined { color: #dc2626; font-weight: 700; }
+  .kw-change.new      { color: #7c3aed; font-weight: 700; }
+  .kw-change.same     { color: #94a3b8; }
+  .kw-pos             { font-weight: 700; color: #0f172a; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">71</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Needs Improvement</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">TechouseCorp</div>
+    <div class="cover-sub">https://www.techousecorp.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">August 25, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">19</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">30</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">16 of 19 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">1 of 19 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-trend">
+    <div class="trend-label">Score History</div>
+    <svg viewBox="0 0 520 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;overflow:visible">
+      <defs>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+      </defs>
+      <polygon points="36,82 36,60.064516129032256 190.66666666666666,35.935483870967744 345.3333333333333,35.935483870967744 500,24.967741935483872 500,82" fill="url(#tg)"/>
+      <polyline points="36,60.064516129032256 190.66666666666666,35.935483870967744 345.3333333333333,35.935483870967744 500,24.967741935483872" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linejoin="round"/>
+      
+      <circle cx="36" cy="60.064516129032256" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="36" y="51.064516129032256" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">55</text>
+    
+      <circle cx="190.66666666666666" cy="35.935483870967744" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="190.66666666666666" y="26.935483870967744" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">66</text>
+    
+      <circle cx="345.3333333333333" cy="35.935483870967744" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="345.3333333333333" y="26.935483870967744" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">66</text>
+    
+      <circle cx="500" cy="24.967741935483872" r="5" fill="#fff" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="500" y="15.967741935483872" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,1)">71</text>
+    
+      <text x="36" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jul 17</text><text x="190.66666666666666" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jul 30</text><text x="345.3333333333333" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Aug 19</text><text x="500" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Aug 25</text>
+    </svg>
+  </div>
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">15</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">15</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">0</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">1</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">19</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Performance Highlights</div>
+      <div class="perf-period">Live data &bull; 2026-07-26 to 2026-08-22 &bull; vs. prior 28 days</div>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-value">5</div>
+        <div class="perf-label">Organic Clicks</div>
+        <span class="perf-change down">
+          <span class="perf-arrow">▼</span> -28.6%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">708</div>
+        <div class="perf-label">Impressions</div>
+        <span class="perf-change down">
+          <span class="perf-arrow">▼</span> -21.7%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">39</div>
+        <div class="perf-label">Avg. Position</div>
+        <span class="perf-change up">
+          <span class="perf-arrow">▲</span> +4.3%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">62</div>
+        <div class="perf-label">Organic Keywords</div>
+        
+      </div></div>
+    
+      <div style="margin-top:20px">
+        <div class="section-title" style="font-size:12px;margin-bottom:10px">Top Organic Keywords (Last 28 Days)</div>
+        <div class="page-table-wrap">
+        <table>
+          <thead><tr>
+            <th>Keyword</th>
+            <th class="center">Clicks</th>
+            <th class="center">Impressions</th>
+            <th class="center">Avg. Position</th>
+            <th class="center">CTR</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td>argos web cleaner</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">66</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>bedford closeit</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">45</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>bk techouse</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">42</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>circular sealer</td>
+              <td class="center">0</td>
+              <td class="center">7</td>
+              <td class="center">30</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>cleaner web</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">50</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>cleaning web</td>
+              <td class="center">0</td>
+              <td class="center">7</td>
+              <td class="center">66</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>cold needle perforating</td>
+              <td class="center">0</td>
+              <td class="center">91</td>
+              <td class="center">22</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>contact web cleaners</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">48</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>draw tape bag machine</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">55</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>fold edge</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">48</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hang hole punch</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">35</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hanger hole</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">14</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hanger hole punch</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">21</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hanger with holes</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">45</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hanging hole</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">56</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hot needle perforating</td>
+              <td class="center">0</td>
+              <td class="center">7</td>
+              <td class="center">58</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>hudson sharp</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">52</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>in punch</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">45</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>in-line punching</td>
+              <td class="center">0</td>
+              <td class="center">18</td>
+              <td class="center">17</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>lip folder</td>
+              <td class="center">0</td>
+              <td class="center">3</td>
+              <td class="center">7</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>needle perforation</td>
+              <td class="center">0</td>
+              <td class="center">150</td>
+              <td class="center">57</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>needle perforation machines</td>
+              <td class="center">0</td>
+              <td class="center">65</td>
+              <td class="center">50</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>non contact web cleaners</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">63</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>outsert applicator</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">61</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>outsert folding</td>
+              <td class="center">0</td>
+              <td class="center">6</td>
+              <td class="center">74</td>
+              <td class="center">-</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+  </div>
+
+  <!-- KEYWORD RANKINGS -->
+  
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Keyword Rankings</div>
+      <div class="perf-period">Last 28 days &nbsp;&bull;&nbsp; vs. Aug 19</div>
+    </div>
+    <div class="page-table-wrap" style="margin-top:14px">
+    <table>
+      <thead><tr>
+        <th>Keyword</th>
+        <th class="center">Position</th>
+        <th class="center">vs. Aug 19</th>
+        <th class="center">Clicks</th>
+        <th class="center">Impressions</th>
+        <th class="center">CTR</th>
+      </tr></thead>
+      <tbody><tr>
+        <td>argos web cleaner</td>
+        <td class="center kw-pos">66</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>bedford closeit</td>
+        <td class="center kw-pos">45</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>bk techouse</td>
+        <td class="center kw-pos">42</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>circular sealer</td>
+        <td class="center kw-pos">30</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">7</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>cleaner web</td>
+        <td class="center kw-pos">50</td>
+        <td class="center"><span class="kw-change declined">▼ 1</span></td>
+        <td class="center">0</td>
+        <td class="center">2</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>cleaning web</td>
+        <td class="center kw-pos">66</td>
+        <td class="center"><span class="kw-change declined">▼ 15</span></td>
+        <td class="center">0</td>
+        <td class="center">7</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>cold needle perforating</td>
+        <td class="center kw-pos">22</td>
+        <td class="center"><span class="kw-change declined">▼ 1</span></td>
+        <td class="center">0</td>
+        <td class="center">91</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>contact web cleaners</td>
+        <td class="center kw-pos">48</td>
+        <td class="center"><span class="kw-change improved">▲ 1</span></td>
+        <td class="center">0</td>
+        <td class="center">2</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>draw tape bag machine</td>
+        <td class="center kw-pos">55</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>fold edge</td>
+        <td class="center kw-pos">48</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">2</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hang hole punch</td>
+        <td class="center kw-pos">35</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hanger hole</td>
+        <td class="center kw-pos">14</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">2</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hanger hole punch</td>
+        <td class="center kw-pos">21</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hanger with holes</td>
+        <td class="center kw-pos">45</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hanging hole</td>
+        <td class="center kw-pos">56</td>
+        <td class="center"><span class="kw-change same">—</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hot needle perforating</td>
+        <td class="center kw-pos">58</td>
+        <td class="center"><span class="kw-change declined">▼ 1</span></td>
+        <td class="center">0</td>
+        <td class="center">7</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>hudson sharp</td>
+        <td class="center kw-pos">52</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>in punch</td>
+        <td class="center kw-pos">45</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>in-line punching</td>
+        <td class="center kw-pos">17</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">18</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>lip folder</td>
+        <td class="center kw-pos">7</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">3</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>needle perforation</td>
+        <td class="center kw-pos">57</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">150</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>needle perforation machines</td>
+        <td class="center kw-pos">50</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">65</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>non contact web cleaners</td>
+        <td class="center kw-pos">63</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>outsert applicator</td>
+        <td class="center kw-pos">61</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">1</td>
+        <td class="center">-</td>
+      </tr><tr>
+        <td>outsert folding</td>
+        <td class="center kw-pos">74</td>
+        <td class="center"><span class="kw-change new">New</span></td>
+        <td class="center">0</td>
+        <td class="center">6</td>
+        <td class="center">-</td>
+      </tr></tbody>
+    </table>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Rewrite meta descriptions on 5 pages</div>
+        <div class="qw-detail" style="margin-top:6px">5 are too long and get truncated in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Optimize title tag length on 3 pages</div>
+        <div class="qw-detail" style="margin-top:6px">3 titles exceed 65 characters and will be cut off in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Medium">Medium effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Add structured data (schema) to 15 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Schema markup helps Google display rich results (star ratings, FAQs, product details). Product and service pages especially benefit from this.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-High">High effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Expand thin content on 9 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Pages under 150 words give Google very little to rank. Adding descriptive copy, FAQs, or specifications strengthens these pages significantly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val warn">71 / 100 &mdash; Needs Improvement</span>
+      </div>
+      
+      
+      <div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">15 pages affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">15 pages affected</span></div>
+      
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">16 of 19 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">1 of 19 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 71/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (18 pages need attention)</div>
+    
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/round-bottom-bag-sealer</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (182 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (134 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (171 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/in-line-hole-punching-system</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (149 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/unwinder-and-folder</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (169 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/in-line-hole-punching-system-0</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (140 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/web-edges-dual-lip-folder</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (171 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/wicket-hole-punching-unit</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (123 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/web-cleaner</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (124 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/about</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (170 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/hanger-hole-punch</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (128 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/off-line-wicket-welding-pins</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (130 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/contact-us</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (47 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/cold-needle-perforator</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/rotary-serrator</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/taper-bag-manufacturing-attachment</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (70 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/handle-bag-cutout</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (8 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/zipper-sealing-system</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (66 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/roller-header-sealer</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (70 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com" target="_blank">/</a></td>
+      <td>TecHouse Machining | Packaging & Automation Equipment</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization,LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/taper-bag-manufacturing-attachment" target="_blank">/products/taper-bag-manufacturing-attachment</a></td>
+      <td>Taper Bag Attachment for Hudson-Sharp Wicketers | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/cold-needle-perforator" target="_blank">/products/cold-needle-perforator</a></td>
+      <td>Cold Needle Perforator | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products" target="_blank">/products</a></td>
+      <td>Products | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/in-line-hole-punching-system" target="_blank">/products/in-line-hole-punching-system</a></td>
+      <td>In-Line Hole Punching System | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/unwinder-and-folder" target="_blank">/products/unwinder-and-folder</a></td>
+      <td>Unwinder & Folder | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/in-line-hole-punching-system-0" target="_blank">/products/in-line-hole-punching-system-0</a></td>
+      <td>In-Line Hole Punching System | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/web-edges-dual-lip-folder" target="_blank">/products/web-edges-dual-lip-folder</a></td>
+      <td>Web Edges Dual Lip Folder | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/wicket-hole-punching-unit" target="_blank">/products/wicket-hole-punching-unit</a></td>
+      <td>Wicket Hole Punching Unit | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/web-cleaner" target="_blank">/products/web-cleaner</a></td>
+      <td>Web Cleaner | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/about" target="_blank">/about</a></td>
+      <td>About Us | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/zipper-sealing-system" target="_blank">/products/zipper-sealing-system</a></td>
+      <td>Zipper Sealing System for Poly Bag Machines | TecHouse Corporation</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/rotary-serrator" target="_blank">/products/rotary-serrator</a></td>
+      <td>Rotary Serrator | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/roller-header-sealer" target="_blank">/products/roller-header-sealer</a></td>
+      <td>Roller Header Sealer for Side-Weld Bag Machines | TecHouse Corporation</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Unknown</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/hanger-hole-punch" target="_blank">/products/hanger-hole-punch</a></td>
+      <td>Hanger Hole Punch | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/off-line-wicket-welding-pins" target="_blank">/products/off-line-wicket-welding-pins</a></td>
+      <td>Off-Line Wicket Welding Pins | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/contact-us" target="_blank">/contact-us</a></td>
+      <td>Contact Us | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/round-bottom-bag-sealer" target="_blank">/products/round-bottom-bag-sealer</a></td>
+      <td>Round Bottom Bag Sealer | TecHouse Corporation</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.techousecorp.com/products/handle-bag-cutout" target="_blank">/products/handle-bag-cutout</a></td>
+      <td>Handle Bag Cutout | TecHouse Corporation</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+</div>
+
+<div class="report-footer">
+  Prepared by Start Advertising &bull; TechouseCorp SEO Audit &bull; August 25, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+</body>
+</html>

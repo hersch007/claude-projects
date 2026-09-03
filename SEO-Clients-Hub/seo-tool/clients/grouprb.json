@@ -1,0 +1,13 @@
+{
+    "name":  "GroupRB",
+    "url":  "https://www.grouprb.com",
+    "brand_color":  "#c8102e",
+    "output_dir":  "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/GroupRB",
+    "max_pages":  60,
+    "ignore_paths":  [
+                         "/cdn-cgi/",
+                         "?hs",
+                         "#"
+                     ],
+    "gsc_property":  "https://www.grouprb.com/"
+}

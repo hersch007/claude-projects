@@ -1,0 +1,133 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 280" width="220" height="280" role="img" aria-label="Echo-64 badge â€” Nerd After Dark">
+  <title>Echo-64 Â· Nerd After Dark</title>
+  <defs>
+
+    <filter id="phosphor" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="bezel-glow" x="-6%" y="-6%" width="112%" height="112%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="title-glow" x="-8%" y="-30%" width="116%" height="160%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <radialGradient id="screen-bloom2" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"   stop-color="#061414"/>
+      <stop offset="100%" stop-color="#030306"/>
+    </radialGradient>
+    <pattern id="scanlines2" x="0" y="0" width="2" height="4" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="2" height="2" fill="rgba(0,0,0,0.4)"/>
+    </pattern>
+    <linearGradient id="badge-top-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="35%"  stop-color="#00f5ff"/>
+      <stop offset="65%"  stop-color="#ff00e5"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Badge background -->
+  <rect width="220" height="280" fill="#07070f" rx="14"/>
+
+  <!-- Outer border -->
+  <rect x="1" y="1" width="218" height="278" fill="none"
+        stroke="#1a1a2e" stroke-width="1.5" rx="13"/>
+
+  <!-- Top accent bar -->
+  <rect x="1" y="1" width="218" height="2" fill="url(#badge-top-grad)" rx="13"/>
+
+  <!-- â”€â”€ CRT Monitor (scaled down, centred) â”€â”€â”€â”€â”€â”€â”€â”€ -->
+
+  <!-- Bezel -->
+  <rect x="18" y="14" width="184" height="122" rx="15" ry="15"
+        fill="#111122" stroke="#00f5ff" stroke-width="1.2"
+        filter="url(#bezel-glow)"/>
+
+  <!-- Screen surround -->
+  <rect x="29" y="24" width="162" height="102" rx="7" ry="7"
+        fill="#08081a"/>
+
+  <!-- Screen -->
+  <rect x="33" y="28" width="154" height="94" rx="4" ry="4"
+        fill="url(#screen-bloom2)"/>
+
+  <!-- Scanlines -->
+  <rect x="33" y="28" width="154" height="94" rx="4" ry="4"
+        fill="url(#scanlines2)" opacity="0.55"/>
+
+  <!-- Screen edge -->
+  <rect x="33" y="28" width="154" height="94" rx="4" ry="4"
+        fill="none" stroke="#00f5ff" stroke-width="0.6" opacity="0.2"/>
+
+  <!-- READY. -->
+  <text x="45" y="50"
+        font-family="'VT323', 'Courier New', monospace"
+        font-size="12"
+        fill="#00f5ff" opacity="0.4"
+        filter="url(#phosphor)">READY.</text>
+
+  <!-- ECHO-64 on screen -->
+  <text x="45" y="78"
+        font-family="'VT323', 'Courier New', monospace"
+        font-size="26"
+        fill="#00f5ff"
+        filter="url(#phosphor)"
+        letter-spacing="1">ECHO-64</text>
+
+  <!-- Cursor — 27px below text baseline, clearly separate line -->
+  <rect x="45" y="105" width="11" height="12"
+        fill="#00f5ff" filter="url(#phosphor)" opacity="0.85"/>
+
+  <!-- Neck -->
+  <path d="M 94,136 L 126,136 L 120,153 L 100,153 Z"
+        fill="#0c0c1e"/>
+
+  <!-- Base -->
+  <rect x="72" y="153" width="76" height="11" rx="4"
+        fill="#0c0c1e" stroke="#1a1a2e" stroke-width="0.75"/>
+
+  <!-- Base accent -->
+  <line x1="84" y1="158" x2="136" y2="158"
+        stroke="#00f5ff" stroke-width="0.75" opacity="0.3"/>
+
+  <!-- â”€â”€ ECHO-64 title text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <text x="110" y="200"
+        font-family="'VT323', 'Courier New', monospace"
+        font-size="46"
+        fill="#00f5ff"
+        text-anchor="middle"
+        filter="url(#title-glow)"
+        letter-spacing="3">ECHO-64</text>
+
+  <!-- â”€â”€ Divider rule â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <line x1="30" y1="212" x2="190" y2="212"
+        stroke="#1e1e38" stroke-width="1"/>
+
+  <!-- â”€â”€ NERD AFTER DARK sub-text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <text x="110" y="232"
+        font-family="'VT323', 'Courier New', monospace"
+        font-size="17"
+        fill="#c0c0e0"
+        text-anchor="middle"
+        letter-spacing="4">NERD AFTER DARK</text>
+
+  <!-- â”€â”€ Bottom tagline â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+  <text x="110" y="254"
+        font-family="'VT323', 'Courier New', monospace"
+        font-size="11"
+        fill="#7878a0"
+        text-anchor="middle"
+        letter-spacing="3">SCI-FI AFTER MIDNIGHT</text>
+
+  <!-- Small neon dots at corners for retro badge feel -->
+  <circle cx="18"  cy="18"  r="2.5" fill="#00f5ff" opacity="0.4"/>
+  <circle cx="202" cy="18"  r="2.5" fill="#00f5ff" opacity="0.4"/>
+  <circle cx="18"  cy="262" r="2.5" fill="#ff00e5" opacity="0.4"/>
+  <circle cx="202" cy="262" r="2.5" fill="#ff00e5" opacity="0.4"/>
+
+</svg>
+

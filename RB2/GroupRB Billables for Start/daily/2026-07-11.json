@@ -1,0 +1,16 @@
+{
+  "date": "2026-07-11",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false },
+    { "client": "STP", "note": "write up the build spec for chat cor", "job": "", "billable": false }
+  ]
+}

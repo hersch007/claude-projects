@@ -1,0 +1,23 @@
+{
+  "date": "2026-07-05",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STA", "note": "admin email timesheets", "job": "", "billable": false },
+    { "client": "STP", "note": "Styling - AI Cards", "job": "", "billable": false },
+    { "client": "STP", "note": "Styling - AI Cards", "job": "", "billable": false },
+    { "client": "STP", "note": "Styling - AI Cards", "job": "", "billable": false },
+    { "client": "STP", "note": "Styling - AI Cards", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false },
+    { "client": "STP", "note": "Workflows logic", "job": "", "billable": false }
+  ]
+}

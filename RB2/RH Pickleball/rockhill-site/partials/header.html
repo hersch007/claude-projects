@@ -1,0 +1,25 @@
+<!--
+  Rock Hill Pickleball - HEADER (the part YOU own, not the theme)
+  In GeneratePress: Appearance → Elements → Add New → "Block" or "Hook"
+  element, hook location = "wp_body_open" (or use a Header element),
+  paste this markup. Load header-footer.css site-wide.
+  Optional: add class="rh-active" to the <a> for the current page to
+  highlight it (a WordPress nav menu would do this automatically).
+-->
+<header class="rh-header">
+  <div class="rh-header-inner">
+    <!-- Replace src with your uploaded logo URL from the WordPress Media Library -->
+    <a class="rh-logo" href="/">
+      <img src="/wp-content/uploads/rock-hill-pickleball-club-logo.png" alt="Rock Hill Pickleball Club">
+    </a>
+    <button class="rh-burger" aria-label="Menu" onclick="this.closest('.rh-header').classList.toggle('rh-open')"><span></span><span></span><span></span></button>
+    <nav class="rh-nav">
+      <a href="/">Home</a>
+      <a href="/courts/">Courts</a>
+      <a href="/find-players/">Find Players</a>
+      <a href="/getting-started/">Getting Started</a>
+      <a href="/about/">About</a>
+      <a href="/scheduler/" class="rh-cta">Scheduler</a>
+    </nav>
+  </div>
+</header>

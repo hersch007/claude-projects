@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer is examining the NCM for a colocation project. The structural analysis is signed and stamped by a licensed Professional Engineer -- but the PE's license is from a different state than where the tower is located. The document is otherwise complete and the engineering looks thorough. Should the reviewer approve the NCM?",
+      "options": {
+        "A": "Yes. The PE is licensed somewhere, which demonstrates professional competence. The specific state should not matter for a technical review.",
+        "B": "Yes, with a note. The reviewer can approve and flag the license issue for the final inspection.",
+        "C": "No. PE certification requires state licensure in the state where the work is performed. A structural analysis stamped by an out-of-state PE who is not licensed in the project state does not meet the certification standard. The NCM should be sent back for revision requiring a properly licensed PE.",
+        "D": "It depends on whether the local ordinance specifically requires in-state PE licensure."
+      },
+      "answer": "C",
+      "explanation": "A certified document must be reviewed, stamped, and signed by a Professional Engineer licensed in the state where the work is performed. Out-of-state licensure alone does not satisfy this requirement. The PE may be technically competent, but the legal standard for certification is state-specific. Approving a structural analysis with an out-of-state PE stamp creates a compliance gap in the Official Record and may not satisfy your ordinance or federal documentation standards."
+    },
+    {
+      "question": "A Jurisdiction reviewer receives an NCM with a structural analysis showing the tower is loaded to 97% of its rated capacity after the proposed colocation equipment is added. The analysis is signed by a properly licensed PE who concludes the tower is structurally adequate. What should the reviewer do?",
+      "options": {
+        "A": "Deny the application. A loading percentage that high is too close to capacity and poses a safety risk.",
+        "B": "Approve the NCM. A licensed PE has certified the structure is adequate. The reviewer's role is to verify the certification exists and is valid -- not to independently re-evaluate the engineering conclusion. If the PE's analysis is complete and properly certified, approval is appropriate.",
+        "C": "Request revision asking the Agent to reduce the equipment load before resubmitting.",
+        "D": "Defer to the Analyst to make a recommendation before deciding."
+      },
+      "answer": "B",
+      "explanation": "The Jurisdiction reviewer's role in component review is to verify that required certifications exist, are valid, and are signed by the correct licensed professional -- not to independently re-evaluate engineering conclusions. When a licensed PE stamps a structural analysis and certifies the tower is adequate, they are taking professional and legal responsibility for that conclusion. Rejecting a properly certified analysis because the loading percentage feels high substitutes the reviewer's instinct for a licensed engineer's professional judgment, which is not within the reviewer's role."
+    }
+  ]
+}

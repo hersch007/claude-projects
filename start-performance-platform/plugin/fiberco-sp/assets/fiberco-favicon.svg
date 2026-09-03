@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="FiberCo">
+  <defs>
+    <linearGradient id="fcf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0057FF"/>
+      <stop offset="100%" stop-color="#003FC7"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="120" height="120" rx="26" fill="url(#fcf)"/>
+  <path d="M13 2 L3 14 h9 l-1 8 l10 -12 h-9 l1 -8 z" transform="translate(18,22) scale(3.2)" fill="#ffffff"/>
+</svg>

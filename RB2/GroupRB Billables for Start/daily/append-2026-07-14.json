@@ -1,0 +1,14 @@
+{
+  "date": "2026-07-14",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Wireless TS": 3.5,
+    "Fruth": 2.75,
+    "Automotive Service Products": 0.5,
+    "Garlock": 1.5
+  },
+  "nonBillable": {
+    "STA": 1,
+    "Start Performance": 2.5
+  }
+}

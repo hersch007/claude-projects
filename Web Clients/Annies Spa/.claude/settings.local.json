@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:startwebservicesbackup.com)",
+      "Read(//c//**)",
+      "Read(//c/Users/richa/Downloads/**)"
+    ]
+  }
+}

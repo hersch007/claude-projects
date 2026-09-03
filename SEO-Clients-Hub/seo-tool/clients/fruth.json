@@ -1,0 +1,9 @@
+{
+  "name": "Fruth Custom Packaging",
+  "url": "https://www.fruth.com",
+  "brand_color": "#003366",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/Fruth",
+  "max_pages": 60,
+  "ignore_paths": ["/cdn-cgi/", "/wp-", "?hs", "#"],
+  "gsc_property": "https://www.fruth.com/"
+}

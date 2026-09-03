@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "Scenario: A Jurisdiction reviewer and an Agent have a productive phone call in which the reviewer explains exactly what corrections are needed on the NCM component. The Agent thanks her and says he will make the fixes. The reviewer considers the matter resolved and does not enter anything into AMP. Two weeks later the Agent submits revised components that do not address the issues discussed. The Agent claims the reviewer said something different on the call. What is the Jurisdiction's position?",
+      "options": {
+        "A": "The reviewer's version of the phone call should be taken as accurate since she is the Jurisdiction authority.",
+        "B": "The Jurisdiction has no documented record of what was communicated. The phone call does not exist in the Official Record. There is no way to verify what was said, and the Agent's claim cannot be disproven using AMP records. The reviewer should have issued a formal revision request inside AMP stating specifically what needed to be corrected.",
+        "C": "The Agent is at fault for not taking notes during the call.",
+        "D": "The reviewer can reconstruct the conversation in AMP now that the dispute has arisen."
+      },
+      "answer": "B",
+      "explanation": "Phone calls about application requirements are not part of the Official Record. When a dispute arises about what was communicated, the only evidence that matters is what is documented in AMP. The correct procedure is to issue a formal revision request inside AMP that clearly states what is deficient and what is required to correct it. This protects the Jurisdiction, gives the Agent a clear documented target, and ensures the record accurately reflects the review."
+    },
+    {
+      "question": "A final inspection is conducted on a newly constructed tower. The inspector finds that the antenna configuration as built does not match the approved application -- the carrier installed a different antenna model than what was submitted and approved. What should the Jurisdiction do?",
+      "options": {
+        "A": "Close the project as Completed since the tower is structurally sound and the difference is minor.",
+        "B": "Issue a failed inspection result in AMP and require the carrier to either bring the installation into conformance with the approved application or submit a revised application reflecting the as-built configuration. The final inspection verifies that what was built matches what was approved. A discrepancy must be resolved before the project can be closed.",
+        "C": "Contact the carrier by phone to discuss the discrepancy and determine if it matters.",
+        "D": "Close the project but add a note to the file describing the discrepancy."
+      },
+      "answer": "B",
+      "explanation": "The final inspection's purpose is to verify that the as-built installation matches the approved application. When there is a discrepancy -- even one that seems minor -- the inspection has failed that verification. The Jurisdiction must record the failed inspection in AMP and require resolution before the project is closed. Closing a project with a known as-built discrepancy creates a gap in the Official Record and may expose the Jurisdiction if the discrepancy causes problems later."
+    }
+  ]
+}

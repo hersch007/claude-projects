@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_itemdata"]
+
+[resource]
+script = ExtResource("1_itemdata")
+id = "blue_book_vol3"
+title = "Project Blue Book Vol. III"
+category = "Declassified Government Records"
+series = "Project Blue Book"
+volume = 3
+lore_blurb = "The classified appendix. All known declassified copies of the Blue Book archive end at page 442. This volume continues from page 443 to page 891.\n\nThe appendix describes what the report's authors called 'the retrieval problem' — the difficulty of recovering physical evidence from close-encounter sites without drawing attention. It lists seven successful retrievals between 1953 and 1967. The materials recovered are referenced by warehouse catalog number, not description.\n\nFour of those catalog numbers exist in our inventory. Three do not. There is no record of them ever being entered. The AI Oversight system flagged this discrepancy at 03:14 AM, eleven days before you arrived."
+research_stages = 4
+current_research_progress = 0
+ai_feed_value = 4.5
+ai_threat_level = 3
+is_ai_sensitive = true
+is_series_key_item = true
+series_feed_multiplier = 1.5
+classification = "Top Secret"
+containment_level = 2
+origin = "US Air Force / Blue Book Archive — Classified Appendix, date unknown"
+mesh_path = "res://assets/items/"
+texture_path = ""

@@ -1,0 +1,19 @@
+{
+  "date": "2026-08-15",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "GAR", "note": "Careers - Seo Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo AI/SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Implementation", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "Careers - Web Updates Cards ALT TXT", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo AI SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Web Updates", "job": "0790166", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Research", "job": "0790165", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo AI SEO", "job": "0790147", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Schema", "job": "0790149", "billable": true },
+    { "client": "GAR", "note": "Careers - Seo Implementation", "job": "0790166", "billable": true }
+  ]
+}

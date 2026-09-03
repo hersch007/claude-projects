@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"tsc exit: $?\")",
+      "Read(//tmp/**)",
+      "Bash(DATABASE_URL=\"postgresql://u:p@localhost:5432/db\" BETTER_AUTH_SECRET=\"x_test_secret_at_least_32_chars_long_padding\" BETTER_AUTH_URL=\"http://localhost:3000\" NEXT_PUBLIC_APP_URL=\"http://localhost:3000\" ENCRYPTION_PEPPER=\"x_test_pepper_at_least_32_chars_long_padding\" npx next build)",
+      "Bash(npm view *)",
+      "Bash(npm audit *)",
+      "Bash(mkdir -p prisma/migrations/0_init)",
+      "Bash(echo \"exit: $?\")"
+    ]
+  }
+}

@@ -1,0 +1,351 @@
+// =============================================================================
+//  License Tracker — Prisma schema
+//
+//  SECURITY / MULTI-TENANCY MODEL
+//  ------------------------------
+//  * Shared database, shared schema. Every tenant-owned row carries an
+//    `accountId`. Isolation is enforced in the data-access layer (see
+//    src/lib/tenant.ts) — EVERY query must be scoped by accountId.
+//  * Sensitive values (license keys, file bytes, sensitive notes) are NEVER
+//    stored in plaintext. They live in opaque `...Cipher` columns produced by
+//    AES-256-GCM (see src/lib/crypto/encryption.ts). The DB only ever sees
+//    ciphertext.
+//  * The per-account Data Encryption Key (DEK) is itself stored only in
+//    *wrapped* (encrypted) form. The wrapping key (KEK) is derived from the
+//    account master passphrase via Argon2id and never persisted.
+//  * Soft deletes (`deletedAt`) keep an auditable trail and support GDPR
+//    "right to be forgotten" via a hard-purge job.
+// =============================================================================
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"] // native (dev) + alpine (docker)
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// -----------------------------------------------------------------------------
+//  Tenancy
+// -----------------------------------------------------------------------------
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  UNPAID
+}
+
+/// An Account is the tenant boundary. All data hangs off it.
+model Account {
+  id   String @id @default(cuid())
+  name String
+
+  // ---- Master-passphrase / envelope-encryption material --------------------
+  // Verifier derived from the passphrase (HKDF over the Argon2id master key).
+  // Used to confirm the passphrase on unlock. It is NOT the encryption key.
+  masterPassphraseHash String?
+  // Argon2id salt for deriving the master key from the passphrase.
+  kdfSalt              Bytes?
+  // The account DEK, encrypted ("wrapped") with the KEK. Stored as GCM blob.
+  dekWrapped           Bytes?
+  dekWrapIv            Bytes?
+  dekWrapTag           Bytes?
+  // Bumped whenever the passphrase changes so stale in-memory keys are evicted.
+  keyVersion           Int     @default(1)
+  // True once an admin has set the passphrase during onboarding.
+  passphraseSet        Boolean @default(false)
+
+  // ---- Billing -------------------------------------------------------------
+  plan                 Plan                @default(FREE)
+  subscriptionStatus   SubscriptionStatus?
+  stripeCustomerId     String?             @unique
+  stripeSubscriptionId String?             @unique
+  stripePriceId        String?
+  seatLimit            Int                 @default(1) // derived from plan; enforced on invite
+  currentPeriodEnd     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  licenses     License[]
+  invitations  Invitation[]
+  auditLogs    AuditLog[]
+  attachments  Attachment[]
+
+  @@index([stripeCustomerId])
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+/// Application user. `accountId` is the hard tenant boundary.
+model User {
+  id            String   @id @default(cuid())
+  accountId     String
+  email         String   @unique // global uniqueness keeps login simple & safe
+  emailVerified Boolean  @default(false)
+  name          String?
+  role          Role     @default(MEMBER)
+  image         String?
+
+  // better-auth credential storage lives in the Account/Session/etc. tables
+  // below. Password hashing is handled by better-auth (scrypt/argon2).
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  account            Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  sessions           Session[]
+  authAccounts       AuthAccount[]
+  createdLicenses    License[]    @relation("LicenseCreatedBy")
+  auditLogs          AuditLog[]
+  sentInvitations    Invitation[] @relation("InvitationInviter")
+
+  @@index([accountId])
+  @@index([email])
+}
+
+// -----------------------------------------------------------------------------
+//  better-auth tables (sessions, OAuth/credential links, verification tokens)
+//  Names kept generic to match the better-auth Prisma adapter expectations.
+// -----------------------------------------------------------------------------
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+/// Credential / OAuth provider link (better-auth "account").
+model AuthAccount {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String // provider account id (NOT the tenant)
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String? // hashed credential, managed by better-auth
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+}
+
+// -----------------------------------------------------------------------------
+//  Invitations (seat-limited member management)
+// -----------------------------------------------------------------------------
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+  EXPIRED
+}
+
+model Invitation {
+  id         String           @id @default(cuid())
+  accountId  String
+  email      String
+  role       Role             @default(MEMBER)
+  status     InvitationStatus @default(PENDING)
+  tokenHash  String           @unique // SHA-256 of the emailed token; raw token never stored
+  invitedById String?
+  expiresAt  DateTime
+  createdAt  DateTime         @default(now())
+
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  invitedBy User?   @relation("InvitationInviter", fields: [invitedById], references: [id], onDelete: SetNull)
+
+  @@index([accountId])
+  @@index([email])
+}
+
+// -----------------------------------------------------------------------------
+//  Licenses (the core domain object)
+// -----------------------------------------------------------------------------
+
+enum LicenseType {
+  PERPETUAL
+  SUBSCRIPTION
+  VOLUME
+  OEM
+  TRIAL
+  OPEN_SOURCE
+  OTHER
+}
+
+enum BillingCycle {
+  NONE
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  BIENNIAL
+  CUSTOM
+}
+
+/// Persisted status. "EXPIRING"/"ACTIVE"/"EXPIRED" are also computed live from
+/// dates in the app layer; this column lets us index/filter cheaply.
+enum LicenseStatus {
+  ACTIVE
+  EXPIRING_SOON
+  EXPIRED
+  ARCHIVED
+}
+
+model License {
+  id        String @id @default(cuid())
+  accountId String
+  createdById String?
+
+  productName String
+  vendor      String?
+  licenseType LicenseType @default(SUBSCRIPTION)
+
+  // ---- ENCRYPTED: the license key is the crown jewel -----------------------
+  // Opaque GCM blob: iv || tag || ciphertext (see encryption.ts). Never logged,
+  // never returned in list endpoints, only decrypted on explicit "reveal".
+  licenseKeyCipher Bytes?
+  // Last 4 visible chars cached in plaintext purely so the UI can render a
+  // recognizable mask like "••••-AB12" without unlocking. Optional.
+  licenseKeyHint   String?
+
+  purchaseDate    DateTime?
+  startDate       DateTime?
+  expirationDate  DateTime?
+  nextRenewalDate DateTime?
+
+  // Money is stored in integer minor units (cents) to avoid float drift.
+  costCents Int?
+  currency  String @default("USD")
+
+  quantity     Int          @default(1)
+  billingCycle BillingCycle @default(NONE)
+  autoRenew    Boolean      @default(false)
+
+  renewalUrl String?
+  status     LicenseStatus @default(ACTIVE)
+
+  // Flexible assignment: array of {name,email,device} objects.
+  assignedTo Json @default("[]")
+  tags       String[] @default([])
+
+  // Notes may contain secrets; if `notesSensitive` they are stored encrypted.
+  notesCipher    Bytes?
+  notesPlain     String?
+  notesSensitive Boolean @default(false)
+
+  invoiceReference     String?
+  vendorSupportContact String?
+
+  // Arbitrary forward-compatible fields.
+  customFields Json @default("{}")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft delete
+
+  account     Account      @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  createdBy   User?        @relation("LicenseCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  attachments Attachment[]
+
+  // Composite indexes are all accountId-first: every read is tenant-scoped.
+  @@index([accountId, deletedAt])
+  @@index([accountId, status])
+  @@index([accountId, expirationDate])
+  @@index([accountId, vendor])
+}
+
+// -----------------------------------------------------------------------------
+//  Attachments (invoices/PDFs — bytes encrypted at rest)
+// -----------------------------------------------------------------------------
+
+model Attachment {
+  id        String @id @default(cuid())
+  accountId String
+  licenseId String
+
+  filename    String
+  contentType String
+  sizeBytes   Int
+
+  // ENCRYPTED file bytes (GCM blob). For large files in production you would
+  // store the ciphertext in object storage (S3) and keep only a pointer here;
+  // for self-host simplicity we keep the blob in Postgres.
+  dataCipher Bytes
+  sha256     String // integrity check of the *plaintext*, computed before encrypt
+
+  createdAt DateTime  @default(now())
+  deletedAt DateTime?
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  license License @relation(fields: [licenseId], references: [id], onDelete: Cascade)
+
+  @@index([accountId, licenseId])
+}
+
+// -----------------------------------------------------------------------------
+//  Audit log (append-only; who did what, when)
+// -----------------------------------------------------------------------------
+
+model AuditLog {
+  id        String @id @default(cuid())
+  accountId String
+  userId    String?
+
+  action     String // e.g. "license.create", "passphrase.change", "auth.login"
+  targetType String? // e.g. "License"
+  targetId   String?
+  // Non-sensitive metadata only. The audit layer strips secret fields.
+  metadata   Json    @default("{}")
+  ipAddress  String?
+  userAgent  String?
+
+  createdAt DateTime @default(now())
+
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([accountId, createdAt])
+  @@index([accountId, action])
+}

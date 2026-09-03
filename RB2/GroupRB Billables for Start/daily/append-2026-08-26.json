@@ -1,0 +1,12 @@
+{
+  "date": "2026-08-26",
+  "employee": "Richard Brashear",
+  "billable": {
+    "Fruth": 1.75,
+    "Garlock": 6.5
+  },
+  "nonBillable": {
+    "STA": 3,
+    "Start Performance": 1
+  }
+}

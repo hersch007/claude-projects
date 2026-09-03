@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Mahjong\\\\.claude\" && echo '{\"version\":\"0.0.1\",\"configurations\":[{\"name\":\"mahjong\",\"runtimeExecutable\":\"npx\",\"runtimeArgs\":[\"serve\",\"-p\",\"3131\",\".\"],\"port\":3131}]}' > \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\Mahjong\\\\.claude\\\\launch.json\" && echo done)",
+      "mcp__Claude_Preview__preview_start"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-07-31",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    { "client": "CFB", "note": "EMI Static Film - SEO Research", "job": "0920031", "billable": true },
+    { "client": "CFB", "note": "EMI Static Film - SEO Dev", "job": "0920017", "billable": true },
+    { "client": "CFB", "note": "EMI Static Film - SEO Schema", "job": "0920018", "billable": true },
+    { "client": "CFB", "note": "EMI Static Film - SEO Impl", "job": "0920012", "billable": true },
+    { "client": "CFB", "note": "Anti Static Film - SEO Research", "job": "0920031", "billable": true },
+    { "client": "CFB", "note": "Anti Static Film - SEO Dev", "job": "0920017", "billable": true },
+    { "client": "CFB", "note": "Anti Static Film - SEO Schema", "job": "0920018", "billable": true },
+    { "client": "CFB", "note": "Anti Static Film - SEO Imp", "job": "0920012", "billable": true },
+    { "client": "CFB", "note": "Flame Retardant Film - SEO Research", "job": "0920031", "billable": true },
+    { "client": "CFB", "note": "Flame Retardant Film - SEO Dev", "job": "0920017", "billable": true },
+    { "client": "CFB", "note": "Flame Retardant Film - SEO Schema", "job": "0920018", "billable": true },
+    { "client": "CFB", "note": "Flame Retardant Film - SEO Imp", "job": "0920012", "billable": true },
+    { "client": "CFB", "note": "Polypropylene Film - SEO Research", "job": "0920031", "billable": true },
+    { "client": "CFB", "note": "Polypropylene Film - SEO Dev", "job": "0920017", "billable": true },
+    { "client": "CFB", "note": "Polypropylene Film - SEO Schema", "job": "0920018", "billable": true },
+    { "client": "CFB", "note": "Polypropylene Film - SEO Imp", "job": "0920012", "billable": true },
+    { "client": "CFB", "note": "Nuclear Green - SEO Research", "job": "0920031", "billable": true },
+    { "client": "CFB", "note": "Nuclear Green - SEO Dev", "job": "0920017", "billable": true },
+    { "client": "CFB", "note": "Nuclear Green - SEO Schema", "job": "0920018", "billable": true },
+    { "client": "CFB", "note": "Nuclear Green - SEO Imp", "job": "0920012", "billable": true }
+  ]
+}

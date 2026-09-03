@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -Command \"Expand-Archive -Path 'quote-builder-core-7-3-home-signout-fix.zip' -DestinationPath './extracted' -Force\")",
+      "Bash(powershell -Command ' *)"
+    ]
+  }
+}

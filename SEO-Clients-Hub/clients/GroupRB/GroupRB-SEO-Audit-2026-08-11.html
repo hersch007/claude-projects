@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: GroupRB — August 11, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #c8102e; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #c8102e; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #c8102e; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #c8102e; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">86</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Good</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">GroupRB</div>
+    <div class="cover-sub">https://www.grouprb.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">August 11, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">27</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">15</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">16 of 27 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">7 of 27 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">10</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">5</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">2</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">2</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">7</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">27</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Performance Highlights</div>
+      <div class="perf-period">Live data &bull; 2026-07-12 to 2026-08-08 &bull; vs. prior 28 days</div>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card">
+        <div class="perf-value">1</div>
+        <div class="perf-label">Organic Clicks</div>
+        <span class="perf-change down">
+          <span class="perf-arrow">▼</span> -80%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">5,829</div>
+        <div class="perf-label">Impressions</div>
+        <span class="perf-change up">
+          <span class="perf-arrow">▲</span> +10.4%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">22.5</div>
+        <div class="perf-label">Avg. Position</div>
+        <span class="perf-change up">
+          <span class="perf-arrow">▲</span> +4.1%
+        </span>
+      </div>
+      <div class="perf-card">
+        <div class="perf-value">199</div>
+        <div class="perf-label">Organic Keywords</div>
+        
+      </div></div>
+    
+      <div style="margin-top:20px">
+        <div class="section-title" style="font-size:12px;margin-bottom:10px">Top Organic Keywords (Last 28 Days)</div>
+        <div class="page-table-wrap">
+        <table>
+          <thead><tr>
+            <th>Keyword</th>
+            <th class="center">Clicks</th>
+            <th class="center">Impressions</th>
+            <th class="center">Avg. Position</th>
+            <th class="center">CTR</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td>web design augusta</td>
+              <td class="center">1</td>
+              <td class="center">2</td>
+              <td class="center">81</td>
+              <td class="center">50%</td>
+            </tr><tr>
+              <td>ai search optimization fort mill sc</td>
+              <td class="center">0</td>
+              <td class="center">6</td>
+              <td class="center">37</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>answer engine optimization fort mill sc</td>
+              <td class="center">0</td>
+              <td class="center">6</td>
+              <td class="center">76.5</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>b2b professional services fractional cmo</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">55</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>best b2b seo company morristown</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">69</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>best local seo company near fort mill</td>
+              <td class="center">0</td>
+              <td class="center">12</td>
+              <td class="center">8.1</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>branding services in rock hill</td>
+              <td class="center">0</td>
+              <td class="center">7</td>
+              <td class="center">21.6</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>camarillo small business search engine optimization</td>
+              <td class="center">0</td>
+              <td class="center">1</td>
+              <td class="center">95</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>cape coral wordpress website design company</td>
+              <td class="center">0</td>
+              <td class="center">4</td>
+              <td class="center">94.3</td>
+              <td class="center">-</td>
+            </tr><tr>
+              <td>charlotte conversion rate optimization agency</td>
+              <td class="center">0</td>
+              <td class="center">2</td>
+              <td class="center">94.5</td>
+              <td class="center">-</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Optimize title tag length on 7 pages</div>
+        <div class="qw-detail" style="margin-top:6px">6 titles are under 30 characters (missing keyword opportunities). 1 titles exceed 65 characters and will be cut off in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fill in empty image alt text on 3 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Add canonical tags to 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Medium">Medium effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Add structured data (schema) to 2 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Schema markup helps Google display rich results (star ratings, FAQs, product details). Product and service pages especially benefit from this.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val good">86 / 100 &mdash; Good</span>
+      </div>
+      
+      <div class="summary-row"><span class="sr-label">Pages missing a meta description</span><span class="sr-val bad">10 pages affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">5 pages affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">2 pages affected</span></div>
+      
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">16 of 27 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">7 of 27 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 86/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (20 pages need attention)</div>
+    
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog/insights-5/feed</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (8 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (53 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog/our-blog-7/feed</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (8 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (3 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (75 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/shop</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (28 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (34 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog/our-blog-7</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (28 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (39 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/slides</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (47 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/profile/users</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (37 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/slides/all</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (47 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/terms</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/appointment</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/calendar</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/website/info</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/fractional-cmo-services</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (67 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/blog/insights-5</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (76 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact-us</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/cookie-policy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (26 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/rock-hill-web-design-company</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (28 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/shop/creative-visibility-audit-seo-optimization-33</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (68 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/profile/ranks_badges</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contactus</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com" target="_blank">/</a></td>
+      <td>Web Design, SEO & Fractional CMO in Rock Hill & Fort Mill</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/about-rock-hill-web-design-seo-digital-marketing" target="_blank">/about-rock-hill-web-design-seo-digital-marketing</a></td>
+      <td>Rock Hill Web Design and Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/contact-us" target="_blank">/contact-us</a></td>
+      <td>Contact Us – GroupRB Marketing | Rock Hill & Fort Mill, SC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/cookie-policy" target="_blank">/cookie-policy</a></td>
+      <td>Cookie Policy GroupRB, LLC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/fractional-cmo-services" target="_blank">/fractional-cmo-services</a></td>
+      <td>Fractional CMO Services in Rock Hill & Fort Mill, SC , Charlotte NC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/our-services" target="_blank">/our-services</a></td>
+      <td>Web Design, SEO, and Marketing in Rock Hill & Fort Mill</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/privacy" target="_blank">/privacy</a></td>
+      <td>Privacy Policy for GroupRB LLC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/rock-hill-web-design-company" target="_blank">/rock-hill-web-design-company</a></td>
+      <td>Rock Hill Web Design Company</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/search-engine-optimization-seo-services" target="_blank">/search-engine-optimization-seo-services</a></td>
+      <td>SEO Services in Rock Hill & Fort Mill, SC | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/web-design-services" target="_blank">/web-design-services</a></td>
+      <td>Web Design Services in Rock Hill & Fort Mill, SC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/terms" target="_blank">/terms</a></td>
+      <td>Terms & Conditions | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/appointment" target="_blank">/appointment</a></td>
+      <td>Free Strategy Session with GroupRB</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/calendar" target="_blank">/calendar</a></td>
+      <td>Free Strategy Session with GroupRB</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/shop/creative-visibility-audit-seo-optimization-33" target="_blank">/shop/creative-visibility-audit-seo-optimization-33</a></td>
+      <td>Creative Visibility Audit + SEO Optimization | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Unknown, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/shop" target="_blank">/shop</a></td>
+      <td>Products | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/website/info" target="_blank">/website/info</a></td>
+      <td>Odoo Information | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog" target="_blank">/blog</a></td>
+      <td>Blog Posts | GroupRB Marketing</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog/insights-5" target="_blank">/blog/insights-5</a></td>
+      <td>Marketing Insights to Help Your Business Grow</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog/our-blog-7" target="_blank">/blog/our-blog-7</a></td>
+      <td>Our blog | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog/insights-5/feed" target="_blank">/blog/insights-5/feed</a></td>
+      <td>Insights</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog/our-blog-7/feed" target="_blank">/blog/our-blog-7/feed</a></td>
+      <td>Our blog</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/blog/insights-5/7-reasons-your-website-isn-t-bringing-in-customers-and-how-to-fix-them-1" target="_blank">/blog/insights-5/7-reasons-your-website-isn-t-bringing-in-customers-and-how-to-fix-them-1</a></td>
+      <td>7 Reasons Your Website Isn’t Bringing in Customers</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/slides" target="_blank">/slides</a></td>
+      <td>Odoo Courses Homepage | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/profile/users" target="_blank">/profile/users</a></td>
+      <td>Users Page | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/profile/ranks_badges" target="_blank">/profile/ranks_badges</a></td>
+      <td>Ranks Page | GroupRB Marketing</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/slides/all" target="_blank">/slides/all</a></td>
+      <td>Odoo Courses Homepage | GroupRB Marketing</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://www.grouprb.com/contactus" target="_blank">/contactus</a></td>
+      <td>Contact Us – GroupRB Marketing | Rock Hill & Fort Mill, SC</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization, Invalid JSON-LD, FAQPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+</div>
+
+<div class="report-footer">
+  Prepared by Start Advertising &bull; GroupRB SEO Audit &bull; August 11, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+</body>
+</html>

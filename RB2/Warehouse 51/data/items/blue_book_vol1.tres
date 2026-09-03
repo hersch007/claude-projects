@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_itemdata"]
+
+[resource]
+script = ExtResource("1_itemdata")
+id = "blue_book_vol1"
+title = "Project Blue Book Vol. I"
+category = "Declassified Government Records"
+series = "Project Blue Book"
+volume = 1
+lore_blurb = "Official USAF records: 12,618 reported UFO sightings logged between 1952 and 1969. The report concludes the majority are explained phenomena. What it does not explain is why 701 cases remain classified as UNEXPLAINED — or why the physical evidence logs for those cases are missing entirely from the public archive.\n\nThis volume covers years 1952–1958. Pay close attention to the Levelland incident. Someone added a handwritten margin note that was not part of the original report. It reads: 'They matched.'"
+research_stages = 3
+current_research_progress = 0
+ai_feed_value = 2.5
+ai_threat_level = 2
+is_ai_sensitive = false
+is_series_key_item = false
+series_feed_multiplier = 1.5
+classification = "Declassified"
+containment_level = 1
+origin = "US Air Force / Wright-Patterson AFB, declassified 1969"
+mesh_path = "res://assets/items/"
+texture_path = ""

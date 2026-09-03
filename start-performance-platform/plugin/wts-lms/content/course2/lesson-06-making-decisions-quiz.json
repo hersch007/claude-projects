@@ -1,0 +1,26 @@
+{
+  "questions": [
+    {
+      "question": "A Jurisdiction reviewer wants to deny a Small Wireless Facility application. The carrier's proposed small cell would be mounted on a utility pole in a residential neighborhood. Several residents have submitted written objections citing concerns about radio frequency emissions from the equipment and potential health effects. The reviewer finds the technical documentation complete and properly certified. Can she deny the application based on the residents' RF concerns?",
+      "options": {
+        "A": "Yes. The Jurisdiction has broad authority to protect public health and safety, and resident concerns are a valid basis for denial.",
+        "B": "Yes, if enough residents object. Community opposition is a documented basis for denial under local land use authority.",
+        "C": "No. Federal telecommunications law explicitly prohibits local governments from denying wireless facility applications on the basis of radio frequency emissions concerns where the carrier has demonstrated FCC compliance. RF health concerns -- regardless of how many residents raise them -- are not a permissible basis for denial.",
+        "D": "It depends on whether the local ordinance includes a provision addressing RF emissions."
+      },
+      "answer": "C",
+      "explanation": "The Telecommunications Act of 1996 explicitly prohibits local governments from regulating wireless facilities on the basis of environmental effects of radio frequency emissions, provided the carrier demonstrates FCC compliance. This prohibition is absolute -- it applies regardless of the number of residents who object, regardless of local ordinance language, and regardless of the reviewer's own concerns. Denying on RF grounds exposes the Jurisdiction to federal preemption and legal challenge. The denial will not stand."
+    },
+    {
+      "question": "A Jurisdiction reviewer decides to deny a New Tower application. She enters the denial in AMP with the following note: 'Application does not meet community standards and is not in keeping with the character of the area.' Is this a legally sufficient denial?",
+      "options": {
+        "A": "Yes. The Jurisdiction has authority over land use decisions and community character is a legitimate consideration.",
+        "B": "No. A denial must cite specific, written findings tied to the provisions of the local ordinance or applicable federal law that the application fails to meet. 'Community standards' and 'character of the area' are not specific articulable grounds -- they are vague subjective conclusions. A denial written this way is legally indefensible and will not survive challenge.",
+        "C": "Yes, as long as the Analyst agrees with the decision.",
+        "D": "It is sufficient for now. The Jurisdiction can add specific grounds if the carrier appeals."
+      },
+      "answer": "B",
+      "explanation": "A denial must be in writing, must be supported by the administrative record, and must cite specific provisions of the local ordinance or applicable law that the application fails to meet. Vague conclusions like 'community standards' or 'character of the area' are not specific grounds -- they cannot be tied to a written standard the carrier failed to satisfy. A denial written this way will not survive federal court review. The grounds must be specific, articulable, and documented in the Official Record at the time of the decision -- not added later if the carrier appeals."
+    }
+  ]
+}

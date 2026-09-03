@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__4aae0cc3-f85a-4541-97e4-9bef0bb81c04__search_threads",
+      "mcp__4aae0cc3-f85a-4541-97e4-9bef0bb81c04__get_thread",
+      "mcp__4aae0cc3-f85a-4541-97e4-9bef0bb81c04__label_thread",
+      "mcp__4aae0cc3-f85a-4541-97e4-9bef0bb81c04__unlabel_thread",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__list_undone_tasks_by_date",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__get_project_with_undone_tasks",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__list_projects",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__filter_tasks",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__create_task",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__update_task",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__complete_task",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__delete_task",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__batch_update_tasks",
+      "mcp__44956f95-c69b-41be-ab49-87fbbcfc3af5__list_completed_tasks_by_date",
+      "mcp__f98c7629-b446-44d2-a038-fd3afffbbf4e__search-designs",
+      "mcp__947c3113-2b38-4149-91e4-479306ba05ff__list_events",
+      "mcp__947c3113-2b38-4149-91e4-479306ba05ff__list_calendars",
+      "mcp__947c3113-2b38-4149-91e4-479306ba05ff__get_event",
+      "mcp__947c3113-2b38-4149-91e4-479306ba05ff__create_event",
+      "mcp__947c3113-2b38-4149-91e4-479306ba05ff__delete_event",
+      "mcp__ccd_session__mark_chapter",
+      "Bash(npm list *)",
+      "Bash(Get-ChildItem *)"
+    ]
+  }
+}

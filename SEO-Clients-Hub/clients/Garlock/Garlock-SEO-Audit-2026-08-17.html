@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Garlock — August 17, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #1a3a5c; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #1a3a5c; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #1a3a5c; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #1a3a5c; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Keyword tracker ── */
+  .kw-change.improved { color: #16a34a; font-weight: 700; }
+  .kw-change.declined { color: #dc2626; font-weight: 700; }
+  .kw-change.new      { color: #7c3aed; font-weight: 700; }
+  .kw-change.same     { color: #94a3b8; }
+  .kw-pos             { font-weight: 700; color: #0f172a; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #003366 !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">83</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Needs Improvement</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Garlock</div>
+    <div class="cover-sub">https://gcpflexpack-24024882.hs-sites.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">August 17, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">120</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">7</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">70 of 120 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">48 of 120 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-trend">
+    <div class="trend-label">Score History</div>
+    <svg viewBox="0 0 520 110" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;overflow:visible">
+      <defs>
+        <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+      </defs>
+      <polygon points="36,82 36,64.10526315789474 268,55.15789473684211 500,22.94736842105263 500,82" fill="url(#tg)"/>
+      <polyline points="36,64.10526315789474 268,55.15789473684211 500,22.94736842105263" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linejoin="round"/>
+      
+      <circle cx="36" cy="64.10526315789474" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="36" y="55.10526315789474" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">60</text>
+    
+      <circle cx="268" cy="55.15789473684211" r="3.5" fill="rgba(255,255,255,0.7)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="268" y="46.15789473684211" text-anchor="middle" font-size="9" font-weight="400" fill="rgba(255,255,255,0.75)">65</text>
+    
+      <circle cx="500" cy="22.94736842105263" r="5" fill="#fff" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+      <text x="500" y="13.94736842105263" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(255,255,255,1)">83</text>
+    
+      <text x="36" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jul 1</text><text x="268" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Jul 31</text><text x="500" y="104" text-anchor="middle" font-size="9" fill="rgba(255,255,255,0.55)">Aug 17</text>
+    </svg>
+  </div>
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">1</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">21</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">6</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">4</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">48</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">120</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+
+  <!-- KEYWORD RANKINGS -->
+  
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Optimize title tag length on 35 pages</div>
+        <div class="qw-detail" style="margin-top:6px">3 titles are under 30 characters (missing keyword opportunities). 32 titles exceed 65 characters and will be cut off in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fill in empty image alt text on 12 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Rewrite meta descriptions on 12 pages</div>
+        <div class="qw-detail" style="margin-top:6px">7 meta descriptions are too short to persuade clicks. 5 are too long and get truncated in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on 6 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Add canonical tags to 4 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val good">83 / 100 &mdash; Needs Improvement</span>
+      </div>
+      
+      
+      <div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">1 page affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">21 pages affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages with images missing alt text</span><span class="sr-val warn">6 pages affected</span></div>
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">70 of 120 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">48 of 120 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 83/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (72 pages need attention)</div>
+    
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/printed-rollstock/peel-reseal-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (1)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (69 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/capabilities/finishing-slitting-flexible-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (1)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/products/printed-rollstock/paper-flexible-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (1)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/markets/pet-foods</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (2)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/request-a-consultation</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority critical">Critical</span>
+            <span class="finding-label">Page has no main heading (H1)</span>
+          </div>
+          <div class="finding-why">The H1 tells search engines what the page is about. Every page should have exactly one.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/learning-center/how-an-artisan-meats-company-improved-their-productivity-and-branding-with-die-cut-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (1)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/learning-center/the-benefits-of-reclose-technology</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Images missing alt text (1)</span>
+          </div>
+          <div class="finding-why">Alt text helps Google understand images and is required for accessibility compliance.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (37 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">9 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (20 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">9 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/author/admin</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (28 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">9 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/author/admin</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (37 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">9 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No canonical tag</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/orange-california</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (67 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (98 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/introducing-c-p-greenstream-portfolio-of-sustainable-packaging-solutions</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (98 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (98 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-announces-acquisition-of-genpak-flexible</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (88 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (273 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/shrink-bands</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (79 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/premade-pouches</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (69 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (110 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-invests-in-new-poly-bag-manufacturing-capabilities</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (98 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (356 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-welcomes-dave-klopp-as-vice-president-of-sales</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (69 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (94 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/premade-pouches/paper-pouches</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/laser-die-cut-window-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (61 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/about-us/our-companies</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (53 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (67 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-acquires-fruth-custom-packaging-inc-and-cleanroom-film-and-bag-inc</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (118 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (181 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/sustainable-packaging/internal-recycling-facility</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (66 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-launches-new-website</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (26 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description short (68 chars)</span>
+          </div>
+          <div class="finding-why">Short meta descriptions waste valuable space to attract clicks from search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (68 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (110 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-announces-acquisition-of-bass-flexible-packaging-inc</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (102 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (177 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/markets/cookies-bakery-products</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (70 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/vetting-potential-cold-seal-packaging-suppliers</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">2 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/sustainable-packaging/solar-powered-manufacturing</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/cleanroom-film-bags-announces-grand-opening-of-new-solar-powered-cleanroom-packaging-facility</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (120 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/markets/confectionery</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (68 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (106 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-announces-intelligraphix-systems</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (80 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/c-p-bristol</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (101 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/aurora-ontario-canada</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (106 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-showcases-proprietary-lidding-films-for-high-pressure-pasteurization-at-iddba-2023</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (130 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/glossary/pouch</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/introducing-virtual-press-check-capabilities-for-customers-in-critical-infrastructure-industries</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (121 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-acquires-preferred-packaging-in-georgia</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (87 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/commercially-viable-recyclable-stand-up-pouches</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (79 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/capabilities/flexible-package-design-and-consultation</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (69 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/2024-mdm-show-c-p-flexible-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (112 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/bags/autoclave-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/hffs-vffs-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/lidding-films</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (66 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/c-p-buffalo</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (100 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/high-performance-packaging-for-extended-shelf-life-refrigerated-meals</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (181 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-announces-acquisition-of-prestige-pak-inc</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (91 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/careers</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/short-run-cold-seal-packaging-for-co-packers</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-enables-rapid-development-of-voortmans-resealable-cookie-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (115 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/capabilities/flexible-packaging-prepress-services</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/c-p-york</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (103 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/privacy-policy</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/high-barrier-flexible-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/fond-du-lac-wisconsin</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (105 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/c-p-flexible-packaging-announces-commitment-to-convert-50-of-companys-u-s-plants-to-solar-power-by-2025</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (131 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/benefits-of-cold-seal-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">Meta description long (166 chars, aim for 140-160)</span>
+          </div>
+          <div class="finding-why">Long meta descriptions get truncated in search results.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/preferred-packaging-launches-greenstream-fiber-trays-a-new-standard-in-sustainable-meal-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (93 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/cleanroom-film-bags-expands-offering-of-customized-sterilizable-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (100 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/lakeville-minnesota</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (102 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/inno-lok-pre-zippered-rollstock</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/placentia-california</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (101 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/preferred-packaging-a-division-of-c-p-flexible-packaging-launches-new-sustainable-greenstream-pulp-trays</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (132 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/child-resistant-flexible-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/locations/preferred-packaging</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (84 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/news/cleanroom-film-bags-adds-capacity-to-serve-increasing-demand-for-cleanroom-nylon-films-and-bags</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (122 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/learning-center/redesigning-flexible-packaging-sustainability-shelf-appeal</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/products/printed-rollstock/shrink-bands</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/cold-seal-packaging-guide</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">No JSON-LD schema found</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/redesigning-flexible-packaging-sustainability-shelf-appeal</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">1 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com" target="_blank">/</a></td>
+      <td>Custom Flexible Packaging & Printing | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/cookies-bakery-products" target="_blank">/markets/cookies-bakery-products</a></td>
+      <td>Cookie & Bakery Packaging | Resealable Pouches, Slug Packs & Flow Wrap</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/high-burst-strength-flexible-packaging" target="_blank">/products/printed-rollstock/high-burst-strength-flexible-packaging</a></td>
+      <td>High Burst Strength Packaging | OTM Laminations for Snacks</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/capabilities/finishing-slitting-flexible-packaging" target="_blank">/capabilities/finishing-slitting-flexible-packaging</a></td>
+      <td>Package Finishing and Pouch Converting | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center"><span class="missing">1</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/stick-pack-film-laminations" target="_blank">/products/printed-rollstock/stick-pack-film-laminations</a></td>
+      <td>Stick Packs | Single-Serve Stick Pack Film Laminations</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/sustainable-packaging/greenstream-products" target="_blank">/sustainable-packaging/greenstream-products</a></td>
+      <td>GreenStream Sustainable Packaging | Recyclable, PCR & Compostable</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/snack-products" target="_blank">/markets/snack-products</a></td>
+      <td>Snack Food Packaging | Pillow Bags, Flow Wrap & Stand-Up Pouches</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/flat-bottom-pouches" target="_blank">/products/premade-pouches/flat-bottom-pouches</a></td>
+      <td>Flat-Bottom Pouches | Box & Quad-Seal Pouches with Shelf Appeal</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/matte-gloss-packaging" target="_blank">/products/printed-rollstock/matte-gloss-packaging</a></td>
+      <td>Matte/Gloss Flexible Packaging | Registered Finish Effects</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/vetting-potential-cold-seal-packaging-suppliers" target="_blank">/learning-center/vetting-potential-cold-seal-packaging-suppliers</a></td>
+      <td>How To Choose A Cold-Seal Supplier | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/sustainable-packaging/solar-powered-manufacturing" target="_blank">/sustainable-packaging/solar-powered-manufacturing</a></td>
+      <td>Solar-Powered Manufacturing | Renewable Energy at C-P</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/cleanroom-film-bags-announces-grand-opening-of-new-solar-powered-cleanroom-packaging-facility" target="_blank">/news/cleanroom-film-bags-announces-grand-opening-of-new-solar-powered-cleanroom-packaging-facility</a></td>
+      <td>Cleanroom Film & Bags Announces Grand Opening of New Solar-Powered Cleanroom Packaging Facility - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/confectionery" target="_blank">/markets/confectionery</a></td>
+      <td>Confectionery Packaging | Custom Pouches, Rollstock & Shrink Sleeves</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-announces-acquisition-of-genpak-flexible" target="_blank">/news/c-p-flexible-packaging-announces-acquisition-of-genpak-flexible</a></td>
+      <td>C-P Flexible Packaging Announces Acquisition of Genpak Flexible - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/contact" target="_blank">/contact</a></td>
+      <td>Contact C-P Flexible Packaging | 9 Plant Locations</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">ContactPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-announces-intelligraphix-systems" target="_blank">/news/c-p-flexible-packaging-announces-intelligraphix-systems</a></td>
+      <td>C-P Flexible Packaging Announces Intelligraphix Systems - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/shrink-bands" target="_blank">/learning-center/shrink-bands</a></td>
+      <td>5 reasons why shrink bands are a preferred method for achieving tamper evidence</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/c-p-bristol" target="_blank">/locations/c-p-bristol</a></td>
+      <td>Bristol, PA Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-earns-top-brcgs-rating-aa-for-food-packaging-quality-and-safety" target="_blank">/news/c-p-flexible-packaging-earns-top-brcgs-rating-aa-for-food-packaging-quality-and-safety</a></td>
+      <td>BRCGS Certified 2025 | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/aurora-ontario-canada" target="_blank">/locations/aurora-ontario-canada</a></td>
+      <td>Aurora, ON Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-showcases-proprietary-lidding-films-for-high-pressure-pasteurization-at-iddba-2023" target="_blank">/news/c-p-flexible-packaging-showcases-proprietary-lidding-films-for-high-pressure-pasteurization-at-iddba-2023</a></td>
+      <td>C-P Flexible Packaging Showcases Proprietary Lidding Films for High Pressure Pasteurization at IDDBA 2023 - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/glossary/pouch" target="_blank">/glossary/pouch</a></td>
+      <td>Premade Pouches Glossary | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/introducing-virtual-press-check-capabilities-for-customers-in-critical-infrastructure-industries" target="_blank">/news/introducing-virtual-press-check-capabilities-for-customers-in-critical-infrastructure-industries</a></td>
+      <td>Introducing Virtual Press Check Capabilities for Customers in Critical Infrastructure Industries - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-acquires-preferred-packaging-in-georgia" target="_blank">/news/c-p-flexible-packaging-acquires-preferred-packaging-in-georgia</a></td>
+      <td>C-P Flexible Packaging Acquires Preferred Packaging in Georgia - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/commercially-viable-recyclable-stand-up-pouches" target="_blank">/learning-center/commercially-viable-recyclable-stand-up-pouches</a></td>
+      <td>Recyclable stand-up pouches: Mapping out your brand’s path to commercialization</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/flexible-packaging-technology" target="_blank">/flexible-packaging-technology</a></td>
+      <td>Flexible Packaging Technology | Reclose, HD Print, Laser & More</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/capabilities/flexible-package-design-and-consultation" target="_blank">/capabilities/flexible-package-design-and-consultation</a></td>
+      <td>Flexible Package Design & Consultation | Custom Packaging Engineering</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/what-is-cold-seal-packaging" target="_blank">/learning-center/what-is-cold-seal-packaging</a></td>
+      <td>What is Cold-Seal Packaging? | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches" target="_blank">/products/premade-pouches</a></td>
+      <td>Premade Pouches | Stand-Up, Zipper & Spouted | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/2024-mdm-show-c-p-flexible-packaging" target="_blank">/news/2024-mdm-show-c-p-flexible-packaging</a></td>
+      <td>C-P Flexible Packaging Unveils Advanced Packaging Solutions at the MD&M Show in Anaheim - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-invests-in-new-poly-bag-manufacturing-capabilities" target="_blank">/news/c-p-flexible-packaging-invests-in-new-poly-bag-manufacturing-capabilities</a></td>
+      <td>C-P Flexible Packaging Invests in New Poly Bag Manufacturing Capabilities - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-welcomes-dave-klopp-as-vice-president-of-sales" target="_blank">/news/c-p-flexible-packaging-welcomes-dave-klopp-as-vice-president-of-sales</a></td>
+      <td>C-P Flexible Packaging Welcomes Dave Klopp as Vice President of Sales</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/medical-electronics-cleanroom-packaging" target="_blank">/markets/medical-electronics-cleanroom-packaging</a></td>
+      <td>Medical & Electronics Cleanroom Packaging | ISO-Class Films</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/capabilities/high-definition-flexographic-printing" target="_blank">/capabilities/high-definition-flexographic-printing</a></td>
+      <td>HD Flexographic Printing | Extended Gamut Packaging Printing</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/recyclable-flexible-packaging" target="_blank">/products/printed-rollstock/recyclable-flexible-packaging</a></td>
+      <td>Recyclable Flexible Packaging | Mono-Material & PCR Films</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags/emi-static-shielding-bags" target="_blank">/products/bags/emi-static-shielding-bags</a></td>
+      <td>EMI Static Shielding Bags | ESD Protection for Electronics</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/compostable-pouches" target="_blank">/products/premade-pouches/compostable-pouches</a></td>
+      <td>Compostable Pouches | Plant-Based Stand-Up & Frac Packs</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags/autoclave-bags" target="_blank">/products/bags/autoclave-bags</a></td>
+      <td>Autoclave Bags | Steam-Sterilizable Polypropylene Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/roll-fed-labels" target="_blank">/products/roll-fed-labels</a></td>
+      <td>Roll-Fed Labels | 360° Wraparound Film Labels for Bottles & Jars</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/orange-california" target="_blank">/locations/orange-california</a></td>
+      <td>Cleanroom Film & Bags | C-P Flexible Packaging | Orange, California</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags/nylon-bag" target="_blank">/products/bags/nylon-bag</a></td>
+      <td>Nylon Bags | Tough, Abrasion-Resistant Cleanroom & Lab Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/paper-pouches" target="_blank">/products/premade-pouches/paper-pouches</a></td>
+      <td>Paper pouches | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/hffs-vffs-rollstock" target="_blank">/products/printed-rollstock/hffs-vffs-rollstock</a></td>
+      <td>HFFS & VFFS Rollstock | Form/Fill/Seal Packaging Films</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/lidding-films" target="_blank">/products/printed-rollstock/lidding-films</a></td>
+      <td>Lidding Films | Peelable & High-Barrier Films for Rigid Containers</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/c-p-buffalo" target="_blank">/locations/c-p-buffalo</a></td>
+      <td>Buffalo, NY Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/high-performance-packaging-for-extended-shelf-life-refrigerated-meals" target="_blank">/news/high-performance-packaging-for-extended-shelf-life-refrigerated-meals</a></td>
+      <td>C-P Flexible Packaging Collaborates with Northwest Frozen, LLC in Successful Launch of High-Performance Packaging for Extended Shelf-Life Refrigerated Meals - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-announces-acquisition-of-prestige-pak-inc" target="_blank">/news/c-p-flexible-packaging-announces-acquisition-of-prestige-pak-inc</a></td>
+      <td>C-P Flexible Packaging Announces Acquisition of Prestige-Pak, Inc. - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/health-wellness-packaging" target="_blank">/markets/health-wellness-packaging</a></td>
+      <td>Health & Wellness Packaging | Supplements, Personal Care & More</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/careers" target="_blank">/careers</a></td>
+      <td>Careers at C-P Flexible Packaging | Join Our Team</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/laser-scored-pouches-easy-open-packaging" target="_blank">/products/premade-pouches/laser-scored-pouches-easy-open-packaging</a></td>
+      <td>Laser-Scored Pouches | Easy-Open Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/short-run-cold-seal-packaging-for-co-packers" target="_blank">/learning-center/short-run-cold-seal-packaging-for-co-packers</a></td>
+      <td>Short-Run Cold-Seal Packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/laser-die-cut-window-rollstock" target="_blank">/products/printed-rollstock/laser-die-cut-window-rollstock</a></td>
+      <td>Bags with customized die-cut windows | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-awarded-highest-achievable-brcgs-ratings-for-product-quality-and-safety" target="_blank">/news/c-p-flexible-packaging-awarded-highest-achievable-brcgs-ratings-for-product-quality-and-safety</a></td>
+      <td>BRCGS Certified Plants | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/introducing-c-p-greenstream-portfolio-of-sustainable-packaging-solutions" target="_blank">/news/introducing-c-p-greenstream-portfolio-of-sustainable-packaging-solutions</a></td>
+      <td>Introducing C-P GreenStream™ Portfolio of Sustainable Packaging Solutions - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-enables-rapid-development-of-voortmans-resealable-cookie-packaging" target="_blank">/news/c-p-flexible-packaging-enables-rapid-development-of-voortmans-resealable-cookie-packaging</a></td>
+      <td>C-P Flexible Packaging Enables Rapid Development of Voortman's Resealable Cookie Packaging - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/flexible-packaging-calculator" target="_blank">/flexible-packaging-calculator</a></td>
+      <td>Flexible Packaging Calculator | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebApplication</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/capabilities/flexible-packaging-prepress-services" target="_blank">/capabilities/flexible-packaging-prepress-services</a></td>
+      <td>Flexible Packaging Prepress Services | In-House Platemaking</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/c-p-york" target="_blank">/locations/c-p-york</a></td>
+      <td>York, PA Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/about-us/our-companies" target="_blank">/about-us/our-companies</a></td>
+      <td>Our companies - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/about-us" target="_blank">/about-us</a></td>
+      <td>About C-P Flexible Packaging | 60+ Years of Expertise</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">AboutPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags" target="_blank">/products/bags</a></td>
+      <td>Functional Bags & Pouches | Cleanroom, Static-Shielding & Poly Bags</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/aerospace-packaging" target="_blank">/markets/aerospace-packaging</a></td>
+      <td>Aerospace Packaging | ESD, Flame-Retardant & Cleanroom Films</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/fixing-flexible-packaging-performance-print-quality-issues" target="_blank">/learning-center/fixing-flexible-packaging-performance-print-quality-issues</a></td>
+      <td>Fixing Flexible Packaging Performance & Print-Quality Problems</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/spouted-pouches" target="_blank">/products/premade-pouches/spouted-pouches</a></td>
+      <td>Spouted Pouches | Stand-Up Pouches With Spout Fitments</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/privacy-policy" target="_blank">/privacy-policy</a></td>
+      <td>Privacy Policy | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/high-barrier-flexible-packaging" target="_blank">/products/printed-rollstock/high-barrier-flexible-packaging</a></td>
+      <td>High-Barrier Flexible Packaging | Oxygen & Moisture Barrier Films</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/how-an-artisan-meats-company-improved-their-productivity-and-branding-with-die-cut-rollstock" target="_blank">/learning-center/how-an-artisan-meats-company-improved-their-productivity-and-branding-with-die-cut-rollstock</a></td>
+      <td>DCRS Flow Wrap Meat Packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center"><span class="missing">1</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/compostable-flexible-packaging" target="_blank">/products/printed-rollstock/compostable-flexible-packaging</a></td>
+      <td>Compostable Flexible Packaging | BPI-Certified Sustainable Films</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/paper-flexible-packaging" target="_blank">/products/printed-rollstock/paper-flexible-packaging</a></td>
+      <td>Paper flexible packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center"><span class="missing">1</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/fond-du-lac-wisconsin" target="_blank">/locations/fond-du-lac-wisconsin</a></td>
+      <td>Fond du Lac, WI Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-teams-up-with-hr-pharmaceuticals-to-donate-hand-sanitizer-in-record-time" target="_blank">/news/c-p-flexible-packaging-teams-up-with-hr-pharmaceuticals-to-donate-hand-sanitizer-in-record-time</a></td>
+      <td>Hand sanitizer packaging supplied in record time</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-announces-commitment-to-convert-50-of-companys-u-s-plants-to-solar-power-by-2025" target="_blank">/news/c-p-flexible-packaging-announces-commitment-to-convert-50-of-companys-u-s-plants-to-solar-power-by-2025</a></td>
+      <td>C-P Flexible Packaging Announces Commitment to Convert 50% of Company’s U.S. Plants to Solar Power by 2025 - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-acquires-fruth-custom-packaging-inc-and-cleanroom-film-and-bag-inc" target="_blank">/news/c-p-flexible-packaging-acquires-fruth-custom-packaging-inc-and-cleanroom-film-and-bag-inc</a></td>
+      <td>C-P Flexible Packaging Acquires Fruth Custom Packaging, Inc. and Cleanroom Film and Bag, Inc. - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/pet-foods" target="_blank">/markets/pet-foods</a></td>
+      <td>Pet food packaging - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center"><span class="missing">2</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/benefits-of-cold-seal-packaging" target="_blank">/learning-center/benefits-of-cold-seal-packaging</a></td>
+      <td>3 Benefits of Cold-Seal Packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/preferred-packaging-launches-greenstream-fiber-trays-a-new-standard-in-sustainable-meal-packaging" target="_blank">/news/preferred-packaging-launches-greenstream-fiber-trays-a-new-standard-in-sustainable-meal-packaging</a></td>
+      <td>GreenStream™ Compostable Fiber Trays Launched by Preferred Packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/cleanroom-film-bags-expands-offering-of-customized-sterilizable-packaging" target="_blank">/news/cleanroom-film-bags-expands-offering-of-customized-sterilizable-packaging</a></td>
+      <td>Cleanroom Film & Bags Expands Offering of Customized Sterilizable Packaging - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/stand-up-pouches" target="_blank">/products/premade-pouches/stand-up-pouches</a></td>
+      <td>Stand-Up Pouches | Custom Premade Pouches With Any Closure</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/sustainable-packaging/internal-recycling-facility" target="_blank">/sustainable-packaging/internal-recycling-facility</a></td>
+      <td>Internal Recycling Facility | PE Scrap Recycling & Waste Diversion</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/thermoformed-food-trays" target="_blank">/products/thermoformed-food-trays</a></td>
+      <td>Thermoformed Food Trays | Retail & Institutional Meal Trays</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/cold-seal-packaging" target="_blank">/products/cold-seal-packaging</a></td>
+      <td>Cold-Seal Packaging | Heat-Sensitive Bar & Snack Wraps</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news" target="_blank">/news</a></td>
+      <td>News Archive - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/capabilities/extrusion-adhesive-lamination" target="_blank">/capabilities/extrusion-adhesive-lamination</a></td>
+      <td>Extrusion & Adhesive Lamination | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/lakeville-minnesota" target="_blank">/locations/lakeville-minnesota</a></td>
+      <td>Lakeville, MN Flexible Packaging Plant | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/inno-lok-pre-zippered-rollstock" target="_blank">/products/printed-rollstock/inno-lok-pre-zippered-rollstock</a></td>
+      <td>Inno-Lok® Pre-Zippered Rollstock | Resealable VFFS Packaging</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/shrink-sleeves" target="_blank">/products/shrink-sleeves</a></td>
+      <td>Shrink Sleeves | 360° Shrink Sleeve Labels & Sustainable Options</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/sustainable-packaging" target="_blank">/sustainable-packaging</a></td>
+      <td>Sustainable Packaging | Recyclable, Compostable & PCR Solutions</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-launches-new-website" target="_blank">/news/c-p-flexible-packaging-launches-new-website</a></td>
+      <td>C-P’s new website launches</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/recyclable-pouches" target="_blank">/products/premade-pouches/recyclable-pouches</a></td>
+      <td>Recyclable Pouches | Mono-Material & PCR Stand-Up Pouches</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock" target="_blank">/products/printed-rollstock</a></td>
+      <td>Printed Rollstock | Lidding, Barrier & More | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/placentia-california" target="_blank">/locations/placentia-california</a></td>
+      <td>Fruth Custom Packaging — Placentia, CA | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/preferred-packaging-a-division-of-c-p-flexible-packaging-launches-new-sustainable-greenstream-pulp-trays" target="_blank">/news/preferred-packaging-a-division-of-c-p-flexible-packaging-launches-new-sustainable-greenstream-pulp-trays</a></td>
+      <td>Preferred Packaging, a division of C-P Flexible Packaging, Launches New Sustainable GreenStream™ Pulp Trays - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/how-to-cut-flexible-packaging-costs-eliminate-delivery-issues" target="_blank">/learning-center/how-to-cut-flexible-packaging-costs-eliminate-delivery-issues</a></td>
+      <td>Cut Flexible Packaging Costs & Eliminate Delivery Issues</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/child-resistant-flexible-packaging" target="_blank">/products/printed-rollstock/child-resistant-flexible-packaging</a></td>
+      <td>Child-Resistant Flexible Packaging | ASTM D3475 Pouches & Film</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/sustainable-wipes-packaging-101" target="_blank">/learning-center/sustainable-wipes-packaging-101</a></td>
+      <td>Sustainable Wipes Packaging 101 - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/slider-pouches" target="_blank">/products/premade-pouches/slider-pouches</a></td>
+      <td>Slider Pouches | Resealable Slider Zipper Pouch Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/locations/preferred-packaging" target="_blank">/locations/preferred-packaging</a></td>
+      <td>Preferred Packaging — Norcross, GA | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">LocalBusiness</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/cleanroom-film-bags-adds-capacity-to-serve-increasing-demand-for-cleanroom-nylon-films-and-bags" target="_blank">/news/cleanroom-film-bags-adds-capacity-to-serve-increasing-demand-for-cleanroom-nylon-films-and-bags</a></td>
+      <td>Cleanroom Film & Bags Adds Capacity to Serve Increasing Demand for Cleanroom Nylon Films and Bags - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets/coffee" target="_blank">/markets/coffee</a></td>
+      <td>Coffee & Beverage Packaging | Bags, Pods, Sleeves & Labels</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/markets" target="_blank">/markets</a></td>
+      <td>Markets | Flexible Packaging for Snacks, Coffee, Pet Food & More</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/peel-reseal-rollstock" target="_blank">/products/printed-rollstock/peel-reseal-rollstock</a></td>
+      <td>Peel and Reseal Rollstock / Cookie Packaging | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center"><span class="missing">1</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products" target="_blank">/products</a></td>
+      <td>Flexible Packaging Products | Pouches, Rollstock, Labels & Bags</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">CollectionPage</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center" target="_blank">/learning-center</a></td>
+      <td>Learning center Blog</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags/poly-bags" target="_blank">/products/bags/poly-bags</a></td>
+      <td>Poly Bags | Custom-Printed Polyethylene Bags & Roll Stock</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/stretch-sleeves" target="_blank">/products/stretch-sleeves</a></td>
+      <td>Stretch Sleeves | Recyclable 360° Mono-Material Labels</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/zipper-pouches" target="_blank">/products/premade-pouches/zipper-pouches</a></td>
+      <td>Zipper Pouches | Cost-Effective Resealable Premade Pouches</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/the-benefits-of-reclose-technology" target="_blank">/learning-center/the-benefits-of-reclose-technology</a></td>
+      <td>The benefits of reclose technology - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center"><span class="missing">1</span></td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-flexible-packaging-announces-acquisition-of-bass-flexible-packaging-inc" target="_blank">/news/c-p-flexible-packaging-announces-acquisition-of-bass-flexible-packaging-inc</a></td>
+      <td>C-P Flexible Packaging Announces Acquisition of Bass Flexible Packaging, Inc. - C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/redesigning-flexible-packaging-sustainability-shelf-appeal" target="_blank">/learning-center/redesigning-flexible-packaging-sustainability-shelf-appeal</a></td>
+      <td>Redesign Flexible Packaging For Sustainability & Shelf Appeal</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/matte-and-gloss-pouches" target="_blank">/products/premade-pouches/matte-and-gloss-pouches</a></td>
+      <td>Matte & Gloss Pouches | High-Impact Stand-Up Pouch Finishes</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/printed-rollstock/shrink-bands" target="_blank">/products/printed-rollstock/shrink-bands</a></td>
+      <td>Shrink Bands | Custom PVC & PETG Tamper-Evident Bands</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/c-p-expands-medical-packaging-capabilities-through-fruth-division-to-meet-rising-demand-for-biohazard-autoclave-bags" target="_blank">/news/c-p-expands-medical-packaging-capabilities-through-fruth-division-to-meet-rising-demand-for-biohazard-autoclave-bags</a></td>
+      <td>Autoclave Bags | News | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/glossary/film" target="_blank">/glossary/film</a></td>
+      <td>Flexible Packaging Films Glossary | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">DefinedTermSet</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/premade-pouches/pouches-with-handles" target="_blank">/products/premade-pouches/pouches-with-handles</a></td>
+      <td>Pouches With Handles | Easy-Carry Stand-Up Pouch Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/request-a-consultation" target="_blank">/request-a-consultation</a></td>
+      <td>Request a Consultation | Flexible Packaging Experts</td>
+      <td class="center"><span class="missing">None</span></td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell ok">&#10003;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/products/bags/cleanroom-bags" target="_blank">/products/bags/cleanroom-bags</a></td>
+      <td>Cleanroom Bags | FDA-Compliant Medical & Electronics Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">Service</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/cold-seal-packaging-guide" target="_blank">/cold-seal-packaging-guide</a></td>
+      <td>Download Your Cold-Seal Packaging Guide | C-P Flexible Packaging</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/learning-center/author/admin" target="_blank">/learning-center/author/admin</a></td>
+      <td>Learning center Blog | Admin</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/news/author/admin" target="_blank">/news/author/admin</a></td>
+      <td>News Archive - C-P Flexible Packaging | Admin</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="warn-text">None</span></td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://gcpflexpack-24024882.hs-sites.com/redesigning-flexible-packaging-sustainability-shelf-appeal" target="_blank">/redesigning-flexible-packaging-sustainability-shelf-appeal</a></td>
+      <td>Redesign Flexible Packaging For Sustainability & Shelf Appeal</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">BlogPosting</td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+</div>
+
+<div class="report-footer">
+  Prepared by Start Advertising &bull; Garlock SEO Audit &bull; August 17, 2026<br>
+  Questions? Contact richard@grouprb.com
+</div>
+</body>
+</html>
