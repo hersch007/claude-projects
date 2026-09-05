@@ -1,0 +1,602 @@
+<title>Steph Goes With That</title>
+<style>
+  /* ── Tokens ── */
+  :root {
+    --plum:       #1E1B2E;
+    --plum-mid:   #4A4060;
+    --violet:     #7C5C8C;
+    --violet-lt:  #B8A0C8;
+    --lavender:   #EDE8F4;
+    --ground:     #F6F4F9;
+
+    --bg:         var(--ground);
+    --surface:    #FFFFFF;
+    --surface-alt: var(--lavender);
+    --text-1:     var(--plum);
+    --text-2:     #4D5568;
+    --text-3:     #8A9BAE;
+    --border:     #DDD5EA;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:          #1A1624;
+      --surface:     #211D30;
+      --surface-alt: #251E38;
+      --text-1:      #EDE8F8;
+      --text-2:      #9A88B8;
+      --text-3:      #6A5888;
+      --border:      #2E2848;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:          #1A1624;
+    --surface:     #211D30;
+    --surface-alt: #251E38;
+    --text-1:      #EDE8F8;
+    --text-2:      #9A88B8;
+    --text-3:      #6A5888;
+    --border:      #2E2848;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-1);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .kit {
+    max-width: 880px;
+    margin: 48px auto;
+    background: var(--surface);
+    box-shadow: 0 4px 32px rgba(30,27,46,0.13);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  /* ── Header ── */
+  .hd {
+    background: var(--plum);
+    padding: 60px 68px 52px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hd::before {
+    content: '';
+    position: absolute;
+    right: -60px; top: -80px;
+    width: 360px; height: 360px;
+    border-radius: 50%;
+    background: var(--violet);
+    opacity: 0.12;
+    pointer-events: none;
+  }
+
+  .hd::after {
+    content: '';
+    position: absolute;
+    right: 80px; top: 160px;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--violet-lt);
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  .hd-eyebrow {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--violet-lt);
+    margin-bottom: 18px;
+  }
+
+  .hd h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: #F0EBF8;
+    line-height: 1.05;
+    text-wrap: balance;
+    margin-bottom: 6px;
+  }
+
+  .hd-handle {
+    font-size: 13px;
+    color: var(--violet-lt);
+    letter-spacing: 0.04em;
+    margin-bottom: 26px;
+  }
+
+  .hd-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 17.5px;
+    color: rgba(240,235,248,0.65);
+    max-width: 560px;
+    text-wrap: balance;
+    line-height: 1.55;
+  }
+
+  .hd-badges {
+    display: flex;
+    gap: 8px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 5px 14px;
+    border: 1px solid rgba(184,160,200,0.30);
+    border-radius: 2px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--violet-lt);
+  }
+
+  /* ── Violet rule ── */
+  .rule { height: 5px; background: var(--violet); }
+
+  /* ── Stats strip ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--border);
+    gap: 1px;
+  }
+
+  .stat {
+    background: var(--surface-alt);
+    padding: 32px 28px 28px;
+    text-align: center;
+  }
+
+  .stat-plat {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 14px;
+  }
+
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 5px;
+  }
+
+  .stat-lbl {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+  }
+
+  .stat-sub {
+    font-size: 11.5px;
+    color: var(--violet);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .stat-sub { color: var(--violet-lt); }
+  }
+  :root[data-theme="dark"] .stat-sub { color: var(--violet-lt); }
+
+  /* ── Sections ── */
+  .sec {
+    padding: 48px 68px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sec:last-child { border-bottom: none; }
+
+  .sec-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 22px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .sec-lbl { color: var(--violet-lt); }
+  }
+  :root[data-theme="dark"] .sec-lbl { color: var(--violet-lt); }
+
+  /* ── Bio ── */
+  .bio-wrap {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .bio-copy {
+    color: var(--text-2);
+    font-size: 14.5px;
+    line-height: 1.78;
+  }
+
+  .bio-copy p + p { margin-top: 14px; }
+  .bio-copy strong { color: var(--text-1); font-weight: 600; }
+
+  .pullquote {
+    border-left: 3px solid var(--violet);
+    padding: 20px 24px;
+    background: var(--surface-alt);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .pullquote p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 15.5px;
+    line-height: 1.62;
+    color: var(--text-1);
+    text-wrap: balance;
+  }
+
+  .pullquote cite {
+    display: block;
+    margin-top: 12px;
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    font-style: normal;
+  }
+
+  /* ── Tags ── */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    padding: 6px 15px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    color: var(--plum-mid);
+    font-size: 12.5px;
+    font-weight: 500;
+    border-radius: 2px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .tag { color: var(--violet-lt); }
+  }
+  :root[data-theme="dark"] .tag { color: var(--violet-lt); }
+
+  /* ── Audience ── */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .aud-card {
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 22px 24px;
+    border-top: 3px solid var(--violet);
+  }
+
+  .aud-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+
+  .aud-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-1);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .aud-desc {
+    font-size: 12.5px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+
+  /* ── Rates ── */
+  .rates-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .rates-table thead tr {
+    border-bottom: 2px solid var(--violet);
+  }
+
+  .rates-table th {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    padding: 0 0 12px;
+    text-align: left;
+  }
+
+  .rates-table th.right { text-align: right; }
+
+  .rates-table td {
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+
+  .rates-table tr:last-child td { border-bottom: none; }
+
+  .rates-table td.name {
+    font-weight: 600;
+    color: var(--text-1);
+    width: 220px;
+    padding-right: 20px;
+  }
+
+  .rates-table td.price {
+    text-align: right;
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-1);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    padding-left: 20px;
+  }
+
+  .highlight-row td {
+    background: var(--surface-alt);
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .highlight-row td.name { padding-left: 12px; }
+  .highlight-row td.price { padding-right: 12px; }
+
+  .rates-note {
+    margin-top: 18px;
+    font-size: 12px;
+    color: var(--text-3);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ── Footer ── */
+  .ft {
+    background: var(--plum);
+    padding: 36px 68px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .ft-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #F0EBF8;
+    margin-bottom: 4px;
+  }
+
+  .ft-title {
+    font-size: 12px;
+    color: var(--violet-lt);
+    letter-spacing: 0.05em;
+  }
+
+  .ft-links {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    text-align: right;
+  }
+
+  .ft-links a {
+    font-size: 12.5px;
+    color: rgba(240,235,248,0.55);
+    text-decoration: none;
+    transition: color 0.18s;
+  }
+
+  .ft-links a:hover { color: var(--violet-lt); }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    .kit { margin: 0; border-radius: 0; }
+    .hd, .sec, .ft { padding-left: 24px; padding-right: 24px; }
+    .hd h1 { font-size: 34px; }
+    .stats, .bio-wrap, .audience-grid { grid-template-columns: 1fr; }
+    .ft { flex-direction: column; align-items: flex-start; }
+    .ft-links { text-align: left; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap">
+
+<div class="kit">
+
+  <!-- Header -->
+  <header class="hd">
+    <div class="hd-eyebrow">Creator Media Kit · 2026</div>
+    <h1>Steph Brashear</h1>
+    <div class="hd-handle">@steph.goes.with.that &nbsp;·&nbsp; TikTok &nbsp;·&nbsp; Instagram &nbsp;·&nbsp; Facebook</div>
+    <p class="hd-tagline">EMDR Therapist &amp; EMDRIA Approved Consultant — reaching the therapists and clients that practice management platforms want to reach.</p>
+    <div class="hd-badges">
+      <span class="badge">TikTok</span>
+      <span class="badge">Instagram</span>
+      <span class="badge">Facebook</span>
+      <span class="badge">Providence, RI</span>
+    </div>
+  </header>
+
+  <div class="rule"></div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-plat">TikTok</div>
+      <div class="stat-num">390K+</div>
+      <div class="stat-lbl">Total Likes</div>
+      <div class="stat-sub">2,529 followers<br>Videos reach 60K–120K+ views</div>
+    </div>
+    <div class="stat">
+      <div class="stat-plat">Instagram</div>
+      <div class="stat-num">8,836</div>
+      <div class="stat-lbl">Followers</div>
+      <div class="stat-sub">309 posts<br>Engaged clinician community</div>
+    </div>
+    <div class="stat">
+      <div class="stat-plat">Facebook</div>
+      <div class="stat-num">209</div>
+      <div class="stat-lbl">Followers</div>
+      <div class="stat-sub">Growing<br>Linked to IG presence</div>
+    </div>
+  </div>
+
+  <!-- Bio -->
+  <section class="sec">
+    <div class="sec-lbl">About Steph</div>
+    <div class="bio-wrap">
+      <div class="bio-copy">
+        <p>Stephanie Brashear is a licensed EMDR Therapist and <strong>EMDRIA Approved Consultant</strong> based in Providence, Rhode Island — licensed in SC, ID, and OH. She has built a trusted voice in the mental health space by making complex trauma therapy genuinely accessible.</p>
+        <p>Her content focuses on EMDR, IFS, CPTSD, and religious trauma — topics deeply underserved by mainstream wellness creators, yet actively sought by therapy clients and practicing clinicians alike. Her TikTok content consistently reaches far beyond her follower count, with individual videos earning tens of thousands — sometimes over 100,000 — organic views.</p>
+        <p>She speaks to two high-trust audiences at once: <strong>survivors navigating their healing</strong> and <strong>therapists looking for clinical insight and practice tools</strong> — making her uniquely valuable to brands in the therapy and mental health practice space.</p>
+      </div>
+      <div class="pullquote">
+        <p>"A popular mental health creator and EMDR consultant known for sharing relatable insights on therapy and emotional healing."</p>
+        <cite>— Google AI Overview</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Focus -->
+  <section class="sec">
+    <div class="sec-lbl">Content Niche</div>
+    <div class="tags">
+      <span class="tag">EMDR Therapy</span>
+      <span class="tag">IFS — Internal Family Systems</span>
+      <span class="tag">CPTSD &amp; Complex Trauma</span>
+      <span class="tag">Religious Trauma</span>
+      <span class="tag">Trauma Education</span>
+      <span class="tag">Mental Health Destigmatization</span>
+      <span class="tag">Clinician Resources</span>
+      <span class="tag">Emotional Healing</span>
+      <span class="tag">Therapy Demystified</span>
+    </div>
+  </section>
+
+  <!-- Audience -->
+  <section class="sec">
+    <div class="sec-lbl">Who's Watching</div>
+    <div class="audience-grid">
+      <div class="aud-card">
+        <div class="aud-title">Primary Audience</div>
+        <div class="aud-val">Dual</div>
+        <div class="aud-desc">Trauma survivors seeking understanding + licensed therapists seeking clinical content, training, and practice resources</div>
+      </div>
+      <div class="aud-card">
+        <div class="aud-title">Trust Level</div>
+        <div class="aud-val">High</div>
+        <div class="aud-desc">Followers are actively in therapy or clinical practice — not casual scrollers. Purchasing intent for therapy tools is strong.</div>
+      </div>
+      <div class="aud-card">
+        <div class="aud-title">Organic Reach</div>
+        <div class="aud-val">60K+</div>
+        <div class="aud-desc">Top TikTok videos reach 60K–120K+ views — far exceeding follower count. Viral lift is built into the content.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rates -->
+  <section class="sec">
+    <div class="sec-lbl">Partnership Opportunities &amp; Rates</div>
+    <table class="rates-table">
+      <thead>
+        <tr>
+          <th>Deliverable</th>
+          <th>Description</th>
+          <th class="right">Rate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">TikTok Sponsored Video</td>
+          <td>Dedicated 60–90 sec. authentic integration — story-driven, not scripted</td>
+          <td class="price">$200</td>
+        </tr>
+        <tr>
+          <td class="name">Instagram Reel</td>
+          <td>30–60 sec. Reel with caption, relevant tags, and Story share</td>
+          <td class="price">$125</td>
+        </tr>
+        <tr>
+          <td class="name">Instagram Carousel</td>
+          <td>Educational slide post — ideal for therapy tools, apps, or resources</td>
+          <td class="price">$100</td>
+        </tr>
+        <tr>
+          <td class="name">Instagram Story Set</td>
+          <td>3-slide sequence with link sticker — high click-through for therapy audience</td>
+          <td class="price">$60</td>
+        </tr>
+        <tr>
+          <td class="name">Facebook Post</td>
+          <td>Sponsored post with organic engagement</td>
+          <td class="price">$40</td>
+        </tr>
+        <tr class="highlight-row">
+          <td class="name">Bundle — TikTok + IG Reel + Stories</td>
+          <td>Full cross-platform campaign on one topic — best value for brand launches</td>
+          <td class="price">$350</td>
+        </tr>
+        <tr class="highlight-row">
+          <td class="name">Monthly Partnership</td>
+          <td>4 TikToks + 4 IG posts + weekly Stories — ongoing ambassador relationship</td>
+          <td class="price">$800/mo</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="rates-note">Custom packages available. All sponsored content is authentic and story-driven — no scripted reads. Affiliate arrangements considered case by case. Rates include 1 round of revisions.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="ft">
+    <div>
+      <div class="ft-name">Stephanie Brashear</div>
+      <div class="ft-title">EMDR Therapist &nbsp;·&nbsp; EMDRIA Approved Consultant</div>
+    </div>
+    <div class="ft-links">
+      <a href="https://www.tiktok.com/@steph.goes.with.that">TikTok: @steph.goes.with.that</a>
+      <a href="https://www.instagram.com/steph.goes.with.that">Instagram: @steph.goes.with.that</a>
+      <a href="https://www.facebook.com/profile.php?id=100090709586635">Facebook: Steph Goes With That</a>
+    </div>
+  </footer>
+
+</div>
