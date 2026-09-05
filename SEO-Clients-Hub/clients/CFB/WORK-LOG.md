@@ -53,9 +53,25 @@
 
 | 2026-08-11 | Anti-Static Nylon material page — implementation (title, meta, H1 reorder, 6 image alts, Product schema, 3 internal links) | 0.75 | Complete | /materials/anti-static-nylon-cleanroom-packaging — VERIFIED LIVE 2026-08-11. Progress report Priority 1: targets "anti-static bags" (4,400/mo, previously unranked) |
 
-**Total billable to date: 15.35 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25)
+| 2026-09-03 | Blog audit — research pass across all 10 Learning Center posts (keyword targeting, title/meta recommendations, schema selection, E-E-A-T notes, internal linking strategy) | 1.50 | Complete | Part 1 of 2 — audit deliverable that preceded per-post implementation |
+| 2026-09-04 | Blog audit — continued (schema markup, featured-image alt recommendations, strategic notes for all 10 posts) | 2.00 | Complete | Part 2 of 2 — completes 3.5 hr blog audit billing |
 
-_Blog audit (10 posts, 3.5 hrs) delivered but not yet billed — pending your go-ahead to log the audit separately from per-post implementation._
+| 2026-09-04 | Electronic market page — confirmed title + meta in HubSpot draft and published | 0.25 | Complete | /markets/electronic-cleanroom-packaging — VERIFIED LIVE 2026-09-04 |
+
+| 2026-09-04 | Markets hub — updated title to "Industries We Serve..." + meta, published | 0.25 | Complete | /markets — VERIFIED LIVE 2026-09-04 |
+
+| 2026-09-04 | Learning Center hub — fixed meta description in HubSpot Blog Settings (was showing wrong brand copy from shared portal) | 0.25 | Complete | /learning-center — VERIFIED LIVE 2026-09-04 |
+
+| 2026-09-04 | Blog posts — added \| CFB suffix to page titles in HubSpot for 6 posts (High-Speed Converting, Outer Space, Organ Transplant, Opens Plant, Sterilizable, FOUP) | 0.50 | Complete | All 6 VERIFIED LIVE 2026-09-04 |
+
+| 2026-09-04 | Blog posts — corrected title wording on Boeing (Aclar® case study) and CleanTronics; Nylon Capacity updated to "Expanding Cleanroom Nylon Film & Bag Capacity \| CFB" | 0.25 | Complete | Boeing + CleanTronics VERIFIED LIVE 2026-09-04; Nylon Capacity pending cache |
+
+| 2026-09-04 | Materials hub — added \| CFB suffix to page title, published | 0.25 | Complete | /materials — VERIFIED LIVE 2026-09-04 |
+
+| 2026-09-04 | Homepage, Medical, Semiconductor — corrected meta descriptions (minor wording variants + em dash fix on Semiconductor) | 0.25 | Complete | All 3 VERIFIED LIVE 2026-09-04 |
+| 2026-09-04 | How To Choose blog — investigated; URL now serves Fruth lead-times article (shared portal cross-contamination); deferred to Content Development (0920013) | 0.25 | Open | /learning-center/how-to-choose-the-right-medical-device-packaging — needs CFB content restoration |
+
+**Total billable to date: 20.85 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00)
 
 ## Open items
 - [x] ✅ VERIFIED 2026-07-22 live — homepage title, Organization schema, and meta description (150 chars) all confirmed live. Live meta wording: "...USA made for 35+ years." (drops "Get a quote" CTA — minor variance from draft, not worth a re-edit).

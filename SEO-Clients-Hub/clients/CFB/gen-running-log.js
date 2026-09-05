@@ -86,8 +86,10 @@ const body = [];
 body.push(new Paragraph({ children: [new TextRun({ text: data.client, font: FONT, size: 52, bold: true, color: PRIMARY })], spacing: { before: 160, after: 60 } }));
 body.push(new Paragraph({ children: [new TextRun({ text: data.docTitle, font: FONT, size: 36, bold: true, color: '333333' })], spacing: { after: 60 } }));
 body.push(new Paragraph({ children: [new TextRun({ text: data.docSubtitle, font: FONT, size: 24, italics: true, color: GRAY })], spacing: { after: 80 } }));
+const verifiedCount = data.pages.filter(p => /^VERIFIED LIVE/.test(p.status)).length;
+const failedCount = data.pages.filter(p => /LIVE CHECK FAILED/.test(p.status)).length;
 body.push(new Paragraph({
-  children: [new TextRun({ text: `Last updated: ${data.lastUpdated}   •   Pages audited: ${data.pages.length} of ${data.totalPages}`, font: FONT, size: 22, color: ACCENT, bold: true })],
+  children: [new TextRun({ text: `Last updated: ${data.lastUpdated}   •   Pages audited: ${data.pages.length} of ${data.totalPages}   •   Verified live: ${verifiedCount}   •   Needs attention: ${failedCount}`, font: FONT, size: 22, color: ACCENT, bold: true })],
   spacing: { after: 160 },
   border: { bottom: { style: BorderStyle.SINGLE, size: 8, color: PRIMARY } }
 }));
@@ -105,8 +107,10 @@ body.push(new Paragraph({ children: [], spacing: { after: 160 } }));
 // ---------- PER-PAGE ENTRIES ----------
 for (const p of data.pages) {
   body.push(h1(p.name));
-  const done = /^IMPLEMENTED/.test(p.status);
-  body.push(para([run(p.status, { bold: true, color: done ? GREEN : 'B26B00' })]));
+  const isVerified = /^VERIFIED LIVE/.test(p.status);
+  const isFailed = /LIVE CHECK FAILED/.test(p.status);
+  const statusColor = isVerified ? GREEN : isFailed ? 'C62828' : 'B26B00';
+  body.push(para([run(p.status, { bold: true, color: statusColor })]));
   body.push(labelLine('Live URL: ', p.liveUrl, { color: '0563C1' }));
   body.push(labelLine('HubSpot editor: ', p.editorUrl, { color: '0563C1' }));
   body.push(para([run('Audited: ', { bold: true }), run(p.audited + '      '), run('Primary keyword: ', { bold: true }), run(p.primaryKw)]));

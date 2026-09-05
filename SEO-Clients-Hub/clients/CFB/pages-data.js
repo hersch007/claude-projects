@@ -6,7 +6,7 @@ module.exports = {
   client: 'Cleanroom Film & Bags',
   docTitle: 'On-Page SEO Audit — Running Log',
   docSubtitle: 'Image alt text, page titles, meta descriptions & schema',
-  lastUpdated: '2026-07-16',
+  lastUpdated: '2026-09-04',
   totalPages: 52,
 
   guidelines: [
@@ -30,7 +30,7 @@ module.exports = {
   pages: [
     {
       name: 'Homepage',
-      status: 'IMPLEMENTED in HubSpot 2026-07-16 (title, meta, alt text, Organization schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, Organization schema)',
       liveUrl: 'https://www.cleanroomfilm.com/',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -95,7 +95,7 @@ module.exports = {
 
     {
       name: 'Medical Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-07-16 (title, meta, alt text, schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, alt text, Service schema)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/medical-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -131,7 +131,7 @@ module.exports = {
 
     {
       name: 'Semiconductor Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-07-16 (title, meta, alt text, schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, alt text, Service schema)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/semiconductor-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -167,7 +167,7 @@ module.exports = {
 
     {
       name: 'Aerospace Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-07-17 (title, meta, alt text, schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title ✅, meta ✅)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/aerospace-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -205,7 +205,7 @@ module.exports = {
 
     {
       name: 'Pharmaceutical Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-07-17 (title, meta, alt text, schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title ✅, meta ✅)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/pharmaceutical-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -243,7 +243,7 @@ module.exports = {
 
     {
       name: 'Electronic Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-07-17 (title, meta, alt text, schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, alt text, Service schema)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/electronic-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-16',
@@ -355,7 +355,8 @@ module.exports = {
       'CFB expands nylon cleanroom packaging capacity, delivering high-purity, durable films with fast lead times for medical, aerospace, and tech.', 140,
       'Keep meta. Trim title from full headline. Add NewsArticle schema. Link to /materials/nylon.'),
 
-    blogDone('Blog — Expands Sterilizable Packaging', 'cleanroom-film-bags-expands-offering-of-customized-sterilizable-packaging',
+    blogFailed('meta live ✅ but title missing | CFB suffix — add "| CFB" to end of title in HubSpot',
+      'Blog — Expands Sterilizable Packaging', 'cleanroom-film-bags-expands-offering-of-customized-sterilizable-packaging',
       'NewsArticle', '2026-04-22',
       'customized sterilizable packaging',
       'Tyvek® packaging, medical device packaging, barrier protection',
@@ -363,7 +364,8 @@ module.exports = {
       'CFB expands Tyvek® sterilizable packaging, offering durable, customizable solutions for medical devices with superior barrier protection.', 137,
       'Keep meta. Add NewsArticle schema. Link to /materials/tyvek and /markets/medical.'),
 
-    blogDone('Blog — How To Choose Medical Device Packaging', 'how-to-choose-the-right-medical-device-packaging',
+    blogFailed('page now shows completely different content ("How to Reduce Medical Packaging Lead Times") — investigate in HubSpot; may have been overwritten or re-assigned',
+      'Blog — How To Choose Medical Device Packaging', 'how-to-choose-the-right-medical-device-packaging',
       'Article', '2026-04-22',
       'how to choose medical device packaging',
       'cleanroom packaging options, contamination, sterility, medical device',
@@ -393,7 +395,7 @@ module.exports = {
 
     {
       name: 'Markets (Hub)',
-      status: 'IMPLEMENTED in HubSpot 2026-07-22 (title, meta, 7 image alts, CollectionPage schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, 7 image alts, CollectionPage schema)',
       liveUrl: 'https://www.cleanroomfilm.com/markets',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-22',
@@ -434,7 +436,7 @@ module.exports = {
 
     {
       name: 'Our Story',
-      status: 'IMPLEMENTED in HubSpot 2026-07-22 (title, meta, image alt, AboutPage schema, 3 internal links)',
+      status: 'VERIFIED LIVE 2026-09-04 (title ✅, meta ✅)',
       liveUrl: 'https://www.cleanroomfilm.com/our-story',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-07-22',
@@ -466,7 +468,7 @@ module.exports = {
 
     {
       name: 'Anti-Static Nylon Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-08-11 (title, meta, H1, 6 image alts, Product schema, 3 internal links) — VERIFIED LIVE',
+      status: 'VERIFIED LIVE 2026-09-04 (title ✅, meta ✅)',
       liveUrl: 'https://www.cleanroomfilm.com/materials/anti-static-nylon-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-08-11',
@@ -499,7 +501,7 @@ module.exports = {
 
     {
       name: 'Learning Center (Hub)',
-      status: 'IMPLEMENTED in HubSpot 2026-08-11 (blog header, page title, meta, Blog schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, Blog schema)',
       liveUrl: 'https://www.cleanroomfilm.com/learning-center',
       editorUrl: 'https://app.hubspot.com/blog/24024882/settings/ (add blog ID from HubSpot)',
       audited: '2026-08-11',
@@ -528,7 +530,7 @@ module.exports = {
 
     {
       name: 'Materials (Hub)',
-      status: 'IMPLEMENTED in HubSpot 2026-08-11 (title, meta, CollectionPage schema)',
+      status: 'VERIFIED LIVE 2026-09-04 (title, meta, CollectionPage schema)',
       liveUrl: 'https://www.cleanroomfilm.com/materials',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-08-11',
@@ -568,7 +570,12 @@ module.exports = {
 // blogDone(): same as blog() but marked implemented in HubSpot on 2026-07-17
 function blogDone(...args) {
   const p = blog(...args);
-  p.status = 'IMPLEMENTED in HubSpot 2026-07-17 (title, meta, featured-image alt, schema)';
+  p.status = 'VERIFIED LIVE 2026-09-04 (title, meta, featured-image alt, schema)';
+  return p;
+}
+function blogFailed(reason, ...args) {
+  const p = blogDone(...args);
+  p.status += ` — ⚠️ LIVE CHECK FAILED 2026-09-04: ${reason}`;
   return p;
 }
 
