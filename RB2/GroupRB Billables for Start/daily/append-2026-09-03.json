@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-03",
+  "employee": "Richard Brashear",
+  "billable": {
+    "MISC": 0.5,
+    "Fruth": 5.75,
+    "TriCoGo": 1.75
+  },
+  "nonBillable": {}
+}
