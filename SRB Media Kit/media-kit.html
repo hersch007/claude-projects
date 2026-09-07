@@ -1,602 +1,675 @@
-<title>Steph Goes With That</title>
+<title>Steph Brashear Media Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  /* ── Tokens ── */
   :root {
-    --plum:       #1E1B2E;
-    --plum-mid:   #4A4060;
-    --violet:     #7C5C8C;
-    --violet-lt:  #B8A0C8;
-    --lavender:   #EDE8F4;
-    --ground:     #F6F4F9;
-
-    --bg:         var(--ground);
-    --surface:    #FFFFFF;
-    --surface-alt: var(--lavender);
-    --text-1:     var(--plum);
-    --text-2:     #4D5568;
-    --text-3:     #8A9BAE;
-    --border:     #DDD5EA;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg:          #1A1624;
-      --surface:     #211D30;
-      --surface-alt: #251E38;
-      --text-1:      #EDE8F8;
-      --text-2:      #9A88B8;
-      --text-3:      #6A5888;
-      --border:      #2E2848;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg:          #1A1624;
-    --surface:     #211D30;
-    --surface-alt: #251E38;
-    --text-1:      #EDE8F8;
-    --text-2:      #9A88B8;
-    --text-3:      #6A5888;
-    --border:      #2E2848;
+    --navy:      #1E1B2E;  /* 25% — headings, strong elements */
+    --violet:    #7C5C8C;  /* 10% — accent: pills, key numbers, rules */
+    --violet-lt: #B8A0C8;  /* sparingly — small decorative only */
+    --lavender:  #F0EBF8;  /* subtle tinted backgrounds */
+    --plum:      #1E1B2E;  /* alias */
+    --white:     #FFFFFF;  /* 65% — primary content surface */
+    --ink:       #1E1B2E;  /* strong headings */
+    --ink-2:     #4D5568;  /* body copy on white (slate) */
+    --ink-3:     #8A9BAE;  /* muted / captions */
+    --sage:      #7E8F7A;  /* secondary accent */
+    --ground:    #F6F4F9;  /* page background */
+    --border:    #E2DCF0;  /* subtle borders */
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
-    color: var(--text-1);
     font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
+    background: #EBEBEB;
+    color: var(--ink);
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 
-  .kit {
-    max-width: 880px;
-    margin: 48px auto;
-    background: var(--surface);
-    box-shadow: 0 4px 32px rgba(30,27,46,0.13);
-    border-radius: 3px;
+  /* ── PAGE SHELL ── */
+  .page {
+    width: 760px;
+    margin: 32px auto;
+    background: var(--white);
+    box-shadow: 0 6px 40px rgba(0,0,0,.13);
     overflow: hidden;
-  }
-
-  /* ── Header ── */
-  .hd {
-    background: var(--plum);
-    padding: 60px 68px 52px;
     position: relative;
-    overflow: hidden;
   }
 
-  .hd::before {
-    content: '';
-    position: absolute;
-    right: -60px; top: -80px;
-    width: 360px; height: 360px;
-    border-radius: 50%;
-    background: var(--violet);
-    opacity: 0.12;
-    pointer-events: none;
-  }
+  /* ══════════════════════════════
+     PAGE 1
+  ══════════════════════════════ */
 
-  .hd::after {
-    content: '';
-    position: absolute;
-    right: 80px; top: 160px;
-    width: 180px; height: 180px;
-    border-radius: 50%;
-    background: var(--violet-lt);
-    opacity: 0.08;
-    pointer-events: none;
-  }
-
-  .hd-eyebrow {
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--violet-lt);
-    margin-bottom: 18px;
-  }
-
-  .hd h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 52px;
-    font-weight: 700;
-    color: #F0EBF8;
-    line-height: 1.05;
-    text-wrap: balance;
-    margin-bottom: 6px;
-  }
-
-  .hd-handle {
-    font-size: 13px;
-    color: var(--violet-lt);
-    letter-spacing: 0.04em;
-    margin-bottom: 26px;
-  }
-
-  .hd-tagline {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 17.5px;
-    color: rgba(240,235,248,0.65);
-    max-width: 560px;
-    text-wrap: balance;
-    line-height: 1.55;
-  }
-
-  .hd-badges {
-    display: flex;
-    gap: 8px;
-    margin-top: 30px;
-    flex-wrap: wrap;
-  }
-
-  .badge {
-    padding: 5px 14px;
-    border: 1px solid rgba(184,160,200,0.30);
-    border-radius: 2px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    color: var(--violet-lt);
-  }
-
-  /* ── Violet rule ── */
-  .rule { height: 5px; background: var(--violet); }
-
-  /* ── Stats strip ── */
-  .stats {
+  /* ── TWO-COLUMN WRAPPER ── */
+  .p1-layout {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    background: var(--border);
-    gap: 1px;
+    grid-template-columns: 158px 1fr;
+    min-height: 960px;
   }
 
-  .stat {
-    background: var(--surface-alt);
-    padding: 32px 28px 28px;
-    text-align: center;
+  /* ── LEFT PHOTO STRIP ── */
+  .photo-strip {
+    background: var(--ground);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
   }
-
-  .stat-plat {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.2em;
+  .photo-slot {
+    width: 158px;
+    flex: 1;
+    background: var(--lavender);
+    overflow: hidden;
+    position: relative;
+    min-height: 160px;
+  }
+  .photo-slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-slot.ph {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ph-icon { font-size: 22px; opacity: .35; }
+  .ph-text {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: .06em;
     text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: 14px;
+    color: var(--violet-lt);
+    text-align: center;
+    line-height: 1.4;
   }
 
-  .stat-num {
+  /* ── RIGHT CONTENT ── */
+  .p1-content { padding: 28px 26px 0; display: flex; flex-direction: column; gap: 16px; }
+
+  /* NAME BLOCK */
+  .name-block { margin-bottom: 2px; }
+  .name-block h1 {
     font-family: 'Playfair Display', serif;
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 700;
-    color: var(--text-1);
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
+    color: var(--violet);
+    line-height: 1.05;
+    letter-spacing: -.01em;
+  }
+  .name-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-top: 4px;
+    opacity: .55;
+  }
+
+  /* ABOUT BOX */
+  .box {
+    border: 1.5px solid var(--violet);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .box-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .box p {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.65;
+  }
+  .box p + p { margin-top: 8px; }
+
+  /* STAT PILLS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .stat-col { text-align: center; }
+  .stat-col-label {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-2);
     margin-bottom: 5px;
   }
-
-  .stat-lbl {
-    font-size: 12px;
-    color: var(--text-2);
-    margin-bottom: 10px;
-  }
-
-  .stat-sub {
-    font-size: 11.5px;
-    color: var(--violet);
-    font-weight: 500;
-    line-height: 1.45;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .stat-sub { color: var(--violet-lt); }
-  }
-  :root[data-theme="dark"] .stat-sub { color: var(--violet-lt); }
-
-  /* ── Sections ── */
-  .sec {
-    padding: 48px 68px;
-    border-bottom: 1px solid var(--border);
-  }
-  .sec:last-child { border-bottom: none; }
-
-  .sec-lbl {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--violet);
-    margin-bottom: 22px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .sec-lbl { color: var(--violet-lt); }
-  }
-  :root[data-theme="dark"] .sec-lbl { color: var(--violet-lt); }
-
-  /* ── Bio ── */
-  .bio-wrap {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 40px;
-    align-items: start;
-  }
-
-  .bio-copy {
-    color: var(--text-2);
-    font-size: 14.5px;
-    line-height: 1.78;
-  }
-
-  .bio-copy p + p { margin-top: 14px; }
-  .bio-copy strong { color: var(--text-1); font-weight: 600; }
-
-  .pullquote {
-    border-left: 3px solid var(--violet);
-    padding: 20px 24px;
-    background: var(--surface-alt);
-    border-radius: 0 2px 2px 0;
-  }
-
-  .pullquote p {
+  .stat-pill {
+    background: var(--violet);
+    color: var(--white);
     font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: 15.5px;
-    line-height: 1.62;
-    color: var(--text-1);
-    text-wrap: balance;
-  }
-
-  .pullquote cite {
+    font-size: 18px;
+    font-weight: 700;
+    border-radius: 100px;
+    padding: 6px 8px 5px;
     display: block;
-    margin-top: 12px;
-    font-size: 10.5px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    font-style: normal;
+    text-align: center;
+    line-height: 1.1;
   }
-
-  /* ── Tags ── */
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .tag {
-    padding: 6px 15px;
-    background: var(--surface-alt);
-    border: 1px solid var(--border);
-    color: var(--plum-mid);
-    font-size: 12.5px;
-    font-weight: 500;
-    border-radius: 2px;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .tag { color: var(--violet-lt); }
-  }
-  :root[data-theme="dark"] .tag { color: var(--violet-lt); }
-
-  /* ── Audience ── */
-  .audience-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-
-  .aud-card {
-    border: 1px solid var(--border);
-    border-radius: 2px;
-    padding: 22px 24px;
-    border-top: 3px solid var(--violet);
-  }
-
-  .aud-title {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    margin-bottom: 10px;
-  }
-
-  .aud-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--text-1);
-    line-height: 1;
-    margin-bottom: 6px;
-  }
-
-  .aud-desc {
-    font-size: 12.5px;
-    color: var(--text-2);
-    line-height: 1.5;
-  }
-
-  /* ── Rates ── */
-  .rates-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  .rates-table thead tr {
-    border-bottom: 2px solid var(--violet);
-  }
-
-  .rates-table th {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-3);
-    padding: 0 0 12px;
-    text-align: left;
-  }
-
-  .rates-table th.right { text-align: right; }
-
-  .rates-table td {
-    padding: 15px 0;
-    border-bottom: 1px solid var(--border);
-    vertical-align: top;
-    font-size: 13.5px;
-    color: var(--text-2);
-    line-height: 1.5;
-  }
-
-  .rates-table tr:last-child td { border-bottom: none; }
-
-  .rates-table td.name {
-    font-weight: 600;
-    color: var(--text-1);
-    width: 220px;
-    padding-right: 20px;
-  }
-
-  .rates-table td.price {
-    text-align: right;
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--text-1);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-    padding-left: 20px;
-  }
-
-  .highlight-row td {
-    background: var(--surface-alt);
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-  .highlight-row td.name { padding-left: 12px; }
-  .highlight-row td.price { padding-right: 12px; }
-
-  .rates-note {
-    margin-top: 18px;
-    font-size: 12px;
-    color: var(--text-3);
+  .stat-note-small {
+    font-size: 8px;
+    color: var(--ink-3);
     font-style: italic;
-    line-height: 1.6;
+    margin-top: 3px;
+    display: block;
   }
 
-  /* ── Footer ── */
-  .ft {
-    background: var(--plum);
-    padding: 36px 68px;
+  /* DEMOGRAPHICS (full-width horizontal) */
+  .demo-row { border: 1.5px solid var(--border); border-radius: 8px; padding: 12px 16px; background: var(--ground); }
+  .demo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
+  .donut-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .donut-wrap svg { display: block; overflow: hidden; }
+  .donut-center { font-family: 'Playfair Display', serif; font-size: 11px; font-weight: 700; fill: var(--violet); }
+  .donut-sub { font-size: 7px; fill: var(--ink-3); }
+  .donut-label { font-size: 9px; font-weight: 500; color: var(--ink-2); text-align: center; letter-spacing: .04em; }
+
+  /* SERVICES (full-width, 2-col internal) */
+  .services-box { border: 1.5px solid var(--violet); border-radius: 8px; padding: 12px 16px; }
+  .services-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+  .services-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 32px;
+    font-size: 11.5px;
+    padding: 3.5px 0;
+    border-bottom: 1px solid var(--lavender);
+    color: var(--ink-2);
+    gap: 6px;
   }
+  .services-row:last-child { border-bottom: none; }
+  .services-row strong { color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .services-row .price { color: var(--violet); font-weight: 600; white-space: nowrap; flex-shrink: 0; }
 
-  .ft-name {
+  /* FOOTER BAR */
+  .p1-footer {
+    background: var(--violet);
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 13px 28px;
+    margin-top: 16px;
+  }
+  .fi {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--white);
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .fi svg { width: 14px; height: 14px; opacity: .85; flex-shrink: 0; }
+  .fi.muted { color: rgba(255,255,255,.45); font-style: italic; font-size: 11px; font-weight: 400; }
+
+  /* ══════════════════════════════
+     PAGE 2
+  ══════════════════════════════ */
+
+  /* mosaic grid: 3 rows, each splits photo + text panel */
+  .mosaic {
+    display: grid;
+    grid-template-rows: 270px 250px 320px;
+  }
+  .mosaic-row { display: grid; }
+  .mosaic-row.photo-left  { grid-template-columns: 360px 1fr; }
+  .mosaic-row.photo-right { grid-template-columns: 1fr 360px; }
+
+  .mosaic-photo {
+    overflow: hidden;
+    background: var(--lavender);
+    position: relative;
+  }
+  .mosaic-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mosaic-photo.ph-large {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .mosaic-photo.ph-large .ph-icon { font-size: 36px; opacity: .3; }
+  .mosaic-photo.ph-large .ph-text { font-size: 10px; }
+
+  .mosaic-panel {
+    padding: 24px 26px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+  }
+  .mosaic-panel h2 {
     font-family: 'Playfair Display', serif;
     font-size: 20px;
     font-weight: 700;
-    color: #F0EBF8;
-    margin-bottom: 4px;
+    color: var(--navy);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
   }
-
-  .ft-title {
+  .mosaic-panel p {
     font-size: 12px;
-    color: var(--violet-lt);
-    letter-spacing: 0.05em;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-bottom: 8px;
   }
-
-  .ft-links {
+  .contact-line {
     display: flex;
-    flex-direction: column;
-    gap: 7px;
-    text-align: right;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-bottom: 7px;
+  }
+  .contact-line svg { width: 13px; height: 13px; flex-shrink: 0; fill: var(--violet); }
+  .contact-line strong { color: var(--violet); }
+  .cta-note {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-style: italic;
+    margin-top: 12px;
+  }
+  .sig-style {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 20px;
+    color: var(--violet-dk);
+    margin-top: 14px;
+    letter-spacing: .04em;
   }
 
-  .ft-links a {
-    font-size: 12.5px;
-    color: rgba(240,235,248,0.55);
-    text-decoration: none;
-    transition: color 0.18s;
+  /* stat callout inside mosaic panel */
+  .mosaic-stats {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .ms {
+    text-align: center;
+    flex: 1;
+  }
+  .ms-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--violet);
+    line-height: 1;
+    display: block;
+    font-weight: 700;
+  }
+  .ms-label {
+    font-size: 8.5px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-top: 2px;
+    display: block;
   }
 
-  .ft-links a:hover { color: var(--violet-lt); }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .chip {
+    background: var(--white);
+    color: var(--navy);
+    font-size: 10.5px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+  }
+  .chip.sage {
+    background: rgba(126,143,122,.1);
+    border-color: rgba(126,143,122,.4);
+    color: #4A5E47;
+  }
 
-  /* ── Responsive ── */
-  @media (max-width: 700px) {
-    .kit { margin: 0; border-radius: 0; }
-    .hd, .sec, .ft { padding-left: 24px; padding-right: 24px; }
-    .hd h1 { font-size: 34px; }
-    .stats, .bio-wrap, .audience-grid { grid-template-columns: 1fr; }
-    .ft { flex-direction: column; align-items: flex-start; }
-    .ft-links { text-align: left; }
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; margin: 0; page-break-after: always; }
+    .page:last-child { page-break-after: auto; }
   }
 </style>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400;1,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap">
+<!-- ═══════════ PAGE 1 ═══════════ -->
+<div class="page">
+  <div class="p1-layout">
 
-<div class="kit">
-
-  <!-- Header -->
-  <header class="hd">
-    <div class="hd-eyebrow">Creator Media Kit · 2026</div>
-    <h1>Steph Brashear</h1>
-    <div class="hd-handle">@steph.goes.with.that &nbsp;·&nbsp; TikTok &nbsp;·&nbsp; Instagram &nbsp;·&nbsp; Facebook</div>
-    <p class="hd-tagline">EMDR Therapist &amp; EMDRIA Approved Consultant — reaching the therapists and clients that practice management platforms want to reach.</p>
-    <div class="hd-badges">
-      <span class="badge">TikTok</span>
-      <span class="badge">Instagram</span>
-      <span class="badge">Facebook</span>
-      <span class="badge">Providence, RI</span>
+    <!-- PHOTO STRIP (left) -->
+    <div class="photo-strip">
+      <div class="photo-slot" style="min-height:190px;">
+        <img src="data:image/jpeg;base64,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" alt="Steph Brashear" />
+      </div>
+      <div class="photo-slot ph">
+        <div class="ph-icon">📷</div>
+        <div class="ph-text">Add photo<br/>here</div>
+      </div>
+      <div class="photo-slot ph">
+        <div class="ph-icon">📷</div>
+        <div class="ph-text">Add photo<br/>here</div>
+      </div>
+      <div class="photo-slot ph">
+        <div class="ph-icon">📷</div>
+        <div class="ph-text">Add photo<br/>here</div>
+      </div>
+      <div class="photo-slot ph">
+        <div class="ph-icon">📷</div>
+        <div class="ph-text">Add photo<br/>here</div>
+      </div>
     </div>
-  </header>
 
-  <div class="rule"></div>
+    <!-- RIGHT CONTENT -->
+    <div class="p1-content">
 
-  <!-- Stats -->
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-plat">TikTok</div>
-      <div class="stat-num">390K+</div>
-      <div class="stat-lbl">Total Likes</div>
-      <div class="stat-sub">2,529 followers<br>Videos reach 60K–120K+ views</div>
+      <!-- NAME -->
+      <div class="name-block">
+        <h1>Steph Brashear</h1>
+        <div class="name-title">EMDR Therapist &amp; Social Media Creator</div>
+      </div>
+
+      <!-- TWO-AUDIENCE CALLOUT -->
+      <div style="background:var(--lavender);border-left:3px solid var(--violet);border-radius:0 6px 6px 0;padding:11px 14px;margin-bottom:4px;">
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--violet);margin-bottom:5px;">The Audience Advantage</div>
+        <p style="font-size:12px;color:var(--navy);line-height:1.6;margin:0;">Steph reaches <strong>two connected audiences</strong>: licensed clinicians actively choosing practice tools — and their clients, who shape how therapy is discussed, sought, and accessed. One partnership speaks to both sides of the sale.</p>
+      </div>
+
+      <!-- ABOUT -->
+      <div class="box">
+        <div class="box-title">About</div>
+        <p>Stephanie Brashear is a licensed EMDR therapist and EMDRIA Approved Consultant — one of a smaller number of clinicians certified to train and supervise other therapists in EMDR. She has built a highly engaged community across TikTok, Instagram, and Facebook.</p>
+        <p>Her content earns trust because it comes from clinical practice, not content strategy. That trust translates directly to product recommendations her audience acts on.</p>
+        <p style="margin-top:8px;font-size:10.5px;color:var(--ink-3);letter-spacing:.03em;">EMDRIA Approved Consultant &nbsp;·&nbsp; Licensed RI · SC · OH &nbsp;·&nbsp; CPTSD · Religious Trauma · IFS</p>
+      </div>
+
+      <!-- STATS -->
+      <div>
+        <div class="stats-grid">
+          <div class="stat-col">
+            <div class="stat-col-label">TikTok<br/>Total Likes</div>
+            <span class="stat-pill">390.6K</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col-label">TikTok<br/>Followers</div>
+            <span class="stat-pill">2,532</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col-label">Instagram<br/>Followers</div>
+            <span class="stat-pill">8,848</span>
+          </div>
+          <div class="stat-col">
+            <div class="stat-col-label">IG Views<br/>/ Month</div>
+            <span class="stat-pill">4.1M</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEMOGRAPHICS (full width, 4 horizontal donuts) -->
+      <div class="demo-row">
+        <div class="box-title">Audience Demographics <span style="font-weight:400;font-style:italic;color:var(--sage);font-size:9px;letter-spacing:0;text-transform:none;">— Instagram Insights</span></div>
+        <div class="demo-grid">
+          <div class="donut-wrap">
+            <svg width="60" height="60" viewBox="2 2 68 68">
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#EDE8F4" stroke-width="9"/>
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#7C5C8C" stroke-width="9"
+                stroke-dasharray="148.7 163.4" stroke-dashoffset="41" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+              <text x="36" y="33" text-anchor="middle" class="donut-center">91%</text>
+              <text x="36" y="44" text-anchor="middle" class="donut-sub">Women</text>
+            </svg>
+            <div class="donut-label">Gender</div>
+          </div>
+          <div class="donut-wrap">
+            <svg width="60" height="60" viewBox="2 2 68 68">
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#EDE8F4" stroke-width="9"/>
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#B8A0C8" stroke-width="9"
+                stroke-dasharray="116 163.4" stroke-dashoffset="41" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+              <text x="36" y="33" text-anchor="middle" class="donut-center">71%</text>
+              <text x="36" y="44" text-anchor="middle" class="donut-sub">25–44</text>
+            </svg>
+            <div class="donut-label">Core Ages</div>
+          </div>
+          <div class="donut-wrap">
+            <svg width="60" height="60" viewBox="2 2 68 68">
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#EDE8F4" stroke-width="9"/>
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#7C5C8C" stroke-width="9"
+                stroke-dasharray="104.6 163.4" stroke-dashoffset="41" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+              <text x="36" y="33" text-anchor="middle" class="donut-center">64%</text>
+              <text x="36" y="44" text-anchor="middle" class="donut-sub">US</text>
+            </svg>
+            <div class="donut-label">Top Country</div>
+          </div>
+          <div class="donut-wrap">
+            <svg width="60" height="60" viewBox="2 2 68 68">
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#EDE8F4" stroke-width="9"/>
+              <circle cx="36" cy="36" r="26" fill="none" stroke="#B8A0C8" stroke-width="9"
+                stroke-dasharray="160.1 163.4" stroke-dashoffset="41" stroke-linecap="round" transform="rotate(-90 36 36)"/>
+              <text x="36" y="33" text-anchor="middle" class="donut-center">98%</text>
+              <text x="36" y="44" text-anchor="middle" class="donut-sub">Non-flw</text>
+            </svg>
+            <div class="donut-label">Viral Reach</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SERVICES & RATES (full width, 2-col internal) -->
+      <div class="services-box">
+        <div class="box-title">Services &amp; Rates</div>
+        <div class="services-two-col">
+          <!-- Left col: individual deliverables -->
+          <div>
+            <div class="services-row"><strong>TikTok Sponsored Video (60–90s)</strong><span class="price">$650</span></div>
+            <div class="services-row"><strong>Instagram Reel</strong><span class="price">$500</span></div>
+            <div class="services-row"><strong>Instagram Carousel</strong><span class="price">$350</span></div>
+            <div class="services-row"><strong>Story Set (3 frames)</strong><span class="price">$225</span></div>
+            <div class="services-row" style="border-bottom:none;"><strong>Facebook Post</strong><span class="price">$125</span></div>
+          </div>
+          <!-- Right col: bundles + ambassador -->
+          <div>
+            <div class="services-row" style="background:var(--lavender);border-radius:4px;padding:3px 7px;"><strong>Bundle — TikTok + Reel + Stories</strong><span class="price">$1,150</span></div>
+            <div class="services-row" style="background:var(--lavender);border-radius:4px;padding:3px 7px;margin-top:3px;"><strong>Bundle — Full Package</strong><span class="price">$1,400</span></div>
+            <div class="services-row" style="background:rgba(126,143,122,.1);border-radius:4px;padding:3px 7px;margin-top:3px;border-color:rgba(126,143,122,.3);"><strong>Light Ambassador</strong><span class="price" style="color:var(--sage);">$1,750–$2,250/mo</span></div>
+            <div class="services-row" style="background:rgba(126,143,122,.1);border-radius:4px;padding:3px 7px;margin-top:3px;border-color:rgba(126,143,122,.3);border-bottom:none;"><strong>Core Ambassador</strong><span class="price" style="color:var(--sage);">$2,750–$3,500/mo</span></div>
+            <div style="padding-top:5px;"><span style="font-size:9px;color:var(--ink-3);font-style:italic;">Usage rights, whitelisting &amp; exclusivity quoted separately</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /p1-content -->
+  </div>
+
+  <!-- FOOTER -->
+  <div class="p1-footer">
+    <div class="fi">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05A6.34 6.34 0 003.15 15.3a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.15a8.28 8.28 0 004.85 1.56V7.27a4.85 4.85 0 01-1.08-.58z"/></svg>
+      @steph.goes.with.that
     </div>
-    <div class="stat">
-      <div class="stat-plat">Instagram</div>
-      <div class="stat-num">8,836</div>
-      <div class="stat-lbl">Followers</div>
-      <div class="stat-sub">309 posts<br>Engaged clinician community</div>
+    <div class="fi">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      @steph.goes.with.that
     </div>
-    <div class="stat">
-      <div class="stat-plat">Facebook</div>
-      <div class="stat-num">209</div>
-      <div class="stat-lbl">Followers</div>
-      <div class="stat-sub">Growing<br>Linked to IG presence</div>
+    <div class="fi">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+      @steph.goes.with.that
+    </div>
+    <div class="fi muted">stephanierbrashear@gmail.com</div>
+  </div>
+
+</div>
+
+
+<!-- ═══════════ PAGE 2 ═══════════ -->
+<div class="page">
+
+  <!-- HEADER -->
+  <div style="background:#1E1B2E;padding:20px 28px 16px;display:flex;align-items:flex-end;justify-content:space-between;">
+    <div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#B8A0C8;margin-bottom:6px;">Content &amp; Audience</div>
+      <div style="font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:#F0EBF8;line-height:1.1;">Performance Snapshot</div>
+    </div>
+    <div style="font-size:11px;color:#B8A0C8;font-style:italic;padding-bottom:3px;">Instagram · TikTok · Facebook</div>
+  </div>
+
+  <!-- INSTAGRAM 4-STAT STRIP -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1.5px solid #E2DCF0;">
+    <div style="padding:18px 16px 14px;border-right:1.5px solid #E2DCF0;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#7C5C8C;line-height:1;">4.1M</div>
+      <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9BAE;margin-top:5px;">IG Views / Month</div>
+    </div>
+    <div style="padding:18px 16px 14px;border-right:1.5px solid #E2DCF0;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#7C5C8C;line-height:1;">802K</div>
+      <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9BAE;margin-top:5px;">Top Reel Views</div>
+    </div>
+    <div style="padding:18px 16px 14px;border-right:1.5px solid #E2DCF0;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#7C5C8C;line-height:1;">97.9%</div>
+      <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9BAE;margin-top:5px;">Non-Follower Reach</div>
+    </div>
+    <div style="padding:18px 16px 14px;text-align:center;">
+      <div style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#7C5C8C;line-height:1;">202K</div>
+      <div style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#8A9BAE;margin-top:5px;">Interactions (30 Days)</div>
     </div>
   </div>
 
-  <!-- Bio -->
-  <section class="sec">
-    <div class="sec-lbl">About Steph</div>
-    <div class="bio-wrap">
-      <div class="bio-copy">
-        <p>Stephanie Brashear is a licensed EMDR Therapist and <strong>EMDRIA Approved Consultant</strong> based in Providence, Rhode Island — licensed in SC, ID, and OH. She has built a trusted voice in the mental health space by making complex trauma therapy genuinely accessible.</p>
-        <p>Her content focuses on EMDR, IFS, CPTSD, and religious trauma — topics deeply underserved by mainstream wellness creators, yet actively sought by therapy clients and practicing clinicians alike. Her TikTok content consistently reaches far beyond her follower count, with individual videos earning tens of thousands — sometimes over 100,000 — organic views.</p>
-        <p>She speaks to two high-trust audiences at once: <strong>survivors navigating their healing</strong> and <strong>therapists looking for clinical insight and practice tools</strong> — making her uniquely valuable to brands in the therapy and mental health practice space.</p>
-      </div>
-      <div class="pullquote">
-        <p>"A popular mental health creator and EMDR consultant known for sharing relatable insights on therapy and emotional healing."</p>
-        <cite>— Google AI Overview</cite>
-      </div>
-    </div>
-  </section>
+  <!-- CONTENT LIST + DEMOGRAPHICS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1.5px solid #E2DCF0;">
 
-  <!-- Content Focus -->
-  <section class="sec">
-    <div class="sec-lbl">Content Niche</div>
-    <div class="tags">
-      <span class="tag">EMDR Therapy</span>
-      <span class="tag">IFS — Internal Family Systems</span>
-      <span class="tag">CPTSD &amp; Complex Trauma</span>
-      <span class="tag">Religious Trauma</span>
-      <span class="tag">Trauma Education</span>
-      <span class="tag">Mental Health Destigmatization</span>
-      <span class="tag">Clinician Resources</span>
-      <span class="tag">Emotional Healing</span>
-      <span class="tag">Therapy Demystified</span>
-    </div>
-  </section>
+    <!-- LEFT: TOP REELS -->
+    <div style="padding:20px 22px;border-right:1.5px solid #E2DCF0;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8A9BAE;margin-bottom:12px;">Top Reels by Views — Last 30 Days</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;width:56px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">802K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">But we don't have to get into all that...</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">459K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">You mean therapy comes with accountability?</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">446K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">You know the lore is elite when...</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">298K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">Could have been held, got bilaterals instead</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">256K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">Interesting thing to say in a room full of...</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">181K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">Anyways, go with that 🎭</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F0EBF8;">
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">120K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">An excellent vintage. Full bodied, complex...</td>
+        </tr>
+        <tr>
+          <td style="padding:5px 0;font-size:11.5px;font-weight:700;color:#7C5C8C;font-family:'Playfair Display',serif;">102K</td>
+          <td style="padding:5px 0;font-size:11.5px;color:#4D5568;">I know it's around here somewhere...</td>
+        </tr>
+      </table>
 
-  <!-- Audience -->
-  <section class="sec">
-    <div class="sec-lbl">Who's Watching</div>
-    <div class="audience-grid">
-      <div class="aud-card">
-        <div class="aud-title">Primary Audience</div>
-        <div class="aud-val">Dual</div>
-        <div class="aud-desc">Trauma survivors seeking understanding + licensed therapists seeking clinical content, training, and practice resources</div>
-      </div>
-      <div class="aud-card">
-        <div class="aud-title">Trust Level</div>
-        <div class="aud-val">High</div>
-        <div class="aud-desc">Followers are actively in therapy or clinical practice — not casual scrollers. Purchasing intent for therapy tools is strong.</div>
-      </div>
-      <div class="aud-card">
-        <div class="aud-title">Organic Reach</div>
-        <div class="aud-val">60K+</div>
-        <div class="aud-desc">Top TikTok videos reach 60K–120K+ views — far exceeding follower count. Viral lift is built into the content.</div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #E2DCF0;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8A9BAE;margin-bottom:10px;">Top by Saves (30 Days)</div>
+        <div style="display:flex;gap:18px;flex-wrap:wrap;">
+          <div style="text-align:center;"><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#7C5C8C;display:block;">1.2K</span><span style="font-size:9px;color:#8A9BAE;">saves · top post</span></div>
+          <div style="text-align:center;"><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#7C5C8C;display:block;">1K</span><span style="font-size:9px;color:#8A9BAE;">saves · #2</span></div>
+          <div style="text-align:center;"><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#7C5C8C;display:block;">810</span><span style="font-size:9px;color:#8A9BAE;">saves · #3</span></div>
+          <div style="text-align:center;"><span style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#7C5C8C;display:block;">767</span><span style="font-size:9px;color:#8A9BAE;">saves · #4</span></div>
+        </div>
+        <div style="margin-top:10px;font-size:10.5px;color:#8A9BAE;font-style:italic;">High save counts = clinicians bookmarking for practice use</div>
       </div>
     </div>
-  </section>
 
-  <!-- Rates -->
-  <section class="sec">
-    <div class="sec-lbl">Partnership Opportunities &amp; Rates</div>
-    <table class="rates-table">
-      <thead>
-        <tr>
-          <th>Deliverable</th>
-          <th>Description</th>
-          <th class="right">Rate</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="name">TikTok Sponsored Video</td>
-          <td>Dedicated 60–90 sec. authentic integration — story-driven, not scripted</td>
-          <td class="price">$200</td>
-        </tr>
-        <tr>
-          <td class="name">Instagram Reel</td>
-          <td>30–60 sec. Reel with caption, relevant tags, and Story share</td>
-          <td class="price">$125</td>
-        </tr>
-        <tr>
-          <td class="name">Instagram Carousel</td>
-          <td>Educational slide post — ideal for therapy tools, apps, or resources</td>
-          <td class="price">$100</td>
-        </tr>
-        <tr>
-          <td class="name">Instagram Story Set</td>
-          <td>3-slide sequence with link sticker — high click-through for therapy audience</td>
-          <td class="price">$60</td>
-        </tr>
-        <tr>
-          <td class="name">Facebook Post</td>
-          <td>Sponsored post with organic engagement</td>
-          <td class="price">$40</td>
-        </tr>
-        <tr class="highlight-row">
-          <td class="name">Bundle — TikTok + IG Reel + Stories</td>
-          <td>Full cross-platform campaign on one topic — best value for brand launches</td>
-          <td class="price">$350</td>
-        </tr>
-        <tr class="highlight-row">
-          <td class="name">Monthly Partnership</td>
-          <td>4 TikToks + 4 IG posts + weekly Stories — ongoing ambassador relationship</td>
-          <td class="price">$800/mo</td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="rates-note">Custom packages available. All sponsored content is authentic and story-driven — no scripted reads. Affiliate arrangements considered case by case. Rates include 1 round of revisions.</p>
-  </section>
+    <!-- RIGHT: DEMOGRAPHICS + TIKTOK -->
+    <div style="padding:20px 22px;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8A9BAE;margin-bottom:12px;">Audience Demographics · Instagram</div>
 
-  <!-- Footer -->
-  <footer class="ft">
-    <div>
-      <div class="ft-name">Stephanie Brashear</div>
-      <div class="ft-title">EMDR Therapist &nbsp;·&nbsp; EMDRIA Approved Consultant</div>
+      <div style="margin-bottom:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <span style="font-size:11.5px;color:#4D5568;">Women</span>
+          <span style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#7C5C8C;">91%</span>
+        </div>
+        <div style="background:#E2DCF0;height:7px;border-radius:4px;overflow:hidden;">
+          <div style="background:#7C5C8C;height:100%;width:91%;border-radius:4px;"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div style="background:#F0EBF8;border-radius:6px;padding:10px 12px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#7C5C8C;">71%</div>
+          <div style="font-size:9.5px;color:#4D5568;margin-top:2px;">Ages 25–44</div>
+        </div>
+        <div style="background:#F0EBF8;border-radius:6px;padding:10px 12px;text-align:center;">
+          <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:#7C5C8C;">64%</div>
+          <div style="font-size:9.5px;color:#4D5568;margin-top:2px;">United States</div>
+        </div>
+      </div>
+
+      <div style="padding-top:14px;border-top:1px solid #E2DCF0;margin-top:4px;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8A9BAE;margin-bottom:12px;">TikTok Highlights</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
+          <div style="text-align:center;">
+            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1E1B2E;">3M+</div>
+            <div style="font-size:9px;color:#8A9BAE;margin-top:2px;">Top video views</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1E1B2E;">390.6K</div>
+            <div style="font-size:9px;color:#8A9BAE;margin-top:2px;">Total likes</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1E1B2E;">2,532</div>
+            <div style="font-size:9px;color:#8A9BAE;margin-top:2px;">Followers</div>
+          </div>
+        </div>
+        <div style="background:#F6F4F9;border-radius:6px;padding:8px 10px;font-size:10.5px;color:#4D5568;font-style:italic;line-height:1.5;">Individual videos reach 3M+ views organically — follower count is low because her content lives in For You feeds, not subscriber lists.</div>
+      </div>
     </div>
-    <div class="ft-links">
-      <a href="https://www.tiktok.com/@steph.goes.with.that">TikTok: @steph.goes.with.that</a>
-      <a href="https://www.instagram.com/steph.goes.with.that">Instagram: @steph.goes.with.that</a>
-      <a href="https://www.facebook.com/profile.php?id=100090709586635">Facebook: Steph Goes With That</a>
+  </div>
+
+  <!-- PARTNERSHIP + CONTACT -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;border-top:1.5px solid #E2DCF0;">
+
+    <!-- LEFT: PARTNERSHIP -->
+    <div style="padding:20px 22px;border-right:1.5px solid #E2DCF0;">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8A9BAE;margin-bottom:8px;">Partnership Model</div>
+      <p style="font-size:12px;color:#4D5568;line-height:1.65;margin-bottom:10px;">Every collaboration is a strategic placement — not just a social post. Steph integrates brand messaging into content her audience is already seeking out, so the recommendation lands as clinical guidance, not advertising.</p>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8A9BAE;margin-bottom:6px;">Available Formats</div>
+      <div style="font-size:11.5px;color:#4D5568;line-height:1.8;">Dedicated videos · Product integrations · Tutorial-style demos · Story series · Ambassador retainers</div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #E2DCF0;">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8A9BAE;margin-bottom:6px;">Previous Collaborations</div>
+        <div style="font-size:11.5px;color:#B8A0C8;font-style:italic;">[add past brand partners here]</div>
+      </div>
     </div>
-  </footer>
+
+    <!-- RIGHT: CONTACT -->
+    <div style="padding:20px 22px;display:flex;flex-direction:column;justify-content:space-between;">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7C5C8C;margin-bottom:10px;">Let's Connect</div>
+        <p style="font-size:12px;color:#4D5568;line-height:1.65;margin-bottom:14px;">Steph's followers are mental health professionals who <em>select the tools they use</em> and clients who <em>advocate for the therapy they receive</em> — a rare dual-audience opportunity.</p>
+
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" style="fill:#7C5C8C;flex-shrink:0;"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+          <strong style="font-size:12px;color:#7C5C8C;">stephanierbrashear@gmail.com</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" style="fill:#7C5C8C;flex-shrink:0;"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          <strong style="font-size:12px;color:#7C5C8C;">@steph.goes.with.that</strong>
+        </div>
+      </div>
+      <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:22px;color:#7C5C8C;margin-top:12px;">Steph Brashear</div>
+      <div style="font-size:10px;color:#8A9BAE;font-style:italic;margin-top:4px;">Reviewed personally — response within 48 hours.</div>
+    </div>
+  </div>
 
 </div>
+
+</body></html>

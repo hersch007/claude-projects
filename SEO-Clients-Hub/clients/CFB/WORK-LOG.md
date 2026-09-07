@@ -71,7 +71,15 @@
 | 2026-09-04 | Homepage, Medical, Semiconductor — corrected meta descriptions (minor wording variants + em dash fix on Semiconductor) | 0.25 | Complete | All 3 VERIFIED LIVE 2026-09-04 |
 | 2026-09-04 | How To Choose blog — investigated; URL now serves Fruth lead-times article (shared portal cross-contamination); deferred to Content Development (0920013) | 0.25 | Open | /learning-center/how-to-choose-the-right-medical-device-packaging — needs CFB content restoration |
 
-**Total billable to date: 20.85 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00)
+| 2026-08-17 | Google Search Console — set up and verified property for cleanroomfilm.com | 0.25 | Complete | GSC property active; enables ranking/impression data going forward |
+
+| 2026-09-07 | CLEANTUFF® material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/cleantuff-cleanroom-packaging — VERIFIED LIVE 2026-09-07 |
+
+| 2026-09-07 | ULO (Extreme Low Outgassing) material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/extreme-low-outgassing-cleanroom-packaging — VERIFIED LIVE 2026-09-07 |
+
+| 2026-09-07 | Aclar® material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/aclar-cleanroom-packaging — VERIFIED LIVE 2026-09-07 |
+
+**Total billable to date: 24.10 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00 · 9/7: 3.00)
 
 ## Open items
 - [x] ✅ VERIFIED 2026-07-22 live — homepage title, Organization schema, and meta description (150 chars) all confirmed live. Live meta wording: "...USA made for 35+ years." (drops "Get a quote" CTA — minor variance from draft, not worth a re-edit).

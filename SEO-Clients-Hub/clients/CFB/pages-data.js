@@ -6,7 +6,7 @@ module.exports = {
   client: 'Cleanroom Film & Bags',
   docTitle: 'On-Page SEO Audit — Running Log',
   docSubtitle: 'Image alt text, page titles, meta descriptions & schema',
-  lastUpdated: '2026-09-04',
+  lastUpdated: '2026-09-07',
   totalPages: 52,
 
   guidelines: [
@@ -524,6 +524,115 @@ module.exports = {
     "name": "Cleanroom Film & Bags",
     "logo": { "@type": "ImageObject", "url": "https://www.cleanroomfilm.com/hubfs/CFB%20Logo.png" }
   }
+}
+</script>`
+    },
+
+    {
+      name: 'ULO Extreme Low Outgassing Cleanroom Packaging Film',
+      status: 'VERIFIED LIVE 2026-09-07 (title, meta, 6 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/extreme-low-outgassing-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-07',
+      primaryKw: 'ULO extreme low outgassing cleanroom packaging',
+      secondaryKw: 'ULO poly film, ELO packaging, low outgassing bags, semiconductor packaging film, aerospace cleanroom film',
+      title: { text: 'ULO Extreme Low Outgassing Cleanroom Packaging Film | CFB', chars: 57 },
+      meta: { text: 'CFB\'s ULO poly film delivers extreme low outgassing for semiconductor, aerospace & pharma cleanrooms — minimal contamination, maximum protection.', chars: 146 },
+      notes: 'H1 "Extreme Low Outgassing Cleanroom Packaging" is fine — left as-is. 6 application images (medical, pharma, aerospace, semiconductor, hero, product roll) had keyword-stuffed or bare alts — all updated. Strong E-E-A-T with CFB2500 spec table.',
+      images: [
+        ['Hero (extreme-low-outgassing-packaging.png)', 'extreme low outgassing, ultra low outgassing (ELO) (ULO) packaging', 'Extreme low outgassing (ULO) poly film and bags for cleanroom packaging by CFB', '78', 'Keyword-stuffed alt replaced with descriptive phrase covering both ULO/ELO terms naturally.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'ULO cleanroom packaging film for medical device applications', '59', 'Adds material context to generic alt.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'ULO poly bags for pharmaceutical cleanroom packaging', '52', 'Adds ULO + cleanroom context.'],
+        ['Aerospace app (aerospace-packaging.png)', 'aerospace packaging', 'Extreme low outgassing film for aerospace cleanroom packaging', '60', 'Ties primary keyword to application.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'ULO poly film for semiconductor cleanroom packaging', '51', 'Ties ULO to highest-value application.'],
+        ['Product roll (extreme-low-outgassing.jpg)', 'extreme-low-outgassing', 'CFB2500 extreme low outgassing poly film roll for cleanrooms', '60', 'Filename-dump replaced with product model + descriptive phrase.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-07',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "ULO Extreme Low Outgassing Cleanroom Packaging Film",
+  "description": "CFB's ULO poly film delivers extreme low outgassing for semiconductor, aerospace & pharma cleanrooms — minimal contamination, maximum protection.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/extreme-low-outgassing-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'CLEANTUFF® Cleanroom Packaging Film',
+      status: 'VERIFIED LIVE 2026-09-07 (title, meta, 2 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/cleantuff-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-07',
+      primaryKw: 'CLEANTUFF cleanroom packaging',
+      secondaryKw: 'LDPE cleanroom film, HDPE cleanroom bags, CT-100 film, CT-200 film, exclusive cleanroom film',
+      title: { text: 'CLEANTUFF® Film: LDPE & HDPE Cleanroom Packaging | CFB', chars: 55 },
+      meta: { text: 'CFB\'s exclusive CLEANTUFF® LDPE & HDPE film — enhanced strength, elasticity, and contamination control for critical cleanroom packaging. Get a quote.', chars: 151 },
+      notes: 'H1 "CLEANTUFF® Cleanroom Packaging" is correct — leave as-is. CT-100 and CT-200 H2 structure + spec tables are strong E-E-A-T. Add internal links to Medical and Semiconductor market pages — CLEANTUFF® is featured in both and page is currently an island.',
+      images: [
+        ['Sheeting photo (cleanroom-film-products-sheeting.jpg)', 'cleanroom-film-products-sheeting', 'CT-100 CLEANTUFF® LDPE cleanroom packaging sheeting by CFB', '58', 'Filename-dump alt replaced with material name + product type + brand.'],
+        ['Material shot (CLEANTUFF.avif)', 'CLEANTUFF', 'CLEANTUFF® LDPE and HDPE cleanroom film rolls manufactured by CFB', '65', 'Bare brand name replaced with full material description + both variants.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-07',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "CLEANTUFF® Cleanroom Packaging Film",
+  "description": "CFB's exclusive CLEANTUFF® LDPE & HDPE cleanroom packaging film — uniquely formulated for enhanced strength, elasticity, and contamination control.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/cleantuff-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'Aclar® Cleanroom Packaging Film',
+      status: 'VERIFIED LIVE 2026-09-07 (title, meta, 5 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/aclar-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-07',
+      primaryKw: 'Aclar cleanroom packaging',
+      secondaryKw: 'PCTFE film, moisture barrier packaging, pharmaceutical cleanroom film, HydroBlock, aerospace cleanroom film',
+      title: { text: 'Aclar® Film: PCTFE Cleanroom Packaging for Pharma | CFB', chars: 55 },
+      meta: { text: 'Aclar® 22A HydroBlock® film delivers superior moisture barrier, chemical resistance, and clarity for pharma, medical & aerospace cleanroom packaging.', chars: 149 },
+      notes: 'H1 "Aclar® 22A HydroBlock® Cleanroom Packaging" left as-is — brand-specific and accurate. 5 application images had generic or bare alts — all updated. Aclar® is a Honeywell material; CFB is the packaging manufacturer (reflected in schema). Cross-link opportunities: Boeing case study (already references Aclar®), Aerospace market page.',
+      images: [
+        ['Hero (aclar-film-gray.avif)', 'aclar-film-gray', 'Aclar® 22A HydroBlock® PCTFE cleanroom packaging film by CFB', '59', 'Filename-dump alt replaced with full material name + manufacturer brand.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'Aclar® film for medical device cleanroom packaging', '50', 'Ties generic alt to Aclar® material context.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'Aclar® 22A cleanroom packaging for pharmaceutical applications', '61', 'Adds specific grade + application context.'],
+        ['Aerospace app (aerospace-packaging.png)', 'aerospace packaging', 'Aclar® HydroBlock® film for aerospace cleanroom packaging', '56', 'Surfaces the HydroBlock® brand variant for the aerospace audience.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'Aclar® film for semiconductor cleanroom packaging', '49', 'Ties Aclar® to semiconductor application.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-07',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Aclar® 22A HydroBlock® Cleanroom Packaging Film",
+  "description": "Aclar® 22A HydroBlock® film delivers superior moisture barrier, chemical resistance, and clarity for pharmaceutical, medical, and aerospace cleanroom packaging.",
+  "brand": { "@type": "Brand", "name": "Honeywell" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/aclar-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
 }
 </script>`
     },
