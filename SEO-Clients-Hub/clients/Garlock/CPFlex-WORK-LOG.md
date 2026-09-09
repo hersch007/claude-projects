@@ -4,37 +4,59 @@
 **HubSpot staging:** https://gcpflexpack-24024882.hs-sites.com  
 **Source of truth:** `Garlock-On-Page-SEO-Audit-Running-Log.docx` (site pages) · `Garlock-Blog-SEO-Audit-Running-Log.docx` (31 articles)
 
-**Progress: ~58 / ~98 implemented** — Site pages mostly done. Blog + 10 site pages remaining.
+**Progress: 77 / 77 site pages implemented on staging · 28 / 31 blog articles (title/meta/schema) — verified 2026-09-08. Remaining: 3 blog articles + internal-link pass.**
+
+> **Site status (verified 2026-09-07):** the new site is a PRE-LAUNCH HubSpot build. All SEO work lives on the staging domain. gcpflexpack.com is registered (May 2026, Cloudflare NS) but currently a Directnic parking page. Today's live sites are www.cpflexpack.com (WordPress) and www.garlockflexibles.com (HubSpot, same portal 24024882). Launch cutover (connect domain, HTTPS, 301 maps from both old sites, sitemap, robots, GSC) is a separate open workstream.
 
 ---
 
-## REMAINING — Site Pages (10 pages)
+## SITE PAGES — log clean-up still needed
 
-> Audit files are in `Page Audits/`. Schema JSON and copy-paste content are in each file.  
-> To implement: open the HubSpot page editor → update Title, Meta Description, image alt tags, paste schema into Settings → Advanced → Head HTML.
+Word log entries for the 5 former "pending" pages were updated 2026-09-07 after verifying each on staging:
 
-| Done | Page | Audit File | Alt Tags | Schema |
-|------|------|------------|----------|--------|
-| ☐ | **Homepage** | [home-homepage-audit.md](Page%20Audits/home-homepage-audit.md) | 10 | Organization |
-| ☐ | **About Us** | [about-us-audit.md](Page%20Audits/about-us-audit.md) | 1 | AboutPage |
-| ☐ | Contact Us | [contact-us-audit.md](Page%20Audits/contact-us-audit.md) | 0 | ContactPage |
-| ☐ | Extrusion & Adhesive Lamination | [extrusion-adhesive-lamination-audit.md](Page%20Audits/extrusion-adhesive-lamination-audit.md) | 1 | Service |
-| ☐ | Premade Pouches Index | [premade-pouches-index-audit.md](Page%20Audits/premade-pouches-index-audit.md) | 0 | CollectionPage |
-| ☐ | Printed Rollstock Index | [printed-rollstock-index-audit.md](Page%20Audits/printed-rollstock-index-audit.md) | 0 | CollectionPage |
-| ☐ | Premade Pouches Glossary | [premade-pouches-glossary-audit.md](Page%20Audits/premade-pouches-glossary-audit.md) | 0 | DefinedTermSet |
-| ☐ | Flexible Packaging Films Glossary | [flexible-packaging-films-glossary-audit.md](Page%20Audits/flexible-packaging-films-glossary-audit.md) | 0 | DefinedTermSet |
-| ☐ | Flexible Packaging Calculator | [flexible-packaging-calculator-audit.md](Page%20Audits/flexible-packaging-calculator-audit.md) | 0 | WebApplication |
-| ☐ | Careers | [careers-audit.md](Page%20Audits/careers-audit.md) | 12 | — |
+| Page | Verified on staging | Word log status | Billing in log |
+|------|------|------|------|
+| ~~Homepage~~ | ✅ title/meta/schema/9 of 10 alts | **updated 2026-09-07** | Billed |
+| About Us | ✅ title/meta/alt/AboutPage schema | **updated 2026-09-07** | Ready to bill |
+| Premade Pouches Glossary | ✅ title/meta/H1/DefinedTermSet schema (published 2026-09-07) | **updated 2026-09-07** | Ready to bill |
+| Flexible Packaging Calculator | ✅ title/meta/H1/WebApplication schema | **updated 2026-09-07** | Billed |
+| Careers | ✅ title/meta/10 of 12 alts (2 filename alts remain) | **updated 2026-09-07** | Billed |
+
+Contact Us: already Implemented + Billed in the Word log; verified live 2026-09-07 and editor link fixed.
+
+**Open fixes on the Homepage (HubSpot editor 212643437655):**
+1. Hero image `sustainable-paper-packaging.webp` alt → "Sustainable paper-based flexible packaging from C-P Flexible Packaging" (currently duplicates the sustainability-block alt).
+2. Global logo alt → "C-P Flexible Packaging company logo" (currently "Garlock CP Flex Logo" / "Garlock CP Flex Logo (1)"); remove duplicate "(1)" logo file.
+
+**Optional:** Contact page map pins all share alt="Preferred Packaging" — set alt="" or per-location names.
 
 ---
 
-## REMAINING — Blog / Learning Center (31 articles)
+## BLOG / Learning Center (31 articles) — verified against staging 2026-09-07
 
-All 31 articles are audited and unbilled. Audit content is in **`Garlock-Blog-SEO-Audit-Running-Log.docx`** (not standalone .md files).
+Source of truth: **`Garlock-Blog-SEO-Audit-Running-Log.docx`** — every article now has a green status line under its heading (added 2026-09-07).
 
-> In HubSpot blog editor: update Title, Meta Description, confirm BlogPosting schema isn't auto-duplicated by the template before adding manually.
+**Title + meta + BlogPosting schema + alt text: 28 of 31 done** (Cut Costs published 2026-09-07 and Hand Sanitizer 2026-09-08, 1.25 h each). HubSpot DOES auto-emit a structured-data block on every post (author "Admin", publisher "Garlock Flexibles", Garlock Logo.jpg) — usually typed WebPage, but BlogPosting on posts with a featured image. The audited BlogPosting block sits alongside it. Fix the publisher name/logo at blog-settings level (Settings → Website → Blog) so the auto block stops saying Garlock Flexibles.
 
-Mark each article done by checking it off in the running log docx, then update the count above.
+### Still to do in HubSpot (3 articles)
+
+| # | Article | What's missing | Editor |
+|---|---|---|---|
+| 5 | Commercializing Recyclable Stand-Up Pouches | page title only | blog editor → Settings |
+| 30 | GreenStream Compostable Fiber Trays | page title only | blog editor → Settings |
+| 15 | Highest BRCGS Ratings for Quality & Safety | meta only (+ add "2024" to H1) | blog editor → Settings |
+
+Paste-ready title/meta/schema for each is in the Word log under the article heading. A consolidated sheet is in `Blog-Remaining-7-Paste-Sheet.md`.
+
+> ⚠️ **Logo defect:** all 24 live BlogPosting blocks use the placeholder publisher logo `https://gcpflexpack.com/hubfs/logo.png`, which does not exist. The real file is `https://gcpflexpack.com/hubfs/Garlock%20CP%20Flex%20Logo.png`. Fix in one pass (or move the publisher block into the blog template) before launch.
+
+### Internal-link pass (second phase, body edits)
+
+The audit's "Internal Links to Add" are mostly not in the post bodies yet (18 articles), and the three cold-seal articles (#1, #2, #4) do not yet link up to the cluster hub (#3 How to Choose a Cold-Seal Supplier). Do this as one pass after the 7 above.
+
+### Billing
+
+3 articles billed (HPP Lidding, Virtual Press Check, Hand Sanitizer). 28 unbilled — bill by hours logged under Garlock, per the usual model.
 
 ---
 
@@ -110,5 +132,5 @@ Implemented June–July 2026. Documented in `Garlock-On-Page-SEO-Audit-Running-L
 ## Notes
 
 - `fruth-placentia-audit.md` in `Page Audits/` is a misplaced Fruth client file — do not implement for CPFlex.
-- Location pages York, Aurora, Bristol, Buffalo, Fond du Lac, Preferred Packaging (Norcross GA) — not showing as implemented in the running log. Verify in HubSpot whether these were done separately; if not, they should be added to the Remaining list above.
+- Location pages (York, Aurora, Bristol, Buffalo, Fond du Lac, Placentia, Preferred Packaging, Lakeville) are in the Word log as Billed with no status line — treat as done.
 - The running log docx says "Pages audited: 77" — some implemented pages (e.g. Spouted Pouches, Stand-Up Pouches, Zipper Pouches, Stick Packs) don't have standalone `.md` audit files; their copy-paste content is in the docx only.

@@ -2,13 +2,13 @@
 /*
  * Plugin Name: Start Performance — AI
  * Description: AI assistant addon for the Start Performance Platform
- * Version:     1.3.4
+ * Version:     1.4.2
  * Author:      Richard Brashear / Start Performance
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SP_AI_VERSION',    '1.3.4' );
+define( 'SP_AI_VERSION',    '1.4.2' );
 define( 'SP_AI_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
 // ── Dependency check ──────────────────────────────────────────────────────────
@@ -58,6 +58,22 @@ function sp_ai_register() {
     add_action( 'wp_ajax_sp_ai_ticket_triage',       'sp_ai_ajax_ticket_triage' );
     add_action( 'sp_tickets_after_list',             'sp_ai_ticket_analysis_ui' );
     add_action( 'wp_ajax_sp_ai_ticket_analysis',     'sp_ai_ajax_ticket_analysis' );
+
+    // Government Service Core (city instances): its service requests live in
+    // sp_city_tickets, not sp_tickets, and its views fire their own hooks. The
+    // city module adds the AI Queue Analysis card to the dashboard and the
+    // weekly emailed report to city admins and supervisors.
+    // SP_CITY_VERSION is defined at file load by Government Service Core, so it
+    // is a safe presence check here regardless of plugin load order.
+    if ( defined( 'SP_CITY_VERSION' ) ) {
+        require_once SP_AI_PLUGIN_DIR . 'includes/city.php';
+        sp_ai_city_register();
+    }
+}
+
+// True on Government Service Core instances (City of Clinton etc.).
+function sp_ai_is_city_instance() {
+    return defined( 'SP_CITY_VERSION' );
 }
 
 // ── Activation ────────────────────────────────────────────────────────────────
@@ -66,6 +82,13 @@ register_activation_hook( __FILE__, 'sp_ai_activate' );
 
 function sp_ai_activate() {
     // No custom tables needed yet — settings stored in wp_options
+}
+
+register_deactivation_hook( __FILE__, 'sp_ai_deactivate' );
+
+function sp_ai_deactivate() {
+    // City weekly report cron (city instances only; harmless elsewhere).
+    wp_clear_scheduled_hook( 'sp_ai_city_weekly_report' );
 }
 
 // ── Nav filter ────────────────────────────────────────────────────────────────
@@ -117,7 +140,7 @@ function sp_ai_settings_section() {
     );
     ?>
     <div id="section-ai" class="sp-card sp-form-card sp-settings-section" style="margin-top:16px">
-        <h2 class="sp-section-heading">AI Assistant — Chat &amp; Marketing</h2>
+        <h2 class="sp-section-heading"><?php echo sp_ai_is_city_instance() ? 'AI Assistant — Service Tickets' : 'AI Assistant — Chat &amp; Marketing'; ?></h2>
         <form method="post" action="<?php echo esc_url( home_url( '/sp-app/' ) ); ?>">
             <?php wp_nonce_field( 'sp_form', 'sp_nonce' ); ?>
             <input type="hidden" name="sp_type" value="ai_settings">
@@ -126,7 +149,7 @@ function sp_ai_settings_section() {
             <div class="sp-field" style="max-width:400px">
                 <label>AI Assistant API Key</label>
                 <input type="text" name="sp_ai_api_key" value="<?php echo esc_attr( $api_key ); ?>" placeholder="sk-... or sk-ant-..." autocomplete="off" style="font-family:monospace;font-size:13px">
-                <span class="sp-hint">Powers the <strong>AI Assistant / marketing pages</strong>. OpenAI (<code>sk-…</code>) or Anthropic (<code>sk-ant-…</code>) per the model below. Also used as a fallback for the KPI Dashboard AI Summary when its own Anthropic key is blank (Anthropic keys only).<?php if ( $masked_key ) : ?><br>Currently set: <?php echo esc_html( $masked_key ); ?><?php endif; ?></span>
+                <span class="sp-hint"><?php if ( sp_ai_is_city_instance() ) : ?>Powers the <strong>AI Queue Analysis</strong> card on the dashboard and the <strong>Weekly Service Request Report</strong> email (city admins and supervisors). OpenAI (<code>sk-…</code>) or Anthropic (<code>sk-ant-…</code>) per the model below. Only ticket details, notes and addresses are sent to the model — never reporter phone numbers or email addresses.<?php else : ?>Powers the <strong>AI Assistant / marketing pages</strong>. OpenAI (<code>sk-…</code>) or Anthropic (<code>sk-ant-…</code>) per the model below. Also used as a fallback for the KPI Dashboard AI Summary when its own Anthropic key is blank (Anthropic keys only).<?php endif; ?><?php if ( $masked_key ) : ?><br>Currently set: <?php echo esc_html( $masked_key ); ?><?php endif; ?></span>
             </div>
 
             <div class="sp-field" style="max-width:320px;margin-top:16px">
@@ -191,6 +214,9 @@ function sp_ai_render_markdown( $text ) {
         } elseif ( preg_match( '/^[-*] (.+)/', $t, $m ) ) {
             if ( ! $in_ul ) { $html .= '<ul>'; $in_ul = true; }
             $html .= '<li>' . sp_ai_inline_md( $m[1] ) . '</li>';
+        } elseif ( preg_match( '/^([-*_]\s?){3,}$/', $t ) ) {
+            // Horizontal rule (---, ***, ___): the headings already separate sections, so drop it.
+            if ( $in_ul ) { $html .= '</ul>'; $in_ul = false; }
         } elseif ( $t === '' ) {
             if ( $in_ul ) { $html .= '</ul>'; $in_ul = false; }
         } else {
@@ -894,11 +920,22 @@ function sp_ai_ajax_ticket_analysis() {
 
 // ── API call helper ───────────────────────────────────────────────────────────
 
-function sp_ai_call_api( $prompt ) {
+// $max_tokens caps the reply; 1024 suits short summaries, longer reports pass more.
+function sp_ai_call_api( $prompt, $max_tokens = 1024 ) {
+    $max_tokens = max( 256, (int) $max_tokens );
     $api_key = sp_ai_get_api_key();
     $model   = sp_ai_get_model();
 
-    $is_anthropic = strpos( $model, 'claude' ) !== false;
+    // Pick the provider from the KEY, not just the model dropdown. An Anthropic key
+    // (sk-ant-…) left on the default GPT model used to be sent to OpenAI and fail
+    // with "Incorrect API key provided"; an OpenAI key on a Claude model did the
+    // reverse. Now the key wins and the model is swapped to a sane default if the
+    // two disagree.
+    $key_is_anthropic = strpos( $api_key, 'sk-ant-' ) === 0;
+    $model_is_claude  = strpos( $model, 'claude' ) !== false;
+    $is_anthropic     = $key_is_anthropic || ( $model_is_claude && strpos( $api_key, 'sk-' ) !== 0 );
+    if ( $key_is_anthropic && ! $model_is_claude )  $model = 'claude-sonnet-4-6';
+    if ( ! $key_is_anthropic && $model_is_claude && strpos( $api_key, 'sk-' ) === 0 ) { $model = 'gpt-4o-mini'; $is_anthropic = false; }
 
     if ( $is_anthropic ) {
         $url     = 'https://api.anthropic.com/v1/messages';
@@ -909,7 +946,7 @@ function sp_ai_call_api( $prompt ) {
         );
         $body = wp_json_encode( array(
             'model'      => $model,
-            'max_tokens' => 1024,
+            'max_tokens' => $max_tokens,
             'messages'   => array(
                 array( 'role' => 'user', 'content' => $prompt ),
             ),
@@ -921,8 +958,9 @@ function sp_ai_call_api( $prompt ) {
             'Content-Type'  => 'application/json',
         );
         $body = wp_json_encode( array(
-            'model'    => $model,
-            'messages' => array(
+            'model'      => $model,
+            'max_tokens' => $max_tokens,
+            'messages'   => array(
                 array( 'role' => 'user', 'content' => $prompt ),
             ),
         ) );

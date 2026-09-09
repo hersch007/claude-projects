@@ -178,6 +178,12 @@ if ( $action === 'edit' && $id ) {
                 </form>
             </div>
 
+            <?php
+            // Addon hook: AI Ticket Triage (Start Performance — AI) and any other
+            // per-ticket panels render here, between the ticket form and Department Status.
+            do_action( 'sp_city_ticket_edit_after', $id, $ticket );
+            ?>
+
             <!-- Dept acknowledgements -->
             <?php if ( ! empty( $ticket_depts ) ) : ?>
             <div class="sp-card" style="margin-top:12px">
@@ -592,3 +598,7 @@ if ( $params ) {
     </table>
     <?php if ( function_exists( 'sp_pagination' ) ) sp_pagination( $total, $limit, $paged, 'city-tickets' ); ?>
 </div>
+<?php
+// Addon hook: AI Queue Analysis (Start Performance — AI) renders below the ticket list.
+do_action( 'sp_city_tickets_after_list', $rows );
+?>

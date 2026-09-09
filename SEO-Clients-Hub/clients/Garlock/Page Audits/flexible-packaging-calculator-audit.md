@@ -1,9 +1,10 @@
 # On-Page SEO Audit — Flexible Packaging Calculator
 
 - **Live URL:** https://gcpflexpack-24024882.hs-sites.com/flexible-packaging-calculator/
+- **HubSpot editor:** https://app.hubspot.com/pages/24024882/editor/212796891913/settings
 - **Production URL:** https://gcpflexpack.com/flexible-packaging-calculator/
 - **Page type:** Tool
-- **Audited:** 2026-08-14 · **Status:** Review — pending implementation
+- **Audited:** 2026-08-14 · **Status:** **IMPLEMENTED — verified live on staging 2026-09-07** (title, meta, H1, WebApplication schema).
 
 ## Keywords
 - **Primary:** flexible packaging calculator, packaging conversions
@@ -39,4 +40,4 @@ Interactive tool — no content images.
 ## Notes
 - H1 lowercase — title-case it.
 - **Strong linkable asset** — earn backlinks by promoting it from product pages and the learning center.
-- Editor link is a placeholder — swap in the specific page's editor URL when available.
+- ✅ **Verified live on staging 2026-09-07** — title, meta, title-case H1 and WebApplication schema all match this audit.

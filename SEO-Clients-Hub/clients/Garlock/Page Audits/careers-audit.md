@@ -1,9 +1,10 @@
 # On-Page SEO Audit — Careers
 
 - **Live URL:** https://gcpflexpack-24024882.hs-sites.com/careers
+- **HubSpot editor:** https://app.hubspot.com/pages/24024882/editor/212650470796/settings
 - **Production URL:** https://gcpflexpack.com/careers
 - **Page type:** Careers
-- **Audited:** 2026-08-14 · **Status:** Review — pending implementation
+- **Audited:** 2026-08-14 · **Status:** **IMPLEMENTED — verified live on staging 2026-09-07** (title, meta, 10/12 alt text); 2 filename-style alts remain.
 
 ## Keywords
 - **Primary:** C-P Flexible Packaging careers, flexible packaging jobs
@@ -46,4 +47,4 @@
 - H1 is strong and on-brand — no change needed.
 - **Three content images have NO alt text** — creative team should add the recommended alts.
 - Add JobPosting schema later, per opening, when specific roles are posted.
-- Editor link is a placeholder — swap in the specific page's editor URL when available.
+- ⚠️ **Verified live 2026-09-07** — title, meta and 10 of 12 alts match. Two images still carry filename alts: `working-at-c-p-thumbnail-300x161` (video thumbnail) and `careers` — apply the recommended text above.

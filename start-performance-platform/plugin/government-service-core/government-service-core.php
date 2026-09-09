@@ -2,13 +2,13 @@
 /*
  * Plugin Name: Start Performance -- Government Service Core
  * Description: Multi-department public service ticket system with on-call scheduling, SMS/email notifications, and on-duty dashboard for city and municipal governments.
- * Version:     1.2.34
+ * Version:     1.2.36
  * Author:      Richard Brashear / Start Performance
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if ( ! defined( 'SP_CITY_VERSION' ) ) define( 'SP_CITY_VERSION', '1.2.34' );
+if ( ! defined( 'SP_CITY_VERSION' ) ) define( 'SP_CITY_VERSION', '1.2.36' );
 
 // -- City role helpers ---------------------------------------------------------
 // Roles:

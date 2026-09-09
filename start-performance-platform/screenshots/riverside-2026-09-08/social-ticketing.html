@@ -1,0 +1,68 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 1500px; overflow: hidden; }
+  body { font-family: Inter, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background: #0b1120; color: #fff; position: relative; }
+  .glow { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; }
+  .g1 { width: 900px; height: 900px; background: rgba(37,99,235,.30); top: -350px; left: -250px; }
+  .g2 { width: 800px; height: 800px; background: rgba(16,185,129,.20); bottom: -300px; right: -250px; }
+  .grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .wrap { position: relative; padding: 72px 72px 0; }
+  .kicker { display: inline-flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #93c5fd; background: rgba(59,130,246,.14); border: 1px solid rgba(147,197,253,.35); padding: 12px 20px; border-radius: 999px; }
+  .kicker .dot { width: 12px; height: 12px; border-radius: 50%; background: #60a5fa; box-shadow: 0 0 18px #60a5fa; }
+  h1 { margin-top: 30px; font-size: 72px; line-height: 1.04; font-weight: 900; letter-spacing: -2.5px; max-width: 1060px; }
+  h1 span { color: #93c5fd; }
+  .sub { margin-top: 22px; font-size: 27px; line-height: 1.35; color: #cbd5e1; font-weight: 500; max-width: 980px; }
+  .steps { display: flex; gap: 18px; margin-top: 40px; }
+  .step { flex: 1; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 22px 22px 24px; position: relative; }
+  .step .num { position: absolute; top: -16px; left: 22px; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 17px; color: #0b1120; }
+  .step .ic { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .step .ic svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .step .t { font-size: 28px; font-weight: 900; letter-spacing: -.5px; }
+  .step .d { margin-top: 6px; font-size: 18px; line-height: 1.35; color: #cbd5e1; font-weight: 500; }
+  .s1 .num, .s1 .ic { background: #60a5fa; color: #0b1120; } .s1 .ic { background: rgba(96,165,250,.18); color: #93c5fd; }
+  .s2 .num { background: #fbbf24; } .s2 .ic { background: rgba(251,191,36,.18); color: #fcd34d; }
+  .s3 .num { background: #a78bfa; } .s3 .ic { background: rgba(167,139,250,.18); color: #c4b5fd; }
+  .s4 .num { background: #34d399; } .s4 .ic { background: rgba(52,211,153,.18); color: #6ee7b7; }
+  .shots { position: absolute; left: 0; right: 0; bottom: 0; height: 600px; }
+  .list { position: absolute; right: 72px; bottom: 90px; width: 900px; height: 500px; border-radius: 18px; overflow: hidden; box-shadow: 0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.12); transform: perspective(1800px) rotateY(-5deg) rotateX(3deg); transform-origin: right center; }
+  .list img { width: 100%; display: block; margin-left: -12.5%; width: 125%; }
+  .phone { position: absolute; left: 72px; bottom: 84px; width: 262px; border-radius: 40px; padding: 12px; background: #111827; box-shadow: 0 40px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(255,255,255,.15), inset 0 0 0 2px #1f2937; transform: rotate(4deg); z-index: 3; }
+  .phone img { width: 100%; display: block; border-radius: 30px; }
+  .tag { position: absolute; z-index: 4; background: #0f172a; border: 1px solid rgba(255,255,255,.25); border-radius: 14px; padding: 14px 18px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+  .tag .k { font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #94a3b8; }
+  .tag .v { margin-top: 4px; font-size: 22px; font-weight: 800; color: #f8fafc; }
+  .tag .v em { font-style: normal; color: #fb7185; }
+  .tagA { right: 110px; bottom: 330px; }
+  .tagB { left: 330px; bottom: 150px; }
+  .tagB .v em { color: #34d399; }
+  .footband { position: absolute; left: 0; right: 0; bottom: 0; height: 150px; background: linear-gradient(to top, #0b1120 55%, rgba(11,17,32,0)); z-index: 5; }
+  .foot { position: absolute; left: 72px; right: 72px; bottom: 26px; display: flex; align-items: center; justify-content: space-between; z-index: 6; }
+  .foot .logo { background: #fff; border-radius: 12px; padding: 8px 14px; display: inline-flex; }
+  .foot img { height: 40px; display: block; }
+  .foot .p { font-size: 18px; color: #94a3b8; font-weight: 600; letter-spacing: .04em; }
+</style></head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div><div class="grid"></div>
+<div class="wrap">
+  <div class="kicker"><span class="dot"></span> City service request system</div>
+  <h1>Every pothole, outage and leak gets a ticket number, an owner, <span>and a clock.</span></h1>
+  <div class="sub">Residents report from their phone. The on-call crew is notified in seconds. Supervisors see every open request, who has it, and how long it has been waiting.</div>
+  <div class="steps">
+    <div class="step s1"><div class="num">1</div><div class="ic"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg></div><div class="t">Submit</div><div class="d">Online form, any device. Photos optional. Ticket number instantly.</div></div>
+    <div class="step s2"><div class="num">2</div><div class="ic"><svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.6a2 2 0 0 1-.5 2.1L8.1 9.7a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.8.3 1.7.5 2.6.7a2 2 0 0 1 1.7 2z"/></svg></div><div class="t">Route</div><div class="d">Right department, on-call staff texted and emailed, auto-escalation if ignored.</div></div>
+    <div class="step s3"><div class="num">3</div><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="t">Track</div><div class="d">Status, priority, assignee and age on every ticket. Residents can check anytime.</div></div>
+    <div class="step s4"><div class="num">4</div><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v1M18.4 5.6l-.7.7M21 12h-1M4 12H3M5.6 5.6l.7.7M9 18h6M10 21h4M8.5 15a5 5 0 1 1 7 0 3 3 0 0 0-1 2h-5a3 3 0 0 0-1-2z"/></svg></div><div class="t">Analyze</div><div class="d">Daily AI briefing: what's overdue, who's behind, what to do today.</div></div>
+  </div>
+</div>
+<div class="shots">
+  <div class="list"><img src="05-service-tickets-list.png" alt=""></div>
+  <div class="tag tagA"><div class="k">Live queue</div><div class="v">42 tickets &nbsp;·&nbsp; <em>1 emergency</em> &nbsp;·&nbsp; 4 departments</div></div>
+  <div class="phone"><img src="10-public-form-mobile.png" alt=""></div>
+  <div class="tag tagB"><div class="k">Average time to acknowledge</div><div class="v"><em>7.7 hours</em>, tracked automatically</div></div>
+</div>
+<div class="footband"></div>
+<div class="foot"><span class="logo"><img src="../../reference-files/Start Performance Logo.png" alt=""></span><div class="p">GOVERNMENT SERVICE CORE &nbsp;·&nbsp; Riverside demo city, all data fictional</div></div>
+</body></html>

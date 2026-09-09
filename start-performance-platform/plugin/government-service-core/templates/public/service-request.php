@@ -8,6 +8,8 @@ header( 'Expires: 0' );
 
 $city_name = get_option( 'sp_city_name', get_bloginfo( 'name' ) );
 $accent    = get_option( 'sp_city_primary_color', '#1e3a5f' );
+// Hero photo: per-city override (sp_city_hero_url) or the stock small-town street.
+$hero_url  = get_option( 'sp_city_hero_url', '' ) ?: 'https://images.unsplash.com/photo-1761839259488-2bdeeae794f5?w=1400&h=400&fit=crop&crop=center&q=85';
 $year      = date( 'Y' );
 
 function sp_city_darken( $hex, $pct = 15 ) {
@@ -67,7 +69,7 @@ body {
     height: 200px;
     overflow: hidden;
     position: relative;
-    background: url('https://images.unsplash.com/photo-1761839259488-2bdeeae794f5?w=1400&h=400&fit=crop&crop=center&q=85') center/cover no-repeat;
+    background: url('<?php echo esc_url( $hero_url ); ?>') center/cover no-repeat;
 }
 
 /* ── Main ── */
@@ -494,7 +496,7 @@ body {
 <!-- Header -->
 <header class="sp-header">
     <div class="sp-header-inner" style="justify-content:center">
-        <span class="sp-header-city" style="font-size:17px">City of Clinton Utility Service Request Portal</span>
+        <span class="sp-header-city" style="font-size:17px"><?php echo esc_html( $city_name ); ?> Utility Service Request Portal</span>
     </div>
 </header>
 

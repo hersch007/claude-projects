@@ -1,9 +1,10 @@
 # On-Page SEO Audit — Premade Pouches Glossary
 
 - **Live URL:** https://gcpflexpack-24024882.hs-sites.com/glossary/pouch/
+- **HubSpot editor:** https://app.hubspot.com/pages/24024882/editor/212725949338/settings
 - **Production URL:** https://gcpflexpack.com/glossary/pouch/
 - **Page type:** Glossary
-- **Audited:** 2026-08-14 · **Status:** Review — pending implementation
+- **Audited:** 2026-08-14 · **Status:** **IMPLEMENTED in HubSpot 2026-09-07** (title, meta, H1, DefinedTermSet schema) — verified live.
 
 ## Keywords
 - **Primary:** premade pouches glossary, pouch packaging terms
@@ -36,5 +37,4 @@ Glossary page — text definitions only, no content images.
 
 ## Notes
 - **High topical-authority page** (~40 defined terms) — link each entry to its related product page (spouted pouches, laser-scored pouches, etc.).
-- H1 lowercase — title-case it.
-- Editor link is a placeholder — swap in the specific page's editor URL when available.
+- ✅ **Published and verified live 2026-09-07** — meta, title-case H1 and DefinedTermSet schema all match this audit.
