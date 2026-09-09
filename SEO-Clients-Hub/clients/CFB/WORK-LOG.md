@@ -79,7 +79,13 @@
 
 | 2026-09-07 | Aclar® material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/aclar-cleanroom-packaging — VERIFIED LIVE 2026-09-07 |
 
-**Total billable to date: 24.10 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00 · 9/7: 3.00)
+| 2026-09-07 | Tyvek® material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/tyvek-cleanroom-packaging — VERIFIED LIVE 2026-09-07 (title, meta, 4 of 6 image alts, schema; 2 alts pending) |
+
+| 2026-09-08 | ESD material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/esd-cleanroom-packaging — VERIFIED LIVE 2026-09-08 |
+
+| 2026-09-08 | Static Shielding material page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Product schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /materials/static-shielding-cleanroom-packaging — VERIFIED LIVE 2026-09-08 |
+
+**Total billable to date: 27.10 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00 · 9/7: 4.00 · 9/8: 2.00)
 
 ## Open items
 - [x] ✅ VERIFIED 2026-07-22 live — homepage title, Organization schema, and meta description (150 chars) all confirmed live. Live meta wording: "...USA made for 35+ years." (drops "Get a quote" CTA — minor variance from draft, not worth a re-edit).

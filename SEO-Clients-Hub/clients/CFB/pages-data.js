@@ -601,6 +601,44 @@ module.exports = {
     },
 
     {
+      name: 'Tyvek® Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-07 (title, meta, 4 of 6 image alts, Product schema — semiconductor-packaging.png + cleanroom-header-bags.jpg alts pending)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/tyvek-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-07',
+      primaryKw: 'Tyvek cleanroom packaging',
+      secondaryKw: 'Tyvek pouches, Tyvek header bags, sterilization pouches, breathable barrier packaging, medical device packaging',
+      title: { text: 'Tyvek® Sterile Pouches & Header Bags for Cleanrooms | CFB', chars: 58 },
+      meta: { text: "CFB's Tyvek® cleanroom pouches and header bags deliver breathable sterilization barrier protection for medical, pharma and semiconductor cleanrooms.", chars: 147 },
+      notes: 'H1 "Tyvek® Cleanroom Packaging" left as-is. DuPont material — brand reflected in schema. 2 image alts (semiconductor-packaging.png, cleanroom-header-bags.jpg) did not save after two attempts — may be in a shared or locked module; follow up.',
+      images: [
+        ['Hero (tyvek-healthcare-cleanroom-packaging.jpg)', 'tyvek cleanroom packaging', 'Tyvek® sterile pouches for healthcare cleanroom packaging', '57', 'Updated.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'Tyvek® pouches for medical device cleanroom packaging', '53', 'Updated.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'Tyvek® packaging for pharmaceutical cleanroom applications', '58', 'Updated.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'Tyvek® cleanroom packaging for semiconductor applications', '57', '⚠ Pending — did not save after two attempts.'],
+        ['Heat-seal pouches (tyvek-heat-sealing-pouches.png.jpg)', 'tyvek heat-sealing pouches', 'Tyvek® heat-sealing pouches for sterile cleanroom packaging', '59', 'Updated.'],
+        ['Header bags (cleanroom-header-bags.jpg)', 'cleanroom header bags', 'Tyvek® header bags for cleanroom sterilization packaging', '56', '⚠ Pending — did not save after two attempts.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-07',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Tyvek® Cleanroom Packaging",
+  "description": "CFB's Tyvek® cleanroom pouches and header bags deliver breathable sterilization barrier protection for medical, pharma and semiconductor cleanrooms.",
+  "brand": { "@type": "Brand", "name": "DuPont" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/tyvek-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
       name: 'Aclar® Cleanroom Packaging Film',
       status: 'VERIFIED LIVE 2026-09-07 (title, meta, 5 image alts, Product schema)',
       liveUrl: 'https://www.cleanroomfilm.com/materials/aclar-cleanroom-packaging',
@@ -632,6 +670,81 @@ module.exports = {
     "url": "https://www.cleanroomfilm.com/"
   },
   "url": "https://www.cleanroomfilm.com/materials/aclar-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'Static Shielding Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-08 (title, meta, 6 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/static-shielding-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-08',
+      primaryKw: 'static shielding cleanroom packaging',
+      secondaryKw: 'static shielding bags, multi-layer ESD protection, electrostatic shielding, semiconductor packaging, aerospace packaging',
+      title: { text: 'Static Shielding Cleanroom Packaging: ESD Bags & Film | CFB', chars: 60 },
+      meta: { text: "CFB's static shielding cleanroom packaging provides multi-layer ESD protection for semiconductors, aerospace, medical, and pharmaceutical components.", chars: 149 },
+      notes: 'H1 "Static Shielding Cleanroom Packaging" left as-is. Meta was only 113 chars and entirely generic — replaced with specifics. Same image file (static-shielding-packaging.png) used twice — given distinct alts for hero vs. product detail roles.',
+      images: [
+        ['Hero (static-shielding-packaging.png)', 'static-shielding packaging', 'Static shielding cleanroom packaging bags for electronics', '57', 'Minor fix + context added.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'Static shielding bags for pharmaceutical cleanroom packaging', '60', 'Ties material to application.'],
+        ['Aerospace app (aerospace-packaging.png)', 'aerospace packaging', 'Static shielding cleanroom packaging for aerospace components', '61', 'Same rationale.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'Static shielding bags for semiconductor cleanroom packaging', '59', 'Same rationale.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'Static shielding packaging for medical device cleanrooms', '56', 'Same rationale.'],
+        ['Product detail (static-shielding-packaging.png — reused)', 'static-shielding-packaging', 'Multi-layer static shielding bag for cleanroom ESD protection', '62', 'Same file as hero — distinct alt for the product detail context.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-08',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Static Shielding Cleanroom Packaging",
+  "description": "CFB's static shielding cleanroom packaging provides multi-layer ESD protection for semiconductors, aerospace, medical, and pharmaceutical components.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/static-shielding-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'ESD Static Shielding Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-08 (title, meta, 5 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/esd-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-08',
+      primaryKw: 'ESD cleanroom packaging',
+      secondaryKw: 'ESD static shielding, anti-static film, electrostatic shielding bags, electronics cleanroom packaging, polycarbonate-compatible packaging',
+      title: { text: 'ESD Cleanroom Packaging: Static Shielding Film & Bags | CFB', chars: 59 },
+      meta: { text: 'ESD static shielding cleanroom packaging from CFB: semi-transparent, heat-sealable, polycarbonate-compatible film and bags for electronics cleanrooms.', chars: 150 },
+      notes: 'H1 "ESD Static Shield Cleanroom Packaging" left as-is. Current meta had decent specifics but led with a generic CTA; replaced with keyword-first construction. All 5 content image alts were filename dumps or bare application labels — all updated.',
+      images: [
+        ['Hero (esd-cleanroom-packaging.jpg)', 'esd-cleanroom-packaging', 'ESD static shielding cleanroom packaging for electronics', '56', 'Filename-dump replaced with descriptive phrase.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'ESD cleanroom packaging for medical device applications', '55', 'Ties generic alt to ESD context.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'ESD packaging for pharmaceutical cleanroom applications', '55', 'Same rationale.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'ESD static shielding film for semiconductor cleanroom packaging', '62', 'Ties primary material to highest-value application.'],
+        ['Anti-static LDPE (anti-static-ldpe.jpg)', 'anti-static-ldpe', 'Anti-static LDPE film for ESD cleanroom packaging', '50', 'Filename-dump replaced with descriptive phrase.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-08',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "ESD Static Shielding Cleanroom Packaging",
+  "description": "ESD static shielding cleanroom packaging from CFB: semi-transparent, heat-sealable, polycarbonate-compatible film and bags for electronics cleanrooms.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/esd-cleanroom-packaging",
   "category": "Cleanroom Packaging Materials"
 }
 </script>`
