@@ -100,6 +100,11 @@ function lawnace_maybe_render_client_dashboard() {
         exit;
     }
 
+    if ( isset( $_GET['export'] ) && $_GET['export'] === 'leads' ) {
+        lawnace_export_leads_csv();
+        exit;
+    }
+
     lawnace_render_client_dashboard_page();
     exit;
 }
@@ -272,6 +277,67 @@ Return ONLY the JSON. No preamble, no explanation.";
 |--------------------------------------------------------------------------
 */
 
+/**
+ * Task sources for a time window (site-local datetime strings).
+ * Shared by the Tasks tab (last 30 days) and the morning digest (last 24 hours).
+ * Returns [ 'leads' => [], 'pricing' => [], 'service' => [], 'dropoffs' => [] ]
+ * — each row has session_id + started; lead rows also carry lead_text.
+ */
+function lawnace_client_task_sources( $start, $end ) {
+    global $wpdb;
+    $table = $wpdb->prefix . 'lawnace_chat_logs';
+
+    // Sales: sessions that captured a lead
+    $leads = $wpdb->get_results( $wpdb->prepare(
+        "SELECT session_id, MIN(created_at) AS started, MAX(message) AS lead_text
+         FROM {$table} WHERE role = 'lead' AND created_at >= %s AND created_at <= %s
+         GROUP BY session_id ORDER BY started DESC",
+        $start, $end
+    ) ) ?: [];
+
+    // Sales: pricing questions that did not become a lead
+    $pricing = [];
+    $pricing_rows = $wpdb->get_results( $wpdb->prepare(
+        "SELECT DISTINCT session_id, MIN(created_at) AS started
+         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
+         AND (message LIKE '%%price%%' OR message LIKE '%%cost%%' OR message LIKE '%%how much%%'
+              OR message LIKE '%%quote%%' OR message LIKE '%%estimate%%')
+         GROUP BY session_id ORDER BY started DESC",
+        $start, $end
+    ) ) ?: [];
+    $lead_sids = array_column( $leads, 'session_id' );
+    foreach ( $pricing_rows as $r ) {
+        if ( ! in_array( $r->session_id, $lead_sids, true ) ) {
+            $pricing[] = $r;
+        }
+    }
+
+    // Service: complaints, no-shows, cancellations
+    $service = $wpdb->get_results( $wpdb->prepare(
+        "SELECT DISTINCT session_id, MIN(created_at) AS started
+         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
+         AND (message LIKE '%%complaint%%' OR message LIKE '%%rude%%' OR message LIKE '%%unhappy%%'
+              OR message LIKE '%%cancel%%' OR message LIKE '%%no show%%' OR message LIKE '%%didn''t show%%'
+              OR message LIKE '%%never came%%' OR message LIKE '%%stop service%%')
+         GROUP BY session_id ORDER BY started DESC",
+        $start, $end
+    ) ) ?: [];
+
+    // Service: drop-offs (2 or fewer customer messages), minus anything already a service task
+    $dropoffs = $wpdb->get_results( $wpdb->prepare(
+        "SELECT session_id, COUNT(*) AS msg_count, MIN(created_at) AS started
+         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
+         GROUP BY session_id HAVING msg_count <= 2 ORDER BY started DESC",
+        $start, $end
+    ) ) ?: [];
+    $service_sids = array_column( $service, 'session_id' );
+    $dropoffs = array_values( array_filter( $dropoffs, function( $r ) use ( $service_sids ) {
+        return ! in_array( $r->session_id, $service_sids, true );
+    } ) );
+
+    return [ 'leads' => $leads, 'pricing' => $pricing, 'service' => $service, 'dropoffs' => $dropoffs ];
+}
+
 add_action( 'wp_ajax_lawnace_task_toggle',        'lawnace_task_toggle_handler' );
 add_action( 'wp_ajax_nopriv_lawnace_task_toggle', 'lawnace_task_toggle_handler' );
 
@@ -295,6 +361,185 @@ function lawnace_task_toggle_handler() {
 
     update_option( 'lawnace_completed_tasks', $done );
     wp_send_json_success( [ 'completed' => $completed, 'session_id' => $session_id ] );
+}
+
+/*
+|--------------------------------------------------------------------------
+| TASK META — lead status, assignee, notes (per session)
+|--------------------------------------------------------------------------
+| Stored in option lawnace_task_meta: [ session_id => [status, assignee, notes, updated] ]
+*/
+
+function lawnace_task_statuses() {
+    return [
+        'new'       => [ 'New',       '#5b4fbd' ],
+        'contacted' => [ 'Contacted', '#0284c7' ],
+        'quoted'    => [ 'Quoted',    '#d97706' ],
+        'won'       => [ 'Won',       '#16a34a' ],
+        'lost'      => [ 'Lost',      '#9ca3af' ],
+    ];
+}
+
+function lawnace_team_members() {
+    $raw = get_option( 'lawnace_team_members', 'Kyle, Tammi, Tim' );
+    $out = [];
+    foreach ( preg_split( '/\s*,\s*/', (string) $raw ) as $n ) {
+        $n = sanitize_text_field( $n );
+        if ( $n !== '' ) $out[] = $n;
+    }
+    return $out;
+}
+
+function lawnace_task_meta_all() {
+    $m = get_option( 'lawnace_task_meta', [] );
+    return is_array( $m ) ? $m : [];
+}
+
+/** One <select> for status or assignee, wired to the AJAX saver. */
+function lawnace_render_meta_select( $field, $sid, $meta, $nonce ) {
+    $attrs = ' data-field="' . esc_attr( $field ) . '" data-sid="' . esc_attr( $sid ) . '" data-nonce="' . esc_attr( $nonce ) . '"';
+    if ( $field === 'status' ) {
+        $status = $meta['status'] ?? 'new';
+        $h = '<select class="la-meta-select la-meta-status"' . $attrs . ' data-status="' . esc_attr( $status ) . '" aria-label="Lead status">';
+        foreach ( lawnace_task_statuses() as $k => $s ) {
+            $h .= '<option value="' . esc_attr( $k ) . '"' . selected( $status, $k, false ) . '>' . esc_html( $s[0] ) . '</option>';
+        }
+        return $h . '</select>';
+    }
+    $assignee = $meta['assignee'] ?? '';
+    $members  = lawnace_team_members();
+    if ( $assignee !== '' && ! in_array( $assignee, $members, true ) ) $members[] = $assignee; // keep a removed name visible
+    $h = '<select class="la-meta-select la-meta-assignee"' . $attrs . ' data-assigned="' . ( $assignee !== '' ? '1' : '0' ) . '" aria-label="Assigned to">';
+    $h .= '<option value="">Unassigned</option>';
+    foreach ( $members as $n ) {
+        $h .= '<option value="' . esc_attr( $n ) . '"' . selected( $assignee, $n, false ) . '>' . esc_html( $n ) . '</option>';
+    }
+    return $h . '</select>';
+}
+
+/** Controls strip under a task row: [status] [assignee] [note toggle] + note editor. */
+function lawnace_render_task_controls( $sid, $meta, $nonce, $show_status = true ) {
+    $notes = $meta['notes'] ?? '';
+    $h  = '<div class="la-task-controls">';
+    if ( $show_status ) $h .= lawnace_render_meta_select( 'status', $sid, $meta, $nonce );
+    $h .= lawnace_render_meta_select( 'assignee', $sid, $meta, $nonce );
+    $h .= '<button type="button" class="la-note-toggle">' . ( $notes !== '' ? '📝 Edit note' : '📝 Add note' ) . '</button>';
+    $h .= '<span class="la-saved">Saved ✓</span>';
+    if ( $notes !== '' ) $h .= '<div class="la-note-preview">' . esc_html( $notes ) . '</div>';
+    $h .= '<div class="la-note-wrap">';
+    $h .= '<textarea class="la-note-text" data-field="notes" data-sid="' . esc_attr( $sid ) . '" data-nonce="' . esc_attr( $nonce ) . '" maxlength="2000" placeholder="Notes for the team — who called, what was quoted, next step…">' . esc_textarea( $notes ) . '</textarea>';
+    $h .= '<div class="la-note-hint">Saves when you click away (or Ctrl+Enter).</div>';
+    $h .= '</div></div>';
+    return $h;
+}
+
+add_action( 'wp_ajax_lawnace_task_meta',        'lawnace_task_meta_handler' );
+add_action( 'wp_ajax_nopriv_lawnace_task_meta', 'lawnace_task_meta_handler' );
+
+function lawnace_task_meta_handler() {
+    check_ajax_referer( 'lawnace_client_summary_nonce', 'nonce' );
+    if ( ! lawnace_client_dash_is_authed() ) wp_send_json_error( 'Not authorized.' );
+
+    $sid   = sanitize_text_field( wp_unslash( $_POST['session_id'] ?? '' ) );
+    $field = sanitize_key( $_POST['field'] ?? '' );
+    $value = wp_unslash( $_POST['value'] ?? '' );
+
+    if ( $sid === '' || ! in_array( $field, [ 'status', 'assignee', 'notes' ], true ) ) wp_send_json_error( 'Bad request.' );
+
+    switch ( $field ) {
+        case 'status':
+            $value = sanitize_key( $value );
+            if ( ! isset( lawnace_task_statuses()[ $value ] ) ) wp_send_json_error( 'Unknown status.' );
+            break;
+        case 'assignee':
+            $value = sanitize_text_field( $value );
+            if ( $value !== '' && ! in_array( $value, lawnace_team_members(), true ) ) wp_send_json_error( 'Unknown team member.' );
+            break;
+        case 'notes':
+            $value = mb_substr( sanitize_textarea_field( $value ), 0, 2000 );
+            break;
+    }
+
+    $all = lawnace_task_meta_all();
+    $row = isset( $all[ $sid ] ) && is_array( $all[ $sid ] ) ? $all[ $sid ] : [];
+    $row[ $field ]  = $value;
+    $row['updated'] = current_time( 'mysql' );
+    $all[ $sid ]    = $row;
+    update_option( 'lawnace_task_meta', $all, false );
+
+    // Won / Lost closes the task automatically
+    $completed = null;
+    if ( $field === 'status' && in_array( $value, [ 'won', 'lost' ], true ) ) {
+        $done = get_option( 'lawnace_completed_tasks', [] );
+        if ( ! is_array( $done ) ) $done = [];
+        if ( ! isset( $done[ $sid ] ) ) {
+            $done[ $sid ] = current_time( 'mysql' );
+            update_option( 'lawnace_completed_tasks', $done );
+        }
+        $completed = true;
+    }
+
+    wp_send_json_success( [ 'session_id' => $sid, 'field' => $field, 'value' => $value, 'completed' => $completed ] );
+}
+
+/*
+|--------------------------------------------------------------------------
+| LEAD CSV EXPORT  (/la-team/?export=leads&range=week|month|all)
+|--------------------------------------------------------------------------
+*/
+
+function lawnace_csv_safe( $v ) {
+    $v = (string) $v;
+    // Neutralise spreadsheet formula injection from customer-typed text
+    return ( $v !== '' && strpbrk( $v[0], '=+-@' ) !== false ) ? "'" . $v : $v;
+}
+
+function lawnace_export_leads_csv() {
+    global $wpdb;
+    $table = $wpdb->prefix . 'lawnace_chat_logs';
+
+    $range = isset( $_GET['range'] ) ? sanitize_text_field( wp_unslash( $_GET['range'] ) ) : 'month';
+    switch ( $range ) {
+        case 'week': $since = date( 'Y-m-d 00:00:00', strtotime( '-7 days' ) );  break;
+        case 'all':  $since = '2000-01-01 00:00:00';                               break;
+        default:     $since = date( 'Y-m-d 00:00:00', strtotime( '-30 days' ) ); $range = 'month';
+    }
+
+    $rows = $wpdb->get_results( $wpdb->prepare(
+        "SELECT session_id, message, created_at FROM {$table} WHERE role = 'lead' AND created_at >= %s ORDER BY created_at DESC",
+        $since
+    ) ) ?: [];
+
+    $meta     = lawnace_task_meta_all();
+    $done     = get_option( 'lawnace_completed_tasks', [] );
+    if ( ! is_array( $done ) ) $done = [];
+    $statuses = lawnace_task_statuses();
+
+    nocache_headers();
+    header( 'Content-Type: text/csv; charset=UTF-8' );
+    header( 'Content-Disposition: attachment; filename="lawnace-leads-' . $range . '-' . date( 'Y-m-d' ) . '.csv"' );
+
+    $out = fopen( 'php://output', 'w' );
+    fwrite( $out, "\xEF\xBB\xBF" ); // UTF-8 BOM so Excel opens it cleanly
+    fputcsv( $out, [ 'Captured', 'Name', 'Phone', 'Email', 'Address', 'Status', 'Assigned To', 'Notes', 'Task Done', 'Chat Link' ] );
+    foreach ( $rows as $r ) {
+        $ld = lawnace_parse_lead_row( $r->message );
+        $m  = isset( $meta[ $r->session_id ] ) && is_array( $meta[ $r->session_id ] ) ? $meta[ $r->session_id ] : [];
+        $st = $m['status'] ?? 'new';
+        fputcsv( $out, [
+            $r->created_at,
+            lawnace_csv_safe( $ld['name'] ),
+            $ld['phone'],
+            lawnace_csv_safe( $ld['email'] ),
+            lawnace_csv_safe( $ld['address'] ),
+            $statuses[ $st ][0] ?? ucfirst( $st ),
+            lawnace_csv_safe( $m['assignee'] ?? '' ),
+            lawnace_csv_safe( $m['notes'] ?? '' ),
+            isset( $done[ $r->session_id ] ) ? 'Yes' : 'No',
+            add_query_arg( [ 'session' => $r->session_id ], home_url( '/la-team/' ) ),
+        ] );
+    }
+    fclose( $out );
 }
 
 /*
@@ -831,59 +1076,18 @@ function lawnace_render_client_dashboard_page() {
 
     // ── Tasks – last 30 days ───────────────────────────────────────────
 
-    $yesterday_start = date( 'Y-m-d 00:00:00', strtotime( '-30 days' ) );
-    $yesterday_end   = date( 'Y-m-d 23:59:59' ); // through right now
+    $task_src = lawnace_client_task_sources(
+        date( 'Y-m-d 00:00:00', strtotime( '-30 days' ) ),
+        date( 'Y-m-d 23:59:59' ) // through right now
+    );
+    $yesterday_leads            = $task_src['leads'];
+    $yesterday_pricing_sessions = $task_src['pricing'];
+    $yesterday_service_tasks    = $task_src['service'];
+    $yesterday_dropoffs         = $task_src['dropoffs'];
 
     $completed_tasks = get_option( 'lawnace_completed_tasks', [] );
     if ( ! is_array( $completed_tasks ) ) $completed_tasks = [];
-
-    // Sales tasks: sessions from yesterday that captured a lead or asked about pricing
-    $yesterday_leads = $wpdb->get_results( $wpdb->prepare(
-        "SELECT DISTINCT session_id, MIN(created_at) AS started
-         FROM {$table} WHERE role = 'lead' AND created_at >= %s AND created_at <= %s
-         GROUP BY session_id ORDER BY started DESC",
-        $yesterday_start, $yesterday_end
-    ) ) ?: [];
-
-    $yesterday_pricing_sessions = [];
-    $pricing_rows = $wpdb->get_results( $wpdb->prepare(
-        "SELECT DISTINCT session_id, MIN(created_at) AS started
-         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
-         AND (message LIKE '%%price%%' OR message LIKE '%%cost%%' OR message LIKE '%%how much%%'
-              OR message LIKE '%%quote%%' OR message LIKE '%%estimate%%')
-         GROUP BY session_id ORDER BY started DESC",
-        $yesterday_start, $yesterday_end
-    ) ) ?: [];
-    // Remove sessions already captured as leads
-    $lead_sids = array_column( $yesterday_leads, 'session_id' );
-    foreach ( $pricing_rows as $r ) {
-        if ( ! in_array( $r->session_id, $lead_sids, true ) ) {
-            $yesterday_pricing_sessions[] = $r;
-        }
-    }
-
-    // Service tasks: complaints, no-shows, cancellations, drop-offs from yesterday
-    $yesterday_service_tasks = $wpdb->get_results( $wpdb->prepare(
-        "SELECT DISTINCT session_id, MIN(created_at) AS started
-         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
-         AND (message LIKE '%%complaint%%' OR message LIKE '%%rude%%' OR message LIKE '%%unhappy%%'
-              OR message LIKE '%%cancel%%' OR message LIKE '%%no show%%' OR message LIKE '%%didn''t show%%'
-              OR message LIKE '%%never came%%' OR message LIKE '%%stop service%%')
-         GROUP BY session_id ORDER BY started DESC",
-        $yesterday_start, $yesterday_end
-    ) ) ?: [];
-
-    $yesterday_dropoffs = $wpdb->get_results( $wpdb->prepare(
-        "SELECT session_id, COUNT(*) AS msg_count, MIN(created_at) AS started
-         FROM {$table} WHERE role = 'user' AND created_at >= %s AND created_at <= %s
-         GROUP BY session_id HAVING msg_count <= 2 ORDER BY started DESC",
-        $yesterday_start, $yesterday_end
-    ) ) ?: [];
-    // Remove overlap with service tasks
-    $service_sids = array_column( $yesterday_service_tasks, 'session_id' );
-    $yesterday_dropoffs = array_filter( $yesterday_dropoffs, function( $r ) use ( $service_sids ) {
-        return ! in_array( $r->session_id, $service_sids, true );
-    } );
+    $task_meta = lawnace_task_meta_all();
 
     // Task counts for summary cards
     $all_task_sessions = array_merge(
@@ -1003,7 +1207,7 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
 .la-tab-badge{display:inline-block;background:#dc2626;color:#fff;font-size:10px;font-weight:800;border-radius:10px;padding:1px 6px;margin-left:5px;vertical-align:middle;line-height:1.4;}
 .la-task-group{margin-bottom:18px;}
 .la-task-group h3{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#5b4fbd;margin:0 0 10px;}
-.la-task-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f9f9ff;border:1px solid #e0ddf5;border-radius:8px;margin-bottom:6px;transition:background .15s;}
+.la-task-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 14px;background:#f9f9ff;border:1px solid #e0ddf5;border-radius:8px;margin-bottom:6px;transition:background .15s;}
 .la-task-row:hover{background:#f0eeff;}
 .la-task-done{opacity:.6;}
 .la-task-check{flex-shrink:0;display:flex;align-items:center;cursor:pointer;}
@@ -1013,11 +1217,105 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
 .la-task-type-sales{color:#16a34a;}
 .la-task-type-service{color:#d97706;}
 .la-task-time{display:block;font-size:11px;color:#888;margin-top:2px;}
+.la-task-lead{display:block;font-size:12px;color:#333;margin-top:4px;line-height:1.5;}
+.la-task-lead a{color:#5b4fbd;font-weight:700;text-decoration:none;white-space:nowrap;}
+.la-task-lead a:hover{text-decoration:underline;}
 .la-task-view{flex-shrink:0;font-size:12px;font-weight:700;color:#5b4fbd;text-decoration:none;white-space:nowrap;}
 .la-task-view:hover{text-decoration:underline;}
 .la-task-done .la-task-type,.la-task-done .la-task-time{text-decoration:line-through;color:#aaa;}
 .la-task-done-stamp{flex-shrink:0;font-size:10px;color:#16a34a;font-weight:700;white-space:nowrap;}
 .la-task-mini h3{font-size:14px;font-weight:800;color:#1a1a2e;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid #5b4fbd;}
+
+/* Task controls: status / assignee / notes */
+.la-task-controls{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding-top:8px;margin-top:2px;border-top:1px dashed #e0ddf5;}
+.la-meta-select{font:inherit;font-size:12px;font-weight:600;padding:5px 26px 5px 9px;border:1px solid #d8d8e8;border-radius:6px;background:#fff;color:#333;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;}
+.la-meta-select:focus{outline:none;border-color:#5b4fbd;box-shadow:0 0 0 2px rgba(91,79,189,.15);}
+.la-meta-select:disabled{opacity:.5;}
+.la-meta-status[data-status="new"]{border-color:#c7c2ee;background-color:#f5f4ff;color:#3b3294;}
+.la-meta-status[data-status="contacted"]{border-color:#7dd3fc;background-color:#f0f9ff;color:#075985;}
+.la-meta-status[data-status="quoted"]{border-color:#fcd34d;background-color:#fffbeb;color:#92400e;}
+.la-meta-status[data-status="won"]{border-color:#86efac;background-color:#f0fdf4;color:#166534;}
+.la-meta-status[data-status="lost"]{border-color:#d1d5db;background-color:#f3f4f6;color:#6b7280;}
+.la-meta-assignee[data-assigned="0"]{color:#999;font-weight:500;}
+.la-note-toggle{font:inherit;font-size:12px;font-weight:700;color:#5b4fbd;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:6px;}
+.la-note-toggle:hover{background:#f0eeff;}
+.la-saved{font-size:11px;color:#16a34a;font-weight:700;opacity:0;transition:opacity .3s;}
+.la-saved.show{opacity:1;}
+.la-note-preview{flex-basis:100%;font-size:12px;color:#444;background:#fffbeb;border-left:3px solid #fcd34d;padding:6px 10px;border-radius:0 6px 6px 0;white-space:pre-wrap;line-height:1.5;}
+.la-note-wrap{flex-basis:100%;display:none;}
+.la-note-wrap.open{display:block;}
+.la-note-text{width:100%;min-height:64px;font:inherit;font-size:13px;line-height:1.5;padding:8px 10px;border:1px solid #d8d8e8;border-radius:6px;resize:vertical;box-sizing:border-box;}
+.la-note-text:focus{outline:none;border-color:#5b4fbd;box-shadow:0 0 0 2px rgba(91,79,189,.15);}
+.la-note-hint{font-size:10px;color:#999;margin-top:3px;}
+.la-task-done .la-task-controls{opacity:1;}
+.la-table .la-meta-select{padding-top:3px;padding-bottom:3px;font-size:11px;}
+
+/* Lead pipeline */
+.la-pipe{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.la-pipe-step{background:#f8f8fc;border:1px solid #e8e5ff;border-top:3px solid #5b4fbd;border-radius:8px;padding:12px 8px;text-align:center;}
+.la-pipe-num{font-size:24px;font-weight:800;line-height:1.1;color:#1a1a2e;}
+.la-pipe-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:#666;margin-top:4px;}
+.la-pipe-sub{font-size:10px;color:#999;margin-top:2px;}
+.la-pipe-rate{border-top-color:#1a1a2e;}
+.la-export-btn{float:right;font-size:11px;font-weight:700;color:#5b4fbd;text-decoration:none;border:1px solid #d8d8e8;border-radius:6px;padding:3px 10px;margin-top:-3px;letter-spacing:0;text-transform:none;}
+.la-export-btn:hover{border-color:#5b4fbd;background:#f5f4ff;}
+@media(max-width:820px){.la-pipe{grid-template-columns:repeat(3,1fr);}}
+
+/* ── Responsive: tablets & phones ── */
+@media(max-width:820px){
+    .la-header{padding:0 16px;}
+    .la-main{padding:18px 14px;}
+    .la-tabs{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .la-tabs::-webkit-scrollbar{display:none;}
+    .la-tab{flex:1 0 auto;text-align:center;padding:9px 16px;white-space:nowrap;}
+    .la-stat-grid{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;}
+    .la-stat{padding:14px 16px;}
+    .la-stat-num{font-size:26px;}
+    .la-panel{padding:16px 16px;}
+    .la-bar-label{width:120px;}
+    .la-table th,.la-table td{padding:7px 8px;}
+}
+@media(max-width:560px){
+    body{font-size:15px;}
+    .la-header{height:56px;}
+    .la-brand{font-size:15px;}
+    .la-brand svg{width:22px;height:22px;}
+    .la-header-right{gap:8px;}
+    .la-header-right a{padding:6px 10px;}
+    .la-version{display:none;}
+    .la-main{padding:14px 12px;}
+    .la-tab{padding:10px 12px;font-size:12px;}
+    .la-range-bar{gap:6px;margin-bottom:16px;}
+    .la-range-btn{padding:6px 12px;font-size:12px;}
+    .la-range-label{width:100%;margin-left:0;margin-top:2px;}
+    .la-stat-grid{grid-template-columns:1fr 1fr;gap:8px;}
+    .la-stat{padding:12px 14px;}
+    .la-stat-num{font-size:24px;}
+    .la-stat-label{font-size:10px;}
+    .la-panels{gap:12px;}
+    .la-panel{padding:14px 12px;border-radius:8px;}
+    .la-panel h3{font-size:12px;}
+    /* Tables scroll inside their panel instead of breaking the page */
+    .la-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;}
+    .la-table th,.la-table td{padding:8px 8px;font-size:12px;}
+    .la-bar-row{flex-wrap:wrap;gap:4px 8px;}
+    .la-bar-label{width:100%;white-space:normal;}
+    .la-bar-pct{width:32px;}
+    .la-summary-header{flex-direction:column;align-items:stretch;}
+    .la-summary-btn{width:100%;padding:12px;}
+    .la-summary-text{padding:14px;font-size:14px;}
+    .la-brief-row{flex-direction:column;gap:3px;}
+    .la-brief-label{min-width:0;}
+    /* Task rows: wrap the action link onto its own line */
+    .la-task-row{flex-wrap:wrap;gap:8px 12px;padding:12px;}
+    .la-task-check input[type=checkbox]{width:22px;height:22px;}
+    .la-task-info{flex:1 1 calc(100% - 46px);}
+    .la-task-view{flex:1 1 auto;padding:8px 0 0;font-size:13px;}
+    .la-task-done-stamp{flex:0 0 auto;padding-top:8px;}
+    .la-task-type{font-size:13px;}
+    /* Inline overrides used in markup */
+    .la-panel[style*="padding:40px"]{padding:24px 14px !important;}
+}
 </style>
 </head>
 <body>
@@ -1095,7 +1393,7 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
         $task_nonce = wp_create_nonce( 'lawnace_client_summary_nonce' );
 
         // Helper to render a task group
-        function lawnace_render_task_group( $title, $type, $rows, $completed_tasks, $base_url, $range, $task_nonce ) {
+        function lawnace_render_task_group( $title, $type, $rows, $completed_tasks, $base_url, $range, $task_nonce, $task_meta = [] ) {
             if ( empty( $rows ) ) return;
             echo '<div class="la-panel la-task-group" style="margin-bottom:18px;">';
             echo '<h3>' . esc_html( $title ) . '</h3>';
@@ -1108,11 +1406,21 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
                 echo '<div class="la-task-info">';
                 echo '<span class="la-task-type la-task-type-' . esc_attr( $type ) . '">' . esc_html( $title ) . '</span>';
                 echo '<span class="la-task-time">' . esc_html( $row->started ) . '</span>';
+                if ( ! empty( $row->lead_text ) ) {
+                    $ld   = lawnace_parse_lead_row( $row->lead_text );
+                    $bits = [];
+                    if ( $ld['name'] )    $bits[] = '<strong>' . esc_html( $ld['name'] ) . '</strong>';
+                    if ( $ld['phone'] )   $bits[] = '<a href="' . esc_attr( lawnace_lead_tel_href( $ld['phone'] ) ) . '">' . esc_html( $ld['phone'] ) . '</a>';
+                    if ( $ld['address'] ) $bits[] = esc_html( $ld['address'] );
+                    if ( $bits ) echo '<span class="la-task-lead">' . implode( ' &middot; ', $bits ) . '</span>';
+                }
                 echo '</div>';
                 echo '<a class="la-task-view" href="' . $view_url . '">View Chat &rarr;</a>';
                 if ( $done && isset( $completed_tasks[ $sid ] ) ) {
                     echo '<span class="la-task-done-stamp">Done ' . esc_html( substr( $completed_tasks[ $sid ], 0, 16 ) ) . '</span>';
                 }
+                $meta = isset( $task_meta[ $sid ] ) && is_array( $task_meta[ $sid ] ) ? $task_meta[ $sid ] : [];
+                echo lawnace_render_task_controls( $sid, $meta, $task_nonce, $type === 'sales' );
                 echo '</div>';
             }
             echo '</div>';
@@ -1120,12 +1428,12 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
         ?>
 
         <!-- Sales tasks -->
-        <?php lawnace_render_task_group( 'New Lead — Follow Up', 'sales', $yesterday_leads, $completed_tasks, $base_url, $range, $task_nonce ); ?>
-        <?php lawnace_render_task_group( 'Pricing Question — Follow Up', 'sales', $yesterday_pricing_sessions, $completed_tasks, $base_url, $range, $task_nonce ); ?>
+        <?php lawnace_render_task_group( 'New Lead — Follow Up', 'sales', $yesterday_leads, $completed_tasks, $base_url, $range, $task_nonce, $task_meta ); ?>
+        <?php lawnace_render_task_group( 'Pricing Question — Follow Up', 'sales', $yesterday_pricing_sessions, $completed_tasks, $base_url, $range, $task_nonce, $task_meta ); ?>
 
         <!-- Service tasks -->
-        <?php lawnace_render_task_group( 'Complaint / Service Issue', 'service', $yesterday_service_tasks, $completed_tasks, $base_url, $range, $task_nonce ); ?>
-        <?php lawnace_render_task_group( 'Drop-off — Re-engage', 'service', array_values( $yesterday_dropoffs ), $completed_tasks, $base_url, $range, $task_nonce ); ?>
+        <?php lawnace_render_task_group( 'Complaint / Service Issue', 'service', $yesterday_service_tasks, $completed_tasks, $base_url, $range, $task_nonce, $task_meta ); ?>
+        <?php lawnace_render_task_group( 'Drop-off — Re-engage', 'service', array_values( $yesterday_dropoffs ), $completed_tasks, $base_url, $range, $task_nonce, $task_meta ); ?>
 
         <?php if ( $total_tasks === 0 ) : ?>
         <div class="la-panel" style="text-align:center;padding:40px;">
@@ -1173,18 +1481,52 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
             </div>
         </div>
 
+        <!-- Lead pipeline -->
+        <?php
+        $pipe = array_fill_keys( array_keys( lawnace_task_statuses() ), 0 );
+        foreach ( $recent_leads as $pl ) {
+            $st = $task_meta[ $pl->session_id ]['status'] ?? 'new';
+            if ( isset( $pipe[ $st ] ) ) $pipe[ $st ]++;
+        }
+        $decided    = $pipe['won'] + $pipe['lost'];
+        $close_rate = $decided > 0 ? round( $pipe['won'] / $decided * 100 ) : null;
+        ?>
+        <div class="la-panel" style="margin-bottom:20px;">
+            <h3>Lead Pipeline</h3>
+            <p class="la-panel-sub">Set each lead's status in the table below. Won and Lost close the task automatically.</p>
+            <div class="la-pipe">
+                <?php foreach ( lawnace_task_statuses() as $k => $s ) : ?>
+                <div class="la-pipe-step" style="border-top-color:<?php echo esc_attr( $s[1] ); ?>">
+                    <div class="la-pipe-num" style="color:<?php echo esc_attr( $s[1] ); ?>"><?php echo (int) $pipe[ $k ]; ?></div>
+                    <div class="la-pipe-label"><?php echo esc_html( $s[0] ); ?></div>
+                </div>
+                <?php endforeach; ?>
+                <div class="la-pipe-step la-pipe-rate">
+                    <div class="la-pipe-num"><?php echo $close_rate === null ? '—' : esc_html( $close_rate ) . '%'; ?></div>
+                    <div class="la-pipe-label">Close Rate</div>
+                    <div class="la-pipe-sub">won ÷ (won + lost)</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Leads table -->
         <div class="la-panel" style="margin-bottom:20px;">
-            <h3>Recent Leads</h3>
+            <h3>Recent Leads <a class="la-export-btn" href="<?php echo esc_url( add_query_arg( [ 'export' => 'leads', 'range' => $range ], $base_url ) ); ?>" title="Download these leads as a spreadsheet">&#11015; Export CSV</a></h3>
             <?php if ( empty( $recent_leads ) ) : ?>
                 <p class="la-empty">No leads captured in this period yet.</p>
             <?php else : ?>
                 <table class="la-table">
-                    <thead><tr><th>Contact Info</th><th>Captured</th><th></th></tr></thead>
+                    <thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Address</th><th>Status</th><th>Assigned</th><th>Captured</th><th></th></tr></thead>
                     <tbody>
-                    <?php foreach ( $recent_leads as $lead ) : ?>
+                    <?php foreach ( $recent_leads as $lead ) : $ld = lawnace_parse_lead_row( $lead->message ); ?>
                     <tr>
-                        <td><?php echo esc_html( $lead->message ); ?></td>
+                        <td><strong><?php echo esc_html( $ld['name'] !== '' ? $ld['name'] : '—' ); ?></strong></td>
+                        <td style="white-space:nowrap"><?php echo $ld['phone'] !== '' ? '<a href="' . esc_attr( lawnace_lead_tel_href( $ld['phone'] ) ) . '">' . esc_html( $ld['phone'] ) . '</a>' : '<span style="color:#bbb">—</span>'; ?></td>
+                        <td><?php echo $ld['email'] !== '' ? '<a href="mailto:' . esc_attr( $ld['email'] ) . '">' . esc_html( $ld['email'] ) . '</a>' : '<span style="color:#bbb">—</span>'; ?></td>
+                        <td><?php echo $ld['address'] !== '' ? '<a href="' . esc_url( lawnace_lead_maps_href( $ld['address'] ) ) . '" target="_blank" rel="noopener">' . esc_html( $ld['address'] ) . '</a>' : '<span style="color:#bbb">—</span>'; ?></td>
+                        <?php $lm = isset( $task_meta[ $lead->session_id ] ) && is_array( $task_meta[ $lead->session_id ] ) ? $task_meta[ $lead->session_id ] : []; ?>
+                        <td><?php echo lawnace_render_meta_select( 'status', $lead->session_id, $lm, $task_nonce ); ?></td>
+                        <td><?php echo lawnace_render_meta_select( 'assignee', $lead->session_id, $lm, $task_nonce ); ?></td>
                         <td style="white-space:nowrap;color:#999"><?php echo esc_html( $lead->created_at ); ?></td>
                         <td><a href="<?php echo esc_url( add_query_arg( [ 'session' => $lead->session_id, 'range' => $range ], $base_url ) ); ?>">View chat</a></td>
                     </tr>
@@ -1820,6 +2162,87 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;color:#
 
 <script>
 (function(){
+    // ── Task meta: status / assignee / notes ──
+    var ajaxUrl = '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>';
+
+    function saveMeta(el, field, value, cb) {
+        var fd = new FormData();
+        fd.append('action', 'lawnace_task_meta');
+        fd.append('nonce', el.dataset.nonce);
+        fd.append('session_id', el.dataset.sid);
+        fd.append('field', field);
+        fd.append('value', value);
+        fetch(ajaxUrl, {method:'POST', credentials:'same-origin', body:fd})
+            .then(function(r){ return r.json(); })
+            .then(function(res){ cb(res && res.success ? res.data : null); })
+            .catch(function(){ cb(null); });
+    }
+    function flashSaved(el) {
+        var c = el.closest('.la-task-controls');
+        var s = c ? c.querySelector('.la-saved') : null;
+        if (!s) return;
+        s.classList.add('show');
+        setTimeout(function(){ s.classList.remove('show'); }, 1500);
+    }
+    function markRowDone(sid) {
+        document.querySelectorAll('.la-task-row[data-sid="' + sid + '"]').forEach(function(row){
+            row.classList.add('la-task-done');
+            var cb = row.querySelector('.la-task-cb');
+            if (cb) cb.checked = true;
+        });
+    }
+
+    document.querySelectorAll('.la-meta-select').forEach(function(sel){
+        sel.dataset.prev = sel.value;
+        sel.addEventListener('change', function(){
+            var el = this, field = el.dataset.field, val = el.value, prev = el.dataset.prev || '';
+            el.disabled = true;
+            saveMeta(el, field, val, function(data){
+                el.disabled = false;
+                if (!data) { el.value = prev; alert('Could not save. Please try again.'); return; }
+                el.dataset.prev = val;
+                // keep every control for this session in sync (task row + leads table)
+                document.querySelectorAll('.la-meta-select[data-field="' + field + '"][data-sid="' + el.dataset.sid + '"]').forEach(function(o){
+                    o.value = val; o.dataset.prev = val;
+                    if (field === 'status') o.dataset.status = val;
+                    if (field === 'assignee') o.dataset.assigned = val ? '1' : '0';
+                });
+                if (field === 'status' && data.completed) markRowDone(el.dataset.sid);
+                flashSaved(el);
+            });
+        });
+    });
+
+    document.querySelectorAll('.la-note-toggle').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var wrap = this.closest('.la-task-controls').querySelector('.la-note-wrap');
+            wrap.classList.toggle('open');
+            if (wrap.classList.contains('open')) wrap.querySelector('textarea').focus();
+        });
+    });
+
+    document.querySelectorAll('.la-note-text').forEach(function(t){
+        t.dataset.prev = t.value;
+        function save() {
+            if (t.value === t.dataset.prev) return;
+            saveMeta(t, 'notes', t.value, function(data){
+                if (!data) { alert('Could not save the note. Please try again.'); return; }
+                t.dataset.prev = t.value;
+                var c  = t.closest('.la-task-controls');
+                var pv = c.querySelector('.la-note-preview');
+                if (t.value.trim()) {
+                    if (!pv) { pv = document.createElement('div'); pv.className = 'la-note-preview'; c.insertBefore(pv, c.querySelector('.la-note-wrap')); }
+                    pv.textContent = t.value;
+                } else if (pv) { pv.remove(); }
+                var tg = c.querySelector('.la-note-toggle');
+                if (tg) tg.textContent = t.value.trim() ? '📝 Edit note' : '📝 Add note';
+                flashSaved(t);
+            });
+        }
+        t.addEventListener('blur', save);
+        t.addEventListener('keydown', function(e){ if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') t.blur(); });
+    });
+
     // Weekly summary
     var btn     = document.getElementById('la-summary-btn');
     var loading = document.getElementById('la-summary-loading');
@@ -1950,6 +2373,24 @@ code{background:#f0f0f8;padding:2px 6px;border-radius:3px;font-size:11px;}
 .role-user{color:#1a1a2e;font-weight:700;}
 .role-assistant{color:#5b4fbd;font-weight:700;}
 .role-lead{color:#16a34a;font-weight:700;}
+
+/* ── Responsive: phones ── */
+@media(max-width:560px){
+    .la-header{padding:0 16px;height:56px;}
+    .la-brand{font-size:14px;}
+    .la-main{padding:16px 12px;}
+    h1{font-size:18px;}
+    .session-meta{word-break:break-all;}
+    /* Stack each transcript row as a card: speaker + time on top, message below */
+    .la-table thead{display:none;}
+    .la-table,.la-table tbody,.la-table tr,.la-table td{display:block;width:100% !important;}
+    .la-table tr{padding:10px 12px;border-bottom:1px solid #f0f0f8;}
+    .la-table tr:last-child{border-bottom:none;}
+    .la-table td{padding:0;border:none;}
+    .la-table td:first-child{display:inline-block;width:auto !important;font-size:12px;}
+    .la-table td:last-child{display:inline-block;width:auto !important;margin-left:8px;}
+    .la-table td:nth-child(2){margin-top:4px;font-size:14px;line-height:1.5;}
+}
 </style>
 </head>
 <body>

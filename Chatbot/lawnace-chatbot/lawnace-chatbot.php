@@ -3,7 +3,7 @@
  * Plugin Name: LawnAce Chatbot
  * Plugin URI:  https://startadvertising.com
  * Description: AI-powered lawn care chat widget for LawnAce, powered by Claude.
- * Version:     3.80.0
+ * Version:     3.85.0
  * Author:      Start Performance | Richard Brashear
  * Author URI:  https://startadvertising.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'LAWNACE_VERSION',    '3.80.0' );
+define( 'LAWNACE_VERSION',    '3.85.0' );
 define( 'LAWNACE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LAWNACE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -29,16 +29,21 @@ require_once LAWNACE_PLUGIN_DIR . 'includes/system-prompt.php';
 require_once LAWNACE_PLUGIN_DIR . 'includes/lead.php';
 require_once LAWNACE_PLUGIN_DIR . 'includes/ajax.php';
 require_once LAWNACE_PLUGIN_DIR . 'includes/admin.php';
-require_once LAWNACE_PLUGIN_DIR . 'includes/public-dashboard.php';
 require_once LAWNACE_PLUGIN_DIR . 'includes/client-dashboard.php';
+require_once LAWNACE_PLUGIN_DIR . 'includes/digest.php';
 
 register_activation_hook( __FILE__, 'lawnace_activate' );
+register_deactivation_hook( __FILE__, 'lawnace_deactivate' );
 
 function lawnace_activate() {
     lawnace_chatbot_ensure_log_table();
-    lawnace_register_dashboard_rewrite();
     lawnace_register_client_dashboard_rewrite();
     flush_rewrite_rules();
+    lawnace_digest_schedule();
+}
+
+function lawnace_deactivate() {
+    lawnace_digest_unschedule();
 }
 
 // Flush rewrite rules whenever the plugin version changes (i.e. after every zip upload)
@@ -46,7 +51,6 @@ add_action( 'init', 'lawnace_maybe_flush_rewrites', 20 );
 
 function lawnace_maybe_flush_rewrites() {
     if ( get_option( 'lawnace_flushed_version' ) !== LAWNACE_VERSION ) {
-        lawnace_register_dashboard_rewrite();
         lawnace_register_client_dashboard_rewrite();
         flush_rewrite_rules();
         update_option( 'lawnace_flushed_version', LAWNACE_VERSION );

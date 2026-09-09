@@ -67,19 +67,39 @@ function lawnace_register_settings() {
     ] );
     register_setting( 'lawnace_settings_group', 'lawnace_notify_email', [
         'type'              => 'string',
-        'sanitize_callback' => 'sanitize_email',
+        'sanitize_callback' => 'lawnace_sanitize_email_list',
         'default'           => get_option( 'admin_email' ),
-    ] );
-    register_setting( 'lawnace_settings_group', 'lawnace_dashboard_pin', [
-        'type'              => 'string',
-        'sanitize_callback' => 'sanitize_text_field',
-        'default'           => '',
     ] );
     register_setting( 'lawnace_settings_group', 'lawnace_client_pin', [
         'type'              => 'string',
         'sanitize_callback' => 'sanitize_text_field',
         'default'           => '',
     ] );
+    register_setting( 'lawnace_settings_group', 'lawnace_digest_enabled', [
+        'type'              => 'string',
+        'sanitize_callback' => function ( $v ) { return $v ? '1' : '0'; },
+        'default'           => '1',
+    ] );
+    register_setting( 'lawnace_settings_group', 'lawnace_digest_emails', [
+        'type'              => 'string',
+        'sanitize_callback' => 'lawnace_sanitize_email_list',
+        'default'           => '',
+    ] );
+    register_setting( 'lawnace_settings_group', 'lawnace_team_members', [
+        'type'              => 'string',
+        'sanitize_callback' => 'sanitize_text_field',
+        'default'           => 'Kyle, Tammi, Tim',
+    ] );
+}
+
+/** Accepts "a@x.com, b@y.com" (commas, semicolons, or spaces) and stores a clean comma list. */
+function lawnace_sanitize_email_list( $raw ) {
+    $out = [];
+    foreach ( preg_split( '/[\s,;]+/', (string) $raw ) as $addr ) {
+        $addr = sanitize_email( $addr );
+        if ( $addr !== '' && is_email( $addr ) ) $out[] = $addr;
+    }
+    return implode( ', ', array_unique( $out ) );
 }
 
 function lawnace_render_settings_page() {
@@ -103,31 +123,10 @@ function lawnace_render_settings_page() {
                 <tr>
                     <th><label for="lawnace_notify_email">Lead Notification Email</label></th>
                     <td>
-                        <input type="email" id="lawnace_notify_email" name="lawnace_notify_email"
+                        <input type="text" id="lawnace_notify_email" name="lawnace_notify_email"
                             value="<?php echo esc_attr( get_option( 'lawnace_notify_email', get_option( 'admin_email' ) ) ); ?>"
-                            class="regular-text" />
-                        <p class="description">Receives new lead notifications from the chatbot.</p>
-                    </td>
-                </tr>
-                <tr>
-                    <th><label for="lawnace_dashboard_pin">Admin Dashboard PIN</label></th>
-                    <td>
-                        <input type="text" id="lawnace_dashboard_pin" name="lawnace_dashboard_pin"
-                            value="<?php echo esc_attr( get_option( 'lawnace_dashboard_pin', '' ) ); ?>"
-                            class="regular-text" autocomplete="off" maxlength="20"
-                            placeholder="e.g. lawnace2025" />
-                        <p class="description">
-                            PIN for the internal analytics dashboard (Richard / admin use).<br>
-                            <?php
-                            $pin      = get_option( 'lawnace_dashboard_pin', '' );
-                            $dash_url = home_url( '/ace-dashboard/' );
-                            if ( ! empty( $pin ) ) :
-                            ?>
-                            URL: <strong><a href="<?php echo esc_url( $dash_url ); ?>" target="_blank"><?php echo esc_url( $dash_url ); ?></a></strong>
-                            <?php else : ?>
-                            Set a PIN above to enable this dashboard.
-                            <?php endif; ?>
-                        </p>
+                            class="regular-text" placeholder="kyle@lawnace.com, tammi@lawnace.com" />
+                        <p class="description">Receives new lead notifications from the chatbot. Comma-separated for more than one person.</p>
                     </td>
                 </tr>
                 <tr>
@@ -152,6 +151,50 @@ function lawnace_render_settings_page() {
                         </p>
                     </td>
                 </tr>
+                <tr>
+                    <th>Morning Digest Email</th>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="lawnace_digest_enabled" value="1" <?php checked( get_option( 'lawnace_digest_enabled', '1' ), '1' ); ?> />
+                            Send a daily <?php echo esc_html( LAWNACE_DIGEST_HOUR ); ?>:00 AM brief to the team
+                        </label>
+                        <p class="description">
+                            New leads (with phone &amp; address), pricing questions, service issues, drop-offs, and the open task count from the last 24 hours.<br>
+                            <?php
+                            $next = wp_next_scheduled( LAWNACE_DIGEST_HOOK );
+                            $last = get_option( 'lawnace_digest_last_sent', null );
+                            if ( $next ) {
+                                echo 'Next send: <strong>' . esc_html( wp_date( 'D M j, g:i a', $next ) ) . '</strong> (' . esc_html( wp_timezone_string() ) . ').';
+                            } else {
+                                echo 'Not scheduled yet — save settings or reload this page.';
+                            }
+                            if ( is_array( $last ) && ! empty( $last['time'] ) ) {
+                                echo ' Last sent: <strong>' . esc_html( $last['time'] ) . '</strong>'
+                                    . ( empty( $last['ok'] ) ? ' <span style="color:#c0392b;">(mail failed)</span>' : '' )
+                                    . ( ! empty( $last['test'] ) ? ' (test)' : '' ) . '.';
+                            }
+                            ?>
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="lawnace_digest_emails">Digest Recipients</label></th>
+                    <td>
+                        <input type="text" id="lawnace_digest_emails" name="lawnace_digest_emails"
+                            value="<?php echo esc_attr( get_option( 'lawnace_digest_emails', '' ) ); ?>"
+                            class="regular-text" placeholder="kyle@lawnace.com, tammi@lawnace.com" />
+                        <p class="description">Comma-separated. Leave blank to send to the Lead Notification Email above.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <th><label for="lawnace_team_members">Team Members</label></th>
+                    <td>
+                        <input type="text" id="lawnace_team_members" name="lawnace_team_members"
+                            value="<?php echo esc_attr( get_option( 'lawnace_team_members', 'Kyle, Tammi, Tim' ) ); ?>"
+                            class="regular-text" placeholder="Kyle, Tammi, Tim" />
+                        <p class="description">Names that appear in the "Assigned to" dropdown on the team dashboard. Comma-separated.</p>
+                    </td>
+                </tr>
             </table>
             <table class="form-table" role="presentation">
                 <tr>
@@ -164,6 +207,20 @@ function lawnace_render_settings_page() {
                 </tr>
             </table>
             <?php submit_button( 'Save Settings' ); ?>
+        </form>
+
+        <?php if ( isset( $_GET['lawnace_digest'] ) ) : ?>
+            <?php if ( $_GET['lawnace_digest'] === 'sent' ) : ?>
+                <div class="notice notice-success"><p>✅ Test digest sent to <?php echo esc_html( implode( ', ', lawnace_digest_recipients() ) ); ?>.</p></div>
+            <?php else : ?>
+                <div class="notice notice-error"><p>❌ Digest was not sent. Check that at least one recipient is set and that the site can send mail.</p></div>
+            <?php endif; ?>
+        <?php endif; ?>
+        <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin-top:-8px;margin-bottom:8px;">
+            <input type="hidden" name="action" value="lawnace_send_test_digest">
+            <?php wp_nonce_field( 'lawnace_send_test_digest' ); ?>
+            <?php submit_button( 'Send Test Digest Now', 'secondary', 'submit', false ); ?>
+            <span class="description" style="margin-left:8px;">Sends the real last-24-hours brief to the recipients above, right now. Save settings first if you changed them.</span>
         </form>
 
         <hr>

@@ -126,10 +126,33 @@ function lawnace_chatbot_handler() {
 
     $reply = $body['content'][0]['text'];
     $lead  = lawnace_chatbot_parse_lead( $reply );
+    $log_new_lead = false;
 
     if ( $lead ) {
-        lawnace_chatbot_notify_lead( $lead, $clean_messages );
         $reply = lawnace_chatbot_strip_lead_tag( $reply );
+
+        // If this session already has a lead row (customer gave phone/address after the first tag),
+        // merge the new fields into it instead of creating a duplicate lead.
+        global $wpdb;
+        $existing_lead_row = $wpdb->get_row( $wpdb->prepare(
+            "SELECT id, message FROM {$wpdb->prefix}lawnace_chat_logs WHERE session_id = %s AND role = 'lead' ORDER BY id DESC LIMIT 1",
+            $session_id
+        ) );
+
+        if ( $existing_lead_row ) {
+            list( $merged_lead, $lead_changed ) = lawnace_merge_lead( lawnace_parse_lead_row( $existing_lead_row->message ), $lead );
+            if ( $lead_changed ) {
+                $wpdb->update(
+                    $wpdb->prefix . 'lawnace_chat_logs',
+                    array( 'message' => lawnace_lead_row_text( $merged_lead ) ),
+                    array( 'id' => (int) $existing_lead_row->id )
+                );
+                lawnace_chatbot_notify_lead( $merged_lead, $clean_messages, true );
+            }
+        } else {
+            $log_new_lead = true;
+            lawnace_chatbot_notify_lead( $lead, $clean_messages );
+        }
     }
 
     $last_user_message = '';
@@ -147,12 +170,8 @@ function lawnace_chatbot_handler() {
 
     lawnace_chatbot_log_message( $session_id, 'assistant', $reply );
 
-    if ( $lead ) {
-        lawnace_chatbot_log_message(
-            $session_id,
-            'lead',
-            'Name: ' . $lead['name'] . ' | Email: ' . $lead['email']
-        );
+    if ( $lead && $log_new_lead ) {
+        lawnace_chatbot_log_message( $session_id, 'lead', lawnace_lead_row_text( $lead ) );
     }
 
     wp_send_json_success(
