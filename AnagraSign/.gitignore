@@ -1,0 +1,11 @@
+node_modules/
+storage/uploads/*
+storage/completed/*
+storage/outbox/*
+storage/*.db
+storage/*.db-*
+!storage/**/.gitkeep
+.env
+deploy/*.env
+*.log
+docs/smoke-completed.pdf

@@ -507,6 +507,21 @@
     text-decoration: underline;
 }
 
+#la-disclaimer {
+    padding: 4px 12px 8px;
+    font-size: 9.5px;
+    line-height: 1.35;
+    font-weight: 300;
+    text-align: center;
+    color: #8a948a;
+    background: #f5f8f1;
+}
+
+#la-disclaimer a {
+    color: #8a948a;
+    text-decoration: underline;
+}
+
 /* ── Mobile ── */
 @media (max-width: 480px) {
     #la-panel {

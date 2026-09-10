@@ -23,8 +23,8 @@ function lawnace_register_admin_menu() {
     );
 
     add_menu_page(
-        'Ace Analytics',
-        'Ace Analytics',
+        'Lawnie Dashboard',
+        'Lawnie',
         'manage_options',
         'lawnace-chat-logs',
         'lawnace_render_dashboard',
@@ -34,7 +34,7 @@ function lawnace_register_admin_menu() {
 
     add_submenu_page(
         'lawnace-chat-logs',
-        'Ace Analytics',
+        'Lawnie Dashboard',
         'Dashboard',
         'manage_options',
         'lawnace-chat-logs',
@@ -43,7 +43,7 @@ function lawnace_register_admin_menu() {
 
     add_submenu_page(
         'lawnace-chat-logs',
-        'LawnAce Chatbot Settings',
+        'Lawnie Settings',
         'Settings',
         'manage_options',
         'lawnace-settings',
@@ -106,7 +106,7 @@ function lawnace_render_settings_page() {
     if ( ! current_user_can( 'manage_options' ) ) return;
     ?>
     <div class="wrap">
-        <h1>LawnAce Chatbot Settings</h1>
+        <h1><img src="<?php echo esc_url( LAWNACE_PLUGIN_URL . 'assets/images/lawnie-icon.png' ); ?>" alt="" style="width:34px;height:34px;border-radius:50%;vertical-align:middle;margin-right:8px;">Lawnie Settings</h1>
         <?php settings_errors( 'lawnace_settings_group' ); ?>
         <form method="post" action="options.php">
             <?php settings_fields( 'lawnace_settings_group' ); ?>
@@ -472,7 +472,7 @@ Identify the most common specific questions and concerns hiding inside the 'Gene
 Specific blog post or FAQ topics Lawn Ace should create based on what customers are asking. Be specific — suggest actual titles.
 
 ## 4. CHATBOT IMPROVEMENTS
-What topics or questions is the chatbot likely struggling with? What knowledge gaps should be added to Ace's training?
+What topics or questions is the chatbot likely struggling with? What knowledge gaps should be added to Lawnie's training?
 
 ## 5. SEASONAL / TIMING OBSERVATIONS
 Any patterns in what people are asking about that suggest timing opportunities for proactive outreach or promotions?
@@ -738,7 +738,7 @@ function lawnace_render_dashboard() {
 
     <div class="wrap la-dash">
         <h1>
-            🌿 Lawn Ace Chat Dashboard
+            <img src="<?php echo esc_url( LAWNACE_PLUGIN_URL . 'assets/images/lawnie-icon.png' ); ?>" alt="" style="width:40px;height:40px;border-radius:50%;vertical-align:middle;margin-right:10px;">Lawnie Dashboard
             <a href="<?php echo esc_url( $export_url ); ?>" class="la-export-btn">⬇ Export CSV</a>
             <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=lawnace_clear_logs' ), 'lawnace_clear_logs' ) ); ?>"
                class="la-export-btn"
@@ -958,7 +958,7 @@ function lawnace_render_dashboard() {
 
         </div>
 
-        <!-- Ace Intelligence -->
+        <!-- Lawnie Intelligence -->
         <div class="la-panel" id="la-insights-panel" style="margin-bottom:24px;border-left:4px solid #6559b1;">
             <style>
             .la-iheader{font-size:11px;font-weight:800;color:#6559b1;text-transform:uppercase;letter-spacing:.7px;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid #6559b1;}
@@ -970,7 +970,7 @@ function lawnace_render_dashboard() {
             </style>
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
                 <div>
-                    <h3 style="margin:0;font-size:15px;">✨ Ace Intelligence</h3>
+                    <h3 style="margin:0;font-size:15px;">✨ Lawnie Intelligence</h3>
                     <?php if ( $cached_insights ) : ?>
                         <span style="font-size:11px;color:#888;">Last generated: <?php echo esc_html( $cached_insights['generated'] ); ?> &mdash; based on <?php echo esc_html( $cached_insights['sessions'] ); ?> sessions</span>
                     <?php else : ?>

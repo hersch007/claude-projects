@@ -1,0 +1,23 @@
+{
+  "name": "anagrasign",
+  "version": "0.1.0",
+  "description": "Self-hosted e-signature app for contracts (upload PDF, place fields, send for signature, audit trail, completed PDF)",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --watch --disable-warning=ExperimentalWarning server/index.js",
+    "sample": "node scripts/make-sample-pdf.mjs",
+    "smoke": "node --disable-warning=ExperimentalWarning scripts/smoke-test.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "multer": "^2.0.1",
+    "nodemailer": "^7.0.3",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.3.31",
+    "signature_pad": "^5.0.7"
+  }
+}

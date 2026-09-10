@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 | Covers the last 24 hours: new leads (with phone + address), pricing
 | questions, service issues, drop-offs, and the open task count.
 | Scheduled with WP-Cron in the site's timezone. Settings live on the
-| plugin's Settings page (Ace Analytics → Settings).
+| plugin's Settings page (Lawnie → Settings).
 */
 
 define( 'LAWNACE_DIGEST_HOOK', 'lawnace_morning_digest' );
@@ -263,7 +263,8 @@ function lawnace_digest_html( $d ) {
 
     <tr>
         <td style="background:linear-gradient(135deg,#12103a,#3b3294,#5b4fbd);background-color:#3b3294;padding:26px 32px;">
-            <div style="font-size:12px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.6px;font-weight:700;">☀️ Morning Brief</div>
+            ' . lawnace_email_logo_html( 56 ) . '
+            <div style="font-size:12px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.6px;font-weight:700;">☀️ Morning Brief from Lawnie</div>
             <div style="font-size:22px;font-weight:800;color:#fff;margin-top:4px;letter-spacing:-.3px;">Good morning, Lawn Ace</div>
             <div style="font-size:13px;color:rgba(255,255,255,.85);margin-top:6px;">' . esc_html( $d['date_label'] ) . ' &middot; What Lawnie handled in the last 24 hours</div>
         </td>

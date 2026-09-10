@@ -3,7 +3,7 @@
  * Plugin Name: LawnAce Chatbot
  * Plugin URI:  https://startadvertising.com
  * Description: AI-powered lawn care chat widget for LawnAce, powered by Claude.
- * Version:     3.85.0
+ * Version:     3.89.0
  * Author:      Start Performance | Richard Brashear
  * Author URI:  https://startadvertising.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'LAWNACE_VERSION',    '3.85.0' );
+define( 'LAWNACE_VERSION',    '3.89.0' );
 define( 'LAWNACE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LAWNACE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -131,6 +131,8 @@ function lawnace_render_widget() {
             </div>
 
             <div id="la-footer">Local. Trusted. Here to help. &middot; <a href="tel:7063642338" id="la-footer-phone">706-364-2338</a></div>
+            <?php $la_privacy_url = function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : ''; ?>
+            <div id="la-disclaimer">Lawnie is an AI assistant. Answers are general information, not a quote or professional advice, and you act on them at your own risk. Chats are saved so our team can follow up.<?php if ( ! empty( $la_privacy_url ) ) : ?> <a href="<?php echo esc_url( $la_privacy_url ); ?>" target="_blank" rel="noopener">Privacy</a><?php endif; ?></div>
         </div>
     </div>
     <?php

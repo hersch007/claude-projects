@@ -102,6 +102,15 @@ function lawnace_lead_maps_href( $address ) {
     return 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $address );
 }
 
+/** Round Lawnie icon for email headers (absolute URL so it loads in mail clients). */
+function lawnace_email_logo_html( $size = 60 ) {
+    if ( ! defined( 'LAWNACE_PLUGIN_URL' ) ) {
+        return '';
+    }
+    $src = LAWNACE_PLUGIN_URL . 'assets/images/lawnie-icon.png';
+    return '<img src="' . esc_url( $src ) . '" width="' . (int) $size . '" height="' . (int) $size . '" alt="Lawnie" style="display:inline-block;width:' . (int) $size . 'px;height:' . (int) $size . 'px;border-radius:50%;background:#fff;padding:3px;margin-bottom:8px;border:0;">';
+}
+
 /** Lead Notification Email setting as a clean list (comma / semicolon / space separated). */
 function lawnace_notify_recipients() {
     $raw = (string) get_option( 'lawnace_notify_email', get_option( 'admin_email' ) );
@@ -129,8 +138,9 @@ function lawnace_chatbot_notify_lead( $lead, $messages, $is_update = false ) {
     $phone        = esc_html( $lead['phone'] ?? '' );
     $address      = esc_html( $lead['address'] ?? '' );
     $subject      = ( $is_update ? 'Updated Lead Info: ' : 'New Lawn Ace Lead: ' ) . ( $lead['name'] !== '' ? $lead['name'] : $lead['email'] );
-    $heading      = $is_update ? '🌿 Lead Updated — Lawn Ace' : '🌿 New Lead — Lawn Ace';
+    $heading      = $is_update ? 'Lead Updated' : 'New Lead from Lawnie';
     $time         = current_time( 'F j, Y \a\t g:i a' );
+    $icon_html    = lawnace_email_logo_html();
 
     // Lead detail rows (only the fields we actually have)
     $detail_rows = '
@@ -181,7 +191,7 @@ function lawnace_chatbot_notify_lead( $lead, $messages, $is_update = false ) {
     // Build conversation HTML
     $convo_html = '';
     foreach ( $messages as $msg ) {
-        $role        = $msg['role'] === 'user' ? 'Customer' : 'Ace';
+        $role        = $msg['role'] === 'user' ? 'Customer' : 'Lawnie';
         $bg          = $msg['role'] === 'user' ? '#f0eeff' : '#f6f7f4';
         $align       = $msg['role'] === 'user' ? 'right' : 'left';
         $label_color = $msg['role'] === 'user' ? '#6559b1' : '#2f7d22';
@@ -207,6 +217,7 @@ function lawnace_chatbot_notify_lead( $lead, $messages, $is_update = false ) {
     <!-- Header -->
     <tr>
         <td style="background:linear-gradient(135deg,#6559b1,#4a3f99);padding:28px 32px;text-align:center;">
+            ' . $icon_html . '
             <div style="font-size:22px;font-weight:700;color:#fff;letter-spacing:-.5px;">' . $heading . '</div>
             <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:6px;">' . $time . '</div>
         </td>
@@ -253,7 +264,7 @@ function lawnace_chatbot_notify_lead( $lead, $messages, $is_update = false ) {
     <!-- Footer -->
     <tr>
         <td style="background:#f8f9f6;padding:16px 32px;text-align:center;border-top:1px solid #eee;">
-            <div style="font-size:11px;color:#999;">Lawn Ace AI Chatbot &mdash; lawnace.com &mdash; 706-364-2338</div>
+            <div style="font-size:11px;color:#999;">Lawnie &mdash; the Lawn Ace chatbot &mdash; lawnace.com &mdash; 706-364-2338</div>
         </td>
     </tr>
 
@@ -269,7 +280,7 @@ function lawnace_chatbot_notify_lead( $lead, $messages, $is_update = false ) {
         $html,
         array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: Lawn Ace Chatbot <' . get_option( 'admin_email' ) . '>',
+            'From: Lawnie at Lawn Ace <' . get_option( 'admin_email' ) . '>',
         )
     );
 }

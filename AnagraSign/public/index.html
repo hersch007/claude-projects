@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documents · AnagraSign</title>
+<link rel="stylesheet" href="/css/app.css">
+<style>
+  .grid { display: grid; grid-template-columns: 1fr 380px; gap: 18px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .signer-row { padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .signer-row:last-child { border-bottom: none; }
+  .events { max-height: 300px; overflow: auto; font-size: 12px; }
+  .events div { padding: 4px 0; border-bottom: 1px dashed var(--border); }
+  .drop { border: 2px dashed var(--border); border-radius: 8px; padding: 18px; text-align: center; color: var(--muted); cursor: pointer; }
+  .drop.over { border-color: var(--accent); background: var(--accent-soft); }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="logo" href="/"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0f2a5a"/><path d="M6 23 C10 26 13 20 16 22 C18 23.3 19 21 21 19" stroke="#1d4ed8" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M10 17 L14.5 21.5 L25 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Anagra<span class="sfx">Sign</span></span><span class="beta">beta</span></a>
+  <div class="spacer"></div>
+  <button class="btn primary" id="newBtn">+ New document</button>
+  <button class="btn" id="logoutBtn">Log out</button>
+</div>
+
+<div class="container">
+  <div class="grid">
+    <div class="card">
+      <h2>Documents</h2>
+      <div id="list"><p class="muted">Loading…</p></div>
+    </div>
+    <div id="detail" class="card" hidden></div>
+  </div>
+</div>
+
+<div id="uploadModal" class="modal-backdrop" hidden>
+  <div class="modal" style="max-width:480px">
+    <h2>New document</h2>
+    <form id="uploadForm">
+      <label class="lbl">Title</label>
+      <input type="text" id="title" placeholder="e.g. Service Agreement – Acme Co." maxlength="200">
+      <label class="lbl">PDF file</label>
+      <div class="drop" id="drop">Drop a PDF here or click to choose<br><span class="small" id="fileName"></span></div>
+      <input type="file" id="file" accept="application/pdf,.pdf" hidden>
+      <p class="error" id="uploadErr" hidden style="margin-top:8px"></p>
+      <div class="actions">
+        <button type="button" class="btn" id="cancelUpload">Cancel</button>
+        <button type="submit" class="btn primary" id="uploadBtn">Upload &amp; prepare</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module" src="/js/dashboard.js"></script>
+</body>
+</html>

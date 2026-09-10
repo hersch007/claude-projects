@@ -515,7 +515,7 @@
 
         var bubble       = document.createElement("div");
         bubble.className = "la-bubble ai";
-        bubble.innerHTML = "Hey, I'm Lawnie — Lawn Ace's virtual assistant. What can I help you with today?";
+        bubble.innerHTML = "Hey, I'm Lawnie — Lawn Ace's AI assistant. What can I help you with today?";
 
         var chipRow       = document.createElement("div");
         chipRow.className = "la-chip-row";
