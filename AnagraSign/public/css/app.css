@@ -64,6 +64,7 @@ label.lbl { display: block; font-size: 12px; font-weight: 600; color: var(--mute
 .badge.pending { background: #e0e7ff; color: #3730a3; }
 .badge.completed, .badge.signed { background: #dcfce7; color: #166534; }
 .badge.declined, .badge.voided { background: #fee2e2; color: #991b1b; }
+.badge.imported { background: #ede9fe; color: #5b21b6; }
 
 /* Table */
 table { width: 100%; border-collapse: collapse; }

@@ -22,6 +22,7 @@ let serverLog = '';
 server.stdout.on('data', (d) => { serverLog += d; });
 server.stderr.on('data', (d) => { serverLog += d; });
 
+const tokenFromLink = (link) => new URL(link).searchParams.get('t');
 const jar = new Map(); // cookie name -> value
 let passed = 0;
 const ok = (cond, msg) => { if (!cond) throw new Error(`FAIL: ${msg}`); passed++; console.log(`  ok  ${msg}`); };
@@ -59,7 +60,41 @@ try {
   const r401 = await call('/api/envelopes', { raw: true });
   ok(r401.status === 401, 'envelopes require login');
   await call('/api/auth/login', { method: 'POST', body: { password: PASSWORD } });
-  ok(jar.has('ss_session'), 'login sets session cookie');
+  ok(jar.has('ss_session'), 'login sets session cookie (role defaults to admin)');
+  const me1 = await call('/api/auth/me');
+  ok(me1.role === 'admin' && me1.userEnabled === false, 'admin role confirmed, user role not set up yet');
+
+  // roles: user role doesn't exist until admin sets it; wrong role/password rejected properly
+  const userLoginBefore = await call('/api/auth/login', { method: 'POST', body: { role: 'user', password: 'whatever' }, raw: true });
+  ok(userLoginBefore.status === 401, 'user login rejected before a user password exists');
+  const badRole = await call('/api/auth/login', { method: 'POST', body: { role: 'nope', password: PASSWORD }, raw: true });
+  ok(badRole.status === 400, 'unknown role rejected');
+
+  await call('/api/auth/change-password', { method: 'POST', body: { target_role: 'user', new_password: 'user-pass-123' } });
+  const me2 = await call('/api/auth/me');
+  ok(me2.userEnabled === true, 'admin can create the user password without knowing a prior one');
+
+  jar.clear(); // log out of admin before testing the user role's own login
+  const userLoginBad = await call('/api/auth/login', { method: 'POST', body: { role: 'user', password: 'wrong' }, raw: true });
+  ok(userLoginBad.status === 401, 'wrong user password rejected');
+  await call('/api/auth/login', { method: 'POST', body: { role: 'user', password: 'user-pass-123' } });
+  const me3 = await call('/api/auth/me');
+  ok(me3.role === 'user', 'user role logs in with its own password');
+
+  const userDeleteAttempt = await call('/api/envelopes/nonexistent-id', { method: 'DELETE', raw: true });
+  ok(userDeleteAttempt.status === 403, 'user role is blocked from admin-only delete route');
+  const userChangeAdminAttempt = await call('/api/auth/change-password', { method: 'POST', body: { target_role: 'admin', new_password: 'whatever123' }, raw: true });
+  ok(userChangeAdminAttempt.status === 403, 'user role cannot change the admin password');
+  const userOwnPasswordWrongCurrent = await call('/api/auth/change-password', { method: 'POST', body: { target_role: 'user', current_password: 'wrong', new_password: 'newpass123' }, raw: true });
+  ok(userOwnPasswordWrongCurrent.status === 401, 'changing own password requires the correct current password');
+  await call('/api/auth/change-password', { method: 'POST', body: { target_role: 'user', current_password: 'user-pass-123', new_password: 'newpass123' } });
+  jar.clear();
+  await call('/api/auth/login', { method: 'POST', body: { role: 'user', password: 'newpass123' } });
+  ok(jar.has('ss_session'), 'user can change their own password with the correct current one, then log in with the new one');
+
+  // back to admin for the rest of the run
+  jar.clear();
+  await call('/api/auth/login', { method: 'POST', body: { password: PASSWORD } });
 
   // upload
   const pdfBytes = fs.readFileSync(path.join(root, 'docs', 'sample-agreement.pdf'));
@@ -99,8 +134,8 @@ try {
   const [s1, s2] = sent.envelope.signers;
   ok(s1.link && s2.link && s1.is_turn && !s2.is_turn, 'signer links issued; first signer is up');
 
-  const t1 = s1.link.split('/').pop();
-  const t2 = s2.link.split('/').pop();
+  const t1 = tokenFromLink(s1.link);
+  const t2 = tokenFromLink(s2.link);
 
   // signer 2 cannot go yet
   const info2 = await call(`/api/sign/${t2}`);
@@ -168,7 +203,7 @@ try {
   };
   extraIds.push(await mk('Email Code Test', { body: { auth_method: 'email_code' } }));
   const e1 = (await call(`/api/envelopes/${extraIds[0]}/send`, { method: 'POST' })).envelope;
-  const vt = e1.signers[0].link.split('/').pop();
+  const vt = tokenFromLink(e1.signers[0].link);
   const gated = await call(`/api/sign/${vt}`);
   ok(gated.auth?.method === 'email_code' && gated.auth.verified === false && !gated.fields, 'unverified signer gets no document details');
   ok((await call(`/api/sign/${vt}/pdf`, { raw: true })).status === 403, 'PDF blocked before verification');
@@ -199,7 +234,7 @@ try {
   await call(`/api/envelopes/${extraIds[1]}`, { method: 'PUT', body: { auth_method: 'access_code', signers: [{ name: 'Val Verify', email: 'verify@example.com', access_code: 'Blue-Sky-42' }], fields: [{ signer_index: 0, type: 'signature', page: 2, x: 0.21, y: 0.2, w: 0.36, h: 0.05 }] } });
   const e2 = (await call(`/api/envelopes/${extraIds[1]}/send`, { method: 'POST' })).envelope;
   ok(e2.signers[0].access_code === 'Blue-Sky-42', 'access code visible to sender on dashboard data');
-  const at = e2.signers[0].link.split('/').pop();
+  const at = tokenFromLink(e2.signers[0].link);
   ok((await call(`/api/sign/${at}`)).auth.method === 'access_code', 'access-code envelope is gated');
   for (let i = 0; i < 4; i++) await call(`/api/sign/${at}/verify`, { method: 'POST', body: { code: 'nope' }, raw: true });
   const fifth = await call(`/api/sign/${at}/verify`, { method: 'POST', body: { code: 'nope' }, raw: true });

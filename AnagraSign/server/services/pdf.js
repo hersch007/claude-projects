@@ -197,3 +197,46 @@ export async function buildCompletedPdf({ envelope, signers, fields, events, ori
 
   return doc.save({ useObjectStreams: false });
 }
+
+/**
+ * Append an "Import Record" page to an already-signed PDF that was uploaded for record-keeping
+ * only. Unlike buildCompletedPdf, this does NOT stamp anything onto the original pages and does
+ * NOT claim to certify a signing process AnagraSign never witnessed — it plainly documents what
+ * the importer told us (source, claimed signer(s)/date, notes) plus the fingerprint of the file
+ * exactly as it was received, with an explicit disclaimer.
+ * @returns {Promise<Uint8Array>}
+ */
+export async function buildImportRecordPdf({ envelope, originalBytes, originalSha256, appName = 'AnagraSign' }) {
+  const doc = await PDFDocument.load(originalBytes, { ignoreEncryption: true });
+  const fonts = {
+    regular: await doc.embedFont(StandardFonts.Helvetica),
+    bold: await doc.embedFont(StandardFonts.HelveticaBold),
+  };
+  const w = makeWriter(doc, fonts);
+
+  w.line('Import Record', { size: 18, font: fonts.bold, color: INK });
+  w.line(`Added by ${appName} for record-keeping — not a signature certificate`, { size: 9, color: GREY });
+  w.gap(4);
+  w.line(`Document: ${envelope.title}`, { font: fonts.bold });
+  w.line(`Original file name: ${envelope.original_name}`);
+  w.line(`Imported: ${fmt(envelope.created_at)}`);
+  w.line(`SHA-256 of the file as uploaded (before this page was added): ${originalSha256}`);
+
+  w.heading('What the importer told us');
+  w.line(`Originally signed via: ${envelope.imported_source || '(not specified)'}`);
+  w.line(`Signed on (as reported): ${envelope.imported_signed_date || '(not specified)'}`);
+  if (envelope.imported_note) { w.line('Notes:'); w.line(envelope.imported_note, { indent: 12 }); }
+
+  w.gap(10);
+  w.rule();
+  w.line(
+    'This page was added when the attached document was imported into AnagraSign purely for storage and record-keeping. '
+    + 'AnagraSign did not witness, verify, or take part in the original signing process, and makes no representation as to the '
+    + 'authenticity of the attached pages or the accuracy of the information above — it reflects only what the person importing '
+    + 'this file entered at the time. The SHA-256 fingerprint above lets you confirm the imported file has not been altered since '
+    + 'upload; it does not verify anything about how it was signed originally.',
+    { size: 8, color: GREY },
+  );
+
+  return doc.save({ useObjectStreams: false });
+}

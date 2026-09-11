@@ -3,15 +3,18 @@ import express from 'express';
 import multer from 'multer';
 import { config } from '../config.js';
 import { db, q, newId, nowIso, logEvent, loadEnvelope } from '../db.js';
-import { requireAdmin } from '../auth.js';
-import { inspectPdf, sha256 } from '../services/pdf.js';
+import { requireAuth, requireAdmin } from '../auth.js';
+import { inspectPdf, sha256, buildImportRecordPdf } from '../services/pdf.js';
 import {
   WorkflowError, sendEnvelope, notifyPendingSigners, voidEnvelope, deleteEnvelope,
   originalPath, completedPath, signingLink, isSignersTurn,
 } from '../services/workflow.js';
 
 export const envelopesRouter = express.Router();
-envelopesRouter.use(requireAdmin);
+// Everyday document work (upload, prepare, send, remind) only needs to be signed in as SOME
+// role. Voiding and deleting are destructive enough to reserve for admin — see the individual
+// routes below.
+envelopesRouter.use(requireAuth);
 
 const FIELD_TYPES = new Set(['signature', 'initials', 'date', 'name', 'text', 'checkbox']);
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,6 +69,41 @@ envelopesRouter.post('/', upload.single('pdf'), async (req, res, next) => {
                 VALUES (?, ?, '', 'draft', 'sequential', ?, ?, ?, ?)`)
       .run(id, title, req.file.originalname, pageCount, sha256(req.file.buffer), nowIso());
     logEvent(id, 'created', `Uploaded ${req.file.originalname} (${pageCount} pages, ${req.file.size} bytes)`, ctx(req));
+    res.status(201).json({ envelope: present(loadEnvelope(id)) });
+  } catch (err) { next(err); }
+});
+
+// Import an already-signed PDF from elsewhere, for record-keeping only. No signers, no fields,
+// no sending — the original is stored untouched and a clearly-labeled Import Record page (NOT a
+// signature certificate) documents what the importer told us. See buildImportRecordPdf.
+envelopesRouter.post('/import', upload.single('pdf'), async (req, res, next) => {
+  try {
+    if (!req.file) throw new WorkflowError('Attach the already-signed PDF');
+    const title = String(req.body?.title || '').trim().slice(0, 200) || req.file.originalname.replace(/\.pdf$/i, '');
+    const importedSource = String(req.body?.imported_source || '').trim().slice(0, 200);
+    const importedSignedDate = String(req.body?.imported_signed_date || '').trim().slice(0, 100);
+    const importedNote = String(req.body?.imported_note || '').trim().slice(0, 2000);
+
+    const { pageCount } = await inspectPdf(req.file.buffer);
+    const id = newId();
+    const ts = nowIso();
+    const originalHash = sha256(req.file.buffer);
+    fs.writeFileSync(originalPath(id), req.file.buffer);
+
+    const envelopeForPdf = {
+      id, title, original_name: req.file.originalname, created_at: ts,
+      imported_source: importedSource || null, imported_signed_date: importedSignedDate || null, imported_note: importedNote || null,
+    };
+    const recordBytes = await buildImportRecordPdf({ envelope: envelopeForPdf, originalBytes: req.file.buffer, originalSha256: originalHash });
+    const completedHash = sha256(recordBytes);
+    fs.writeFileSync(completedPath(id), recordBytes);
+
+    db.prepare(`INSERT INTO envelopes
+        (id, title, message, status, signing_order, original_name, page_count, original_sha256, completed_sha256, created_at, completed_at, imported_source, imported_signed_date, imported_note)
+        VALUES (?, ?, '', 'imported', 'sequential', ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+      .run(id, title, req.file.originalname, pageCount, originalHash, completedHash, ts, ts, importedSource || null, importedSignedDate || null, importedNote || null);
+    logEvent(id, 'imported', `Imported ${req.file.originalname} for record-keeping${importedSource ? ` (via ${importedSource})` : ''}`, ctx(req));
+
     res.status(201).json({ envelope: present(loadEnvelope(id)) });
   } catch (err) { next(err); }
 });
@@ -150,14 +188,14 @@ envelopesRouter.post('/:id/remind', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
-envelopesRouter.post('/:id/void', (req, res, next) => {
+envelopesRouter.post('/:id/void', requireAdmin, (req, res, next) => {
   try {
     voidEnvelope(req.params.id, String(req.body?.reason || '').slice(0, 500));
     res.json({ envelope: present(loadEnvelope(req.params.id)) });
   } catch (err) { next(err); }
 });
 
-envelopesRouter.delete('/:id', (req, res) => {
+envelopesRouter.delete('/:id', requireAdmin, (req, res) => {
   if (!q.envelope.get(req.params.id)) return res.status(404).json({ error: 'Envelope not found' });
   deleteEnvelope(req.params.id);
   res.json({ ok: true });
@@ -171,8 +209,9 @@ envelopesRouter.get('/:id/pdf', (req, res) => {
 
 envelopesRouter.get('/:id/completed', (req, res) => {
   const env = q.envelope.get(req.params.id);
-  if (!env || env.status !== 'completed') return res.status(404).json({ error: 'No completed document yet' });
-  const name = `${env.title.replace(/[^\w.-]+/g, '_')}-signed.pdf`;
+  if (!env || !['completed', 'imported'].includes(env.status)) return res.status(404).json({ error: 'No completed document yet' });
+  const suffix = env.status === 'imported' ? 'imported-record' : 'signed';
+  const name = `${env.title.replace(/[^\w.-]+/g, '_')}-${suffix}.pdf`;
   res.type('application/pdf');
   if (req.query.download) res.attachment(name);
   res.sendFile(completedPath(env.id));

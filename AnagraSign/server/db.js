@@ -71,6 +71,11 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE INDEX IF NOT EXISTS idx_signers_env ON signers(envelope_id, order_index);
 CREATE INDEX IF NOT EXISTS idx_fields_env ON fields(envelope_id);
 CREATE INDEX IF NOT EXISTS idx_events_env ON events(envelope_id, id);
+CREATE TABLE IF NOT EXISTS app_auth (
+  role TEXT PRIMARY KEY,
+  password_hash TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
 `);
 
 // Migrations for databases created before a column existed
@@ -80,12 +85,22 @@ function ensureColumn(table, col, decl) {
 }
 ensureColumn('envelopes', 'auth_method', "TEXT NOT NULL DEFAULT 'none'");
 for (const [col, decl] of [
+  ['imported_source', 'TEXT'], ['imported_signed_date', 'TEXT'], ['imported_note', 'TEXT'],
+]) ensureColumn('envelopes', col, decl);
+for (const [col, decl] of [
   ['access_code', 'TEXT'], ['otp_hash', 'TEXT'], ['otp_expires_at', 'TEXT'], ['otp_sent_at', 'TEXT'],
   ['otp_attempts', 'INTEGER NOT NULL DEFAULT 0'], ['locked_until', 'TEXT'], ['verified_at', 'TEXT'], ['verified_method', 'TEXT'],
 ]) ensureColumn('signers', col, decl);
 
 // Statuses
-//   envelopes.status: draft | sent | completed | declined | voided
+//   app_auth.role: 'admin' | 'user' — a shared password per role (not per-person accounts).
+//     Seeded from env vars at startup by auth.js if the row doesn't exist yet; once someone
+//     changes a password through the app, the DB row wins from then on.
+//   envelopes.status: draft | sent | completed | declined | voided | imported
+//     "imported" = uploaded already-signed from elsewhere, for record-keeping only. It never
+//     goes through draft/sent/signing; original_sha256/completed_sha256 both apply to it (see
+//     services/workflow.js importEnvelope). imported_source/imported_signed_date/imported_note
+//     are what the importer told us — not verified, not witnessed by this app.
 //   envelopes.auth_method: none | email_code | access_code
 //   signers.status:   pending | viewed | signed | declined
 //   fields.type:      signature | initials | date | name | text | checkbox
@@ -102,6 +117,7 @@ export function logEvent(envelopeId, type, detail = '', { signerId = null, ip = 
 }
 
 export const q = {
+  authRole: db.prepare('SELECT * FROM app_auth WHERE role = ?'),
   envelope: db.prepare('SELECT * FROM envelopes WHERE id = ?'),
   envelopes: db.prepare('SELECT * FROM envelopes ORDER BY created_at DESC'),
   signers: db.prepare('SELECT * FROM signers WHERE envelope_id = ? ORDER BY order_index'),

@@ -36,9 +36,9 @@
         "Mosquitoes":                { icon: "✣",  sub: "Find likely breeding and resting areas." },
         "Grass Type Help":           { icon: "🌿", sub: "Bermuda, Zoysia, Fescue, Centipede, St. Augustine, and more." },
         "Other Lawn Question":       { icon: "?",  sub: "Ask Lawnie a general lawn care question." },
-        "Essential Plan — $29/mo":   { icon: "🌱", sub: "Weed control + fertilization. Click to get your exact quote." },
-        "Grow Plan — $39/mo":        { icon: "⭐", sub: "Most popular — guaranteed weed-free lawn year-round." },
-        "Pro Plan — $49/mo":         { icon: "🛡", sub: "Complete protection — adds insect + fire ant control." }
+        "Essential Plan — Starting at $29/mo":   { icon: "🌱", sub: "Weed control + fertilization. Click to get your exact quote." },
+        "Grow Plan — Starting at $39/mo":        { icon: "⭐", sub: "Most popular — guaranteed weed-free lawn year-round." },
+        "Pro Plan — Starting at $49/mo":         { icon: "🛡", sub: "Complete protection — adds insect + fire ant control." }
     };
 
     /* ── Quote flow ─────────────────────────────────────────────────── */
@@ -383,9 +383,9 @@
         });
         if (hasPlanPricing && !alreadyHasPlanBtn && !suppressPlanBtns) {
             options = options.concat([
-                "Essential Plan — $29/mo",
-                "Grow Plan — $39/mo",
-                "Pro Plan — $49/mo"
+                "Essential Plan — Starting at $29/mo",
+                "Grow Plan — Starting at $39/mo",
+                "Pro Plan — Starting at $49/mo"
             ]);
         }
 

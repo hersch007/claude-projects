@@ -7,7 +7,8 @@ import { buildCompletedPdf, sha256 } from './pdf.js';
 
 export const originalPath = (envelopeId) => path.join(config.uploadsDir, `${envelopeId}.pdf`);
 export const completedPath = (envelopeId) => path.join(config.completedDir, `${envelopeId}.pdf`);
-export const signingLink = (signer) => `${config.baseUrl}/sign/${signer.token}`;
+// Query string, not a path segment — see the matching comment in public/js/sign.js for why.
+export const signingLink = (signer) => `${config.baseUrl}/sign.html?t=${signer.token}`;
 export const dashboardLink = (envelopeId) => `${config.baseUrl}/?envelope=${envelopeId}`;
 
 export class WorkflowError extends Error {

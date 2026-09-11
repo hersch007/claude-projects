@@ -1,112 +1,130 @@
-# Deploying AnagraSign to SiteGround (grouprb.com + partsofpractice.com)
+# Deploying AnagraSign to SiteGround
 
-Two separate instances, one per SiteGround account, each fully independent (own database, own
-signers, own storage). SiteGround uses **Site Tools**, not cPanel, and its Node.js hosting runs on
-Phusion Passenger. `server/index.js` already listens on `process.env.PORT`, which is exactly what
-Passenger requires, so no code changes are needed to deploy it.
+This reflects what was actually verified live against `sign.grouprb.com` on Sep 10–11 2026, not
+the original guess (an earlier draft of this doc assumed SSH/git deploys — that was wrong and has
+been replaced).
 
-Repeat every step below **twice** — once per SiteGround account. The two accounts are unrelated to
-each other; nothing is shared.
+grouprb.com and partsofpractice.com are on the **same** SiteGround account (GoGeek plan), each as
+its own separate **Node.js Project** — a distinct resource type from a regular WordPress site, with
+its own Site Tools context and a SiteGround-assigned temporary hostname (e.g.
+`richardb918.sg-host.com`) until you park a real domain onto it.
 
-## 0. Confirm the plan supports it
+## 1. Create the Node.js Project
 
-In Site Tools, look for **Devs** in the left menu. You need both **Node.js** and **SSH Keys
-Manager** to appear there. Both require GrowBig or GoGeek — you've confirmed both accounts are on
-one of those.
+Site Tools > **Websites** has a **Node.js Projects** tab alongside the regular Websites list (or go
+to `my.siteground.com/websites/nodejs`). **Create Node.js Project Now** opens a wizard:
 
-## 1. Create the Node.js application
+- **Import Git repository** vs **Upload your files** — use **Upload your files** unless the app
+  lives in its own dedicated GitHub repo (it doesn't here; it's a folder inside a much larger
+  personal monorepo, and connecting that whole repo would be a mistake).
+- Upload a `.tar.gz`/`.zip`/`.tgz` of the app (see step 2 for what to include).
+- **Framework preset**: Express (auto-detected). **Node version**: highest available (24 as of
+  this writing; needs 22.5+ for `node:sqlite`).
+- **Build command**: change the default `npm run build` to `npm install` — there's no build step,
+  and the default would fail deployment.
 
-Site Tools > **Devs > Node.js** > **Create New Application**.
+This creates the project and gives you **Site Tools > Node.js > Deployment Options**, which is
+where you'll come back for every future update.
 
-| Field | Value |
-|---|---|
-| Node.js version | The highest available (need 22.5 or newer — AnagraSign uses `node:sqlite`). If the dropdown tops out below 22.5, stop and tell me; we'd need a fallback database driver. |
-| Environment | Production |
-| Application root | e.g. `nodeapps/sign` (SiteGround puts this under your account's home directory, separate from `public_html`) |
-| Application URL | `sign.grouprb.com` (or `sign.partsofpractice.com`) — if the subdomain doesn't exist yet, SiteGround lets you create it right here |
-| Application startup file | `server/index.js` |
+## 2. Package the app
 
-Click **Create**. SiteGround scaffolds the folder and gives you a screen with **Run NPM Install**,
-an **Environment Variables** section, and Start/Stop/Restart controls. Leave it here for now.
+No SSH, no git push. Every deploy is a fresh archive upload. From the `AnagraSign` folder:
 
-## 2. Set environment variables
-
-In that same app's **Environment Variables** section, add every line from the matching file in
-`AnagraSign/deploy/` on your machine (`grouprb.env` or `partsofpractice.env`) as its own KEY=VALUE
-entry. Those files already have `SESSION_SECRET` and `ADMIN_PASSWORD` generated for you — do not
-reuse the ones from your local `.env`.
-
-Before adding them, fill in the two `TODO` lines in that file:
-
-1. Site Tools > **Email Accounts** > create a mailbox (suggested: `sign@grouprb.com` or
-   `sign@partsofpractice.com`).
-2. Put that mailbox's password into `SMTP_PASS`, and confirm `SMTP_HOST` matches what SiteGround
-   shows for that mailbox (usually `mail.<yourdomain>`).
-
-Without SMTP filled in, the app still works — signing emails just get written to
-`storage/outbox/` on the server instead of sent, which is fine for testing but not for real use.
-
-## 3. Get SSH access
-
-Site Tools > **Devs > SSH Keys Manager**. Two options:
-
-- **Reuse your existing key** — upload the public half of the key you already use for other
-  deploys (`C:\Users\richa\.ssh\id_ed25519.pub`). Paste its contents into "Import Key".
-- **Generate a new key** there and download the private half.
-
-Either way, note the **connection details** SiteGround shows (hostname, port, username) — they're
-specific to each account and usually look like `ssh username@yourdomain.com -p <port>`. You need
-this for step 5.
-
-## 4. First upload
-
-The very first deploy, do it manually so you can watch for errors:
-
-1. SFTP or SSH into the account (FileZilla, WinSCP, or the `scp` commands in step 5 below) and
-   upload the entire `AnagraSign` folder **except** `node_modules/`, `storage/`, `.env`, and
-   `deploy/` into the Application root you created in step 1.
-2. Back in Site Tools > Devs > Node.js, click **Run NPM Install**. Wait for it to finish — this
-   installs `express`, `pdf-lib`, `nodemailer`, etc. on the server.
-3. Click **Restart**.
-4. Visit `https://sign.grouprb.com` (or the partsofpractice URL). You should see the AnagraSign
-   login page. Log in with the `ADMIN_PASSWORD` from that site's env file.
-5. Upload the sample PDF from `docs/sample-agreement.pdf`, add yourself as a signer, send it, and
-   confirm you receive the email (or find it in `storage/outbox/` via File Manager if SMTP isn't
-   set up yet).
-
-If Node.js version was capped below 22.5 and the app fails on startup mentioning `node:sqlite`,
-tell me — we'll swap the database layer rather than fight the platform.
-
-## 5. Later deploys (script)
-
-Once SSH is working, use `scripts/deploy-siteground.ps1` from your machine instead of repeating
-step 4 by hand. Fill in the connection details it asks for (or edit the placeholders at the top of
-the script once and keep them there). It:
-
-1. Copies the changed files up via `scp` (skips `node_modules`, `storage`, `.env`, `deploy`).
-2. Runs `npm install --omit=dev` over SSH.
-3. Touches `tmp/restart.txt` in the app root, which tells Passenger to reload the app on the next
-   request — no manual "Restart" click needed.
-
-```powershell
-./scripts/deploy-siteground.ps1 -Site grouprb
-./scripts/deploy-siteground.ps1 -Site partsofpractice
+```bash
+tar -czf anagrasign-deploy.tar.gz \
+  --exclude=node_modules --exclude=storage --exclude=.env --exclude=deploy \
+  public server scripts docs .gitignore package.json package-lock.json README.md CLAUDE.md .env.example
 ```
 
-## 6. After both are live
+(In practice this session builds it via a staging copy so `storage/` still ships with empty
+`.gitkeep` placeholders — see any recent transcript for the exact commands. Either way: no
+`node_modules`, no real `storage/` contents, no `.env`, no `deploy/`.)
 
-- Back up `storage/anagrasign.db` on each server on a schedule — it's the only copy of every
-  contract's signatures and audit trail. SiteGround's own backup tool (Site Tools > Security >
-  Backups) covers this automatically if it includes the Node app's directory; confirm it does.
-- Change `ADMIN_PASSWORD` again yourself once you've logged in, if you'd rather pick your own than
-  keep the generated one.
-- The two instances do not talk to each other or share anything. If you ever want one
-  password/login for both, that's a bigger change — ask if you want it.
+## 3. Environment variables
 
-## Known unknowns
+Site Tools > **Node.js > Deployment Options**, scroll to **Environment Variables**. Added one at a
+time through a Key/Value form + Create button — there's no bulk paste. **Two UI gotchas found the
+hard way:**
 
-I don't have SiteGround login or SSH access, so none of the panel steps above have been tested
-against the live UI — field names may differ slightly from what's described. The Passenger
-behavior (listens on `process.env.PORT`, reloads on `tmp/restart.txt`) is standard across every
-Phusion Passenger host (this is the same mechanism cPanel's "Setup Node.js App" uses), so that part
-is solid; the Site Tools screens are the part worth double-checking as you go.
+- After a successful add, the form resets to empty inputs but the page keeps showing "Variable
+  successfully added" with a **Back** button. Click **Back** and take a screenshot before typing
+  the next one — reusing element references across adds can silently concatenate the previous
+  key/value into the new one (hit this twice while adding `SMTP_SECURE`).
+- Adding or editing variables does **not** take effect until the app is redeployed (see step 5) —
+  it only updates what the *next* deploy will use.
+
+Set every line from the matching file in `AnagraSign/deploy/` (`grouprb.env` or
+`partsofpractice.env`) except `PORT` (the platform manages it) — **and see the `STORAGE_DIR`
+section below, which is not optional.**
+
+**SMTP:** if the domain's mail runs on Google Workspace (true for grouprb.com), don't bother with
+a SiteGround mailbox — use Gmail's SMTP directly: `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=587`,
+`SMTP_SECURE=0`, `SMTP_USER` = an existing Workspace mailbox, `SMTP_PASS` = an **app password**
+for that mailbox (Google Account > Security > App Passwords, requires 2-Step Verification on that
+account). `MAIL_FROM` must use that same mailbox's address — Gmail won't send as a different
+address without a configured Workspace alias.
+
+## 4. `STORAGE_DIR` is mandatory — this is the important part
+
+**SiteGround extracts every "Save and Deploy" into a brand-new, timestamped folder
+(`public_html/.nodeapp/<timestamp>-<hash>/app_source`) and discards the old one.** Confirmed by
+writing a probe file, redeploying with no other changes, and reading it back: anything under the
+app's own root — including the default `storage/` folder — is gone after every single redeploy.
+That means the database and every uploaded or signed PDF, unless you fix this.
+
+The fix: set `STORAGE_DIR` to an absolute path **outside** that versioned folder. Verified
+persistent locations (found by testing 1 through 5 directories up from the app root and redeploying
+in between): anywhere from the `.nodeapp` container folder up through the site's home directory.
+Used in practice: one level above `public_html` — outside the web root entirely, so it's not even
+reachable by URL:
+
+```
+STORAGE_DIR=/home/customer/www/<yoursite>.sg-host.com/anagrasign-storage
+```
+
+Find your own exact path by hitting a throwaway diagnostic route once (`process.cwd()` from inside
+the running app) rather than assuming this one — the customer/site segment will differ per account.
+**Do not skip this.** Without it, the app looks like it works right up until the next code update,
+which silently deletes every real contract on the site.
+
+## 5. Deploying (every time, including the first)
+
+Site Tools > Node.js > Deployment Options > **Save and Deploy** → this saves your settings/env
+vars and drops you into the same upload wizard as project creation. Upload the archive from step 2
+again (yes, even if only env vars changed, not the code — the archive re-upload is what actually
+triggers the new deploy) → **Continue** → **Deployed!**
+
+There is no separate "restart" action; re-uploading and continuing through the wizard **is** the
+restart.
+
+## 6. Pointing your real domain at it
+
+The project starts on a SiteGround-assigned hostname. To use your real subdomain:
+
+1. **Don't** create the subdomain under the domain's own site first — that assigns it to that
+   site's regular hosting and a later "park" attempt from the Node project's side will fail with
+   an unhelpful untranslated error (`translate.core.form.new_domain.existing_web_app`).
+2. Instead, go straight to the **Node.js Project's own** Site Tools > **Domain > Parked Domains**
+   and add the subdomain there directly (e.g. `sign.grouprb.com`). SiteGround creates it cleanly
+   since it's implicitly already on the account's own nameservers.
+3. New parked domains have no SSL by default. Site Tools > **Security > SSL Manager**, select the
+   new domain, install **Let's Encrypt** (free). Without this you'll get a browser privacy error,
+   not a connection failure — easy to mistake for DNS not having propagated yet.
+
+## 7. A platform routing quirk that broke real links once
+
+SiteGround's edge only reliably proxies `/api/*` requests and literal static files to the Node
+process. A dynamic path segment that isn't a real file on disk — the app used to generate signing
+links as `/sign/<token>` — gets intercepted and 404'd **before it ever reaches the app**, even
+though the exact same route works perfectly in local dev. The fix already shipped: signing links
+are `/sign.html?t=<token>` (a real static file plus a query string) instead. If you ever add another
+page that needs a dynamic path segment, either give it a real static entry point the same way, or
+put its logic under `/api/*`.
+
+## After it's live
+
+- `storage/` (at whatever `STORAGE_DIR` points to) holds the database and every signed contract.
+  Back it up on a schedule.
+- Change `ADMIN_PASSWORD` yourself if you'd rather pick your own than keep a generated one.
+- The two site instances share nothing — same SiteGround account, but fully independent apps,
+  databases, and domains.

@@ -19,7 +19,16 @@ No build step. No external services required. Node.js only.
 - Optional signer verification before the document can be opened: a one-time code emailed to the
   signer, or an access code you set per signer and share by phone/text. 5 wrong attempts locks the
   link for 15 minutes; every attempt and the successful verification appear on the certificate.
+- **Import already-signed documents** (from DocuSign, Adobe Sign, a scanned wet signature, etc.)
+  for record-keeping. No fields, no signers, no sending — the original file is stored untouched
+  plus a clearly-labeled **Import Record** page noting the source, claimed signed date, and any
+  note you enter. It is explicitly not a signature certificate, since AnagraSign never witnessed
+  that signing.
 - Completed PDF with stamped fields + certificate page, SHA-256 of original and completed files
+- Two login roles on one screen: **Admin** (full access, including voiding/deleting documents and
+  managing both passwords) and **User** (everyday document work — upload, prepare, send, import —
+  without those destructive actions). Both passwords are changed from Settings inside the app, no
+  redeploy needed; an admin sets the initial user password.
 - Full audit trail: created, sent, invitation sent, viewed, consented, signed, declined, completed
 - Email via SMTP (nodemailer). Without SMTP, emails are written to `storage/outbox/` so you can copy links.
 - Single admin password login with rate limiting
@@ -89,17 +98,20 @@ zoom level, and converted to PDF points (bottom-left origin) when stamping.
 ## Deploying
 
 Any host that runs Node 22.5+ works: a VPS with nginx in front, cPanel "Setup Node.js App",
-SiteGround's Node.js app tool, Railway, Render, Fly.io, etc. — anything using Phusion Passenger
-works as-is, since `server/index.js` already listens on `process.env.PORT`. Set `BASE_URL`,
-`TRUST_PROXY=1`, `SECURE_COOKIES=1`, SMTP values, and keep `storage/` on persistent disk (it holds
-the database and every signed contract). Back it up.
+SiteGround's Node.js Projects, Railway, Render, Fly.io, etc. — `server/index.js` listens on
+`process.env.PORT`, which every one of those expects. Set `BASE_URL`, `TRUST_PROXY=1`,
+`SECURE_COOKIES=1`, SMTP values, and **check whether `storage/` actually survives a redeploy on
+your host before trusting it** — on SiteGround it does not (see below); if in doubt, set
+`STORAGE_DIR` to a path outside wherever the app's own folder gets replaced on deploy.
 
 Suggested `pm2` start: `pm2 start server/index.js --name anagrasign --node-args="--disable-warning=ExperimentalWarning"`
 
-**Deploying to SiteGround** (two live instances, `sign.grouprb.com` and
-`sign.partsofpractice.com`): see [docs/deploy-siteground.md](docs/deploy-siteground.md) for the
-full walkthrough, and `scripts/deploy-siteground.ps1` for repeat deploys once each is set up.
-Per-instance production env files with generated secrets live in `deploy/` (git-ignored).
+**Deploying to SiteGround** (`sign.grouprb.com` and `sign.partsofpractice.com`, same account):
+see [docs/deploy-siteground.md](docs/deploy-siteground.md) for the full walkthrough — it's an
+archive-upload wizard, not SSH/git, and `STORAGE_DIR` is mandatory there or every redeploy wipes
+the database. `scripts/deploy-siteground.ps1` builds the upload archive (the actual upload into
+Site Tools still has to be done by hand). Per-instance production env files with generated secrets
+live in `deploy/` (git-ignored).
 
 ## Legal notes (not legal advice)
 

@@ -20,7 +20,10 @@
 <div class="topbar">
   <a class="logo" href="/"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="#0f2a5a"/><path d="M6 23 C10 26 13 20 16 22 C18 23.3 19 21 21 19" stroke="#1d4ed8" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M10 17 L14.5 21.5 L25 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Anagra<span class="sfx">Sign</span></span><span class="beta">beta</span></a>
   <div class="spacer"></div>
+  <span class="badge" id="roleBadge" style="display:none"></span>
+  <button class="btn" id="importBtn">Import signed doc</button>
   <button class="btn primary" id="newBtn">+ New document</button>
+  <button class="btn" id="settingsBtn">Settings</button>
   <button class="btn" id="logoutBtn">Log out</button>
 </div>
 
@@ -49,6 +52,67 @@
         <button type="submit" class="btn primary" id="uploadBtn">Upload &amp; prepare</button>
       </div>
     </form>
+  </div>
+</div>
+
+<div id="importModal" class="modal-backdrop" hidden>
+  <div class="modal" style="max-width:520px">
+    <h2>Import a signed document</h2>
+    <p class="muted small">For record-keeping only. AnagraSign did not witness this signing — the file is stored as-is with a clearly labeled Import Record page noting what you enter below, not a signature certificate.</p>
+    <form id="importForm">
+      <label class="lbl">Title</label>
+      <input type="text" id="importTitle" placeholder="e.g. Vendor NDA – Acme Co." maxlength="200">
+      <label class="lbl">Already-signed PDF</label>
+      <div class="drop" id="importDrop">Drop a PDF here or click to choose<br><span class="small" id="importFileName"></span></div>
+      <input type="file" id="importFile" accept="application/pdf,.pdf" hidden>
+      <label class="lbl">Originally signed via (optional)</label>
+      <input type="text" id="importSource" placeholder="e.g. DocuSign, Adobe Sign, wet signature" maxlength="200">
+      <label class="lbl">Signed on, as reported (optional)</label>
+      <input type="text" id="importSignedDate" placeholder="e.g. 2026-08-01">
+      <label class="lbl">Notes (optional)</label>
+      <textarea id="importNote" rows="2" maxlength="2000" placeholder="e.g. Signed by Jane Doe and John Smith"></textarea>
+      <p class="error" id="importErr" hidden style="margin-top:8px"></p>
+      <div class="actions">
+        <button type="button" class="btn" id="cancelImport">Cancel</button>
+        <button type="submit" class="btn primary" id="importSubmitBtn">Import</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="settingsModal" class="modal-backdrop" hidden>
+  <div class="modal" style="max-width:480px">
+    <h2>Settings</h2>
+
+    <h3 style="margin-top:0">Change my password</h3>
+    <form id="ownPasswordForm">
+      <label class="lbl">Current password</label>
+      <input type="password" id="currentPassword" autocomplete="current-password" required>
+      <label class="lbl">New password (8+ characters)</label>
+      <input type="password" id="newOwnPassword" autocomplete="new-password" minlength="8" required>
+      <p class="error" id="ownPasswordErr" hidden style="margin-top:8px"></p>
+      <div class="actions" style="margin-top:12px">
+        <button type="submit" class="btn primary sm">Update my password</button>
+      </div>
+    </form>
+
+    <div id="userPasswordSection" hidden>
+      <h3 style="margin-top:20px">User password</h3>
+      <p class="small muted" style="margin-top:-6px">The "User" role signs in with this password instead of the admin one. Users can do everyday document work (upload, prepare, send) but can't void or delete documents, or change either password other than this one.</p>
+      <form id="userPasswordForm">
+        <label class="lbl">New user password (8+ characters)</label>
+        <input type="password" id="newUserPassword" autocomplete="new-password" minlength="8" required>
+        <p class="small muted" id="userPasswordStatus" style="margin-top:4px"></p>
+        <p class="error" id="userPasswordErr" hidden style="margin-top:8px"></p>
+        <div class="actions" style="margin-top:12px">
+          <button type="submit" class="btn primary sm">Set user password</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="actions" style="margin-top:20px">
+      <button type="button" class="btn" id="closeSettings">Close</button>
+    </div>
   </div>
 </div>
 

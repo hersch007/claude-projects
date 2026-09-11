@@ -1,7 +1,10 @@
 import { api, esc, fmtDate, toast } from './api.js';
 import { renderPdf, FIELD_META, placeEl } from './pdfview.js';
 
-const token = location.pathname.split('/').filter(Boolean).pop();
+// Query string, not a path segment: some hosts (e.g. SiteGround's Node.js hosting) only proxy
+// /api/* and literal static files to the app, so a dynamic path like /sign/<token> 404s at the
+// edge before ever reaching this code. /sign.html is a real file, always served correctly.
+const token = new URLSearchParams(location.search).get('t');
 const $ = (s) => document.querySelector(s);
 const base = `/api/sign/${token}`;
 

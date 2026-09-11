@@ -9,6 +9,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 |--------------------------------------------------------------------------
 */
 
+/*
+| Cookie name deliberately matches the "wordpress_logged_in_*" pattern: WP Engine, Cloudflare's
+| WordPress rules, and most page caches bypass their cache for requests carrying such a cookie,
+| so a signed-in team member never receives (or creates) a cached copy of the dashboard.
+*/
+define( 'LAWNACE_CLIENT_COOKIE', 'wordpress_logged_in_lawnace' );
+
+/** Tell every cache layer we can reach not to store dashboard responses. */
+function lawnace_client_no_cache() {
+    if ( ! defined( 'DONOTCACHEPAGE' ) ) define( 'DONOTCACHEPAGE', true );
+    if ( ! defined( 'DONOTCACHEOBJECT' ) ) define( 'DONOTCACHEOBJECT', true );
+    nocache_headers();
+    header( 'Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0' );
+}
+
 function lawnace_client_dash_cookie_value() {
     $pin = get_option( 'lawnace_client_pin', '' );
     if ( empty( $pin ) ) return '';
@@ -18,7 +33,7 @@ function lawnace_client_dash_cookie_value() {
 function lawnace_client_dash_is_authed() {
     $expected = lawnace_client_dash_cookie_value();
     if ( empty( $expected ) ) return false;
-    $cookie = isset( $_COOKIE['lawnace_client_auth'] ) ? sanitize_text_field( wp_unslash( $_COOKIE['lawnace_client_auth'] ) ) : '';
+    $cookie = isset( $_COOKIE[LAWNACE_CLIENT_COOKIE] ) ? sanitize_text_field( wp_unslash( $_COOKIE[LAWNACE_CLIENT_COOKIE] ) ) : '';
     return ! empty( $cookie ) && hash_equals( $expected, $cookie );
 }
 
@@ -51,11 +66,12 @@ add_action( 'template_redirect', 'lawnace_maybe_render_client_dashboard' );
 
 function lawnace_maybe_render_client_dashboard() {
     if ( ! get_query_var( 'lawnace_client_dashboard' ) ) return;
+    lawnace_client_no_cache();
 
     $pin = get_option( 'lawnace_client_pin', '' );
 
     if ( isset( $_GET['logout'] ) ) {
-        setcookie( 'lawnace_client_auth', '', [
+        setcookie( LAWNACE_CLIENT_COOKIE, '', [
             'expires'  => time() - 3600,
             'path'     => COOKIEPATH,
             'domain'   => COOKIE_DOMAIN,
@@ -63,7 +79,7 @@ function lawnace_maybe_render_client_dashboard() {
             'httponly' => true,
             'samesite' => 'Lax',
         ] );
-        wp_redirect( home_url( '/la-team/' ) );
+        wp_redirect( home_url( '/la-team/?loggedout=1' ) );
         exit;
     }
 
@@ -74,7 +90,7 @@ function lawnace_maybe_render_client_dashboard() {
         }
         $submitted = sanitize_text_field( wp_unslash( $_POST['lawnace_client_pin'] ) );
         if ( ! empty( $pin ) && hash_equals( $pin, $submitted ) ) {
-            setcookie( 'lawnace_client_auth', lawnace_client_dash_cookie_value(), [
+            setcookie( LAWNACE_CLIENT_COOKIE, lawnace_client_dash_cookie_value(), [
                 'expires'  => time() + 8 * HOUR_IN_SECONDS,
                 'path'     => COOKIEPATH,
                 'domain'   => COOKIE_DOMAIN,
@@ -82,7 +98,7 @@ function lawnace_maybe_render_client_dashboard() {
                 'httponly' => true,
                 'samesite' => 'Lax',
             ] );
-            wp_redirect( home_url( '/la-team/' ) );
+            wp_redirect( home_url( '/la-team/?tab=tasks' ) );
             exit;
         } else {
             lawnace_render_client_login( 'Incorrect password. Please try again.' );
@@ -2333,6 +2349,7 @@ add_action( 'template_redirect', 'lawnace_maybe_render_client_session', 9 );
 
 function lawnace_maybe_render_client_session() {
     if ( ! get_query_var( 'lawnace_client_dashboard' ) ) return;
+    lawnace_client_no_cache();
     if ( ! lawnace_client_dash_is_authed() ) return;
     if ( empty( $_GET['session'] ) ) return;
 

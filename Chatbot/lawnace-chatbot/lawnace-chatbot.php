@@ -3,7 +3,7 @@
  * Plugin Name: LawnAce Chatbot
  * Plugin URI:  https://startadvertising.com
  * Description: AI-powered lawn care chat widget for LawnAce, powered by Claude.
- * Version:     3.89.0
+ * Version:     3.90.0
  * Author:      Start Performance | Richard Brashear
  * Author URI:  https://startadvertising.com
  * License:     GPL-2.0-or-later
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'LAWNACE_VERSION',    '3.89.0' );
+define( 'LAWNACE_VERSION',    '3.90.0' );
 define( 'LAWNACE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LAWNACE_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

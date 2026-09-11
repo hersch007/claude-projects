@@ -5,7 +5,7 @@ export async function api(path, { method = 'GET', body, form } = {}) {
   const r = await fetch(path, opts);
   let data = null;
   try { data = await r.json(); } catch { /* non-JSON */ }
-  if (r.status === 401 && !path.startsWith('/api/sign')) {
+  if (r.status === 401 && !path.startsWith('/api/sign') && path !== '/api/auth/login') {
     location.href = '/login.html?next=' + encodeURIComponent(location.pathname + location.search);
     throw new Error('Not signed in');
   }

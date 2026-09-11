@@ -6,7 +6,7 @@ module.exports = {
   client: 'Cleanroom Film & Bags',
   docTitle: 'On-Page SEO Audit — Running Log',
   docSubtitle: 'Image alt text, page titles, meta descriptions & schema',
-  lastUpdated: '2026-09-07',
+  lastUpdated: '2026-09-11',
   totalPages: 52,
 
   guidelines: [
@@ -309,6 +309,46 @@ module.exports = {
   },
   "areaServed": "US",
   "url": "https://www.cleanroomfilm.com/markets/food-cleanroom-packaging"
+}
+</script>`
+    },
+
+    {
+      name: 'Healthcare Cleanroom Packaging',
+      status: 'IMPLEMENTED in HubSpot 2026-09-11 — live verification pending (cache)',
+      liveUrl: 'https://www.cleanroomfilm.com/markets/healthcare-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-11',
+      primaryKw: 'healthcare cleanroom packaging',
+      secondaryKw: 'Tyvek pouches healthcare, sterilizable cleanroom packaging, medical device packaging, gusseted cleanroom bags, easy-tear pouches',
+      title: { text: 'Healthcare Cleanroom Packaging: Tyvek® Pouches, Bags & Film | CFB', chars: 65 },
+      meta: { text: "CFB's sterilizable healthcare cleanroom packaging — Tyvek® pouches, gusseted bags & easy-tear films for medical device, diagnostic & pharmaceutical use.", chars: 152 },
+      notes: 'Title had wrong brand suffix ("Film & Bags" instead of "CFB") and narrowed to Tyvek® only. Meta started with "We have..." — weak, no keyword targeting. Two image alts were completely wrong: gusseted-bags.jpg had "aluminum foil bag" and easy-tear-pouches.jpg had "Medical Grade Paper Rolls". medical-packaging-applications.jpg had a detailed, accurate alt — kept. Service schema added.',
+      images: [
+        ['Tyvek healthcare hero ×2 (tyvek-healthcare-cleanroom-packaging.jpg)', 'tyvek healthcare cleanroom packaging', 'Tyvek® healthcare cleanroom packaging from CFB', '46', 'First instance. Capitalizes Tyvek® and adds brand.'],
+        ['Heat-sealing pouches (tyvek-heat-sealing-pouches.png.jpg)', 'tyvek heat-sealing pouches', 'CFB Tyvek® heat-sealing pouches for healthcare packaging', '56', 'Adds brand and application context.'],
+        ['Gusseted bags (gusseted-bags.jpg)', '⚠️ aluminum foil bag', 'CFB gusseted cleanroom bags for healthcare packaging', '52', 'Wrong alt — file is gusseted bags, not aluminum foil. Corrected.'],
+        ['Film rolls (cleanroom-film-products.jpg)', 'medical roll film', 'CFB cleanroom film rolls for healthcare packaging', '49', 'Adds brand and application context.'],
+        ['Easy-tear pouches (easy-tear-pouches.jpg)', '⚠️ Medical Grade Paper Rolls', 'CFB easy-tear pouches for healthcare cleanroom packaging', '56', 'Wrong alt — file is easy-tear pouches, not paper rolls. Corrected.'],
+        ['Header bags, reinforced (tyvek-healthcare-cleanroom-packaging.jpg 2nd)', 'tyvek header bags (reinforced)', 'Tyvek® reinforced header bags for healthcare cleanroom packaging', '63', 'Second instance of same filename; alt distinguishes it.'],
+        ['Header bags, standard (cleanroom-header-bags.jpg)', 'standard cleanroom header bags', 'CFB cleanroom header bags for healthcare packaging', '50', 'Adds brand and application context.'],
+        ['Applications collage (medical-packaging-applications.jpg)', 'cleanroom medical packaging applications - diagnostic instruments, wound care, tubing sets, implants, inhalers', '✓ KEEP', '—', 'Already detailed and accurate — no change needed.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Service schema) — implemented 2026-09-11',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "Healthcare Cleanroom Packaging",
+  "description": "CFB's sterilizable healthcare cleanroom packaging — Tyvek® pouches, gusseted bags & easy-tear films for medical device, diagnostic & pharmaceutical use.",
+  "provider": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com"
+  },
+  "serviceType": "Cleanroom Packaging",
+  "areaServed": "US",
+  "url": "https://www.cleanroomfilm.com/markets/healthcare-cleanroom-packaging"
 }
 </script>`
     },
@@ -745,6 +785,128 @@ module.exports = {
     "url": "https://www.cleanroomfilm.com/"
   },
   "url": "https://www.cleanroomfilm.com/materials/esd-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'Barrier Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-10 (title, meta, 5 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/barrier-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-10',
+      primaryKw: 'barrier cleanroom packaging',
+      secondaryKw: 'multi-layer barrier film, moisture barrier packaging, contamination protection, static shielding barrier, cleanroom barrier bags',
+      title: { text: 'Multi-Layer Barrier Cleanroom Packaging Film & Bags | CFB', chars: 58 },
+      meta: { text: 'High-barrier cleanroom film and bags from CFB — moisture, contamination, and static protection for pharma, food, medical & semiconductor applications.', chars: 149 },
+      notes: 'H1 "Barrier Cleanroom Packaging" left as-is. Current meta had decent bones but no specifics on applications or materials — replaced. Note: static-shielding-packaging.png reused on this page (also appears on Static Shielding page) — alt updated to be context-specific.',
+      images: [
+        ['Static/barrier shot (static-shielding-packaging.png)', 'static-shielding packaging', 'Static shielding barrier cleanroom packaging for electronics', '60', 'Context-specific alt — same file used on Static Shielding page with different alt there.'],
+        ['Pharma app (pharma-packaging.png)', 'pharma packaging', 'High-barrier cleanroom packaging for pharmaceutical applications', '63', 'Updated.'],
+        ['Food app (food-nylon-packaging.png)', 'food nylon packaging', 'Barrier cleanroom film and bags for food packaging applications', '62', 'Updated.'],
+        ['Semiconductor app (semiconductor-packaging.png)', 'semiconductor packaging', 'Multi-layer barrier bags for semiconductor cleanroom packaging', '62', 'Updated.'],
+        ['Medical app (medical-device-packaging.png)', 'medical device packaging', 'Barrier cleanroom packaging for medical device protection', '57', 'Updated.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-10',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Barrier Cleanroom Packaging",
+  "description": "High-barrier cleanroom film and bags from CFB — moisture, contamination, and static protection for pharma, food, medical & semiconductor applications.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/barrier-cleanroom-packaging",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'Nylon Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-10 (title, meta, 9 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/nylon',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-10',
+      primaryKw: 'nylon cleanroom packaging',
+      secondaryKw: 'nylon cleanroom bags, heat-sealable nylon film, nylon medical packaging, nylon semiconductor packaging, automotive cleanroom bags',
+      title: { text: 'Nylon Cleanroom Packaging: Heat-Sealable Film & Bags | CFB', chars: 58 },
+      meta: { text: "CFB's nylon cleanroom film and bags — heat-sealable, sterile, and robust for semiconductor, pharma, medical, and automotive cleanroom applications.", chars: 147 },
+      notes: 'H1 "Nylon Packaging" left as-is. Most images of any material page (9 content images) — all updated. cfb-cleantronics.png appears on this page (CleanTronics line uses nylon); alt updated to reflect context. 4 application-specific avif images had decent filenames but generic alts — all updated to tie nylon material to each application.',
+      images: [
+        ['CleanTronics (cfb-cleantronics.png)', 'cfb-cleantronics', 'CFB CleanTronics nylon cleanroom packaging for electronics', '57', 'Filename-dump replaced; ties CleanTronics brand to nylon material.'],
+        ['Semiconductor (semiconductor-packaging.png)', 'semiconductor packaging', 'Nylon cleanroom packaging for semiconductor applications', '56', 'Ties nylon to application.'],
+        ['Pharma (pharma-packaging.png)', 'pharma packaging', 'Nylon cleanroom packaging for pharmaceutical applications', '57', 'Same rationale.'],
+        ['Medical (medical-device-packaging.png)', 'medical device packaging', 'Nylon cleanroom bags for medical device packaging', '49', 'Same rationale.'],
+        ['Automotive (automotive-packaging.png)', 'automotive packaging', 'Nylon cleanroom packaging for automotive parts', '47', 'Same rationale.'],
+        ['Electronics bag (cfb-nylon-bag-electronics.avif)', 'cfb nylon bag electronics', 'CFB nylon cleanroom bag for electronics packaging', '49', 'Near-filename alt improved.'],
+        ['Pharma avif (pharma-cleanroom-packaging.avif)', 'pharma cleanroom packaging', 'Nylon film for pharmaceutical cleanroom packaging by CFB', '55', 'Adds material and brand.'],
+        ['Computer (computer-components-packaging.avif)', 'computer components packaging', 'Nylon cleanroom packaging for computer components', '49', 'Adds material context.'],
+        ['Automotive avif (automotive-parts-packaging.avif)', 'automotive parts packaging', 'Nylon cleanroom bags for automotive parts protection', '52', 'Adds material + function.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — LIVE as of 2026-09-10',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Nylon Cleanroom Packaging",
+  "description": "CFB's nylon cleanroom film and bags — heat-sealable, sterile, and robust for semiconductor, pharma, medical, and automotive cleanroom applications.",
+  "brand": { "@type": "Brand", "name": "Cleanroom Film & Bags" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com/"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/nylon",
+  "category": "Cleanroom Packaging Materials"
+}
+</script>`
+    },
+
+    {
+      name: 'Nylon/Polyethylene Cleanroom Packaging',
+      status: 'VERIFIED LIVE 2026-09-11 (title, meta, 4 image alts, Product schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/materials/nylon-polyethylene-cleanroom-packaging',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-11',
+      primaryKw: 'nylon polyethylene cleanroom packaging',
+      secondaryKw: 'biaxially oriented nylon/polyethylene, nylon/poly cleanroom bags, moisture barrier cleanroom packaging, medical device nylon packaging',
+      title: { text: 'Biaxially Oriented Nylon/Polyethylene Cleanroom Packaging | CFB', chars: 63 },
+      meta: { text: "CFB's nylon/polyethylene cleanroom packaging offers superior strength, moisture barrier & flexibility for pharma, medical & semiconductor applications.", chars: 151 },
+      notes: 'No schema on live page — Product schema added. Title missing | CFB suffix — added. Meta replaced to name target markets (pharma, medical, semiconductor). 4 content image alts updated (cleanroom-bottom-seal-bags.jpg appears twice — both instances updated).',
+      images: [
+        ['Bottom-seal bags ×2 (cleanroom-bottom-seal-bags.jpg)', 'cleanroom bottom-seal bags', 'nylon/polyethylene cleanroom bottom-seal bags', '44', 'Appears twice on page; both instances updated. Ties material to product form.'],
+        ['Medical device (medical-device-packaging.png)', 'medical device packaging', 'nylon/polyethylene medical device cleanroom packaging', '52', 'Adds material context to generic application image.'],
+        ['Pharma (pharma-packaging.png)', 'pharma packaging', 'nylon/polyethylene pharmaceutical cleanroom packaging', '52', 'Same rationale.'],
+        ['Semiconductor (semiconductor-packaging.png)', 'semiconductor packaging', 'nylon/polyethylene semiconductor cleanroom packaging', '51', 'Same rationale.']
+      ],
+      schemaLabel: 'Deployed Structured Data (Product schema) — implemented 2026-09-10',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Nylon/Polyethylene Cleanroom Packaging",
+  "description": "Biaxially oriented nylon/polyethylene cleanroom packaging offering superior strength, moisture barrier, and flexibility for pharmaceutical, medical device, and semiconductor applications.",
+  "brand": { "@type": "Brand", "name": "CFB" },
+  "manufacturer": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com"
+  },
+  "url": "https://www.cleanroomfilm.com/materials/nylon-polyethylene-cleanroom-packaging",
+  "image": "https://www.cleanroomfilm.com/hubfs/cleanroom-bottom-seal-bags.jpg",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "USD",
+    "price": "0",
+    "availability": "https://schema.org/InStock",
+    "url": "https://www.cleanroomfilm.com/materials/nylon-polyethylene-cleanroom-packaging"
+  },
   "category": "Cleanroom Packaging Materials"
 }
 </script>`

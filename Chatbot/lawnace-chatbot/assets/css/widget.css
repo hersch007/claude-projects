@@ -241,9 +241,17 @@
     cursor: pointer;
     transition: all .15s ease;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
+    line-height: 1.25;
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.la-chip .la-chip-sub {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    opacity: .85;
+    margin-top: 1px;
 }
 
 .la-chip:hover {
