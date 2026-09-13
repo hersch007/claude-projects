@@ -1,26 +1,44 @@
 ---
 name: run-seo-audit
-description: Use this skill when the user says "run seo audit [client]", "run the audit for [client]", "rerun [client]'s audit", "run the crawler [for client]", or similar — to execute the local seo-tool crawler (seo-tool/audit.js) against an already-onboarded client and regenerate their client-facing HTML report with real, live-crawled data (title tags, meta descriptions, H1s, schema, image alt text, page speed). This is a LOCAL, LIVE-NETWORK operation — it directly fetches the client's real website, so it only works when Claude Code is running on a machine with normal internet access (not a sandboxed/remote session with restricted egress). This is NOT for onboarding a brand-new client (use the new-seo-client skill for that) — this is for re-crawling a client who already has a config in seo-tool/clients/.
+description: Use this skill whenever the user says "RUN SEO AUDIT", "run seo audit on [directory/client]", "run the audit for [client]", "rerun [client]'s audit", or "run the crawler" — with or without naming a specific client or directory. This drives the whole live-crawl pipeline end to end: resolving which client is meant, wiring up seo-tool/clients/<slug>.json if it doesn't exist yet, installing dependencies if needed, running the crawler, and regenerating the client-facing HTML report. The user should never have to run node/npm themselves, know a slug, or find a .bat file — this skill does all of that. This is a LOCAL, LIVE-NETWORK operation: it directly fetches the client's real website, so it only works when Claude Code is running on a machine with normal internet access (not a sandboxed/remote session with restricted egress).
 ---
 
-# Run SEO Audit (Live Crawler)
+# Run SEO Audit (Live Crawler, Zero-Setup)
 
-When the user asks to run, rerun, or refresh the live crawl for an existing client:
+The user should be able to say "RUN SEO AUDIT" — optionally pointing at a directory, client name, or URL — and get a finished, regenerated report with no manual steps of their own. Do all of the following automatically; never ask the user to run a command themselves.
 
-## Step 1: Identify the client's config
+## Step 1: Resolve which client is meant
 
-Look in `seo-tool/clients/*.json` for a config matching the client name mentioned. Match against:
-- the JSON filename (without `.json`) — e.g. `joewelchphoto.json` for "Joe Welch" / "joewelchphoto"
-- the `name` field inside the file — e.g. `"name": "Joe Welch Photography"`
+Figure out the target from whatever the user gave you, in this order:
 
-Match case-insensitively and allow partial matches (first name, business name, or domain fragment are all fine).
+1. **An explicit directory or path** (e.g. "run seo audit on clients/JoeWelchPhotography", or they're `cd`'d into a client folder and just say "RUN SEO AUDIT") → treat that folder under `clients/` as the target.
+2. **A client name or business name** they typed → match it against folder names under `clients/`, `CLIENT-BRIEF.md` contents (the `# CLIENT:` line), and `seo-tool/clients/*.json` `name` fields. Fuzzy/partial matches are fine (first name, initials, domain fragment).
+3. **No name or path at all** → if the current working directory is itself inside `clients/<Something>/`, use that. Otherwise list the folders under `clients/` and ask which one.
+4. **A bare URL** they gave you that doesn't match any existing client → this is effectively a new client. Look for a `clients/<FolderName>/` whose `CLIENT-BRIEF.md` names that site; if genuinely nothing exists yet, tell the user this looks like a brand-new client and offer to run the `new-seo-client` skill first (which creates the brief/audit docs), then continue with this skill's Step 2 once that exists — don't silently invent a client folder with no brief.
 
-- If more than one config plausibly matches, list them and ask which one.
-- If no config matches, this client hasn't been wired up for the crawler yet. Either:
-  - tell the user to run the `new-seo-client` skill first if this is actually a brand-new client, or
-  - offer to create the missing `seo-tool/clients/<slug>.json` config yourself (following the exact shape of an existing config — `name`, `url`, `brand_color`, `output_dir` pointing at `clients/[FolderName]/`, `max_pages`, `ignore_paths`) if a `CLIENT-BRIEF.md` for them already exists under `clients/`.
+Do not ask the user to disambiguate anything you can figure out yourself from folder names, briefs, or configs — only ask if it's genuinely ambiguous (e.g. two clients with very similar names) or truly unresolvable.
 
-## Step 2: Run the crawler
+## Step 2: Make sure the crawler config exists — create it if not
+
+Look for `seo-tool/clients/<slug>.json` where `<slug>` is a filesystem-safe lowercase version of the client (match against existing configs' `name` field first, per Step 1).
+
+**If it already exists**, use it as-is.
+
+**If it doesn't exist yet** (client was onboarded via `new-seo-client` but never wired up for the crawler, or this is the first live run), create it yourself — do not ask the user to do this:
+- `name`: the business name from `CLIENT-BRIEF.md`
+- `url`: the client's website from `CLIENT-BRIEF.md`
+- `brand_color`: reuse a color already associated with this client if one is visible anywhere (e.g. in an existing HTML report's CSS); otherwise pick a reasonable default distinct from other clients' colors
+- `output_dir`: the absolute path to `clients/<FolderName>` — match the exact path convention already used by sibling configs in `seo-tool/clients/*.json` (they point at this machine's real local path, e.g. `C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/<FolderName>`)
+- `max_pages`: `60` (matches existing configs)
+- `ignore_paths`: `["/wp-admin/", "/wp-content/uploads/", "?", "#"]` (matches existing configs)
+
+Pick a `<slug>` filename consistent with existing ones (lowercase, no spaces — e.g. `joewelchphoto.json`, `lawnace.json`).
+
+## Step 3: Make sure dependencies are installed
+
+Check whether `seo-tool/node_modules/` exists. If not, run `npm install` inside `seo-tool/` first, silently, before running the crawler.
+
+## Step 4: Run the crawler yourself
 
 From the `seo-tool/` directory, run:
 
@@ -28,24 +46,23 @@ From the `seo-tool/` directory, run:
 node audit.js <slug>
 ```
 
-where `<slug>` is the JSON filename without `.json` (e.g. `node audit.js joewelchphoto`).
+Run this directly (not by shelling out to a `.bat` file) so you see the real console output and can catch and explain any error immediately, rather than the user having to go find and interpret it themselves.
 
-- If `node_modules` doesn't exist in `seo-tool/` yet, run `npm install` there first.
-- A matching `run-audit-<slug>.bat` file (if present) does the same thing and also auto-opens the resulting report — prefer running `node audit.js <slug>` directly instead when you want to see console output and catch errors inline, since a `.bat` run hides that from Claude Code.
-- If Google Search Console credentials are configured (`gsc-auth.js` / `gsc.js` in `seo-tool/`), the crawler may also pull live performance metrics — let it run as normal; don't skip that step.
+If Google Search Console credentials are already configured (`gsc-auth.js` / `gsc.js` in `seo-tool/`), let the crawler pull live performance metrics as normal — don't skip or disable that.
 
-## Step 3: Report results
+## Step 5: Report results — don't make the user go look
 
-- Confirm the crawl completed and name the exact HTML file it (re)generated, under `clients/[FolderName]/`
-- Report the new/updated SEO Health Score if the console output printed one
-- Point the user to the file (or open it) so they can review it
-- If the crawl fails (site unreachable, timeout, parse error, missing dependency), report the exact error — don't guess or paper over it
+- State plainly that the audit ran, name the exact regenerated HTML file and its path under `clients/<FolderName>/`
+- Report the SEO Health Score the crawler printed
+- Open the report for them if you're able to, or give the direct path
+- If it failed, explain exactly why (site unreachable, timeout, missing dependency, bad config) — never leave the user to go dig through a terminal to find out what happened
 
-## Step 4: Reconcile with existing docs (ask first)
+## Step 6: Reconcile with existing docs (ask first)
 
-If `CLIENT-BRIEF.md` or the client's `[INITIALS]-SEO-AUDIT-*.md` contains "Pending" markers or notes about a blocked/incomplete live crawl (common right after onboarding from an environment without live network access), ask the user whether they'd like those files updated now with the real data the crawler just pulled, rather than doing it unprompted.
+If `CLIENT-BRIEF.md` or the audit `.md` has "Pending" markers or notes about a previously blocked/incomplete crawl, ask whether the user wants those updated now with the real data just pulled — don't rewrite those files unprompted.
 
 ## Notes
 
-- This skill's whole point is running somewhere with real internet access to the client's site — it cannot succeed in a remote/sandboxed session where outbound access to that domain is blocked. If a crawl attempt fails specifically with a connection/egress error, say so plainly rather than retrying repeatedly.
-- This does not touch `CLIENT-BRIEF.md` or write a new audit `.md` — for onboarding a brand-new client end-to-end, use `new-seo-client` instead.
+- The entire point of this skill is that the user never types `node`, `npm`, or a filename — if you find yourself about to tell them to run something themselves, stop and run it yourself instead (via Bash/PowerShell), unless it's something only they can do (e.g. approving a permission prompt).
+- This only works with real internet access to the client's live site. If a crawl attempt fails specifically with a connection/egress error (as opposed to a bug in the crawler or config), say so plainly rather than retrying repeatedly — that means the current session/environment can't reach the site, not that something is broken.
+- This skill does not itself write `CLIENT-BRIEF.md` or the audit `.md` for a brand-new client — for onboarding a brand-new client end-to-end, use `new-seo-client`. This skill picks up from there (or from any already-onboarded client) and handles everything crawler-related.
