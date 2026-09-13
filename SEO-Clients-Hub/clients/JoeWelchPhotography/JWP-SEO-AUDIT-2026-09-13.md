@@ -6,6 +6,8 @@
 **Auditor:** Parts of Practice (richard@partsofpractice.com)
 **Platform:** Not directly confirmed (see Technical SEO Analysis)
 
+**Rerun log:** Re-attempted on 2026-09-13 (same day) — direct crawl of joewelchphoto.com is still blocked by network egress in this environment (confirmed via both `curl` and the WebFetch tool). Search-index findings were re-checked and are unchanged, with three new details folded in below: a `/portfolio/` page, two publicly listed phone numbers (Broward: 954-695-8730; toll-free/Caribbean: 1-877-253-8611), and the business's origin as "The Elevated Photography Company" (founded 2004, a mast-mounted aerial photography predecessor to the current business). None of this changes the Health Score or the two critical findings.
+
 ---
 
 ## 1. Overall SEO Health Score: 58 / 100
@@ -252,7 +254,8 @@
 *Note: Confirm the exact legal business name, address, and phone number directly with the client before publishing — none of these were independently verified in this pass — and replace `sameAs` with the client's actual, confirmed profile URLs.*
 
 ### Additional Notes
-- **Data sources for this pass:** indexed search results, cached page titles/URLs, and public third-party listings (Yelp, LinkedIn, Instagram, competitor roundup articles). Direct crawling of joewelchphoto.com (page speed, meta descriptions, H1s, image alt text, schema, robots.txt/sitemap.xml) was blocked by network egress in the environment this audit was first drafted in.
+- **Data sources for this pass:** indexed search results, cached page titles/URLs, and public third-party listings (Yelp, LinkedIn, Instagram, competitor roundup articles). Direct crawling of joewelchphoto.com (page speed, meta descriptions, H1s, image alt text, schema, robots.txt/sitemap.xml) was blocked by network egress in the environment this audit was first drafted in, and remained blocked on a same-day retry (see Rerun log above).
+- **Additional details found on retry:** a `/portfolio/` page exists and should be added to the crawl/page inventory; two publicly listed phone numbers (Broward: 954-695-8730; toll-free/Caribbean: 1-877-253-8611) should be checked against GBP/citation NAP data; the business's origin as "The Elevated Photography Company" (founded 2004) could be a genuine E-E-A-T/founder-story asset worth surfacing on the About page if it isn't already prominent.
 - **To complete the technical layer:** run `seo-tool/run-audit-joewelchphoto.bat` from a machine with normal internet access — it crawls the live site with `audit.js` and regenerates `Joe-Welch-Photography-SEO-Audit-[date].html` with real, page-by-page data (title/meta/H1/schema/alt-text checks) in place of the "pending" markers used in this draft.
 - **Recommended tools for ongoing monitoring:** Google Search Console (verify site), PageSpeed Insights / Lighthouse, Google's Mobile-Friendly Test, and the Rich Results structured-data test.
 - **Standing flag:** the joewelchphotography.com brand collision should be re-checked each audit cycle until schema and citation work has had time to disambiguate the two entities in search results.
