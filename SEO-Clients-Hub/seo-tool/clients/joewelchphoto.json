@@ -1,0 +1,8 @@
+{
+  "name": "Joe Welch Photography",
+  "url": "https://joewelchphoto.com",
+  "brand_color": "#0E6E76",
+  "output_dir": "C:/Users/richa/Documents/Claude Projects/SEO-Clients-Hub/clients/JoeWelchPhotography",
+  "max_pages": 60,
+  "ignore_paths": ["/wp-admin/", "/wp-content/uploads/", "?", "#"]
+}

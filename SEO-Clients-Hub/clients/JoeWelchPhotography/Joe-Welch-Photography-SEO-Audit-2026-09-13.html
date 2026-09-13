@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Joe Welch Photography — September 13, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #0E6E76; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; flex-wrap: wrap; }
+  .cover-meta-item { flex: 1; min-width: 130px; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; margin-bottom: 10px; }
+  .cover-meta-item:last-child { border: none; margin-right: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 20px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Agency Switcher ── */
+  .agency-switcher { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+  .agency-switcher label { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .5; }
+  .agency-switcher select { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: white; font-size: 11px; padding: 3px 8px; border-radius: 6px; cursor: pointer; appearance: none; -webkit-appearance: none; }
+  .agency-switcher select option { background: #0E6E76; color: white; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #0E6E76; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #0E6E76; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Box ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; gap: 16px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; text-align: right; white-space: nowrap; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority Badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Finding Cards ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; flex-wrap: wrap; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #0E6E76; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .status-cell.pending { color: #94a3b8; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+  .pending-text { color: #94a3b8; font-weight: 600; font-style: italic; }
+
+  /* ── Score Trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick Wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #0E6E76; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+    .cover { min-height: 96vh; padding: 48px 56px 44px; page-break-after: always; break-after: page; }
+    .agency-switcher { display: none; }
+    .container { padding: 20px 0; }
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+    .finding-card { page-break-inside: avoid; break-inside: avoid; box-shadow: none !important; border: 1px solid #e2e8f0; border-left-width: 4px; padding: 12px 16px; margin-bottom: 8px; }
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #0E6E76 !important; font-size: 10px; }
+    .report-footer { margin-top: 24px; padding: 16px 0 8px; }
+    tr:hover td { background: transparent !important; }
+    .qw-card { box-shadow: none !important; border: 1px solid #e2e8f0; border-top-width: 3px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div>
+      <div class="cover-agency" id="agencyName">Parts of Practice &bull; SEO Audit</div>
+      <div class="agency-switcher">
+        <label>Prepared by</label>
+        <select id="agencySelect" onchange="switchAgency(this.value)">
+          <option value="Start Advertising">Start Advertising</option>
+          <option value="GroupRB Marketing">GroupRB Marketing</option>
+          <option value="Parts of Practice" selected>Parts of Practice</option>
+        </select>
+      </div>
+    </div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">58</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Needs Work</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Joe Welch Photography</div>
+    <div class="cover-sub">https://joewelchphoto.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">September 13, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Identified</div><div class="cm-val">13</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">2</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Live Technical Crawl</div><div class="cm-val">Pending</div></div>
+    </div>
+  </div>
+  <div class="cover-note"><strong>Score note:</strong> This score weighs heavily on two unresolved structural issues — a brand-name collision with an unrelated business, and duplicate/legacy URLs competing for the same keyword — with moderate deductions for title-tag and local-citation inconsistencies. Page speed, schema, and image alt text are marked "pending" rather than scored, because direct crawling of joewelchphoto.com was blocked by network egress in the environment this pass was drafted in. Run <code>seo-tool/run-audit-joewelchphoto.bat</code> locally to complete the live crawl and refine this score.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num bad">2</div>
+      <div class="snap-label">Critical Issues Found</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">3</div>
+      <div class="snap-label">Moderate Issues Found</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">2</div>
+      <div class="snap-label">Growth Opportunities</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">13</div>
+      <div class="snap-label">Pages Identified</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">2</div>
+      <div class="snap-label">Duplicate / Legacy URLs</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">1</div>
+      <div class="snap-label">Third-Party Listing Mismatches</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">0</div>
+      <div class="snap-label">"Best Of Miami" Roundup Mentions</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">5</div>
+      <div class="snap-label">Technical Items Pending Live Crawl</div>
+    </div>
+  </div>
+
+  <!-- QUICK WINS -->
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Medium">Medium effort</span>
+          <span class="qw-badge" style="background:#fee2e2;color:#b91c1c">Critical impact</span>
+        </div>
+        <div class="qw-action">Add schema to disambiguate from joewelchphotography.com</div>
+        <div class="qw-detail" style="margin-top:6px">A separate, unrelated photographer operates at a near-identical domain. LocalBusiness/Person schema naming the specific specialty and service area helps Google — and clients — tell the two apart.</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#fee2e2;color:#b91c1c">High impact</span>
+        </div>
+        <div class="qw-action">301-redirect the duplicate real-estate-photography.html</div>
+        <div class="qw-detail" style="margin-top:6px">Two live URLs share the identical title and target keyword. Redirect the legacy .html version into /residential-real-estate-photography/ and set a canonical tag.</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Rename &amp; redirect hdr-photography.html</div>
+        <div class="qw-detail" style="margin-top:6px">This URL's slug says "HDR" but the page is actually about vacation rental photography. Move it to /vacation-rental-photography/ with a 301 from the old slug.</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Standardize the title-tag formula site-wide</div>
+        <div class="qw-detail" style="margin-top:6px">Nearly every title repeats a long, inconsistently abbreviated city list ("Bch" vs. "Beach," "Ft. Laud" vs. "Ft. Lauderdale"). Use one formula, keep it under ~60 characters, and move full geography into the meta description.</div>
+      </div>
+
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Reconcile the Yelp listing's city with the site</div>
+        <div class="qw-detail" style="margin-top:6px">Yelp surfaces the business under Pompano Beach, FL, while the site leads with Miami-Dade. Confirm the primary address and make every listing agree.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AUDIT SUMMARY -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val warn">58 / 100 &mdash; Needs Work</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Brand/entity confusion with a similarly named competitor</span>
+        <span class="sr-val bad">Critical, unresolved</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Pages with duplicate or mismatched URLs</span>
+        <span class="sr-val bad">2 of 13</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Pages affected by title-tag inconsistency</span>
+        <span class="sr-val warn">4+ of 13</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Third-party listings needing reconciliation</span>
+        <span class="sr-val warn">1 (Yelp)</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Mentions in local "best of" photographer roundups checked</span>
+        <span class="sr-val warn">0 of 3</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Technical elements pending live crawl verification</span>
+        <span class="sr-val warn">5 (meta desc, H1s, schema, page speed, alt text)</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> The two critical issues here are structural, not cosmetic — an unresolved brand-name collision and a live duplicate URL are both actively working against search visibility today. Everything else found (title-tag polish, a citation mismatch, missing "best of" mentions) is fixable in under a week. The technical layer — page speed, schema, alt text — is marked pending because this pass couldn't reach the live site directly; run the local crawler in this repo to fill those in and refine the score.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  <div class="section">
+    <div class="section-title">Findings by Page (6 items need attention)</div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">Sitewide / Brand entity</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority critical">Critical</span>
+          <span class="finding-label">Name collides with an unrelated business at joewelchphotography.com</span>
+        </div>
+        <div class="finding-why">Search queries for "Joe Welch Photography" return both businesses with no disambiguating schema or copy, splitting branded-search demand.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-critical">
+      <div class="finding-url">/real-estate-photography.html</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority critical">Critical</span>
+          <span class="finding-label">Duplicate of /residential-real-estate-photography/ — same title, same target keyword</span>
+        </div>
+        <div class="finding-why">Two live, indexed URLs competing for one query split link equity and force Google to guess which to rank.</div>
+      </div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority medium">Medium</span>
+          <span class="finding-label">Legacy .html URL still live alongside the site's clean-URL structure</span>
+        </div>
+        <div class="finding-why">Signals an incomplete platform migration; redirect it rather than leaving both versions indexed.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/hdr-photography.html</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority medium">Medium</span>
+          <span class="finding-label">URL slug ("hdr") no longer matches its vacation-rental content</span>
+        </div>
+        <div class="finding-why">The page now targets "Vacation Rentals Photography," but the URL still reads as an HDR-editing-technique page.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/commercial-photography/, /construction-photography/, /resort-photography/, /dusk-twilight-photography/</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority medium">Medium</span>
+          <span class="finding-label">Title tags repeat a long geo string with inconsistent abbreviations</span>
+        </div>
+        <div class="finding-why">"Bch" vs. "Beach" and "Ft. Laud" vs. "Ft. Lauderdale" appear inconsistently across these titles, and several run long enough to risk truncation in search results.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">/pricing/</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority low">Low</span>
+          <span class="finding-label">Title tag reads as a run-on sentence</span>
+        </div>
+        <div class="finding-why">"Photo Packages &amp; Pricing or Call for Quote, Joe Welch Photography, S. Florida" — tighten to a clean, front-loaded title.</div>
+      </div>
+    </div>
+
+    <div class="finding-card has-warn">
+      <div class="finding-url">Yelp listing (yelp.com/biz/joe-welch-photography-pompano-beach)</div>
+      <div class="finding-item">
+        <div class="finding-top">
+          <span class="priority medium">Medium</span>
+          <span class="finding-label">Listed city (Pompano Beach) doesn't match the site's stated Miami-Dade-led service area</span>
+        </div>
+        <div class="finding-why">Inconsistent NAP/service-area statements across citations are a documented drag on local-pack ranking.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ALL PAGES TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <p style="font-size:11.5px;color:#94a3b8;margin-bottom:12px;line-height:1.6">Title tags below are confirmed via indexed search results. Meta description, H1, schema, and image-alt columns are marked <em>Pending</em> because direct crawling wasn't reachable from the environment this pass was drafted in — run the local crawler to fill these in with real data.</p>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">H1</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="status-cell pending">&#9711;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/" target="_blank">/</a></td>
+          <td>Not confirmed — homepage title not returned by search index</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell pending">&#9711;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/about/" target="_blank">/about/</a></td>
+          <td>About Joe Welch Photography | Real Estate &amp; Aerial Photography | Miami, S. Florida</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell pending">&#9711;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/contact/" target="_blank">/contact/</a></td>
+          <td>Contact Joe Welch Photography, Serving Florida &amp; the Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/pricing/" target="_blank">/pricing/</a></td>
+          <td>Photo Packages &amp; Pricing or Call for Quote, Joe Welch Photography, S. Florida</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell pending">&#9711;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/sitemap/" target="_blank">/sitemap/</a></td>
+          <td>Sitemap</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell critical">&#9888;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/residential-real-estate-photography/" target="_blank">/residential-real-estate-photography/</a></td>
+          <td>Residential Real Estate Photographer | Miami-Dade, Broward, Palm Beach, Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell critical">&#9888;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/real-estate-photography.html" target="_blank">/real-estate-photography.html</a></td>
+          <td><span class="missing">Duplicate:</span> Residential Real Estate Photographer | Miami-Dade, Broward, Palm Beach, Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/commercial-photography/" target="_blank">/commercial-photography/</a></td>
+          <td>Commercial Photographer | Miami, Ft. Lauderdale, Palm Beach &amp; Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/construction-photography/" target="_blank">/construction-photography/</a></td>
+          <td>Construction Photographer | Miami, Ft. Lauderdale, Palm Beach &amp; Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/resort-photography/" target="_blank">/resort-photography/</a></td>
+          <td>Hotel &amp; Resort Photographer | Miami, Ft. Lauderdale, Palm Bch &amp; Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell pending">&#9711;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/aerial-photography/" target="_blank">/aerial-photography/</a></td>
+          <td>Aerial/Drone Photographer | Miami-Dade, Ft. Lauderdale, Palm Beach &amp; Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/dusk-twilight-photography/" target="_blank">/dusk-twilight-photography/</a></td>
+          <td>Dusk Photographer for Real Estate | Miami, Ft. Laud, Palm Bch, FL &amp; Caribbean</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+        <tr>
+          <td class="status-cell warn">&#9651;</td>
+          <td class="url-cell"><a href="https://joewelchphoto.com/hdr-photography.html" target="_blank">/hdr-photography.html</a></td>
+          <td>Vacation Rentals Photography, Miami &amp; Palm Beach Homes for Rent</td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+          <td class="center"><span class="pending-text">Pending</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="report-footer">
+  Prepared by <span id="footerAgency">Parts of Practice</span> &bull; Joe Welch Photography SEO Audit &bull; September 13, 2026<br>
+  Questions? Contact richard@partsofpractice.com
+</div>
+
+<script>
+  const AGENCIES = {
+    "Start Advertising":  {},
+    "GroupRB Marketing":  {},
+    "Parts of Practice":  {}
+  };
+
+  function switchAgency(name) {
+    document.getElementById('agencyName').textContent = name + ' • SEO Audit';
+    document.getElementById('footerAgency').textContent = name;
+    try { localStorage.setItem('jwp_audit_agency', name); } catch(e) {}
+  }
+
+  (function init() {
+    let saved;
+    try { saved = localStorage.getItem('jwp_audit_agency'); } catch(e) {}
+    if (saved && AGENCIES[saved]) {
+      document.getElementById('agencySelect').value = saved;
+      switchAgency(saved);
+    }
+  })();
+</script>
+
+</body>
+</html>
