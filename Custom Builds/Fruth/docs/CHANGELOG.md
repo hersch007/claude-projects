@@ -53,7 +53,17 @@ New third plugin, built as an independent module attaching to Core exactly the w
 
 ## Quote Builder Core (`sales-quote-system`)
 
-### 8.9.16 (Fruth) — latest
+### 8.9.17 (Fruth) — latest
+Client request: Zipper is no longer an active product line, remove it from the Quote Builder.
+
+- **Hidden, not deleted** (per client direction, for reversibility and to avoid any risk to already-saved Zipper quotes): removed the "Zipper" button from the Quote Builder's product switcher (`sqc-product-switch`) -- Tubing and In-Line BSB are the only reachable tabs now. `calculateZipper()`, its input container (`#inputs-zipper`), and all of its data (`zipperWidthBuckets`, `zipperQtyPerHour`, `laborRates.zipperExtrusion`/`zipperConversion`, the `defaults.zipper` block, Zipper-labeled formula options) are untouched in the code and database.
+- Product-switch grid CSS changed from a 3-column to a 2-column layout to match.
+- **Data Editor**: `zipperWidthBuckets` and `zipperQtyPerHour` -- the two lookup tables that only exist to support Zipper -- no longer render as tabs/tables in either the wp-admin Pricing Tables page or the front-end/embedded `[sqs_pricing_data_admin]` view (new `sqs_pricing_calculator_filter_hidden_data_rows()` helper). Their rows are untouched in `wp_sqs_pricing_data`; the Save-All handlers already only write keys present in the submitted form, so omitting them from the UI cannot wipe their stored values.
+- Portal tile description changed from "Quote pricing for Tubing, BSB & Zipper" to "Quote pricing for Tubing & BSB".
+- No changes to Tubing/In-Line calculations, or to any shared table (Setup Details, Production Rates, Packaging, Resin Prices, Formula Costs). Regression suite re-run clean (81/81) -- the Zipper assertions in that suite still pass because `calculateZipper()` itself is unchanged; they exercise the same code, just no longer reachable through the tab UI.
+- **Reversing this later** is a matter of restoring the one button and the two Data Editor rows -- no data was deleted or migrated.
+
+### 8.9.16 (Fruth)
 Bug fix, found while manually testing 8.9.15's pricing update against the live app: a Tubing quote (FCR-1000, 24"x300ft, qty 20) showed Total Sales $1,317.53 in the app against an expected $1,402.08. Root cause was **not** a pricing bug -- **Resin Cost/LBS** only auto-fills from the Formula dropdown when the dropdown actually fires a `change` event (`syncResinCostFromFormula()`). Every new Tubing/In-Line/Zipper quote pre-loads with a formula *already selected* (from `DATA.defaults`), so if the rep never touches that dropdown, Resin Cost/LBS silently keeps its own separate, unrelated default value (Tubing's was `1.04`, pre-dating the 8.9.15 update, instead of FCR-1000's current $1.1278) rather than the formula's real cost -- producing a real-looking but wrong total with no indication anything was off.
 
 - **Fixed**: new/reset quotes now start with Formula **unselected** ("&mdash; Select Formula &mdash;") instead of pre-filled, and Resin Cost/LBS starts blank instead of carrying a stale default. Picking any formula is now always a genuine `change` event, so the correct cost auto-fills every time -- the underlying auto-fill logic (`syncResinCostFromFormula`) is unchanged, it just now actually fires on a fresh quote.

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quote Builder
  * Description: Quote Builder — database-backed pricing calculator. Shortcodes: [sqs_portal] (Portal), [sqs_pricing_calculator] (Quotes), [sqs_pricing_data_admin] (Editor).
- * Version: 8.9.16
+ * Version: 8.9.17
  * Author: Start Advertising | RH Brashear
  */
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Keep this in sync with the "Version:" line in the header comment above --
 // tests/check-plugin-versions.js enforces this automatically on every run.
-define( 'SQS_VERSION', '8.9.16' );
+define( 'SQS_VERSION', '8.9.17' );
 define( 'SQS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SQS_DEFAULT_DATA_B64', 'eyJwYWNrYWdpbmciOnsiTm8gQmFncyI6MCwiU2luZ2xlIEJhZyI6MC4wMiwiRG91YmxlIEJhZyI6MC4wMywiVHJpcGxlIEJhZyI6MC4wNX0sInJlc2luRGVuc2l0eSI6eyJMRFBFIjowLjkyNCwiT2N0ZW5lIjowLjkyLCJOeWxvbiI6MS4xMywiQWRmbGV4IChQb2x5cHJvKSI6MC44OSwiVFItMTMwIChIRFBFKSI6MC45MzcsIkJsYWNrIENvbmR1Y3RpdmUiOjEuMSwiQmlvbWUgMzAwIjoxLjMyLCJBY2xhciI6Mi4wNzUzfSwiZm9ybXVsYUNvc3RzIjp7IkNGQi0xMDAwIjoxLjA4LCJDRkItMjUwMChDRUxPKSI6MS4xNiwiQ0ZCLTUwMDAoTnlsb24pIjoyLCJGQ1ItNjAwMChOeWxvbikiOjIsIkZDUi0xMDAwIjoxLjEyNzgsIkZDUi0xMDIwKEZlbG8pIjoxLjQ1NDYsIkZJUy0xMDAwIjowLjc3NjgsIjc1JSBSZXBybyI6MC40NywiRkNSLTEwMTAgKFppcHBlcikiOjEuMTQ1LCJGQ1ItNTAxMCAoU3RlZGltKSI6MS4xOTI1LCJGQ1ItNjAxMChPQVMgTnlsb24pIjoyLjgxfSwiZm9ybXVsYU9wdGlvbnMiOlsiQ0ZCLTEwMDAiLCJDRkItMjUwMChDRUxPKSIsIkNGQi01MDAwKE55bG9uKSIsIkZDUi02MDAwKE55bG9uKSIsIkZDUi0xMDAwIiwiRkNSLTEwMjAoRmVsbykiLCJGSVMtMTAwMCIsIjc1JSBSZXBybyIsIkZDUi0xMDEwIChaaXBwZXIpIiwiRklTLTUxMDBSRCAoUmVkIFBQKSIsIkZDUi01MDEwIChTdGVkaW0pIiwiRkNSLTYwMTAoT0FTIE55bG9uKSJdLCJmaWxtVHlwZXMiOlsiUEUvUFAgQ2xlYXIiLCJQRS9QUCBDb2xvciAoVGludCkiLCJQRS9QUCBDb2xvciAoT3BhcXVlKSIsIk55bG9uIiwiQmxhY2sgQ29uZHVjdGl2ZSIsIkhEUEUvTURQRSIsIlNwZWNpYWx0eSJdLCJyZXNpblR5cGVzIjpbIkxEUEUiLCJPY3RlbmUiLCJOeWxvbiIsIkFkZmxleCAoUG9seXBybykiLCJUUi0xMzAgKEhEUEUpIiwiQmxhY2sgQ29uZHVjdGl2ZSIsIkJpb21lIDMwMCIsIkFjbGFyIl0sInNldHVwV2lkdGhCdWNrZXRzIjpbMiw2LDEwLDE2LDI0LDM2LDQ4LDYwXSwicHJvZFdpZHRoQnVja2V0cyI6WzEsMiw0LDYsOCwxMCwxMiwxNiwxOCwyNCwzMCwzNiw0OCw2MF0sInppcHBlcldpZHRoQnVja2V0cyI6WzIsNCw2LDgsMTAsMTIsMTQsMTYsMTgsMjAsMjQsMjgsMzAsMzRdLCJzZXR1cE11bHRpcGxpZXIiOnsiUEUvUFAgQ2xlYXIiOjEsIlBFL1BQIENvbG9yIChUaW50KSI6MiwiUEUvUFAgQ29sb3IgKE9wYXF1ZSkiOjMsIk55bG9uIjoxLCJCbGFjayBDb25kdWN0aXZlIjozLCJIRFBFL01EUEUiOjIsIlNwZWNpYWx0eSI6NH0sInNldHVwSG91cnMiOnsiUEUvUFAgQ2xlYXIiOjAuNSwiUEUvUFAgQ29sb3IgKFRpbnQpIjoxLCJQRS9QUCBDb2xvciAoT3BhcXVlKSI6MS41LCJOeWxvbiI6MC41LCJCbGFjayBDb25kdWN0aXZlIjoxLjUsIkhEUEUvTURQRSI6MSwiU3BlY2lhbHR5IjoyfSwic2V0dXBMYnNUYWJsZSI6eyJQRS9QUCBDbGVhciI6WzEwLDIwLDMwLDQwLDc1LDkwLDE1MCwyNTBdLCJQRS9QUCBDb2xvciAoVGludCkiOlsyMCw0MCw2MCw4MCwxNTAsMTgwLDMwMCw1MDBdLCJQRS9QUCBDb2xvciAoT3BhcXVlKSI6WzMwLDYwLDkwLDEyMCwyMjUsMjcwLDQ1MCw3NTBdLCJOeWxvbiI6WzEwLDIwLDMwLDEwMCwyMDAsMjUwLCJOQSIsIk5BIl0sIkJsYWNrIENvbmR1Y3RpdmUiOlszMCw2MCw5MCwxMjAsMjI1LDI3MCw0NTAsNzUwXSwiSERQRS9NRFBFIjpbMjAsNDAsNjAsODAsMTUwLDE4MCwzMDAsNTAwXSwiU3BlY2lhbHR5IjpbNDAsODAsMTIwLDE2MCwzMDAsMzYwLDYwMCwxMDAwXX0sInNldHVwT3BzRXh0cnVzaW9uIjpbMSwxLDEsMSwxLjUsMiwyLDJdLCJpbmxpbmVBZGRpdGlvbmFsT3BzIjpbMSwxLDEsMSwxLDEsMSwiTi9BIl0sIm1pbmltdW1TZXR1cEZlZXMiOls3NSw3NSwxMDAsMTAwLDEwMCwxMDAsMjAwLDMwMF0sImV4dHJ1c2lvblJhdGVUYWJsZSI6eyIwLjAwMiI6WzMuNzUsNy41LDE1LDIwLDI1LDMwLDQwLDUwLDcwLDEwMCwxNDAsMTUwLDIwMCwyODBdLCIwLjAwMyI6WzQuMjE4NzUsOC40Mzc1LDE2Ljg3NSwyMi41LDI4LjEyNSwzMy43NSw0NSw1Ni4yNSw3OC43NSwxMTIuNSwxNTcuNSwxNjguNzUsMjI1LDMxNV0sIjAuMDA0IjpbNC42ODc1LDkuMzc1LDE4Ljc1LDI1LDMxLjI1LDM3LjUsNTAsNjIuNSw4Ny41LDEyNSwxNzUsMTg3LjUsMjUwLDM1MF0sIjAuMDA1IjpbNS4xMDExMDI5NDExNzY0NzEsMTAuMjAyMjA1ODgyMzUyOTQyLDIwLjQwNDQxMTc2NDcwNTg4NCwyNy4yMDU4ODIzNTI5NDExNzgsMzQuMDA3MzUyOTQxMTc2NDcsNDAuODA4ODIzNTI5NDExNzcsNTQuNDExNzY0NzA1ODgyMzU1LDY4LjAxNDcwNTg4MjM1Mjk0LDk1LjIyMDU4ODIzNTI5NDEyLDEzNi4wMjk0MTE3NjQ3MDU4OCwxOTAuNDQxMTc2NDcwNTg4MjMsMjA0LjA0NDExNzY0NzA1ODg0LDI3Mi4wNTg4MjM1Mjk0MTE3NywzNzVdLCIwLjAwNiI6WzUuNTE0NzA1ODgyMzUyOTQxLDExLjAyOTQxMTc2NDcwNTg4MiwyMi4wNTg4MjM1Mjk0MTE3NjQsMjkuNDExNzY0NzA1ODgyMzU1LDM2Ljc2NDcwNTg4MjM1Mjk0LDQ0LjExNzY0NzA1ODgyMzUzLDU4LjgyMzUyOTQxMTc2NDcxLDczLjUyOTQxMTc2NDcwNTg4LDEwMi45NDExNzY0NzA1ODgyMywxNDcuMDU4ODIzNTI5NDExNzcsMjA1Ljg4MjM1Mjk0MTE3NjQ2LDIyMC41ODgyMzUyOTQxMTc2NSwyOTQuMTE3NjQ3MDU4ODIzNTQsNDAwXX0sImlubGluZVJhdGVUYWJsZSI6eyIwLjAwMiI6WzMuNzUsNy41LDE1LDIwLDI1LDMwLDQwLDUwLDcwLDEwMCwxNDAsMTUwLDIwMCwyODBdLCIwLjAwMyI6WzQuMjE4NzUsOC40Mzc1LDE2Ljg3NSwyMi41LDI4LjEyNSwzMy43NSw0NSw1Ni4yNSw3OC43NSwxMTIuNSwxNTcuNSwxNjguNzUsMjI1LDMxNV0sIjAuMDA0IjpbNC42ODc1LDkuMzc1LDE4Ljc1LDI1LDMxLjI1LDM3LjUsNTAsNjIuNSw4Ny41LDEyNSwxNzUsMTg3LjUsMjUwLDM1MF0sIjAuMDA1IjpbNS4xMDExMDI5NDExNzY0NzEsMTAuMjAyMjA1ODgyMzUyOTQyLDIwLjQwNDQxMTc2NDcwNTg4NCwyNy4yMDU4ODIzNTI5NDExNzgsMzQuMDA3MzUyOTQxMTc2NDcsNDAuODA4ODIzNTI5NDExNzcsNTQuNDExNzY0NzA1ODgyMzU1LDY4LjAxNDcwNTg4MjM1Mjk0LDk1LjIyMDU4ODIzNTI5NDEyLDEzNi4wMjk0MTE3NjQ3MDU4OCwxOTAuNDQxMTc2NDcwNTg4MjMsMjA0LjA0NDExNzY0NzA1ODg0LDI3Mi4wNTg4MjM1Mjk0MTE3NywzNzVdLCIwLjAwNiI6WzUuNTE0NzA1ODgyMzUyOTQxLDExLjAyOTQxMTc2NDcwNTg4MiwyMi4wNTg4MjM1Mjk0MTE3NjQsMjkuNDExNzY0NzA1ODgyMzU1LDM2Ljc2NDcwNTg4MjM1Mjk0LDQ0LjExNzY0NzA1ODgyMzUzLDU4LjgyMzUyOTQxMTc2NDcxLDczLjUyOTQxMTc2NDcwNTg4LDEwMi45NDExNzY0NzA1ODgyMywxNDcuMDU4ODIzNTI5NDExNzcsMjA1Ljg4MjM1Mjk0MTE3NjQ2LDIyMC41ODgyMzUyOTQxMTc2NSwyOTQuMTE3NjQ3MDU4ODIzNTQsNDAwXX0sInppcHBlclF0eVBlckhvdXIiOlsxNTYyLjUsMTg3NSwxODc1LDE1MDAsMTUwMCwxMjUwLDkzNy41LDgxMi41LDgxMi41LDcxMi41LDU5My43NSw1OTMuNzUsNDM3LjUsNDM3LjVdLCJsYWJvclJhdGVzIjp7InR1YmluZyI6MjUsImlubGluZSI6MjMuNzUsInppcHBlckV4dHJ1c2lvbiI6MjUsInppcHBlckNvbnZlcnNpb24iOjIzLjc1fSwiZGVmYXVsdHMiOnsidHViaW5nIjp7ImZpbG1UeXBlIjoiUEUvUFAgQ29sb3IgKFRpbnQpIiwicmVzaW5UeXBlIjoiTERQRSIsImZvcm11bGEiOiJGQ1ItMTAwMCIsIndpZHRoIjo0MCwibGVuZ3RoRnQiOjUwMCwiZ2F1Z2UiOjAuMDA0LCJxdHkiOjEwLCJyZXNpbkNvc3QiOjEuMDQsIm9wZXJhdG9ycyI6MSwic2NyYXBSYXRlIjowLjIsInBhY2thZ2luZyI6IkRvdWJsZSBCYWciLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsInNwZWNpYWx0eUNoYXJnZSI6MCwiY3VzdG9tU2V0dXBDaGFyZ2UiOjAsInByb2ZpdE1hcmdpbiI6MC40LCJ1cGNoYXJnZSI6MC4yLCJ0YXJnZXRVbml0UHJpY2UiOjgxLjE1LCJvdmVyaGVhZFBjdCI6MC4xNX0sImlubGluZSI6eyJmaWxtVHlwZSI6IlBFL1BQIENvbG9yIChPcGFxdWUpIiwicmVzaW5UeXBlIjoiQWRmbGV4IChQb2x5cHJvKSIsImZvcm11bGEiOiJDRkItMTAwMCIsIndpZHRoIjozMCwibGVuZ3RoSW4iOjM2LCJnYXVnZSI6MC4wMDQsInF0eSI6NTAwMCwicmVzaW5Db3N0IjoxLjkzLCJvcGVyYXRvcnMiOjIuNSwic2NyYXBSYXRlIjowLjIsInBhY2thZ2luZyI6Ik5vIEJhZ3MiLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsImVuY2xvc3VyZUNoYXJnZSI6MCwic3BlY2lhbHR5Q2hhcmdlIjowLCJjdXN0b21TZXR1cENoYXJnZSI6NDUwLCJwcm9maXRNYXJnaW4iOjAuNSwidXBjaGFyZ2UiOjAsInRhcmdldFVuaXRQcmljZSI6NDE5MCwib3ZlcmhlYWRQY3QiOjAuMTV9LCJ6aXBwZXIiOnsiZmlsbVR5cGUiOiJQRS9QUCBDb2xvciAoVGludCkiLCJyZXNpblR5cGUiOiJMRFBFIiwiZm9ybXVsYSI6IkZDUi0xMDAwIiwid2lkdGgiOjEwLCJsZW5ndGhJbiI6MTIsImxpcEluIjoxLCJnYXVnZSI6MC4wMDQsInF0eSI6MTAwMCwicmVzaW5Db3N0IjoxLjM1LCJleHRydXNpb25PcGVyYXRvcnMiOjEsImNvbnZlcnNpb25UeXBlIjoiMXVwIFppcHBlciIsInppcHBlckNvc3RQZXJGdCI6MC4wMSwiY29udmVyc2lvbk9wZXJhdG9ycyI6MiwiZXh0cnVzaW9uU2NyYXBSYXRlIjowLjEsImNvbnZlcnNpb25TY3JhcFJhdGUiOjAuMSwidG90YWxTY3JhcFJhdGUiOjAuMTUsInBhY2thZ2luZyI6IkRvdWJsZSBCYWciLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsImVuY2xvc3VyZUNoYXJnZSI6MCwic3BlY2lhbHR5Q2hhcmdlIjowLCJjdXN0b21FeHRydXNpb25TZXR1cENoYXJnZSI6MCwiY3VzdG9tQ29udmVyc2lvblNldHVwQ2hhcmdlIjowLCJwcm9maXRNYXJnaW4iOjAuNCwiY2xlYW5yb29tVXBjaGFyZ2UiOjAuMSwidGFyZ2V0VW5pdFByaWNlIjo1MDQsIm92ZXJoZWFkUGN0IjowLjE1fX19' );
 
@@ -665,7 +665,7 @@ function sqs_pricing_calculator_portal_shortcode( $atts ) {
         <div class="sqs-portal-bottom">
         <a href="<?php echo esc_url($sales_url);?>" class="sqs-portal-btn sales">
             <div class="sqs-portal-btn-icon">&#128202;</div>
-            <div><span class="sqs-portal-btn-label">Quote Builder</span><span class="sqs-portal-btn-desc">Quote pricing for Tubing, BSB &amp; Zipper</span></div>
+            <div><span class="sqs-portal-btn-label">Quote Builder</span><span class="sqs-portal-btn-desc">Quote pricing for Tubing &amp; BSB</span></div>
         </a>
         <a href="<?php echo esc_url($admin_url);?>" class="sqs-portal-btn admin">
             <div class="sqs-portal-btn-icon">&#9881;</div>
@@ -1179,6 +1179,21 @@ function sqs_pricing_calculator_render_user_accounts_panel( $nonce ) {
     <?php
 }
 
+// Data-key rows to omit from the Data Editor (wp-admin Pricing Tables and the
+// front-end/embedded [sqs_pricing_data_admin] view) now that the Zipper tab is
+// hidden from the Quote Builder. The underlying rows are left in the database
+// untouched -- this only controls what renders as an editable tab/table.
+function sqs_pricing_calculator_hidden_data_keys() {
+    return array( 'zipperWidthBuckets', 'zipperQtyPerHour' );
+}
+
+function sqs_pricing_calculator_filter_hidden_data_rows( $rows ) {
+    $hidden = sqs_pricing_calculator_hidden_data_keys();
+    return array_values( array_filter( $rows, function( $row ) use ( $hidden ) {
+        return ! in_array( $row['data_key'], $hidden, true );
+    } ) );
+}
+
 function sqs_pricing_calculator_admin_notes( $key ) {
     $notes = array(
         'packaging'             => 'Packaging fees used by the calculator.',
@@ -1272,6 +1287,7 @@ function sqs_pricing_calculator_admin_page() {
     }
 
     $rows = $wpdb->get_results( "SELECT data_key, data_label, data_json, updated_at FROM $table ORDER BY id ASC", ARRAY_A );
+    $rows = sqs_pricing_calculator_filter_hidden_data_rows( $rows );
     $all_data = sqs_pricing_calculator_get_data();
     ?>
     <div class="wrap sqs-admin-wrap">
@@ -1713,6 +1729,7 @@ function sqs_pricing_calculator_render_frontend_editor( $message = '', $embedded
     global $wpdb;
     $table = sqs_pricing_calculator_table_name();
     $rows = $wpdb->get_results( "SELECT data_key, data_label, data_json, updated_at FROM $table ORDER BY id ASC", ARRAY_A );
+    $rows = sqs_pricing_calculator_filter_hidden_data_rows( $rows );
     $all_data = sqs_pricing_calculator_get_data();
     sqs_pricing_calculator_frontend_styles();
     ?>
@@ -2315,12 +2332,12 @@ function sqs_pricing_calculator_render( $embedded = false ) {
     }
 
     /* Product switch */
-    .sqs-calc .sqc-product-switch { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:8px; }
+    .sqs-calc .sqc-product-switch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:8px; }
 
     /* Layout */
     .sqs-calc .sqc-bottom-stack { display:grid; gap:12px; }
-    /* product switch stays 3-col */
-    .sqs-calc .sqc-product-switch { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:0; }
+    /* product switch: 2-col (Zipper tab hidden) */
+    .sqs-calc .sqc-product-switch { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:0; }
 
     /* Top pricing grid */
     .sqs-calc .sqc-top-pricing-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:12px; margin-bottom:16px; }
@@ -2770,7 +2787,7 @@ function sqs_pricing_calculator_render( $embedded = false ) {
             <div class="sqc-product-switch" style="margin-bottom:16px;">
                 <button class="sqc-switch-btn sqc-active" data-product="tubing">Tubing</button>
                 <button class="sqc-switch-btn" data-product="inline">In-Line BSB</button>
-                <button class="sqc-switch-btn" data-product="zipper">Zipper</button>
+                <!-- Zipper tab hidden per client request; calculateZipper() and its data are left intact for reversibility. -->
             </div>
             <div class="sqc-section-kicker" style="margin-top:4px;">Inputs</div>
             <div style="font-size:18px;font-weight:800;margin-bottom:12px;" id="inputTitle">Tubing Variables</div>
