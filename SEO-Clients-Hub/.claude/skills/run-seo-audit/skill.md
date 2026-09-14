@@ -38,7 +38,24 @@ Pick a `<slug>` filename consistent with existing ones (lowercase, no spaces —
 
 Check whether `seo-tool/node_modules/` exists. If not, run `npm install` inside `seo-tool/` first, silently, before running the crawler.
 
-## Step 4: Run the crawler yourself
+## Step 4: Determine which provider company this audit runs under
+
+The crawler stamps every report with a "provider" — the agency company issuing it (name, contact email, and letterhead colors on the cover/report). There are four:
+
+| # | Company | Colors | Email |
+|---|---|---|---|
+| 1 | Start Advertising | Red / Black / Grey | RBStart@StartAdvertising.com |
+| 2 | Start Performance | Red / Black / Grey | RBStart@StartPerformance.com |
+| 3 | Parts of Practice | Red / Teal-Aqua | Richard@PartsofPractice.com |
+| 4 | GroupRB | Black / Blue | Richard@GroupRB.com |
+
+This is a real business/billing decision — **always ask the user in chat** which of the four this audit should be prepared under before running the crawler. Never infer it yourself, even if `CLIENT-BRIEF.md`'s "Prepared by" field appears to name one of these companies — that field may be stale or wrong, and getting the letterhead/billing company wrong on a client-facing report is exactly the kind of mistake that needs a human check, not a guess.
+
+Exception: if `seo-tool/clients/<slug>.json` already has a `"provider"` field (a number 1-4 or one of the exact names above) — meaning the user already pinned it for this client on a prior run — use it without asking again, but say which one you're using.
+
+Once you know the answer, you'll feed it to the crawler in Step 5 — don't write it into the client's JSON config yourself unless the user says this client should always use the same provider going forward.
+
+## Step 5: Run the crawler yourself
 
 From the `seo-tool/` directory, run:
 
@@ -48,16 +65,19 @@ node audit.js <slug>
 
 Run this directly (not by shelling out to a `.bat` file) so you see the real console output and can catch and explain any error immediately, rather than the user having to go find and interpret it themselves.
 
+The crawler will first prompt `Which company is this audit being prepared under? ... Enter 1-4:` (skipped if `provider` is pinned in the config per Step 4) — answer it with the number for the provider you determined in Step 4. It will later prompt for performance metrics (`Do you have updated metrics to enter? (y/N)`) — press Enter/answer blank to keep existing data unless the user has new metrics to give you.
+
 If Google Search Console credentials are already configured (`gsc-auth.js` / `gsc.js` in `seo-tool/`), let the crawler pull live performance metrics as normal — don't skip or disable that.
 
-## Step 5: Report results — don't make the user go look
+## Step 6: Report results — don't make the user go look
 
 - State plainly that the audit ran, name the exact regenerated HTML file and its path under `clients/<FolderName>/`
 - Report the SEO Health Score the crawler printed
+- Name which provider company the report was prepared under (from Step 4)
 - Open the report for them if you're able to, or give the direct path
 - If it failed, explain exactly why (site unreachable, timeout, missing dependency, bad config) — never leave the user to go dig through a terminal to find out what happened
 
-## Step 6: Reconcile with existing docs (ask first)
+## Step 7: Reconcile with existing docs (ask first)
 
 If `CLIENT-BRIEF.md` or the audit `.md` has "Pending" markers or notes about a previously blocked/incomplete crawl, ask whether the user wants those updated now with the real data just pulled — don't rewrite those files unprompted.
 

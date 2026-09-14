@@ -24,6 +24,18 @@ const BASE_URL = client.url.replace(/\/$/, '');
 const MAX_PAGES = client.max_pages || 50;
 const IGNORE = client.ignore_paths || [];
 
+// ─── Provider companies (who this audit is prepared/billed under) ─────────────
+// Parts of Practice's colors (navy/amber) are confirmed from its live site and
+// existing client materials (WFC-SEO-Pricing, Karen Hubbars Therapy PDF). The
+// other three are still representative placeholders — swap in exact values
+// if/when they're supplied.
+const PROVIDERS = {
+  '1': { name: 'Start Advertising', email: 'RBStart@StartAdvertising.com', brand: '#C8102E', brand2: '#1A1A1A' },
+  '2': { name: 'Start Performance', email: 'RBStart@StartPerformance.com', brand: '#C8102E', brand2: '#1A1A1A' },
+  '3': { name: 'Parts of Practice', email: 'Richard@PartsofPractice.com', brand: '#003366', brand2: '#f59e0b' },
+  '4': { name: 'GroupRB', email: 'Richard@GroupRB.com', brand: '#0B0B0C', brand2: '#1D4ED8' },
+};
+
 // ─── Crawler ──────────────────────────────────────────────────────────────────
 
 const visited = new Set();
@@ -117,7 +129,14 @@ function analyzePage(url, html) {
   const schemaTypes = schemas.map(s => {
     try {
       const parsed = JSON.parse($(s).html());
-      return parsed['@type'] || 'Unknown';
+      // Many CMS/SEO plugins (e.g. Yoast) nest multiple types under an @graph array
+      // instead of a single top-level @type — unwrap that so type detection isn't just "Unknown".
+      const items = Array.isArray(parsed['@graph']) ? parsed['@graph'] : [parsed];
+      const types = items
+        .map(it => it && it['@type'])
+        .filter(Boolean)
+        .flatMap(t => Array.isArray(t) ? t : [t]);
+      return types.length ? [...new Set(types)].join('+') : 'Unknown';
     } catch { return 'Invalid JSON-LD'; }
   });
   if (schemas.length === 0) issues.push('No JSON-LD schema found');
@@ -273,6 +292,8 @@ function calcScore(results) {
   const noSchema = pages.filter(p => p.schemaTypes.length === 0).length;
   const noCanonical = pages.filter(p => !p.canonical).length;
   const missingAlt = pages.filter(p => p.imagesNoAlt > 0).length;
+  const badTitleLength = pages.filter(p => p.title && (p.titleLen < 30 || p.titleLen > 65)).length;
+  const multipleH1 = pages.filter(p => p.h1Count > 1).length;
   const totalPages = pages.length;
 
   const deduct = (pts, label) => { score -= pts; docked.push({ pts, label }); };
@@ -287,11 +308,21 @@ function calcScore(results) {
   if (noCanonical) deduct(Math.min(8, Math.round((noCanonical / totalPages) * 8)), `${noCanonical} page(s) missing canonical`);
   if (missingAlt) deduct(Math.min(10, Math.round((missingAlt / totalPages) * 10)), `${missingAlt} page(s) have images without alt`);
 
-  // Advisory warning deduction: pages with warnings but no critical issues (-0.5 each, max -15)
-  const warningOnlyPages = pages.filter(p => p.warnings.length > 0 && p.issues.length === 0).length;
+  // A page can have a present-but-wrong title/H1 (too short, too long, duplicated) —
+  // that's not "missing" so it wouldn't be caught above, but it's still a real quality problem.
+  if (badTitleLength) deduct(Math.min(12, Math.max(1, Math.round((badTitleLength / totalPages) * 12))), `${badTitleLength} page(s) with a poorly sized title tag (too short or too long)`);
+  if (multipleH1) deduct(Math.min(5, Math.max(1, Math.round((multipleH1 / totalPages) * 5))), `${multipleH1} page(s) with multiple H1 tags`);
+
+  // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
+  const scoredWarningPatterns = [/^Title too (short|long)/, /^Multiple H1 tags/];
+  const warningOnlyPages = pages.filter(p => {
+    if (p.issues.length > 0) return false;
+    const remaining = p.warnings.filter(w => !scoredWarningPatterns.some(re => re.test(w)));
+    return remaining.length > 0;
+  }).length;
   if (warningOnlyPages) {
     const warnPts = Math.min(15, Math.round(warningOnlyPages * 0.5));
-    deduct(warnPts, `${warningOnlyPages} page(s) with improvement opportunities`);
+    deduct(warnPts, `${warningOnlyPages} page(s) with other improvement opportunities`);
   }
 
   return { score: Math.max(0, score), deductions: docked };
@@ -324,11 +355,14 @@ function friendlyIssue(text) {
 
 // ─── HTML Report ──────────────────────────────────────────────────────────────
 
-function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = []) {
+function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1']) {
   const pages = results.filter(r => !r.error);
   const errors = results.filter(r => r.error);
   const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const brand = client.brand_color || '#003366';
+  // The provider (agency issuing the report) drives the letterhead colors;
+  // client.brand_color, if set, is kept only as a fallback for older configs.
+  const brand = provider.brand || client.brand_color || '#003366';
+  const brand2 = provider.brand2 || brand;
 
   const scoreColor = scoreData.score >= 80 ? '#22c55e' : scoreData.score >= 60 ? '#f59e0b' : '#ef4444';
   const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
@@ -345,6 +379,8 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
   const noTitlePgs = pages.filter(p => !p.title);
   const noH1Pgs = pages.filter(p => p.h1Count === 0);
   const missingAltPgs = pages.filter(p => p.imagesNoAlt > 0);
+  const badTitlePgs = pages.filter(p => p.title && (p.titleLen < 30 || p.titleLen > 65));
+  const multipleH1Pgs = pages.filter(p => p.h1Count > 1);
 
   function priorityBadge(p) {
     if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -493,7 +529,7 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
 
   /* ── Quick wins ── */
   .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #003366; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid ${brand2}; }
   .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
   .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
@@ -506,7 +542,7 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
   .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
   .perf-period { font-size: 12px; color: #64748b; }
   .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #003366; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid ${brand2}; }
   .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
   .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
   .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
@@ -578,7 +614,7 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
 
     /* Links: plain text */
     a { color: inherit !important; text-decoration: none !important; }
-    td a { color: #003366 !important; font-size: 10px; }
+    td a { color: ${brand2} !important; font-size: 10px; }
 
     /* Page numbers via CSS counters */
     body { counter-reset: page-num; }
@@ -600,7 +636,7 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
 <!-- COVER -->
 <div class="cover">
   <div class="cover-header">
-    <div class="cover-agency">Start Advertising &bull; SEO Audit</div>
+    <div class="cover-agency">${provider.name} &bull; SEO Audit</div>
     <div class="cover-score-box">
       <div class="cover-score-num">${scoreData.score}</div>
       <div class="cover-score-label">SEO Health Score</div>
@@ -620,7 +656,7 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
     </div>
   </div>
   ${buildTrendChart(history)}
-  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text) and applies a smaller deduction for pages with improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text), a moderate amount for present-but-wrong titles/H1s (too short, too long, or duplicated), and a smaller amount for other improvement opportunities such as schema markup, canonical tags, and content depth.</div>
 </div>
 
 <div class="container">
@@ -638,6 +674,14 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
     <div class="snap-card">
       <div class="snap-num ${noH1Pgs.length === 0 ? 'good' : 'bad'}">${noH1Pgs.length}</div>
       <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${multipleH1Pgs.length === 0 ? 'good' : 'warn'}">${multipleH1Pgs.length}</div>
+      <div class="snap-label">Pages w/ Multiple H1s</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${badTitlePgs.length === 0 ? 'good' : 'warn'}">${badTitlePgs.length}</div>
+      <div class="snap-label">Poorly Sized Title Tags</div>
     </div>
     <div class="snap-card">
       <div class="snap-num ${noSchemaPgs.length === 0 ? 'good' : 'warn'}">${noSchemaPgs.length}</div>
@@ -799,6 +843,8 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
       ${noTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a title tag</span><span class="sr-val bad">${noTitlePgs.length} page${noTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noMetaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a meta description</span><span class="sr-val bad">${noMetaPgs.length} page${noMetaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noH1Pgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">${noH1Pgs.length} page${noH1Pgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${multipleH1Pgs.length ? `<div class="summary-row"><span class="sr-label">Pages with more than one H1 heading</span><span class="sr-val warn">${multipleH1Pgs.length} page${multipleH1Pgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${badTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a title tag outside the ideal 30&ndash;65 character range</span><span class="sr-val warn">${badTitlePgs.length} page${badTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noSchemaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">${noSchemaPgs.length} page${noSchemaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingAltPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with images missing alt text</span><span class="sr-val warn">${missingAltPgs.length} page${missingAltPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       <div class="summary-row">
@@ -861,8 +907,8 @@ function buildReport(results, scoreData, history = [], metrics = null, liveGSC =
 </div>
 
 <div class="report-footer">
-  Prepared by Start Advertising &bull; ${client.name} SEO Audit &bull; ${date}<br>
-  Questions? Contact richard@grouprb.com
+  Prepared by ${provider.name} &bull; ${client.name} SEO Audit &bull; ${date}<br>
+  Questions? Contact ${provider.email}
 </div>
 </body>
 </html>`;
@@ -992,13 +1038,76 @@ function buildTrendChart(history) {
   </div>`;
 }
 
+// ─── Shared prompt interface ────────────────────────────────────────────────
+// Two modes:
+//  - Real TTY (a human typing in a terminal): use readline normally. stdin
+//    never ends mid-run here, so one interface can safely serve every prompt.
+//  - Piped/non-interactive stdin (e.g. an agent driving this script): readline
+//    auto-closes the moment the underlying pipe hits EOF, and since the crawl
+//    takes time, the pipe is often already drained and closed by the time a
+//    later prompt (e.g. performance metrics) fires — even with one shared
+//    interface, that second question() throws ERR_USE_AFTER_CLOSE instead of
+//    hanging. So for piped input, read all of stdin up front (synchronously,
+//    before any prompt is shown) and serve answers from a line queue instead —
+//    no readline, no dependency on the pipe staying open across the run.
+let _sharedRl = null;
+let _pipedLines = null;
+let _pipedIndex = 0;
+
+function getSharedPrompt() {
+  if (!process.stdin.isTTY) {
+    if (_pipedLines === null) {
+      let raw = '';
+      try { raw = fs.readFileSync(0, 'utf8'); } catch { /* no piped input at all */ }
+      _pipedLines = raw.split('\n');
+    }
+    return async (q) => {
+      process.stdout.write(q);
+      const line = (_pipedLines[_pipedIndex++] ?? '').replace(/\r$/, '');
+      console.log(line);
+      return line;
+    };
+  }
+  if (!_sharedRl) _sharedRl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return q => new Promise(res => _sharedRl.question(q, res));
+}
+function closeSharedPrompt() {
+  if (_sharedRl) { _sharedRl.close(); _sharedRl = null; }
+}
+
+// ─── Provider prompt ────────────────────────────────────────────────────────
+
+async function promptProvider() {
+  // A config can pin a provider (skips the prompt on repeat/automated runs) via
+  // "provider": "1".."4" or a name matching PROVIDERS[key].name (case-insensitive).
+  if (client.provider) {
+    const pinned = PROVIDERS[client.provider] ||
+      Object.values(PROVIDERS).find(p => p.name.toLowerCase() === String(client.provider).toLowerCase());
+    if (pinned) {
+      console.log(`Provider company: ${pinned.name} (pinned in ${clientName}.json)`);
+      return pinned;
+    }
+  }
+
+  const ask = getSharedPrompt();
+
+  console.log('\n─── Provider Company ─────────────────────────────────────────────');
+  console.log('  Which company is this audit being prepared under?');
+  Object.entries(PROVIDERS).forEach(([key, p]) => console.log(`  ${key}) ${p.name}  (${p.email})`));
+
+  let choice = (await ask('\n  Enter 1-4: ')).trim();
+  while (!PROVIDERS[choice]) {
+    choice = (await ask('  Please enter 1, 2, 3, or 4: ')).trim();
+  }
+  return PROVIDERS[choice];
+}
+
 // ─── Metrics prompt ───────────────────────────────────────────────────────────
 
 async function promptMetrics(outDir) {
   const existing = loadMetrics(outDir);
 
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
-  const ask = q => new Promise(res => rl.question(q, res));
+  const ask = getSharedPrompt();
 
   console.log('\n─── Performance Metrics ──────────────────────────────────────────');
   if (existing) {
@@ -1009,7 +1118,6 @@ async function promptMetrics(outDir) {
 
   const yn = (await ask('\n  Do you have updated metrics to enter? (y/N): ')).trim().toLowerCase();
   if (yn !== 'y') {
-    rl.close();
     console.log(existing ? '  Keeping existing metrics.' : '  No metrics — section will be skipped.');
     return existing;
   }
@@ -1040,8 +1148,6 @@ async function promptMetrics(outDir) {
     if (m) metricsOut.push(m);
   }
 
-  rl.close();
-
   if (!metricsOut.length) {
     console.log('  No values entered — keeping existing metrics.');
     return existing;
@@ -1062,6 +1168,7 @@ async function promptMetrics(outDir) {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 (async () => {
+  const provider = await promptProvider();
   await crawl();
 
   const scoreData = calcScore(results);
@@ -1099,7 +1206,8 @@ async function promptMetrics(outDir) {
     }
   }
   const metrics = gscData || await promptMetrics(outDir);
-  const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory);
+  closeSharedPrompt();
+  const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, provider);
 
   const fileName = `${client.name.replace(/\s+/g, '-')}-SEO-Audit-${today}.html`;
   const outPath = path.join(outDir, fileName);

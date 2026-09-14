@@ -4,7 +4,6 @@ Copy-paste-ready content for the drafted pages that are **not yet live** on frut
 
 **How to use each section:** Open the page in HubSpot's page editor. Paste the Meta Description into Page Settings → Meta Description. Add the "AFTER — New Content" copy below the existing content (do not delete existing copy). Paste the JSON-LD `<script>` block into the page's Head HTML / JSON-LD field. Mark the row Complete in WORK-LOG.md once verified live.
 
-## Already live (no action needed)
 - Autoclave Bags — https://www.fruth.com/products/bags/autoclave-bags
 - Bags Hub — https://www.fruth.com/products/bags
 - Bakery Bags — https://www.fruth.com/products/bags/bakery-bags
@@ -19,6 +18,17 @@ Copy-paste-ready content for the drafted pages that are **not yet live** on frut
 - Header Bags — https://www.fruth.com/products/bags/header-bags
 - Kraft Foil Barrier Film — https://www.fruth.com/products/barrier-films/kraft-foil-barrier-film
 - Lay Flat Bags — https://www.fruth.com/products/bags/lay-flat-bags
+- Anti-Static Bags — https://www.fruth.com/products/films/anti-static-film *(confirmed live 2026-09-14, not in original tracker)*
+- Capabilities — https://www.fruth.com/capabilities *(confirmed live 2026-09-14, not in original tracker)*
+- EMI Static Shielding Barrier Film — https://www.fruth.com/products/barrier-films/emi-static-shielding-barrier-film *(confirmed live 2026-09-14, not in original tracker)*
+- Flame Retardant PE Film — https://www.fruth.com/products/films/flame-retardant-polyethylene-film *(confirmed live 2026-09-14, not in original tracker)*
+- Fruth 360 — https://www.fruth.com/fruth-360 *(confirmed live 2026-09-14, not in original tracker)*
+- Industries — https://www.fruth.com/industries *(confirmed live 2026-09-14, not in original tracker)*
+- Nuclear Green PE Film — https://www.fruth.com/products/films/nuclear-green-polyethylene-film *(confirmed live 2026-09-14, not in original tracker)*
+- Our Story — https://www.fruth.com/our-story *(confirmed live 2026-09-14, not in original tracker)*
+- Polypropylene Film — https://www.fruth.com/products/films/polypropylene-film *(confirmed live 2026-09-14, not in original tracker)*
+
+**⚠️ 2026-09-14 correction:** the original implementation tracker (content-creation/build-client-docs.js) only listed 14 pages as live. A direct site check found 9 more pages already published that the tracker never recorded. Only 14 pages in this packet are actually still pending — see FCP-On-Page-SEO-Audit-Running-Log.docx for the verified list.
 
 ## Gaps not covered by a content-creation draft
 - **https://www.fruth.com/products** (top-level hub, distinct from /products/bags) — title/meta now drafted below; still no body-copy expansion for this exact URL (only the FAQPage schema example from the audit Appendix).
@@ -74,6 +84,8 @@ Body-copy expansion / blog header rewrite hasn't been drafted. The audit's Quick
 ---
 
 ## Anti-Static Bags
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/products/films/anti-static-film
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -154,6 +166,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Capabilities
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/capabilities
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -369,6 +383,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## EMI Static Shielding Barrier Film
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/products/barrier-films/emi-static-shielding-barrier-film
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -448,6 +464,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## ESD Packaging
+
+> ⚠️ **CORRECTION 2026-09-14: BLOCKED — this URL returns a 404 on the live site.** The draft below targets a page that does not exist (https://www.fruth.com/products/bags/esd-packaging). Do not implement until the correct URL is confirmed with the client or in HubSpot.
 **URL:** https://www.fruth.com/products/bags/esd-packaging
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -528,6 +546,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Flame Retardant PE Film
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/products/films/flame-retardant-polyethylene-film
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -690,6 +710,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Fruth 360
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/fruth-360
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -759,13 +781,17 @@ SCHEMA / Technical Implementation
 **URL:** https://www.fruth.com
 **Status:** 🔲 PENDING — not yet in HubSpot
 
-### Title Tag
-(see FCP-SEO-AUDIT-2026-08-31.md Appendix for exact recommended title — not separately drafted for this page)
+### Title Tag (≤60 chars — paste into HubSpot Page Settings)
+```
+Fruth Custom Packaging | Plastic Bags & Barrier Films
+```
+*(53 characters — this is the current live title; the audit already confirmed it's good, no change needed)*
 
-### Meta Description (paste into HubSpot Page Settings)
+### Meta Description (≤160 chars — paste into HubSpot Page Settings)
 ```
-Fruth manufactures custom plastic bags, barrier films, and specialty packaging for medical, aerospace, cleanroom, and industrial applications. ISO certified. Made in the USA. Request a quote.
+Custom plastic bags and barrier films for medical, aerospace, cleanroom, and industrial applications. ISO certified. Made in the USA. Request a quote.
 ```
+*(150 characters — tightened from the audit's original 191-character draft, which would have been truncated in Google's snippet; dropped the redundant "Fruth manufactures" since the brand name already appears in the title tag)*
 
 ### Body Copy + Schema (from content-creation draft)
 ```
@@ -848,6 +874,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Industries
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/industries
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -1354,6 +1382,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Nuclear Green PE Film
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/products/films/nuclear-green-polyethylene-film
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -1522,6 +1552,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Our Story
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/our-story
 **Status:** 🔲 PENDING — not yet in HubSpot
 
@@ -1608,6 +1640,8 @@ SCHEMA / Technical Implementation
 ---
 
 ## Polypropylene Film
+
+> ⚠️ **CORRECTION 2026-09-14: ALREADY LIVE — DO NOT PASTE.** A direct check of the live site confirms this page's body copy and schema below are already published. This section is kept only for reference. See FCP-On-Page-SEO-Audit-Running-Log.docx for the current, verified status of every page.
 **URL:** https://www.fruth.com/products/films/polypropylene-film
 **Status:** 🔲 PENDING — not yet in HubSpot
 

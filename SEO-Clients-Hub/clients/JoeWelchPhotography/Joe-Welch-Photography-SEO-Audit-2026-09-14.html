@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Audit: Joe Welch Photography — September 14, 2026</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
+
+  /* ── Cover Page ── */
+  .cover { background: #003366; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
+  .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
+  .cover-sub { font-size: 14px; opacity: .7; }
+  .cover-divider { height: 2px; background: rgba(255,255,255,.2); margin: 28px 0; }
+  .cover-meta { display: flex; gap: 0; }
+  .cover-meta-item { flex: 1; padding-right: 16px; border-right: 1px solid rgba(255,255,255,.15); margin-right: 16px; }
+  .cover-meta-item:last-child { border: none; margin: 0; }
+  .cover-meta-item .cm-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; }
+  .cover-meta-item .cm-val { font-size: 15px; font-weight: 700; margin-top: 4px; }
+  .cover-note { margin-top: 28px; font-size: 10.5px; opacity: .55; max-width: 580px; line-height: 1.6; }
+
+  /* ── Layout ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 32px; }
+  .section { margin-bottom: 40px; page-break-inside: avoid; }
+  .section-title { font-size: 15px; font-weight: 700; color: #0f172a; padding-bottom: 10px; border-bottom: 2px solid #003366; margin-bottom: 18px; text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── Snapshot Cards ── */
+  .snapshot { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 36px; }
+  .snap-card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; }
+  .snap-num { font-size: 30px; font-weight: 800; }
+  .snap-num.good { color: #16a34a; }
+  .snap-num.warn { color: #d97706; }
+  .snap-num.bad { color: #dc2626; }
+  .snap-num.neutral { color: #003366; }
+  .snap-label { font-size: 11px; color: #64748b; margin-top: 4px; }
+
+  /* ── Summary Bullets ── */
+  .summary-box { background: white; border-radius: 10px; padding: 24px 28px; box-shadow: 0 1px 4px rgba(0,0,0,.07); }
+  .summary-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .summary-row:last-child { border: none; }
+  .summary-row .sr-label { color: #374151; }
+  .summary-row .sr-val { font-weight: 700; }
+  .sr-val.bad { color: #dc2626; }
+  .sr-val.warn { color: #d97706; }
+  .sr-val.good { color: #16a34a; }
+
+  /* ── Priority badges ── */
+  .priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+  .priority.critical { background: #fee2e2; color: #b91c1c; }
+  .priority.high { background: #ffedd5; color: #c2410c; }
+  .priority.medium { background: #fef9c3; color: #92400e; }
+  .priority.low { background: #f1f5f9; color: #475569; }
+
+  /* ── Findings ── */
+  .finding-card { background: white; border-radius: 10px; padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 12px; border-left: 4px solid #e2e8f0; page-break-inside: avoid; }
+  .finding-card.has-critical { border-left-color: #dc2626; }
+  .finding-card.has-warn { border-left-color: #f59e0b; }
+  .finding-url { font-size: 12px; color: #64748b; font-weight: 600; margin-bottom: 10px; font-family: monospace; }
+  .finding-item { padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+  .finding-item:last-child { border: none; padding-bottom: 0; }
+  .finding-top { display: flex; align-items: center; gap: 10px; margin-bottom: 3px; }
+  .finding-label { font-size: 13px; font-weight: 600; color: #1e293b; }
+  .finding-why { font-size: 12px; color: #64748b; padding-left: 2px; margin-top: 2px; }
+
+  /* ── Page Table ── */
+  .page-table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.07); font-size: 12px; }
+  th { background: #f8fafc; padding: 10px 12px; text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 2px solid #e2e8f0; }
+  th.center, td.center { text-align: center; }
+  td { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+  tr:last-child td { border: none; }
+  tr:hover td { background: #f8fafc; }
+  td a { color: #003366; text-decoration: none; font-family: monospace; font-size: 11px; }
+  td a:hover { text-decoration: underline; }
+  .status-cell { width: 28px; text-align: center; font-size: 14px; }
+  .status-cell.critical { color: #dc2626; }
+  .status-cell.warn { color: #d97706; }
+  .status-cell.ok { color: #16a34a; }
+  .url-cell { max-width: 220px; }
+  .missing { color: #dc2626; font-weight: 600; }
+  .warn-text { color: #d97706; font-weight: 600; }
+
+  /* ── Score trend ── */
+  .cover-trend { margin-top: 20px; }
+  .trend-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .55; margin-bottom: 6px; }
+
+  /* ── Quick wins ── */
+  .qw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .qw-card { background: white; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-top: 3px solid #f59e0b; }
+  .qw-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .qw-action { font-size: 13px; font-weight: 700; color: #0f172a; }
+  .qw-detail { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .qw-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .qw-badge.effort-Low { background: #dcfce7; color: #166534; }
+  .qw-badge.effort-Medium { background: #fef9c3; color: #92400e; }
+  .qw-badge.effort-High { background: #ffedd5; color: #c2410c; }
+
+  /* ── Performance metrics ── */
+  .perf-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+  .perf-period { font-size: 12px; color: #64748b; }
+  .perf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .perf-card { background: white; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.07); border-bottom: 3px solid #f59e0b; }
+  .perf-value { font-size: 28px; font-weight: 800; color: #0f172a; line-height: 1.1; }
+  .perf-label { font-size: 11px; color: #64748b; margin-top: 4px; margin-bottom: 8px; }
+  .perf-change { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+  .perf-change.up   { background: #dcfce7; color: #166534; }
+  .perf-change.down { background: #fee2e2; color: #991b1b; }
+  .perf-arrow { font-size: 10px; }
+
+  /* ── Keyword tracker ── */
+  .kw-change.improved { color: #16a34a; font-weight: 700; }
+  .kw-change.declined { color: #dc2626; font-weight: 700; }
+  .kw-change.new      { color: #7c3aed; font-weight: 700; }
+  .kw-change.same     { color: #94a3b8; }
+  .kw-pos             { font-weight: 700; color: #0f172a; }
+
+  /* ── Footer ── */
+  .report-footer { text-align: center; color: #94a3b8; font-size: 11px; padding: 32px 0 20px; border-top: 1px solid #e2e8f0; margin-top: 48px; }
+
+  /* ── Print ── */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    @page { margin: 0.55in 0.65in; }
+    @page :left { margin-left: 0.65in; }
+    @page :right { margin-right: 0.65in; }
+
+    body { background: white !important; font-size: 11px; line-height: 1.45; }
+
+    /* Cover: fill entire first page, force new page after */
+    .cover {
+      min-height: 96vh;
+      padding: 48px 56px 44px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    /* Container tighter in print */
+    .container { padding: 20px 0; }
+
+    /* Snapshot grid: 4-up stays, just tighter */
+    .snapshot { gap: 10px; margin-bottom: 24px; }
+    .snap-card { padding: 14px 10px; box-shadow: none !important; border: 1px solid #e2e8f0; }
+    .snap-num { font-size: 24px; }
+
+    /* Summary */
+    .summary-box { box-shadow: none !important; border: 1px solid #e2e8f0; padding: 16px 20px; }
+    .summary-row { padding: 6px 0; }
+
+    /* Section headings: start a new page only for major sections */
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; padding-bottom: 7px; margin-bottom: 12px; }
+
+    /* Keep finding cards together but allow section to break */
+    .finding-card {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      box-shadow: none !important;
+      border: 1px solid #e2e8f0;
+      border-left-width: 4px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+    }
+
+    /* Table: allow rows to flow across pages, keep header visible */
+    table { box-shadow: none !important; border: 1px solid #e2e8f0; font-size: 10px; }
+    thead { display: table-header-group; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    td, th { padding: 6px 8px; }
+    .page-table-wrap { overflow: visible; }
+
+    /* Links: plain text */
+    a { color: inherit !important; text-decoration: none !important; }
+    td a { color: #f59e0b !important; font-size: 10px; }
+
+    /* Page numbers via CSS counters */
+    body { counter-reset: page-num; }
+    .container::after {
+      counter-increment: page-num;
+    }
+    .report-footer {
+      margin-top: 24px;
+      padding: 16px 0 8px;
+    }
+
+    /* Hide hover effects */
+    tr:hover td { background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="cover-header">
+    <div class="cover-agency">Parts of Practice &bull; SEO Audit</div>
+    <div class="cover-score-box">
+      <div class="cover-score-num">70</div>
+      <div class="cover-score-label">SEO Health Score</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.9">Needs Improvement</div>
+    </div>
+  </div>
+  <div class="cover-body">
+    <div class="cover-title">Joe Welch Photography</div>
+    <div class="cover-sub">https://joewelchphoto.com</div>
+    <div class="cover-divider"></div>
+    <div class="cover-meta">
+      <div class="cover-meta-item"><div class="cm-label">Report Date</div><div class="cm-val">September 14, 2026</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Pages Audited</div><div class="cm-val">39</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Critical Issues</div><div class="cm-val">15</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Improvement Opportunities</div><div class="cm-val">39 of 39 pages</div></div>
+      <div class="cover-meta-item"><div class="cm-label">Fully Optimized</div><div class="cm-val">0 of 39 pages</div></div>
+    </div>
+  </div>
+  
+  <div class="cover-note"><strong>Score note:</strong> The SEO Health Score deducts heavily for critical issues (missing titles, H1s, meta descriptions, image alt text), a moderate amount for present-but-wrong titles/H1s (too short, too long, or duplicated), and a smaller amount for other improvement opportunities such as schema markup, canonical tags, and content depth.</div>
+</div>
+
+<div class="container">
+
+  <!-- SNAPSHOT -->
+  <div class="snapshot">
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing Title</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num bad">15</div>
+      <div class="snap-label">Missing Meta Description</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Missing H1</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">1</div>
+      <div class="snap-label">Pages w/ Multiple H1s</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num warn">32</div>
+      <div class="snap-label">Poorly Sized Title Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages Without Schema</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Pages w/ Missing Image Alt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">0</div>
+      <div class="snap-label">Missing Canonical Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num good">0</div>
+      <div class="snap-label">Fully Healthy Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num neutral">39</div>
+      <div class="snap-label">Total Pages Audited</div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE METRICS -->
+  
+
+  <!-- KEYWORD RANKINGS -->
+  
+
+  <!-- QUICK WINS -->
+  
+  <div class="section">
+    <div class="section-title">Quick Wins &amp; Recommendations</div>
+    <div class="qw-grid">
+      
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Optimize title tag length on 32 pages</div>
+        <div class="qw-detail" style="margin-top:6px">10 titles are under 30 characters (missing keyword opportunities). 22 titles exceed 65 characters and will be cut off in search results.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fill in empty image alt text on 23 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-Low">Low effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">Medium impact</span>
+        </div>
+        <div class="qw-action">Fix multiple H1 tags on 1 page</div>
+        <div class="qw-detail" style="margin-top:6px">Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.</div>
+      </div>
+      <div class="qw-card">
+        <div class="qw-top">
+          <span class="qw-badge effort-High">High effort</span>
+          <span class="qw-badge" style="background:#eff6ff;color:#1d4ed8">High impact</span>
+        </div>
+        <div class="qw-action">Expand thin content on 14 pages</div>
+        <div class="qw-detail" style="margin-top:6px">Pages under 150 words give Google very little to rank. Adding descriptive copy, FAQs, or specifications strengthens these pages significantly.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THIS MEANS -->
+  <div class="section">
+    <div class="section-title">Audit Summary</div>
+    <div class="summary-box">
+      <div class="summary-row">
+        <span class="sr-label">Overall SEO Health Score</span>
+        <span class="sr-val warn">70 / 100 &mdash; Needs Improvement</span>
+      </div>
+      
+      <div class="summary-row"><span class="sr-label">Pages missing a meta description</span><span class="sr-val bad">15 pages affected</span></div>
+      
+      <div class="summary-row"><span class="sr-label">Pages with more than one H1 heading</span><span class="sr-val warn">1 page affected</span></div>
+      <div class="summary-row"><span class="sr-label">Pages with a title tag outside the ideal 30&ndash;65 character range</span><span class="sr-val warn">32 pages affected</span></div>
+      
+      
+      <div class="summary-row">
+        <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
+        <span class="sr-val warn">39 of 39 pages</span>
+      </div>
+      <div class="summary-row">
+        <span class="sr-label">Fully optimized pages (no issues, no warnings)</span>
+        <span class="sr-val good">0 of 39 pages</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#64748b;margin-top:12px;line-height:1.6">
+      <strong>What this means:</strong> A score of 70/100 means your site has no critical SEO problems. Pages listed under "improvement opportunities" have advisory items — adding schema markup, increasing content length, or setting canonical tags — that can help rankings but are not broken elements.
+    </p>
+  </div>
+
+  <!-- FINDINGS BY PAGE -->
+  
+  <div class="section">
+    <div class="section-title">Findings by Page (39 pages need attention)</div>
+    
+    <div class="finding-card has-critical">
+      <div class="finding-url">/</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (4 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Multiple H1 tags (2)</span>
+          </div>
+          <div class="finding-why">Having more than one H1 dilutes the page focus signal for search engines.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">35 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/portfolio</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (9 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">9 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/sitemap</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (7 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (137 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/what-is-the-turnaround-time</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (28 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (50 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/how-many-photos-will-i-get</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (27 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (94 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/what-areas-do-you-cover</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (24 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (37 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/are-there-any-legal-restrictions-when-using-a-drone-to-photograph-properties</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (32 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/do-i-need-to-be-there</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (22 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (52 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/where-are-you-located</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (22 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (23 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/do-you-fly-above-water</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (23 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (21 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/for-aerial-photography-when-is-the-best-time-of-day-to-photograph-my-listing-property</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (87 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (35 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/blog</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too short (4 chars)</span>
+          </div>
+          <div class="finding-why">Short titles miss keyword opportunities. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (19 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/what-is-the-resolution-or-file-size-of-the-photos</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (62 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/how-long-will-it-take-to-photograph-my-listing-property</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (39 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-critical">
+      <div class="finding-url">/faqs/what-forms-of-payment-do-you-take</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority high">High</span>
+            <span class="finding-label">Missing meta description</span>
+          </div>
+          <div class="finding-why">Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (29 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/about</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (82 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">4 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/aerial-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (78 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">14 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/architectural-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/commercial-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (71 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/construction-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (73 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/dusk-twilight-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/insurance-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (70 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">10 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/pricing</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">3 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/residential-real-estate-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (81 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/resort-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (73 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/aerial</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (78 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">14 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/commercial</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (71 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/residential</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (81 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/resort</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (73 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/dusk</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/architectural</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (77 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/construction</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (73 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">13 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/insurance</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (70 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">10 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/clients</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">11 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/contact</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Low word count (116 words)</span>
+          </div>
+          <div class="finding-why">Pages with very little content are harder for Google to rank.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/faqs</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (71 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/reviews</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority medium">Medium</span>
+            <span class="finding-label">Title too long (66 chars, aim for 50-65)</span>
+          </div>
+          <div class="finding-why">Long titles get cut off in search results. Aim for 50-65 characters.</div>
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/vacation-rentals-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+    <div class="finding-card has-warn">
+      <div class="finding-url">/portfolio/vacation-rentals-photography</div>
+      
+        <div class="finding-item">
+          <div class="finding-top">
+            <span class="priority low">Low</span>
+            <span class="finding-label">15 image(s) have empty alt text</span>
+          </div>
+          
+        </div>
+      
+    </div>
+  </div>
+
+  <!-- FULL PAGE TABLE -->
+  <div class="section">
+    <div class="section-title">All Pages at a Glance</div>
+    <div class="page-table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Page URL</th>
+          <th>Title Tag</th>
+          <th class="center">H1</th>
+          <th class="center">Meta Desc</th>
+          <th class="center">Schema</th>
+          <th class="center">Image Alts</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com" target="_blank">/</a></td>
+      <td>Home</td>
+      <td class="center"><span class="warn-text">2</span></td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio" target="_blank">/portfolio</a></td>
+      <td>Portfolio</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/about" target="_blank">/about</a></td>
+      <td>About Joe Welch Photography | Real Estate & Aerial Photography | Miami, S. Florida</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/aerial-photography" target="_blank">/aerial-photography</a></td>
+      <td>Aerial/Drone Photographer | Miami-Dade, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/architectural-photography" target="_blank">/architectural-photography</a></td>
+      <td>Architectural Photographer | Miami-Dade, Ft. Lauderdale, Palm Bch & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/clients" target="_blank">/clients</a></td>
+      <td>Joe Welch Photography, Serving Clients in Florida & the Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/commercial-photography" target="_blank">/commercial-photography</a></td>
+      <td>Commercial Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/construction-photography" target="_blank">/construction-photography</a></td>
+      <td>Construction Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/contact" target="_blank">/contact</a></td>
+      <td>Contact Joe Welch Photography, Serving Florida & the Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/dusk-twilight-photography" target="_blank">/dusk-twilight-photography</a></td>
+      <td>Dusk Photographer for Real Estate | Miami, Ft. Laud, Palm Bch, FL & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs" target="_blank">/faqs</a></td>
+      <td>Joe Welch Photography FAQs | Serving Miami, Ft. Lauderdale & Palm Beach</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/insurance-photography" target="_blank">/insurance-photography</a></td>
+      <td>Insurance Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/pricing" target="_blank">/pricing</a></td>
+      <td>Photo Packages & Pricing or Call for Quote, Joe Welch Photography, S. Florida</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/residential-real-estate-photography" target="_blank">/residential-real-estate-photography</a></td>
+      <td>Residential Real Estate Photographer | Miami-Dade, Broward, Palm Beach, Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/resort-photography" target="_blank">/resort-photography</a></td>
+      <td>Hotel & Resort Photographer | Miami, Ft. Lauderdale, Palm Bch & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/reviews" target="_blank">/reviews</a></td>
+      <td>Client Reviews of Joe Welch Photography, Serving Florida Companies</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/sitemap" target="_blank">/sitemap</a></td>
+      <td>Sitemap</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/vacation-rentals-photography" target="_blank">/vacation-rentals-photography</a></td>
+      <td>Vacation Rentals Photography, Miami & Palm Beach Homes for Rent</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/what-is-the-turnaround-time" target="_blank">/faqs/what-is-the-turnaround-time</a></td>
+      <td>What is the turnaround time?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/how-many-photos-will-i-get" target="_blank">/faqs/how-many-photos-will-i-get</a></td>
+      <td>How many photos will I get?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/what-areas-do-you-cover" target="_blank">/faqs/what-areas-do-you-cover</a></td>
+      <td>What areas do you cover?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/are-there-any-legal-restrictions-when-using-a-drone-to-photograph-properties" target="_blank">/faqs/are-there-any-legal-restrictions-when-using-a-drone-to-photograph-properties</a></td>
+      <td>Are there any legal restrictions when using a drone to photograph properties?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/what-is-the-resolution-or-file-size-of-the-photos" target="_blank">/faqs/what-is-the-resolution-or-file-size-of-the-photos</a></td>
+      <td>What is the resolution or file size of the photos?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/do-i-need-to-be-there" target="_blank">/faqs/do-i-need-to-be-there</a></td>
+      <td>Do I need to be there?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/where-are-you-located" target="_blank">/faqs/where-are-you-located</a></td>
+      <td>Where are you located?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/how-long-will-it-take-to-photograph-my-listing-property" target="_blank">/faqs/how-long-will-it-take-to-photograph-my-listing-property</a></td>
+      <td>How long will it take to photograph my listing/property?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/do-you-fly-above-water" target="_blank">/faqs/do-you-fly-above-water</a></td>
+      <td>Do you fly above water?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/what-forms-of-payment-do-you-take" target="_blank">/faqs/what-forms-of-payment-do-you-take</a></td>
+      <td>What forms of payment do you take?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/faqs/for-aerial-photography-when-is-the-best-time-of-day-to-photograph-my-listing-property" target="_blank">/faqs/for-aerial-photography-when-is-the-best-time-of-day-to-photograph-my-listing-property</a></td>
+      <td>For aerial photography, when is the best time of day to photograph my listing/property?</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/aerial" target="_blank">/portfolio/aerial</a></td>
+      <td>Aerial/Drone Photographer | Miami-Dade, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/commercial" target="_blank">/portfolio/commercial</a></td>
+      <td>Commercial Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/residential" target="_blank">/portfolio/residential</a></td>
+      <td>Residential Real Estate Photographer | Miami-Dade, Broward, Palm Beach, Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/resort" target="_blank">/portfolio/resort</a></td>
+      <td>Hotel & Resort Photographer | Miami, Ft. Lauderdale, Palm Bch & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/vacation-rentals-photography" target="_blank">/portfolio/vacation-rentals-photography</a></td>
+      <td>Vacation Rentals Photography, Miami & Palm Beach Homes for Rent</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/dusk" target="_blank">/portfolio/dusk</a></td>
+      <td>Dusk Photographer for Real Estate | Miami, Ft. Laud, Palm Bch, FL & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/architectural" target="_blank">/portfolio/architectural</a></td>
+      <td>Architectural Photographer | Miami-Dade, Ft. Lauderdale, Palm Bch & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/construction" target="_blank">/portfolio/construction</a></td>
+      <td>Construction Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell warn">&#9651;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/portfolio/insurance" target="_blank">/portfolio/insurance</a></td>
+      <td>Insurance Photographer | Miami, Ft. Lauderdale, Palm Beach & Caribbean</td>
+      <td class="center">&#10003;</td>
+      <td class="center">&#10003;</td>
+      <td class="center">WebPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+    <tr>
+      <td class="status-cell critical">&#9888;</td>
+      <td class="url-cell"><a href="https://joewelchphoto.com/blog" target="_blank">/blog</a></td>
+      <td>Blog</td>
+      <td class="center">&#10003;</td>
+      <td class="center"><span class="missing">Missing</span></td>
+      <td class="center">WebPage+CollectionPage+BreadcrumbList+WebSite+Organization</td>
+      <td class="center">&#10003;</td>
+    </tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+</div>
+
+<div class="report-footer">
+  Prepared by Parts of Practice &bull; Joe Welch Photography SEO Audit &bull; September 14, 2026<br>
+  Questions? Contact Richard@PartsofPractice.com
+</div>
+</body>
+</html>

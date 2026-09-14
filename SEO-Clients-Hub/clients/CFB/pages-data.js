@@ -315,7 +315,7 @@ module.exports = {
 
     {
       name: 'Healthcare Cleanroom Packaging',
-      status: 'IMPLEMENTED in HubSpot 2026-09-11 — live verification pending (cache)',
+      status: 'VERIFIED LIVE 2026-09-14 (title, meta, 7 image alts, Service schema)',
       liveUrl: 'https://www.cleanroomfilm.com/markets/healthcare-cleanroom-packaging',
       editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
       audited: '2026-09-11',

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: RallyOP Sessions
  * Description: Schedule open-play sessions and collect player RSVPs inside the RallyOP clubhouse.
- * Version: 4.0.0
+ * Version: 5.0.0
  * Author: RallyOP
  */
 
@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) { exit; }
 
 require_once __DIR__ . '/rallyop-content.php';
 require_once __DIR__ . '/rallyop-community.php';
+require_once __DIR__ . '/rallyop-feed-order.php';
+require_once __DIR__ . '/rallyop-community-fixes.php';
+require_once __DIR__ . '/rallyop-app-shell.php';
 
 function rallyop_companion_table($kind) {
     global $wpdb;
