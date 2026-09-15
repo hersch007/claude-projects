@@ -197,6 +197,21 @@ function saveHistory(outDir, history) {
   fs.writeFileSync(p, JSON.stringify(history, null, 2), 'utf8');
 }
 
+// ─── Storage adapter ──────────────────────────────────────────────────────────
+// runAudit() below persists history/metrics through this interface instead of
+// calling the file functions directly, so a caller can swap in a DB-backed
+// adapter (webapp/server) without changing the CLI's behavior at all — see
+// webapp/PHASE1-DESIGN.md §5. fileStorage is the default and is exactly what
+// audit.js has always done; each method receives the client object (not just
+// outDir) so a DB adapter can key off client.slug/client.id instead.
+const fileStorage = {
+  loadHistory: (client) => loadHistory(client.output_dir || process.cwd()),
+  saveHistory: (client, history) => saveHistory(client.output_dir || process.cwd(), history),
+  loadKeywordHistory: (client) => loadKeywordHistory(client.output_dir || process.cwd()),
+  saveKeywordHistory: (client, date, keywords) => saveKeywordHistory(client.output_dir || process.cwd(), date, keywords),
+  loadMetrics: (client) => loadMetrics(client.output_dir || process.cwd()),
+};
+
 // ─── Quick wins ───────────────────────────────────────────────────────────────
 
 function getQuickWins(pages) {
@@ -1035,30 +1050,35 @@ function createEngine(client) {
   // this is how audit.js's CLI wrapper keeps its existing prompt-driven
   // metrics entry working unchanged, without forcing that prompt into the
   // web path (which never passes this option).
-  async function runAudit({ provider, onProgress, onNeedMetrics } = {}) {
+  async function runAudit({ provider, onProgress, onNeedMetrics, storage } = {}) {
     const resolvedProvider = resolveProvider(provider);
     const outDir = client.output_dir || process.cwd();
+    const store = storage || fileStorage;
 
     const results = await crawl(onProgress);
     const scoreData = calcScore(results);
 
     const today = new Date().toISOString().split('T')[0];
-    const history = loadHistory(outDir);
+    const history = await store.loadHistory(client);
     const existingToday = history.find(h => h.date === today);
     if (existingToday) existingToday.score = scoreData.score;
     else history.push({ date: today, score: scoreData.score });
-    saveHistory(outDir, history);
+    await store.saveHistory(client, history);
 
     let gscData = null;
-    let keywordHistory = loadKeywordHistory(outDir);
+    let keywordHistory = await store.loadKeywordHistory(client);
     if (client.gsc_property) {
       gscData = await getGSCMetrics(client.gsc_property);
       if (gscData && gscData.topKeywords && gscData.topKeywords.length) {
-        saveKeywordHistory(outDir, today, gscData.topKeywords);
-        keywordHistory = loadKeywordHistory(outDir);
+        await store.saveKeywordHistory(client, today, gscData.topKeywords);
+        keywordHistory = await store.loadKeywordHistory(client);
       }
     }
-    const metrics = gscData || (onNeedMetrics ? await onNeedMetrics(outDir) : loadMetrics(outDir));
+    // onNeedMetrics is a CLI-only concern (audit.js's interactive prompt) —
+    // always file-based (metrics.json in outDir) regardless of which storage
+    // adapter is in use, since it's the CLI wrapper's own fallback, not part
+    // of the storage abstraction.
+    const metrics = gscData || (onNeedMetrics ? await onNeedMetrics(outDir) : await store.loadMetrics(client));
 
     const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider);
 
