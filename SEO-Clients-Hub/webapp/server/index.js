@@ -1,7 +1,10 @@
 // Phase 0 pilot server. One client (GroupRB, per PHASE0-DESIGN.md §8), one
 // "run audit" button, no database, no job queue — an in-memory Map is enough
 // for a single pilot client triggered by one person. See design doc §4-6.
+// Auth added per PHASE1-DESIGN.md §3 — the Phase 0 deploy was public with no
+// login, which is urgent to fix now that it's live on a real URL.
 const express = require('express');
+const cookieSession = require('cookie-session');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -9,6 +12,42 @@ const { runAudit } = require('../../seo-tool/lib/audit-engine');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const SITE_PASSWORD = process.env.SITE_PASSWORD;
+
+if (!SITE_PASSWORD) {
+  console.warn('WARNING: SITE_PASSWORD is not set — /api/login will reject all attempts until it is configured.');
+}
+
+app.use(express.json());
+app.use(cookieSession({
+  name: 'session',
+  secret: process.env.SESSION_SECRET || 'dev-only-secret-set-a-real-one-in-production',
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days — internal tool, not worth re-logging-in constantly
+}));
+
+app.post('/api/login', (req, res) => {
+  if (!SITE_PASSWORD) return res.status(500).json({ error: 'Server not configured with SITE_PASSWORD' });
+  if (req.body && req.body.password === SITE_PASSWORD) {
+    req.session.authed = true;
+    return res.json({ ok: true });
+  }
+  res.status(401).json({ error: 'Wrong password' });
+});
+
+app.post('/api/logout', (req, res) => {
+  req.session = null;
+  res.json({ ok: true });
+});
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/login.html'));
+});
+
+app.use((req, res, next) => {
+  if (req.session && req.session.authed) return next();
+  if (req.path.startsWith('/api/')) return res.status(401).json({ error: 'Not authenticated' });
+  return res.redirect('/login.html');
+});
 
 // Overridable via env for testing against a fixture config without touching
 // the real pilot client's file.

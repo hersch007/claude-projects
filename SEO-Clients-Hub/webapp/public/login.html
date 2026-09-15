@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Platform — Log In</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f6fa;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    padding: 40px;
+    max-width: 360px;
+    width: 100%;
+  }
+  h1 { font-size: 18px; margin-bottom: 20px; }
+  input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  button {
+    background: #0B0B0C;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  .error { color: #dc2626; font-size: 13px; margin-bottom: 12px; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>SEO Platform</h1>
+  <div id="error" class="error"></div>
+  <form id="login-form">
+    <input type="password" id="password" placeholder="Password" autofocus required>
+    <button type="submit">Log In</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const password = document.getElementById('password').value;
+    const errorEl = document.getElementById('error');
+    errorEl.textContent = '';
+
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+
+    if (res.ok) {
+      window.location.href = '/';
+    } else {
+      const data = await res.json().catch(() => ({}));
+      errorEl.textContent = data.error || 'Login failed';
+    }
+  });
+</script>
+
+</body>
+</html>
