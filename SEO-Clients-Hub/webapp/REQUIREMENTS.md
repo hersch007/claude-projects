@@ -193,5 +193,10 @@ lost between sessions:
 2. ~~Design doc for the Phase 0 pilot~~ — **done, see `PHASE0-DESIGN.md`**
    (covers the `audit.js` refactor plan, no-queue backend approach, Phase 1
    DB schema sketch, and GroupRB as the recommended pilot client).
-3. Build Phase 0 against one pilot client and compare its output against that
-   client's existing audit file for parity before proceeding to Phase 1.
+3. ~~Build Phase 0 against one pilot client~~ — **done, see `PHASE0-DESIGN.md`
+   §9.** Deployed to Render at https://seo-platform-phase0.onrender.com and
+   confirmed with a live GroupRB audit (score 80/100).
+4. **Next up — Phase 1 (MVP):** client dashboard, DB-backed audit history
+   (Postgres, per the §7/§10a schema sketch), migrate all current clients in,
+   Word/PDF export matching current report quality. Needs a Phase 1 design
+   doc before implementation starts, same as Phase 0 did.

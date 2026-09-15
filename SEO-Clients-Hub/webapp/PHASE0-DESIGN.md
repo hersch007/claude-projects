@@ -174,10 +174,22 @@ Recommend **GroupRB** (`grouprb.json`) itself as the Phase 0 pilot:
       client. The 6-point drop is a real finding (10 pages now missing meta
       descriptions, 5 missing H1s) — worth a look on grouprb.com itself, not
       a sign of a tool bug.
-- [ ] Deployed to the actual hosted server (per `REQUIREMENTS.md` §10.3's
-      decision) — so far only run from a developer machine (`node index.js`
-      locally). Still needs an actual deploy to validate the real hosting
-      target's network egress to client sites before Phase 1 starts.
+- [x] Deployed to an actual hosted server. **Confirmed 2026-09-15**: deployed
+      to Render (free tier) at https://seo-platform-phase0.onrender.com,
+      building from this repo/branch (Root Directory `SEO-Clients-Hub/webapp/server`,
+      Build Command `npm install --prefix ../../seo-tool && npm install` —
+      needed because the engine's dependencies live in `seo-tool/package.json`,
+      a separate folder from `webapp/server/package.json`). Ran a live audit
+      against GroupRB from the deployed instance: score 80/100, matching the
+      local run. SiteGround (GroupRB's existing host) was ruled out first —
+      confirmed with their support that shared GoGeek hosting doesn't support
+      persistent Node.js processes. The StartPerformance VPS was also ruled
+      out for this pilot since it already hosts live client sites and this
+      app is still early — not worth the shared-resource risk; worth
+      revisiting as the real Phase 1 production target once the app has more
+      of a track record.
+
+**Phase 0 is complete — all four criteria met.**
 
 ## 10. Explicitly out of scope for Phase 0
 
