@@ -25,13 +25,10 @@ const MAX_PAGES = client.max_pages || 50;
 const IGNORE = client.ignore_paths || [];
 
 // ─── Provider companies (who this audit is prepared/billed under) ─────────────
-// Parts of Practice's colors (navy/amber) are confirmed from its live site and
-// existing client materials (WFC-SEO-Pricing, Karen Hubbars Therapy PDF). The
-// other three are still representative placeholders — swap in exact values
-// if/when they're supplied.
+// All four sets of colors are confirmed real brand values.
 const PROVIDERS = {
-  '1': { name: 'Start Advertising', email: 'RBStart@StartAdvertising.com', brand: '#C8102E', brand2: '#1A1A1A' },
-  '2': { name: 'Start Performance', email: 'RBStart@StartPerformance.com', brand: '#C8102E', brand2: '#1A1A1A' },
+  '1': { name: 'Start Advertising', email: 'RBStart@StartAdvertising.com', brand: '#ED1C24', brand2: '#212121' },
+  '2': { name: 'Start Performance', email: 'RBStart@StartPerformance.com', brand: '#ED1C24', brand2: '#212121' },
   '3': { name: 'Parts of Practice', email: 'Richard@PartsofPractice.com', brand: '#003366', brand2: '#f59e0b' },
   '4': { name: 'GroupRB', email: 'Richard@GroupRB.com', brand: '#0B0B0C', brand2: '#1D4ED8' },
 };

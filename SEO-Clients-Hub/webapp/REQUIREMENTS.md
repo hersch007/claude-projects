@@ -1,6 +1,6 @@
 # SEO Platform — Requirements & Scope
 
-Status: draft v1 — 2026-09-15
+Status: draft v2 — 2026-09-15 (open questions resolved, ready for Phase 0 design)
 Owner: Richard (GroupRB)
 
 ## 1. Purpose
@@ -58,8 +58,8 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 | **Site crawl / technical audit** | Ubersuggest Site Audit, SEObility Site Audit, Moz Site Crawl | Own crawler (extend `audit.js`: Cheerio + HTTP checks) | Broken links, missing/duplicate title & meta, heading structure, image alt text, canonical tags, sitemap.xml/robots.txt presence, HTTPS, schema/structured data detection |
 | **Performance / Core Web Vitals** | Ubersuggest Site Audit speed section | Google PageSpeed Insights API (free) | Per-page or homepage-only for v1 |
 | **On-page SEO checker (single URL)** | Ubersuggest On-Page SEO Analyzer | Own crawler, single-page mode | Title/meta length checks, keyword-in-title/H1 check, readability, internal link count |
-| **Rank / search visibility tracking** | Ubersuggest/Moz rank tracker | Google Search Console API (already integrated via `gsc.js`) | Real position/impressions/clicks/CTR per query — ground truth for clients who already have GSC verified, which is a real constraint to flag (see §10) |
-| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; deferred to Phase 2 (requires a Google Ads account + API access, which is a setup dependency, not just code) |
+| **Rank / search visibility tracking** | Ubersuggest/Moz rank tracker | Google Search Console API (already integrated via `gsc.js`) | Real position/impressions/clicks/CTR per query. Only 6 of 15 current clients have `gsc_property` configured today (ariandava, cfb, fruth, grouprb, root-and-grow, techousecorp) — **decision: ship with partial coverage**, dashboard shows "no data" gracefully for the rest, add clients as GSC access is obtained |
+| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; deferred to Phase 2. **Decision: no Google Ads account exists yet** — setting one up is a confirmed prerequisite task before Phase 2 work starts, not just code |
 | **E-E-A-T / local SEO signals** | Not a direct competitor feature, but core to your current audit template | Own crawler + manual checklist | Carry forward the existing 11-section rubric's E-E-A-T and Local sections |
 | **SEO Health Score** | Ubersuggest/SEObility overall score | Computed from the above | Reuse and codify the existing 100-point rubric (§3 table) instead of ad hoc scoring |
 | **Client dashboard** | Moz/SEObility "Campaigns" list | Own DB | List of clients, latest score, trend sparkline, last-crawled date |
@@ -69,8 +69,8 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 
 ## 7. Deferred / Phase 2+ candidates
 
-- Keyword Planner API integration (needs Google Ads account access — confirm
-  availability before committing to a phase).
+- Keyword Planner API integration — **needs a Google Ads account set up first
+  (confirmed prerequisite, none exists today)** before this can start.
 - Scheduled/automatic re-crawls (e.g. weekly) with email/Slack summary of score changes.
 - Competitor comparison (crawl a client-named competitor URL side by side) — fully
   achievable on free sources, just not in v1 scope.
@@ -97,36 +97,50 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 
 ## 9. Proposed Architecture (high level — to be detailed in a separate design doc)
 
+- **Hosting: decided — small hosted server**, not local-only. The team needs to
+  trigger audits and view the dashboard from anywhere, and background crawl jobs
+  need to run without a machine staying on. Implies the app needs real
+  authentication (internal team login) and HTTPS from day one, not just
+  local-network trust.
 - **Backend:** Node.js, reusing `audit.js`'s crawl logic as a library rather than
   a CLI script; crawl runs as a background job (queue) so the UI isn't blocked.
 - **Database:** replaces `seo-tool/clients/*.json` and the file-per-report model —
   clients, audit runs, findings, and scores as rows so history/trends are queryable.
-  SQLite is enough for single-agency internal use; Postgres if concurrent multi-user
-  access matters.
+  Given hosted (not local-only) deployment, plan for Postgres rather than SQLite
+  so the DB isn't tied to a single server's local disk.
 - **Frontend:** dashboard (client list + trends) + per-client audit view + report
   export button. Reuses the existing 11-section structure and scoring rubric as the
-  data model, not a redesign of the report content.
+  data model, not a redesign of the report content. Each client's settings page
+  includes a manual "add historical score" entry (date + score, optionally per
+  category) so older audits can be logged into the trend chart by hand — see §7.
 - **Report generation:** keep the existing Word/PDF generation approach (the `docx`
   package scripts already used by the skills), triggered from the app instead of
   written/run/deleted as throwaway scripts each time.
 
-## 10. Open Questions
+## 10. Open Questions — RESOLVED (2026-09-15)
 
-1. **GSC access per client:** rank tracking depends on the agency having Search
-   Console access to each client's property (`gsc_property` in the existing
-   configs). Confirm this is true for all current clients, since it gates a core
-   feature for some of them.
-2. **Google Ads Keyword Planner access:** does the agency have a Google Ads
-   account in good standing to use for the Keyword Planner API (Phase 2)?
-3. **Hosting:** run locally only (like today), or deployed to a small server the
-   team can reach from anywhere?
-4. **Migration:** do existing clients' historical audits (the `.md`/`.docx` files
-   already in `clients/`) get backfilled into the new DB, or does history start
-   fresh from the app's first run per client?
-5. **Provider/letterhead colors:** the 3 of 4 provider color values in `audit.js`
-   are marked as placeholders pending real brand values — confirm exact hex
-   codes for Start Advertising and Start Performance before this becomes the
-   system of record for report branding.
+1. **GSC access per client** — resolved: only 6 of 15 clients have `gsc_property`
+   configured today. **Decision: ship with partial coverage.** Rank tracking
+   launches for the clients that already have it; the rest show "no data" until
+   access is set up, added incrementally rather than blocking launch.
+2. **Google Ads Keyword Planner access** — resolved: **no account exists yet.**
+   Setting one up is now a confirmed prerequisite task ahead of Phase 2, not
+   something that can happen in parallel with the code.
+3. **Hosting** — resolved: **small hosted server**, not local-only. Team needs
+   to reach the dashboard and trigger audits from anywhere; background crawl
+   jobs shouldn't depend on a machine staying powered on. This raises the bar
+   on §8 (real auth + HTTPS required, not just local-network trust) and shifts
+   §9's DB recommendation toward Postgres over SQLite.
+4. **Migration** — resolved: **start fresh, no automated backfill script.**
+   New DB history begins at each client's first audit run in the app; existing
+   `.md`/`.docx` files stay in `clients/` as archive only. However, each
+   client's settings page must support **manually entering historical scores**
+   (date + score, optionally by category) so past audits can be logged into
+   the trend chart by hand when wanted — see §9.
+5. **Provider/letterhead colors** — resolved: **Start Advertising and Start
+   Performance are both `#ED1C24` (red) / `#212121` (near-black).** Updated in
+   `seo-tool/audit.js`'s `PROVIDERS` map; all four providers now use confirmed
+   real brand values, no placeholders remain.
 
 ## 11. Proposed Phases
 
@@ -136,16 +150,21 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 - **Phase 1 — MVP:** client dashboard, DB-backed audit history, Health Score
   computed consistently, Word/PDF export matching current report quality,
   migrate all current clients in.
-- **Phase 2 — Enhancements:** Keyword Planner integration, scheduled re-crawls,
-  trend charts/alerts on score drops.
+- **Phase 2 — Enhancements:** Keyword Planner integration (blocked on Google Ads
+  account setup — see §10.2), scheduled re-crawls, trend charts/alerts on score
+  drops.
 - **Phase 3 — Stretch:** competitor comparison, and (only if the agency decides
   to pay for it) a licensed data API for backlinks/DA.
 
 ## 12. Next Steps
 
-1. Resolve Open Questions §10 (especially GSC access and hosting preference).
-2. Design doc for the Phase 0 pilot: exact DB schema, job queue choice, and how
-   much of `audit.js` can be reused unmodified vs. needs refactoring out of its
-   CLI/`readline` prompt flow.
+1. Set up a Google Ads account for Keyword Planner API access — needed before
+   Phase 2, so worth starting in parallel with Phase 0/1 build work rather than
+   waiting until Phase 2 begins.
+2. Design doc for the Phase 0 pilot: DB schema (Postgres, hosted target per
+   §10.3), job queue choice, hosting/auth setup for the small server, the
+   manual historical-score entry form (§10.4), and how much of `audit.js` can
+   be reused unmodified vs. needs refactoring out of its CLI/`readline` prompt
+   flow.
 3. Build Phase 0 against one pilot client and compare its output against that
    client's existing audit file for parity before proceeding to Phase 1.
