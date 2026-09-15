@@ -35,13 +35,19 @@ just needs to start appearing in the objects going forward.
 This needs its own credential setup, parallel to what `gsc-auth.js` already
 does for Search Console — a Google Ads API client requires:
 
-- The developer token (already obtained — Explorer access, approved this
-  session, under MCC 169-720-1017).
-- OAuth credentials + a refresh token authorized against that MCC account
-  (same Desktop-app OAuth client pattern already used for GSC — could even
-  reuse the same Cloud project's OAuth client if its scope is extended to
-  include `https://www.googleapis.com/auth/adwords`).
+- OAuth credentials + a refresh token authorized against the MCC account
+  (same Desktop-app OAuth client pattern already used for GSC — reuses the
+  same Cloud project's OAuth client, scope extended to include
+  `https://www.googleapis.com/auth/adwords`; see `ads-auth.js`).
 - A `login-customer-id` (the MCC's customer ID) alongside the request.
+- **No developer token.** Google sunset developer tokens API-wide on
+  2026-09-09 (mid-session, which is why this took a while to track down —
+  every doc/UI path we found pre-sunset was a dead end). API access is now
+  tied entirely to the Cloud project that owns the OAuth credentials above;
+  "GroupRB SEO Software Project" already has Explorer access approved, so
+  no further application step is needed. `keyword-planner.js` still passes
+  a placeholder string to `google-ads-api`'s constructor (that field is
+  required client-side by the library, but the API server ignores it).
 
 Recommend a `seo-tool/lib/keyword-planner.js` module mirroring `gsc.js`'s
 shape: `getSearchVolumes(keywords[])` → `{ keyword: volume }`, using

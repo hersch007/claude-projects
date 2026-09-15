@@ -6,9 +6,9 @@
 // package's own generated type definitions (node_modules/google-ads-node/
 // build/protos/protos.d.ts — IGenerateKeywordHistoricalMetricsRequest/
 // Response), not guessed — but this has NOT been exercised against the
-// real Google Ads API, since the OAuth credentials/developer token wiring
-// (§3.2) hasn't been set up yet. Treat as code-reviewed, not live-tested,
-// until that setup happens and this has actually been run once.
+// real Google Ads API yet, pending running ads-auth.js locally (§3.2) to
+// produce ads-token.json. Treat as code-reviewed, not live-tested, until
+// that's done and this has actually been run once.
 const fs = require('fs');
 const path = require('path');
 
@@ -32,12 +32,18 @@ function getCustomer() {
   if (!fs.existsSync(TOKEN_PATH)) {
     throw new Error(`Missing ${TOKEN_PATH} — run ads-auth.js first to authorize the adwords scope.`);
   }
-  const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
-  if (!developerToken) throw new Error('GOOGLE_ADS_DEVELOPER_TOKEN is not set.');
 
   const { GoogleAdsApi } = require('google-ads-api');
   const { client_id, client_secret } = JSON.parse(fs.readFileSync(OAUTH_CLIENT_PATH, 'utf8')).installed;
   const { refresh_token } = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf8'));
+
+  // Google sunset developer tokens on 2026-09-09 — API access is now tied to
+  // the Cloud project that owns these OAuth credentials (Explorer access was
+  // approved for "GroupRB SEO Software Project" this same session), not a
+  // token value. The google-ads-api client still requires a non-empty string
+  // for this field (it's sent as a request header), but the API server
+  // ignores it now, so any placeholder satisfies both.
+  const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN || 'unused-post-sunset-placeholder';
 
   const client = new GoogleAdsApi({ client_id, client_secret, developer_token: developerToken });
   const customerId = getCustomerId();
