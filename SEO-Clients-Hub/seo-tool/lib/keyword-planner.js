@@ -70,7 +70,11 @@ async function getSearchVolumes(keywords) {
     }
     return volumes;
   } catch (err) {
-    console.warn('Keyword Planner lookup failed (continuing without volume data):', err.message);
+    // google-ads-api errors often carry the real detail in `.errors`
+    // (per-failure error_code/message) rather than a top-level `.message`,
+    // so log whichever is actually populated.
+    const detail = (err && err.errors) ? JSON.stringify(err.errors) : (err && (err.stack || err.message)) || err;
+    console.warn('Keyword Planner lookup failed (continuing without volume data):', detail);
     return {};
   }
 }
