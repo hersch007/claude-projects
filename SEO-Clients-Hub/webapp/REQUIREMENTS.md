@@ -144,6 +144,30 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
    `seo-tool/audit.js`'s `PROVIDERS` map; all four providers now use confirmed
    real brand values, no placeholders remain.
 
+## 10a. Infrastructure Setup Status (2026-09-15)
+
+Concrete progress on the Google Cloud/Ads setup from §10.2/§10.3, so this isn't
+lost between sessions:
+
+- [x] Google Cloud project created: **"GroupRB SEO Software Project"** — the
+  single consolidated project for GSC, Google Ads API, and future backend
+  hosting, per the "one place for everything" decision.
+- [x] Search Console API and Google Ads API both enabled in this project.
+- [x] OAuth 2.0 client created (type: **Desktop app**, required to match
+  `gsc-auth.js`'s expected `installed` credential format) — saved locally as
+  `seo-tool/gsc-oauth-client.json`.
+- [x] `gsc-auth.js` re-run against the new project; `seo-tool/gsc-token.json`
+  regenerated and working.
+- [x] Google Ads API → Access levels → applied for **Explorer** access
+  (the tier that permits calls to real/production accounts, not just
+  Google's test sandbox). **Status: submitted, under review** as of
+  2026-09-15 — check back on this before starting Phase 2 keyword work.
+- Note for later: the Google Ads UI's own "API Center" page (Tools & Settings)
+  is now scoped only to the unrelated App Conversion Tracking and Remarketing
+  API — don't look there for Google Ads API access/developer token again;
+  it's managed entirely from Cloud Console → APIs & Services → Google Ads API
+  → Access levels, as confirmed above.
+
 ## 11. Proposed Phases
 
 - **Phase 0 — Pilot:** wrap `audit.js` in a minimal web UI (trigger a crawl,
