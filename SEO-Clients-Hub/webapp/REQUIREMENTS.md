@@ -59,7 +59,7 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 | **Performance / Core Web Vitals** | Ubersuggest Site Audit speed section | Google PageSpeed Insights API (free) | Per-page or homepage-only for v1 |
 | **On-page SEO checker (single URL)** | Ubersuggest On-Page SEO Analyzer | Own crawler, single-page mode | Title/meta length checks, keyword-in-title/H1 check, readability, internal link count |
 | **Rank / search visibility tracking** | Ubersuggest/Moz rank tracker | Google Search Console API (already integrated via `gsc.js`) | Real position/impressions/clicks/CTR per query. Only 6 of 15 current clients have `gsc_property` configured today (ariandava, cfb, fruth, grouprb, root-and-grow, techousecorp) — **decision: ship with partial coverage**, dashboard shows "no data" gracefully for the rest, add clients as GSC access is obtained |
-| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; deferred to Phase 2. **Decision: no Google Ads account exists yet** — setting one up is a confirmed prerequisite task before Phase 2 work starts, not just code |
+| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; deferred to Phase 2. **GroupRB MCC account (169-720-1017) exists** — remaining prerequisite is Google Ads API/developer token approval, not account setup |
 | **E-E-A-T / local SEO signals** | Not a direct competitor feature, but core to your current audit template | Own crawler + manual checklist | Carry forward the existing 11-section rubric's E-E-A-T and Local sections |
 | **SEO Health Score** | Ubersuggest/SEObility overall score | Computed from the above | Reuse and codify the existing 100-point rubric (§3 table) instead of ad hoc scoring |
 | **Client dashboard** | Moz/SEObility "Campaigns" list | Own DB | List of clients, latest score, trend sparkline, last-crawled date |
@@ -69,8 +69,8 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 
 ## 7. Deferred / Phase 2+ candidates
 
-- Keyword Planner API integration — **needs a Google Ads account set up first
-  (confirmed prerequisite, none exists today)** before this can start.
+- Keyword Planner API integration — GroupRB MCC account (169-720-1017) exists;
+  **needs Google Ads API access + developer token approval** before this can start.
 - Scheduled/automatic re-crawls (e.g. weekly) with email/Slack summary of score changes.
 - Competitor comparison (crawl a client-named competitor URL side by side) — fully
   achievable on free sources, just not in v1 scope.
@@ -123,9 +123,11 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
    configured today. **Decision: ship with partial coverage.** Rank tracking
    launches for the clients that already have it; the rest show "no data" until
    access is set up, added incrementally rather than blocking launch.
-2. **Google Ads Keyword Planner access** — resolved: **no account exists yet.**
-   Setting one up is now a confirmed prerequisite task ahead of Phase 2, not
-   something that can happen in parallel with the code.
+2. **Google Ads Keyword Planner access** — resolved: **GroupRB has an existing
+   MCC (manager) account, ID 169-720-1017**, which can be used for Keyword
+   Planner API access. Remaining prerequisite before Phase 2: confirm/enable
+   Google Ads API access under this MCC and obtain a developer token (Google's
+   API approval process, not just a config change) — see §12.
 3. **Hosting** — resolved: **small hosted server**, not local-only. Team needs
    to reach the dashboard and trigger audits from anywhere; background crawl
    jobs shouldn't depend on a machine staying powered on. This raises the bar
@@ -151,15 +153,16 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
   computed consistently, Word/PDF export matching current report quality,
   migrate all current clients in.
 - **Phase 2 — Enhancements:** Keyword Planner integration (blocked on Google Ads
-  account setup — see §10.2), scheduled re-crawls, trend charts/alerts on score
-  drops.
+  API/developer token approval under the existing MCC — see §10.2), scheduled
+  re-crawls, trend charts/alerts on score drops.
 - **Phase 3 — Stretch:** competitor comparison, and (only if the agency decides
   to pay for it) a licensed data API for backlinks/DA.
 
 ## 12. Next Steps
 
-1. Set up a Google Ads account for Keyword Planner API access — needed before
-   Phase 2, so worth starting in parallel with Phase 0/1 build work rather than
+1. Apply for Google Ads API access + a developer token under the existing
+   GroupRB MCC account (169-720-1017) — Google's approval process can take
+   time, so worth starting in parallel with Phase 0/1 build work rather than
    waiting until Phase 2 begins.
 2. Design doc for the Phase 0 pilot: DB schema (Postgres, hosted target per
    §10.3), job queue choice, hosting/auth setup for the small server, the
