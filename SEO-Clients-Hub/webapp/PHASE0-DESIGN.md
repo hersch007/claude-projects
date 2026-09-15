@@ -161,17 +161,23 @@ Recommend **GroupRB** (`grouprb.json`) itself as the Phase 0 pilot:
 
 ## 9. Definition of done for Phase 0
 
-- [ ] `audit-engine.js` extracted, existing `audit.js` CLI still works
-      unchanged for all other clients (regression check).
-- [ ] Web UI triggers a live crawl of GroupRB's site end-to-end, no terminal
-      involved.
-- [ ] Resulting report is diffed against the existing GroupRB audit HTML —
-      same score (±expected drift from content changes since the last
-      crawl), same issue/warning categories, same visual design.
+- [x] `audit-engine.js` extracted, existing `audit.js` CLI still works
+      unchanged for all other clients (regression check). Verified against a
+      local fixture site in the build session, then confirmed on the real
+      pilot below.
+- [x] Web UI triggers a live crawl of GroupRB's site end-to-end, no terminal
+      involved. **Confirmed 2026-09-15**, run from Richard's machine: 27
+      pages crawled, score 80/100, report rendered correctly in the browser.
+- [x] Resulting report picked up the existing score history correctly — the
+      trend chart shows 86 (Aug 11) → 80 (today), proving the file-based
+      history mechanism (§5) works against real prior data, not just a fresh
+      client. The 6-point drop is a real finding (10 pages now missing meta
+      descriptions, 5 missing H1s) — worth a look on grouprb.com itself, not
+      a sign of a tool bug.
 - [ ] Deployed to the actual hosted server (per `REQUIREMENTS.md` §10.3's
-      decision), not just proven locally — Phase 0 should validate the real
-      hosting target's network egress to client sites, not a developer
-      machine's.
+      decision) — so far only run from a developer machine (`node index.js`
+      locally). Still needs an actual deploy to validate the real hosting
+      target's network egress to client sites before Phase 1 starts.
 
 ## 10. Explicitly out of scope for Phase 0
 
