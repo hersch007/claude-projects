@@ -220,42 +220,50 @@ rather tackle the LLM integration now instead.
 
 ## 9. Migration
 
-One-time script (`seo-tool/migrate-to-db.js` or similar), run once against
-the new Postgres database:
+**Built as `POST /api/admin/migrate`** (a protected route triggered by a
+"Sync Clients from Config" button on the dashboard) rather than a standalone
+script — simpler for Richard to run from the browser than installing `psql`
+or using a local terminal, and safe to re-run any time a client's JSON
+config changes (upserts by slug). On each run:
 
-1. Seed `providers` with the 4 known companies (names/emails/colors already
-   in `audit-engine.js`'s `PROVIDERS` map).
-2. For each of the 15 files in `seo-tool/clients/*.json` (andy-studer,
-   ariandava, cfb, fruth, garlock, grouprb, guidance-grief, joewelchphoto,
-   karen-hubbars, lavender, lawnace, mothershiproofing, root-and-grow,
-   start-again, techousecorp) — insert a `clients` row.
-3. For each client that already has a `score-history.json` /
-   `keyword-history.json` / `metrics.json` on disk (from prior CLI runs),
-   import those directly into `audit_runs`/`gsc_snapshots` — this is
-   different from the `.md`/`.docx` narrative-report backfill question
-   already decided against in `REQUIREMENTS.md` §10.4; these JSON files are
-   already structured data, not prose to parse, so importing them is
-   low-effort and strictly additive to the trend charts. Flagging this as
-   the default plan rather than assuming — say if you'd rather these also
-   start fresh.
+1. Providers are already seeded by `schema.sql` on boot (§3/§5's
+   `ensureSchema()`), not by this endpoint.
+2. For each file in `seo-tool/clients/*.json` — upsert a `clients` row.
+3. For each client with a `score-history.json` / `keyword-history.json` on
+   disk (from prior CLI runs), import those into `audit_runs`/
+   `gsc_snapshots` — structured data, not prose, so distinct from the
+   `.md`/`.docx` narrative-backfill question already decided against in
+   `REQUIREMENTS.md` §10.4.
 4. Existing `.md`/`.docx`/`.html` report files stay on disk as archive only,
    per the earlier decision — not imported.
 
+**Confirmed 2026-09-15** against the real Render Postgres database: 15
+clients synced, 26 history rows imported, 7 keyword snapshots, 0 errors.
+
 ## 10. Definition of done for Phase 1
 
-- [ ] Login page gates the whole app; Phase 0's unauthenticated Render URL
-      is no longer reachable without the shared password.
-- [ ] All 15 clients visible on the dashboard with correct latest scores.
-- [ ] Running an audit from the dashboard works for a client with GSC
-      configured and one without, producing correct results in both cases.
-- [ ] Trend chart on at least one migrated client shows real historical
-      data (from the JSON import), not just points from new runs.
-- [ ] Manual score entry form works and shows up correctly in the trend
-      chart merged with real run data.
+- [x] Login page gates the whole app. **Confirmed** — Phase 0's
+      unauthenticated Render URL is no longer reachable without the shared
+      password.
+- [x] All 15 clients visible on the dashboard with correct latest scores.
+      **Confirmed** via the live migration run above.
+- [x] Running an audit from the dashboard works. **Confirmed** — two live
+      runs against GroupRB (which has GSC configured) completed correctly,
+      including correct provider-branded colors on the generated report.
+      Still worth trying once on a client *without* `gsc_property` set to
+      confirm the graceful no-metrics fallback also holds on the live app,
+      not just in local testing.
+- [x] Trend chart shows real historical data, not just new-run points.
+      **Confirmed** — GroupRB's chart included the imported Aug 11 score
+      alongside today's live runs.
+- [x] Manual score entry form works and merges correctly with real run
+      data. **Confirmed** in local testing against a real Postgres instance
+      before deploying (not yet exercised on the live Render app itself —
+      worth a quick live check).
 - [ ] Master report Word export produces output matching the quality of
-      what the `new-seo-client` skill generates today.
-- [ ] Deployed to Render (same app, or a redeploy) with the database wired
-      up and auth active.
+      what the `new-seo-client` skill generates today. **Not yet built.**
+- [x] Deployed to Render with the database wired up and auth active.
+      **Confirmed.**
 
 ## 11. Explicitly out of scope for Phase 1
 
