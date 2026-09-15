@@ -158,10 +158,14 @@ lost between sessions:
   `seo-tool/gsc-oauth-client.json`.
 - [x] `gsc-auth.js` re-run against the new project; `seo-tool/gsc-token.json`
   regenerated and working.
-- [x] Google Ads API → Access levels → applied for **Explorer** access
-  (the tier that permits calls to real/production accounts, not just
-  Google's test sandbox). **Status: submitted, under review** as of
-  2026-09-15 — check back on this before starting Phase 2 keyword work.
+- [x] Google Ads API → Access levels → applied for and **approved for
+  Explorer access** (2026-09-15): 2,880 daily API operations on production
+  accounts, full access to reporting/Keyword Planner-type features. This is
+  the tier needed for real client keyword data, not just Google's test
+  sandbox — **Phase 2 Keyword Planner integration is fully unblocked.**
+  Decision: skip the further **Basic** tier — it requires Brand Verification
+  and mainly raises the daily quota ceiling, which isn't needed for ~15-20
+  clients queried periodically. Revisit only if quota is actually hit.
 - Note for later: the Google Ads UI's own "API Center" page (Tools & Settings)
   is now scoped only to the unrelated App Conversion Tracking and Remarketing
   API — don't look there for Google Ads API access/developer token again;
@@ -176,18 +180,16 @@ lost between sessions:
 - **Phase 1 — MVP:** client dashboard, DB-backed audit history, Health Score
   computed consistently, Word/PDF export matching current report quality,
   migrate all current clients in.
-- **Phase 2 — Enhancements:** Keyword Planner integration (blocked on Google Ads
-  API/developer token approval under the existing MCC — see §10.2), scheduled
+- **Phase 2 — Enhancements:** Keyword Planner integration — **unblocked**,
+  Explorer-level Google Ads API access approved (see §10a) — scheduled
   re-crawls, trend charts/alerts on score drops.
 - **Phase 3 — Stretch:** competitor comparison, and (only if the agency decides
   to pay for it) a licensed data API for backlinks/DA.
 
 ## 12. Next Steps
 
-1. Apply for Google Ads API access + a developer token under the existing
-   GroupRB MCC account (169-720-1017) — Google's approval process can take
-   time, so worth starting in parallel with Phase 0/1 build work rather than
-   waiting until Phase 2 begins.
+1. ~~Apply for Google Ads API access under the existing GroupRB MCC account~~
+   — **done, approved for Explorer access (see §10a).**
 2. Design doc for the Phase 0 pilot: DB schema (Postgres, hosted target per
    §10.3), job queue choice, hosting/auth setup for the small server, the
    manual historical-score entry form (§10.4), and how much of `audit.js` can
