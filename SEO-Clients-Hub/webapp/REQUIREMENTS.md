@@ -196,7 +196,9 @@ lost between sessions:
 3. ~~Build Phase 0 against one pilot client~~ — **done, see `PHASE0-DESIGN.md`
    §9.** Deployed to Render at https://seo-platform-phase0.onrender.com and
    confirmed with a live GroupRB audit (score 80/100).
-4. **Next up — Phase 1 (MVP):** client dashboard, DB-backed audit history
-   (Postgres, per the §7/§10a schema sketch), migrate all current clients in,
-   Word/PDF export matching current report quality. Needs a Phase 1 design
-   doc before implementation starts, same as Phase 0 did.
+4. ~~Design doc for Phase 1~~ — **done, see `PHASE1-DESIGN.md`** (auth,
+   Postgres schema, engine storage-adapter plan, migration script scope, and
+   a flagged gap on the Prospect report needing LLM integration).
+5. **Next up:** build Phase 1 against `PHASE1-DESIGN.md`'s definition of
+   done (§10) — starting with auth, since the Phase 0 app is currently
+   public with no login.
