@@ -20,21 +20,29 @@ const PILOT_PROVIDER = '4';
 // runId -> { status: 'crawling'|'done'|'error', pagesCrawled, totalQueued, score, html, error }
 const runs = new Map();
 
+// grouprb.json's output_dir is a hardcoded Windows path (used by the local
+// CLI on Richard's machine) — that path doesn't exist on a Linux server, so
+// score-history.json etc. would fail to write there. We don't touch the
+// shared JSON config itself (that would break the local CLI), we just
+// override output_dir here with a portable path to the same repo location.
+function loadPilotClient() {
+  if (!fs.existsSync(PILOT_CLIENT_PATH)) return null;
+  const client = JSON.parse(fs.readFileSync(PILOT_CLIENT_PATH, 'utf8'));
+  client.output_dir = path.join(__dirname, '../../clients/GroupRB');
+  return client;
+}
+
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/api/audit/client', (req, res) => {
-  if (!fs.existsSync(PILOT_CLIENT_PATH)) {
-    return res.status(500).json({ error: 'Pilot client config not found' });
-  }
-  const client = JSON.parse(fs.readFileSync(PILOT_CLIENT_PATH, 'utf8'));
+  const client = loadPilotClient();
+  if (!client) return res.status(500).json({ error: 'Pilot client config not found' });
   res.json({ name: client.name, url: client.url });
 });
 
 app.post('/api/audit/run', (req, res) => {
-  if (!fs.existsSync(PILOT_CLIENT_PATH)) {
-    return res.status(500).json({ error: 'Pilot client config not found' });
-  }
-  const client = JSON.parse(fs.readFileSync(PILOT_CLIENT_PATH, 'utf8'));
+  const client = loadPilotClient();
+  if (!client) return res.status(500).json({ error: 'Pilot client config not found' });
   const runId = crypto.randomUUID();
   runs.set(runId, { status: 'crawling', pagesCrawled: 0, totalQueued: 0 });
 
