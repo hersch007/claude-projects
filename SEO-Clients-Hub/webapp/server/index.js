@@ -9,6 +9,7 @@ const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
 const { runAudit } = require('../../seo-tool/lib/audit-engine');
+const { getPool } = require('../../seo-tool/lib/db-storage');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -16,6 +17,24 @@ const SITE_PASSWORD = process.env.SITE_PASSWORD;
 
 if (!SITE_PASSWORD) {
   console.warn('WARNING: SITE_PASSWORD is not set — /api/login will reject all attempts until it is configured.');
+}
+
+// Applies webapp/db/schema.sql on every boot instead of requiring a manual
+// `psql` step — schema.sql is written to be idempotent (CREATE TABLE IF NOT
+// EXISTS, ON CONFLICT DO NOTHING on the seed data), so re-running it on
+// every deploy is safe and just confirms the schema is current.
+async function ensureSchema() {
+  if (!process.env.DATABASE_URL) {
+    console.warn('DATABASE_URL not set — skipping schema setup (DB-backed features unavailable until it is configured).');
+    return;
+  }
+  const schemaSql = fs.readFileSync(path.join(__dirname, '../db/schema.sql'), 'utf8');
+  try {
+    await getPool().query(schemaSql);
+    console.log('Database schema is up to date.');
+  } catch (err) {
+    console.error('Failed to apply database schema:', err.message);
+  }
 }
 
 app.use(express.json());
@@ -119,4 +138,7 @@ app.get('/api/audit/report/:runId', (req, res) => {
   res.set('Content-Type', 'text/html').send(run.html);
 });
 
-app.listen(PORT, () => console.log(`Phase 0 pilot server listening on http://localhost:${PORT}`));
+(async () => {
+  await ensureSchema();
+  app.listen(PORT, () => console.log(`Phase 0 pilot server listening on http://localhost:${PORT}`));
+})();
