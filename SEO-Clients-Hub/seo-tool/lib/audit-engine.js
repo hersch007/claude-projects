@@ -1050,7 +1050,7 @@ function createEngine(client) {
   // this is how audit.js's CLI wrapper keeps its existing prompt-driven
   // metrics entry working unchanged, without forcing that prompt into the
   // web path (which never passes this option).
-  async function runAudit({ provider, onProgress, onNeedMetrics, storage } = {}) {
+  async function runAudit({ provider, onProgress, onNeedMetrics, storage, enrichKeywords } = {}) {
     const resolvedProvider = resolveProvider(provider);
     const outDir = client.output_dir || process.cwd();
     const store = storage || fileStorage;
@@ -1070,6 +1070,11 @@ function createEngine(client) {
     if (client.gsc_property) {
       gscData = await getGSCMetrics(client.gsc_property);
       if (gscData && gscData.topKeywords && gscData.topKeywords.length) {
+        // enrichKeywords (Phase 2, seo-tool/lib/keyword-planner.js's
+        // enrichWithVolumes) adds real search volume to each keyword —
+        // optional so this stays a no-op until Keyword Planner OAuth is
+        // set up, same pattern as onNeedMetrics/storage above.
+        if (enrichKeywords) gscData.topKeywords = await enrichKeywords(gscData.topKeywords);
         await store.saveKeywordHistory(client, today, gscData.topKeywords);
         keywordHistory = await store.loadKeywordHistory(client);
       }

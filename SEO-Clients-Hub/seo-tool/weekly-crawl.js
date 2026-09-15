@@ -7,6 +7,7 @@ const { runAudit, PROVIDERS } = require('./lib/audit-engine');
 const dbStorage = require('./lib/db-storage');
 const { getPool } = dbStorage;
 const { sendSummaryEmail } = require('./lib/send-summary-email');
+const { enrichWithVolumes } = require('./lib/keyword-planner');
 
 async function getProviderIdByName(name) {
   const { rows } = await getPool().query('SELECT id FROM providers WHERE name = $1', [name]);
@@ -59,7 +60,7 @@ async function main() {
     console.log(`[${client.slug}] crawling ${client.url}...`);
 
     try {
-      const result = await runAudit(client, { provider, storage: dbStorage });
+      const result = await runAudit(client, { provider, storage: dbStorage, enrichKeywords: enrichWithVolumes });
       const providerId = await getProviderIdByName(provider.name);
       await pool.query(
         `UPDATE audit_runs SET provider_id = $1, pages_crawled = $2, deductions = $3, html_report = $4

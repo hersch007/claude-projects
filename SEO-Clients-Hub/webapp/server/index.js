@@ -12,6 +12,7 @@ const fs = require('fs');
 const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
+const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -237,6 +238,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
   runAudit(clientForEngine, {
     provider: providerKey,
     storage: dbStorage,
+    enrichKeywords: enrichWithVolumes,
     onProgress: (e) => {
       const run = runs.get(runId);
       if (run) Object.assign(run, { pagesCrawled: e.pagesCrawled, totalQueued: e.totalQueued, currentUrl: e.currentUrl });
