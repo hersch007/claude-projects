@@ -190,10 +190,8 @@ lost between sessions:
 
 1. ~~Apply for Google Ads API access under the existing GroupRB MCC account~~
    — **done, approved for Explorer access (see §10a).**
-2. Design doc for the Phase 0 pilot: DB schema (Postgres, hosted target per
-   §10.3), job queue choice, hosting/auth setup for the small server, the
-   manual historical-score entry form (§10.4), and how much of `audit.js` can
-   be reused unmodified vs. needs refactoring out of its CLI/`readline` prompt
-   flow.
+2. ~~Design doc for the Phase 0 pilot~~ — **done, see `PHASE0-DESIGN.md`**
+   (covers the `audit.js` refactor plan, no-queue backend approach, Phase 1
+   DB schema sketch, and GroupRB as the recommended pilot client).
 3. Build Phase 0 against one pilot client and compare its output against that
    client's existing audit file for parity before proceeding to Phase 1.
