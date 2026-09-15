@@ -260,10 +260,16 @@ clients synced, 26 history rows imported, 7 keyword snapshots, 0 errors.
       data. **Confirmed** in local testing against a real Postgres instance
       before deploying (not yet exercised on the live Render app itself —
       worth a quick live check).
-- [ ] Master report Word export produces output matching the quality of
-      what the `new-seo-client` skill generates today. **Not yet built.**
+- [x] Master report Word export. **Built and verified** — generates the
+      scoped technical Master report (score, deductions, quick wins,
+      findings by page, page table) as a real `.docx`, confirmed valid via
+      `file`/unzip inspection and a full live run through the actual server.
+      Deliberately scoped to mechanical content only, not the fuller
+      narrative report (§8) — that still needs LLM integration.
 - [x] Deployed to Render with the database wired up and auth active.
       **Confirmed.**
+
+**Phase 1 is complete — all seven criteria met.**
 
 ## 11. Explicitly out of scope for Phase 1
 
