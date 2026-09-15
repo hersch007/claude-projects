@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Platform — Client</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; padding: 32px; }
+  .container { max-width: 700px; margin: 0 auto; }
+  a.back { color: #64748b; font-size: 13px; text-decoration: none; display: inline-block; margin-bottom: 16px; }
+  h1 { font-size: 20px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  .card {
+    background: white; border-radius: 10px; padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 20px;
+  }
+  .card h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin-bottom: 14px; }
+  select, input, button {
+    font-size: 13px; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1;
+  }
+  button {
+    background: #0B0B0C; color: white; border: none; font-weight: 600; cursor: pointer; padding: 9px 18px;
+  }
+  button:disabled { background: #94a3b8; cursor: default; }
+  .run-row { display: flex; gap: 10px; align-items: center; }
+  #status { margin-top: 12px; font-size: 13px; }
+  #status.error { color: #dc2626; }
+  #status.done { color: #16a34a; font-weight: 600; }
+  a.report-link { color: #1d4ed8; font-weight: 600; text-decoration: none; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #64748b; font-size: 11px; text-transform: uppercase; padding: 6px 8px; border-bottom: 1px solid #e2e8f0; }
+  td { padding: 6px 8px; border-bottom: 1px solid #f1f5f9; }
+  .source-manual { color: #7c3aed; font-size: 11px; }
+  .manual-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  #manual-status { font-size: 12px; color: #16a34a; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back" href="/">&larr; All clients</a>
+  <div id="header">
+    <h1>Loading...</h1>
+  </div>
+
+  <div class="card">
+    <h2>Run Audit</h2>
+    <div class="run-row">
+      <select id="provider-select"></select>
+      <button id="run-btn">Run Audit</button>
+    </div>
+    <div id="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Score History</h2>
+    <table id="history-table">
+      <thead><tr><th>Date</th><th>Score</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Add Historical Score</h2>
+    <div class="manual-form">
+      <input type="date" id="manual-date">
+      <input type="number" id="manual-score" placeholder="Score" min="0" max="100" style="width:80px">
+      <input type="text" id="manual-note" placeholder="Note (optional)" style="flex:1;min-width:120px">
+      <button id="manual-submit">Add</button>
+    </div>
+    <div id="manual-status"></div>
+  </div>
+</div>
+
+<script>
+  const slug = new URLSearchParams(window.location.search).get('slug');
+  let pollTimer = null;
+
+  async function load() {
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`);
+    if (!res.ok) {
+      document.getElementById('header').innerHTML = '<h1>Client not found</h1>';
+      return;
+    }
+    const data = await res.json();
+
+    document.getElementById('header').innerHTML = `
+      <h1>${data.client.name}</h1>
+      <div class="sub">${data.client.url}</div>
+    `;
+
+    const providerSelect = document.getElementById('provider-select');
+    providerSelect.innerHTML = Object.entries(data.providers)
+      .map(([key, p]) => `<option value="${key}">${p.name}</option>`).join('');
+
+    const tbody = document.querySelector('#history-table tbody');
+    if (!data.history.length) {
+      tbody.innerHTML = '<tr><td colspan="3" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
+    } else {
+      tbody.innerHTML = [...data.history].reverse().map(h => `
+        <tr>
+          <td>${new Date(h.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+          <td>${h.score}</td>
+          <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  function poll(runId) {
+    const statusEl = document.getElementById('status');
+    pollTimer = setInterval(async () => {
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/status/${runId}`);
+      const s = await res.json();
+
+      if (s.status === 'crawling') {
+        statusEl.className = '';
+        statusEl.textContent = `Crawling... ${s.pagesCrawled} page${s.pagesCrawled === 1 ? '' : 's'} done` +
+          (s.currentUrl ? ` (last: ${s.currentUrl})` : '');
+      } else if (s.status === 'done') {
+        clearInterval(pollTimer);
+        statusEl.className = 'done';
+        statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` +
+          `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>` +
+          ` &nbsp;|&nbsp; <a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx">Download Word report &rarr;</a>`;
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('run-btn').textContent = 'Run Audit Again';
+        load();
+      } else if (s.status === 'error') {
+        clearInterval(pollTimer);
+        statusEl.className = 'error';
+        statusEl.textContent = `Audit failed: ${s.error}`;
+        document.getElementById('run-btn').disabled = false;
+        document.getElementById('run-btn').textContent = 'Retry';
+      }
+    }, 2000);
+  }
+
+  document.getElementById('run-btn').addEventListener('click', async () => {
+    const btn = document.getElementById('run-btn');
+    const statusEl = document.getElementById('status');
+    btn.disabled = true;
+    btn.textContent = 'Running...';
+    statusEl.className = '';
+    statusEl.textContent = 'Starting crawl...';
+
+    const provider = document.getElementById('provider-select').value;
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ provider }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.className = 'error';
+      statusEl.textContent = data.error;
+      btn.disabled = false;
+      btn.textContent = 'Retry';
+      return;
+    }
+    poll(data.runId);
+  });
+
+  document.getElementById('manual-submit').addEventListener('click', async () => {
+    const date = document.getElementById('manual-date').value;
+    const score = parseInt(document.getElementById('manual-score').value, 10);
+    const note = document.getElementById('manual-note').value;
+    const statusEl = document.getElementById('manual-status');
+
+    if (!date || isNaN(score)) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = 'Date and a numeric score are required.';
+      return;
+    }
+
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/manual-score`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date, score, note }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Added.';
+    document.getElementById('manual-date').value = '';
+    document.getElementById('manual-score').value = '';
+    document.getElementById('manual-note').value = '';
+    load();
+  });
+
+  load();
+</script>
+
+</body>
+</html>
