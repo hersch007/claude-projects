@@ -1091,4 +1091,8 @@ function createEngine(client) {
 module.exports = {
   PROVIDERS,
   runAudit: (client, opts) => createEngine(client).runAudit(opts),
+  // Exported for reuse by build-docx-report.js — same findings data the
+  // HTML report's Quick Wins and Findings by Page sections are built from.
+  getQuickWins,
+  friendlyIssue,
 };

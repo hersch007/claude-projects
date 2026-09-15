@@ -122,7 +122,8 @@
         clearInterval(pollTimer);
         statusEl.className = 'done';
         statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` +
-          `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>`;
+          `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>` +
+          ` &nbsp;|&nbsp; <a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx">Download Word report &rarr;</a>`;
         document.getElementById('run-btn').disabled = false;
         document.getElementById('run-btn').textContent = 'Run Audit Again';
         load();

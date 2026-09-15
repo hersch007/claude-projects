@@ -11,6 +11,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
+const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -256,7 +257,15 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
        WHERE client_id = $5 AND run_date = $6`,
       [providerId, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
     );
-    runs.set(runId, { status: 'done', pagesCrawled: result.results.length, score: result.scoreData.score, html: result.html, slug: clientRow.slug });
+    runs.set(runId, {
+      status: 'done', pagesCrawled: result.results.length, score: result.scoreData.score,
+      html: result.html, slug: clientRow.slug,
+      // Kept for the Word export route (§8) — generated on demand rather
+      // than pre-built, since not every run's report gets downloaded as
+      // .docx. Not persisted to the DB; only available for a run just
+      // completed, same lifecycle as the HTML report.
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date },
+    });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
     runs.set(runId, { status: 'error', error: err.message, slug: clientRow.slug });
@@ -268,7 +277,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
 app.get('/api/clients/:slug/audit/status/:runId', (req, res) => {
   const run = runs.get(req.params.runId);
   if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
-  const { html, ...status } = run; // don't ship the full report on every status poll
+  const { html, docxSource, ...status } = run; // don't ship the full report/crawl data on every status poll
   res.json(status);
 });
 
@@ -278,6 +287,24 @@ app.get('/api/clients/:slug/audit/report/:runId', (req, res) => {
   if (run.status === 'error') return res.status(500).send(`Audit failed: ${run.error}`);
   if (run.status !== 'done') return res.status(425).send('Report not ready yet');
   res.set('Content-Type', 'text/html').send(run.html);
+});
+
+app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).send('Unknown runId');
+  if (run.status !== 'done') return res.status(425).send('Report not ready yet');
+  try {
+    const buffer = await buildDocxReport(run.docxSource);
+    const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+    });
+    res.send(buffer);
+  } catch (err) {
+    console.error(`Docx generation for run ${req.params.runId} failed:`, err);
+    res.status(500).send('Failed to generate Word document');
+  }
 });
 
 (async () => {
