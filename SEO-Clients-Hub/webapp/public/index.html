@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Platform — Phase 0 Pilot</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f6fa;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    padding: 40px;
+    max-width: 480px;
+    width: 100%;
+  }
+  h1 { font-size: 20px; margin-bottom: 4px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 28px; }
+  .client-name { font-size: 16px; font-weight: 700; }
+  .client-url { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  button {
+    background: #0B0B0C;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  button:disabled { background: #94a3b8; cursor: default; }
+  .status { margin-top: 20px; font-size: 13px; color: #374151; min-height: 20px; }
+  .status.error { color: #dc2626; }
+  .status.done { color: #16a34a; font-weight: 600; }
+  a.report-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: #1d4ed8;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  a.report-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>SEO Platform — Phase 0 Pilot</h1>
+  <div class="sub">Triggers a live audit through the browser, no terminal.</div>
+
+  <div id="client-info">
+    <div class="client-name">Loading client…</div>
+  </div>
+
+  <button id="run-btn" disabled>Run Audit</button>
+  <div id="status" class="status"></div>
+</div>
+
+<script>
+  const runBtn = document.getElementById('run-btn');
+  const statusEl = document.getElementById('status');
+  const clientInfo = document.getElementById('client-info');
+  let pollTimer = null;
+
+  async function loadClient() {
+    try {
+      const res = await fetch('/api/audit/client');
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      clientInfo.innerHTML = `
+        <div class="client-name">${data.name}</div>
+        <div class="client-url">${data.url}</div>
+      `;
+      runBtn.disabled = false;
+    } catch (e) {
+      clientInfo.innerHTML = `<div class="client-name">Could not load pilot client</div>`;
+      statusEl.textContent = e.message;
+      statusEl.className = 'status error';
+    }
+  }
+
+  function poll(runId) {
+    pollTimer = setInterval(async () => {
+      const res = await fetch(`/api/audit/status/${runId}`);
+      const s = await res.json();
+
+      if (s.status === 'crawling') {
+        statusEl.className = 'status';
+        statusEl.textContent = `Crawling... ${s.pagesCrawled} page${s.pagesCrawled === 1 ? '' : 's'} done` +
+          (s.currentUrl ? ` (last: ${s.currentUrl})` : '');
+      } else if (s.status === 'done') {
+        clearInterval(pollTimer);
+        statusEl.className = 'status done';
+        statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` +
+          `<br><a class="report-link" href="/api/audit/report/${runId}" target="_blank">View full report &rarr;</a>`;
+        runBtn.disabled = false;
+        runBtn.textContent = 'Run Audit Again';
+      } else if (s.status === 'error') {
+        clearInterval(pollTimer);
+        statusEl.className = 'status error';
+        statusEl.textContent = `Audit failed: ${s.error}`;
+        runBtn.disabled = false;
+        runBtn.textContent = 'Retry';
+      }
+    }, 2000);
+  }
+
+  runBtn.addEventListener('click', async () => {
+    runBtn.disabled = true;
+    runBtn.textContent = 'Running...';
+    statusEl.className = 'status';
+    statusEl.textContent = 'Starting crawl...';
+
+    const res = await fetch('/api/audit/run', { method: 'POST' });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.className = 'status error';
+      statusEl.textContent = data.error;
+      runBtn.disabled = false;
+      runBtn.textContent = 'Retry';
+      return;
+    }
+    poll(data.runId);
+  });
+
+  loadClient();
+</script>
+
+</body>
+</html>
