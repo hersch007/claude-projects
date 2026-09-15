@@ -199,6 +199,15 @@ lost between sessions:
 4. ~~Design doc for Phase 1~~ — **done, see `PHASE1-DESIGN.md`** (auth,
    Postgres schema, engine storage-adapter plan, migration script scope, and
    a flagged gap on the Prospect report needing LLM integration).
-5. **Next up:** build Phase 1 against `PHASE1-DESIGN.md`'s definition of
-   done (§10) — starting with auth, since the Phase 0 app is currently
-   public with no login.
+5. ~~Build Phase 1~~ — **done, see `PHASE1-DESIGN.md` §10.** All 7 criteria
+   met: auth, multi-client dashboard, Postgres-backed history, migration
+   (15 clients, 26 history rows, 7 keyword snapshots), live audits with
+   correct provider branding, and Master report Word export. Merged to
+   `main` via [PR #8](https://github.com/hersch007/claude-projects/pull/8).
+6. ~~Design doc for Phase 2~~ — **done, see `PHASE2-DESIGN.md`** (Keyword
+   Planner enrichment scope, Render Cron Job for weekly re-crawls since the
+   free web service sleeps when idle, Resend for email alerts, a
+   3-point score-drop threshold as a starting default).
+7. **Next up:** build Phase 2 against `PHASE2-DESIGN.md`'s definition of
+   done (§6) — likely starting with the Google Ads OAuth setup, since that
+   mirrors work already done for GSC and unblocks the keyword-volume piece.
