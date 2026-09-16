@@ -313,6 +313,10 @@ if ( $sp_nav_hover_bg )    $custom_vars .= '--sp-nav-hover-bg:' . esc_attr( $sp_
         foreach ( $nav as $item ) {
             if ( ! empty( $item['section'] ) ) {
                 $current_section_key = ! empty( $item['section_id'] ) ? $item['section_id'] : sanitize_title( $item['label'] );
+            } elseif ( ! empty( $item['divider'] ) ) {
+                // A divider ends the preceding section's run -- a standalone item that
+                // follows (e.g. "Explore More") must not inherit it as its active section.
+                $current_section_key = null;
             } elseif ( ! empty( $item['view'] ) && $item['view'] === $view ) {
                 $active_section_key = $current_section_key;
             }
