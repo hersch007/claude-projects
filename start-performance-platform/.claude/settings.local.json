@@ -148,7 +148,9 @@
       "PowerShell(Copy-Item \"C:\\\\Users\\\\richa\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-richa-Documents-Claude-Projects-start-performance-platform\\\\98802c1b-d71e-4d7e-8f2b-5d61ab6f7ea4\\\\scratchpad\\\\government-service-core-user-manual.docx\" \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\\\\start-performance-platform\\\\government-service-core-user-manual.docx\" -Force)",
       "Bash(node build-manual.js)",
       "Bash(rm -f '/c/Users/richa/Documents/Claude Projects/start-performance-platform/plugin/government-service-core-1.2.15.zip')",
-      "Bash(node build-zip.js)"
+      "Bash(node build-zip.js)",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" add .)",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" status --short)"
     ]
   }
 }
