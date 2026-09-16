@@ -288,7 +288,16 @@ No other lines differ across these three versions — no schema changes, no shor
 
 ## Quote Builder Print Module (`quote-builder-print`)
 
-### 1.14.3 (Fruth) — latest
+### 1.15.0 (Fruth) — latest
+Feature request: make the customer-facing quote card visible on screen as reps build a quote, instead of only at print time.
+
+- **The print card is now a live, always-visible on-screen preview**, positioned right after the Quote Details section (via the existing `sqs_bottom_stack_extra` hook — no change to where it renders). It already listened for Core's `sqs:update` broadcast and re-rendered itself (`renderPrintQuote()`) on every input change; that data-binding needed no changes, it was just wired to an invisible element.
+- **Root cause of it needing real work, not just a CSS flip**: every visual rule for the card (header, red accent bar, line-item table, terms) previously lived *only* inside `@media print { ... }`, so simply un-hiding `.sqc-print-only` would have shown a completely unstyled block. Moved all of that inner `.sqp-*` styling to unconditional CSS so it now renders identically on screen and on paper; `@media print` now only strips the on-screen card's chrome (border/shadow/padding, inherited for free from Core's `.sqc-card` class) back to the original flush, full-bleed page layout, plus hides the new screen-only label.
+- Added a small "Customer Quote Preview" label above the card (`.sqc-preview-label`), hidden via `@media print`, so a rep can tell at a glance that this block is what the customer actually receives, not part of the internal quote form.
+- No changes to the print button, the print-time DOM-move/restore mechanism, or any pricing/calculation logic. Regression suite re-run clean (81/81) — this plugin has no assertions of its own, but confirms nothing in Core was disturbed.
+- `sqsp_head_assets()`'s two boot hooks (`wp_head` for standalone, `sp_app_footer` for Start-Performance-embedded) are unchanged; whichever one currently fires now also delivers this styling, same as before.
+
+### 1.14.3 (Fruth)
 - Description-only change: plugin header now clarifies it has no shortcode of its own — it attaches to the `[sqs_pricing_calculator]` Quotes page via Core's hooks. No functional change.
 
 ### 1.14.2 (Fruth)

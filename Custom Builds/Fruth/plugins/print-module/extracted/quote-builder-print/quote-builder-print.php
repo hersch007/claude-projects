@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quote Builder — Print Module
  * Description: Adds customer-facing print quotes to the Quote Builder plugin. Requires Quote Builder Core (sales-quote-system). No shortcode of its own — attaches to the [sqs_pricing_calculator] Quotes page via hooks.
- * Version:     1.14.9
+ * Version:     1.15.0
  * Author:      Start Advertising | RH Brashear
  */
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Keep this in sync with the "Version:" line in the header comment above --
 // tests/check-plugin-versions.js enforces this automatically on every run.
-define( 'SQSP_VERSION', '1.14.9' );
+define( 'SQSP_VERSION', '1.15.0' );
 
 /**
  * Boot only when the core plugin is present.
@@ -119,6 +119,7 @@ function sqsp_print_card() {
 	$terms = get_option( 'sqs_quote_terms', '' ) ?: $default_terms;
 	?>
 	<div class="sqc-card sqc-print-only">
+		<div class="sqc-preview-label">Customer Quote Preview</div>
 		<div class="sqp-header">
 			<?php if ( $logo ) : ?>
 				<img src="<?php echo esc_url( $logo ); ?>" class="sqp-logo" alt="<?php echo esc_attr( $company ); ?>" />
@@ -185,19 +186,79 @@ function sqsp_head_assets() {
 	#sqsPrintBtn { color:#0369a1 !important; border-color:#7dd3fc !important; }
 	#sqsPrintBtn:hover { background:#f0f9ff !important; border-color:#0284c7 !important; color:#0284c7 !important; }
 
-	/* Hide print card on screen — core also sets this, belt-and-suspenders */
-	.sqc-print-only { display:none !important; }
+	/* Quote card is now a live, always-visible on-screen preview (updates via
+	 * the sqs:update listener below), reusing the same markup that's used for
+	 * printing. .sqc-card already supplies its on-screen border/padding/shadow
+	 * chrome; @media print below strips that back to a flush, full-page layout,
+	 * same as before this card was ever shown on screen. */
+	.sqc-print-only { display:block !important; }
+
+	/* Screen-only label above the preview so a rep knows this block is what the
+	 * customer will actually receive, not part of the internal quote form. */
+	.sqc-preview-label { font-size:10px !important; font-weight:800 !important; text-transform:uppercase !important; letter-spacing:.08em !important; color:#64748b !important; margin-bottom:12px !important; }
+
+	/* ── Inner layout styles — apply on screen AND when printing ── */
+	.sqp-header { display:flex !important; align-items:flex-start !important; justify-content:space-between !important; padding:0 0 12px !important; border-bottom:none !important; margin-bottom:0 !important; }
+	.sqp-logo { max-height:68px !important; max-width:220px !important; width:auto !important; display:block !important; }
+	.sqp-addr { font-size:11px !important; color:#4a5568 !important; text-align:right !important; line-height:1.65 !important; }
+
+	/* Red accent stripe below header */
+	.sqp-accent-bar { display:block !important; height:4px !important; background:#c62828 !important; margin-bottom:35px !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+
+	/* Quote number + QUOTATION badge */
+	.sqp-qnum { display:flex !important; align-items:center !important; gap:8px !important; font-size:14px !important; font-weight:700 !important; color:#1a202c !important; margin-bottom:16px !important; }
+	.sqp-qnum > span:last-child { font-weight:400 !important; }
+	.sqp-badge { display:inline-block !important; background:#c62828 !important; color:#fff !important; font-size:10px !important; font-weight:800 !important; letter-spacing:.07em !important; text-transform:uppercase !important; padding:3px 9px !important; border-radius:3px !important; vertical-align:middle !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+
+	/* Info block */
+	.sqp-info { display:grid !important; grid-template-columns:1fr 1fr !important; gap:0 !important; margin-bottom:35px !important; border:1px solid #c8cdd5 !important; border-radius:3px !important; overflow:hidden !important; font-size:12px !important; }
+	.sqp-info-col { display:block !important; padding:12px 14px !important; }
+	.sqp-info-col + .sqp-info-col { border-left:1px solid #c8cdd5 !important; }
+	.sqp-info-row { display:flex !important; gap:6px !important; margin-bottom:5px !important; line-height:1.45 !important; }
+	.sqp-info-row:last-child { margin-bottom:0 !important; }
+	.sqp-info-lbl { font-weight:700 !important; color:#374151 !important; min-width:92px !important; flex-shrink:0 !important; }
+	.sqp-info-val { color:#1a202c !important; }
+
+	/* Line items table */
+	.sqp-table { display:table !important; width:100% !important; border-collapse:collapse !important; font-size:12px !important; margin-bottom:50px !important; }
+	.sqp-table thead { display:table-header-group !important; }
+	.sqp-table thead tr { background:#c62828 !important; color:#fff !important; }
+	.sqp-table thead th { display:table-cell !important; padding:9px 10px !important; text-align:left !important; font-weight:700 !important; font-size:11px !important; text-transform:uppercase !important; letter-spacing:.04em !important; background:#c62828 !important; color:#fff !important; border:none !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+	.sqp-table thead th:not(:first-child) { text-align:right !important; }
+	.sqp-table tbody { display:table-row-group !important; }
+	.sqp-table tbody tr:nth-child(even) { background:#f7f8fa !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+	.sqp-table tbody td { display:table-cell !important; padding:8px 10px !important; border-bottom:1px solid #e2e8f0 !important; color:#1a202c !important; vertical-align:middle !important; }
+	.sqp-table tbody td:not(:first-child) { text-align:right !important; }
+	.sqp-table tfoot { display:table-footer-group !important; }
+	.sqp-table tfoot td { display:table-cell !important; padding:8px 10px !important; font-weight:700 !important; border-top:2px solid #c62828 !important; background:#f3f4f6 !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+	.sqp-table tfoot td:not(:first-child) { text-align:right !important; }
+
+	/* Footer info row */
+	.sqp-foot-info { display:flex !important; gap:28px !important; font-size:12px !important; margin-bottom:10px !important; align-items:baseline !important; }
+	.sqp-foot-row { display:flex !important; gap:6px !important; align-items:baseline !important; }
+	.sqp-foot-row .sqp-info-lbl { min-width:auto !important; }
+	.sqp-valid { margin-left:auto !important; font-size:11px !important; color:#c62828 !important; font-style:italic !important; font-weight:600 !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+
+	/* Terms */
+	.sqp-terms { display:block !important; font-size:10.5px !important; color:#6b7280 !important; line-height:1.55 !important; margin:12px 0 0 !important; border-top:1px solid #e2e8f0 !important; padding-top:8px !important; }
+
+	/* Stamp */
+	.sqp-stamp { display:block !important; font-size:9px !important; color:#9ca3af !important; text-align:right !important; margin-top:10px !important; }
 
 	/* ── @media print ── */
 	/*
 	 * JS moves .sqc-print-only to be a direct <body> child before window.print().
 	 * That lets us use display:none on all other body > * without fighting the
-	 * WordPress theme nesting. One page, instant preview.
+	 * WordPress theme nesting. One page, instant preview. Everything here strips
+	 * the on-screen card's chrome (border/shadow/padding from .sqc-card) back to
+	 * a flush, full-bleed page layout, and hides the screen-only preview label.
 	 */
 	@page { size:letter portrait; margin:0.65in; }
 	@media print {
 		/* Hide everything except our print card (which JS moved to body) */
 		body > *:not(.sqc-print-only) { display:none !important; }
+
+		.sqc-preview-label { display:none !important; }
 
 		.sqc-print-only {
 			display:block !important;
@@ -205,22 +266,15 @@ function sqsp_head_assets() {
 			width:100% !important;
 			margin:0 !important;
 			padding:0 !important;
+			border:none !important;
+			border-radius:0 !important;
+			box-shadow:none !important;
 			background:#fff !important;
 			font-family:Arial,Helvetica,sans-serif !important;
 			font-size:13px !important;
 			color:#1a202c !important;
 			box-sizing:border-box !important;
 		}
-
-		/* ── Inner layout styles ── */
-		/* Header: logo + address.
-		 * @page already applies 0.65in page margins, so no extra side padding here. */
-		.sqp-header { display:flex !important; align-items:flex-start !important; justify-content:space-between !important; padding:0 0 12px !important; border-bottom:none !important; margin-bottom:0 !important; }
-		.sqp-logo { max-height:68px !important; max-width:220px !important; width:auto !important; display:block !important; }
-		.sqp-addr { font-size:11px !important; color:#4a5568 !important; text-align:right !important; line-height:1.65 !important; }
-
-		/* Red accent stripe below header */
-		.sqp-accent-bar { display:block !important; height:4px !important; background:#c62828 !important; margin-bottom:35px !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
 
 		/* Content sections — no extra padding; @page margin handles the gutters */
 		.sqp-qnum,
@@ -229,46 +283,6 @@ function sqsp_head_assets() {
 		.sqp-foot-info,
 		.sqp-terms,
 		.sqp-stamp { padding-left:0 !important; padding-right:0 !important; }
-
-		/* Quote number + QUOTATION badge */
-		.sqp-qnum { display:flex !important; align-items:center !important; gap:8px !important; font-size:14px !important; font-weight:700 !important; color:#1a202c !important; margin-bottom:16px !important; }
-		.sqp-qnum > span:last-child { font-weight:400 !important; }
-		.sqp-badge { display:inline-block !important; background:#c62828 !important; color:#fff !important; font-size:10px !important; font-weight:800 !important; letter-spacing:.07em !important; text-transform:uppercase !important; padding:3px 9px !important; border-radius:3px !important; vertical-align:middle !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-
-		/* Info block */
-		.sqp-info { display:grid !important; grid-template-columns:1fr 1fr !important; gap:0 !important; margin-bottom:35px !important; border:1px solid #c8cdd5 !important; border-radius:3px !important; overflow:hidden !important; font-size:12px !important; }
-		.sqp-info-col { display:block !important; padding:12px 14px !important; }
-		.sqp-info-col + .sqp-info-col { border-left:1px solid #c8cdd5 !important; }
-		.sqp-info-row { display:flex !important; gap:6px !important; margin-bottom:5px !important; line-height:1.45 !important; }
-		.sqp-info-row:last-child { margin-bottom:0 !important; }
-		.sqp-info-lbl { font-weight:700 !important; color:#374151 !important; min-width:92px !important; flex-shrink:0 !important; }
-		.sqp-info-val { color:#1a202c !important; }
-
-		/* Line items table */
-		.sqp-table { display:table !important; width:100% !important; border-collapse:collapse !important; font-size:12px !important; margin-bottom:50px !important; }
-		.sqp-table thead { display:table-header-group !important; }
-		.sqp-table thead tr { background:#c62828 !important; color:#fff !important; }
-		.sqp-table thead th { display:table-cell !important; padding:9px 10px !important; text-align:left !important; font-weight:700 !important; font-size:11px !important; text-transform:uppercase !important; letter-spacing:.04em !important; background:#c62828 !important; color:#fff !important; border:none !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-		.sqp-table thead th:not(:first-child) { text-align:right !important; }
-		.sqp-table tbody { display:table-row-group !important; }
-		.sqp-table tbody tr:nth-child(even) { background:#f7f8fa !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-		.sqp-table tbody td { display:table-cell !important; padding:8px 10px !important; border-bottom:1px solid #e2e8f0 !important; color:#1a202c !important; vertical-align:middle !important; }
-		.sqp-table tbody td:not(:first-child) { text-align:right !important; }
-		.sqp-table tfoot { display:table-footer-group !important; }
-		.sqp-table tfoot td { display:table-cell !important; padding:8px 10px !important; font-weight:700 !important; border-top:2px solid #c62828 !important; background:#f3f4f6 !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-		.sqp-table tfoot td:not(:first-child) { text-align:right !important; }
-
-		/* Footer info row */
-		.sqp-foot-info { display:flex !important; gap:28px !important; font-size:12px !important; margin-bottom:10px !important; align-items:baseline !important; }
-		.sqp-foot-row { display:flex !important; gap:6px !important; align-items:baseline !important; }
-		.sqp-foot-row .sqp-info-lbl { min-width:auto !important; }
-		.sqp-valid { margin-left:auto !important; font-size:11px !important; color:#c62828 !important; font-style:italic !important; font-weight:600 !important; -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
-
-		/* Terms */
-		.sqp-terms { display:block !important; font-size:10.5px !important; color:#6b7280 !important; line-height:1.55 !important; margin:12px 0 0 !important; border-top:1px solid #e2e8f0 !important; padding-top:8px !important; }
-
-		/* Stamp */
-		.sqp-stamp { display:block !important; font-size:9px !important; color:#9ca3af !important; text-align:right !important; margin-top:10px !important; }
 	}
 	</style>
 
