@@ -27,10 +27,11 @@ CREATE TABLE IF NOT EXISTS clients (
   created_at           timestamptz DEFAULT now()
 );
 
--- clients existed before the archived column was added — CREATE TABLE IF
--- NOT EXISTS above won't add it to an already-created table, so add it
--- explicitly (idempotent, safe to re-run on every boot).
+-- clients existed before the archived/business_notes columns were added —
+-- CREATE TABLE IF NOT EXISTS above won't add columns to an already-created
+-- table, so add them explicitly (idempotent, safe to re-run on every boot).
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS business_notes text;
 
 CREATE TABLE IF NOT EXISTS audit_runs (
   id                serial PRIMARY KEY,

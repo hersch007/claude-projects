@@ -13,6 +13,7 @@ const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
+const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -221,6 +222,16 @@ app.get('/api/clients/:slug', async (req, res) => {
   res.json({ client, history, providers: PROVIDERS });
 });
 
+app.patch('/api/clients/:slug', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (typeof (req.body && req.body.business_notes) !== 'string') {
+    return res.status(400).json({ error: 'business_notes (string) is required' });
+  }
+  await getPool().query('UPDATE clients SET business_notes = $1 WHERE id = $2', [req.body.business_notes, client.id]);
+  res.json({ ok: true });
+});
+
 app.patch('/api/clients/:slug/archive', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).json({ error: 'Client not found' });
@@ -363,7 +374,8 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
   if (!run || run.slug !== req.params.slug) return res.status(404).send('Unknown runId');
   if (run.status !== 'done') return res.status(425).send('Report not ready yet');
   try {
-    const buffer = await buildDocxReport(run.docxSource);
+    const narrative = await generateNarrative(run.docxSource);
+    const buffer = await buildDocxReport({ ...run.docxSource, narrative });
     const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',

@@ -1,11 +1,12 @@
 // Generates the Master report as a Word document — the mechanical/technical
 // content the app can honestly produce from crawl data (score, findings,
 // quick wins, page table), matching what the HTML report already shows.
-// Deliberately NOT the fuller narrative report the `new-seo-client` skill
-// writes (E-E-A-T analysis, local SEO, content strategy) — those sections
-// are authored by Claude reasoning about the business, not derived
-// mechanically from a crawl, so reproducing them here would need LLM
-// integration that doesn't exist yet. See PHASE1-DESIGN.md §8.
+// Optionally also renders the narrative sections (E-E-A-T, local SEO,
+// content strategy, etc.) when a `narrative` object from
+// seo-tool/lib/narrative-report.js is passed in — those sections require
+// reasoning about the business rather than mechanical derivation from a
+// crawl, so they're generated separately and are optional here (a docx is
+// still fully valid without them, matching the report Phase 1 shipped).
 //
 // Generated fresh from the in-memory crawl `results` right after a run
 // completes (same lifecycle as the HTML report in webapp/server's `runs`
@@ -41,7 +42,7 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date }) {
+function buildDocxReport({ client, results, scoreData, provider, date, narrative }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
@@ -92,6 +93,26 @@ function buildDocxReport({ client, results, scoreData, provider, date }) {
     }
   }
 
+  // ── Section: Top Priorities (narrative) ──
+  if (narrative && narrative.summary) {
+    children.push(
+      new Paragraph({ children: [new TextRun({ text: narrative.summary, italics: true, size: 22, color: '333333' })], spacing: { after: 300 } }),
+    );
+  }
+  if (narrative && narrative.top_priorities && narrative.top_priorities.length) {
+    children.push(new Paragraph({ text: 'Top Priorities', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 160 } }));
+    const rows = [
+      new TableRow({
+        children: [headerCell('Priority', brandHex), headerCell('Impact', brandHex), headerCell('Effort', brandHex)],
+        tableHeader: true,
+      }),
+      ...narrative.top_priorities.map((p, i) => new TableRow({
+        children: [bodyCell(p.priority, i % 2 === 1), bodyCell(p.impact, i % 2 === 1), bodyCell(p.effort, i % 2 === 1)],
+      })),
+    ];
+    children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }));
+  }
+
   // ── Section: Quick Wins ──
   const wins = getQuickWins(pages);
   if (wins.length) {
@@ -101,6 +122,20 @@ function buildDocxReport({ client, results, scoreData, provider, date }) {
         new Paragraph({ children: [new TextRun({ text: `${w.action} `, bold: true }), new TextRun({ text: `(${w.effort} effort, ${w.impact} impact)`, italics: true, color: '595959' })], spacing: { before: 100 } }),
         new Paragraph({ children: [new TextRun({ text: w.detail, size: 20, color: '444444' })], spacing: { after: 100 } }),
       );
+    }
+  }
+
+  // ── Section: Medium/Long-term recommendations (narrative) ──
+  if (narrative && narrative.medium_term && narrative.medium_term.length) {
+    children.push(new Paragraph({ text: 'Medium-Term Recommendations (2–8 Weeks)', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    for (const item of narrative.medium_term) {
+      children.push(new Paragraph({ text: item, bullet: { level: 0 } }));
+    }
+  }
+  if (narrative && narrative.long_term && narrative.long_term.length) {
+    children.push(new Paragraph({ text: 'Long-Term / Strategic Recommendations', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    for (const item of narrative.long_term) {
+      children.push(new Paragraph({ text: item, bullet: { level: 0 } }));
     }
   }
 
@@ -118,6 +153,63 @@ function buildDocxReport({ client, results, scoreData, provider, date }) {
         children.push(new Paragraph({ text: `[${item.priority.toUpperCase()}] ${item.label}`, bullet: { level: 0 } }));
       }
     }
+  }
+
+  // ── Section: E-E-A-T & Local SEO (narrative) ──
+  if (narrative && (narrative.eeat_signals_present || narrative.eeat_gaps || narrative.local_seo)) {
+    children.push(new Paragraph({ text: 'E-E-A-T & Local SEO Analysis', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    if (narrative.eeat_signals_present && narrative.eeat_signals_present.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Signals Present:', bold: true })], spacing: { after: 80 } }));
+      for (const s of narrative.eeat_signals_present) children.push(new Paragraph({ text: s, bullet: { level: 0 } }));
+    }
+    if (narrative.eeat_gaps && narrative.eeat_gaps.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Gaps:', bold: true })], spacing: { before: 160, after: 80 } }));
+      for (const g of narrative.eeat_gaps) children.push(new Paragraph({ text: g, bullet: { level: 0 } }));
+    }
+    if (narrative.local_seo) {
+      const l = narrative.local_seo;
+      children.push(
+        new Paragraph({ children: [new TextRun({ text: 'Local SEO:', bold: true })], spacing: { before: 160, after: 80 } }),
+        new Paragraph({ text: `Google Business Profile: ${l.google_business_profile}`, bullet: { level: 0 } }),
+        new Paragraph({ text: `NAP Consistency: ${l.nap_consistency}`, bullet: { level: 0 } }),
+        new Paragraph({ text: `Geographic Targeting: ${l.geographic_targeting}`, bullet: { level: 0 } }),
+        new Paragraph({ text: `Local Citations: ${l.local_citations}`, bullet: { level: 0 } }),
+      );
+    }
+  }
+
+  // ── Section: Content & Keyword Strategy (narrative) ──
+  if (narrative && narrative.content_keyword_strategy) {
+    const cks = narrative.content_keyword_strategy;
+    children.push(new Paragraph({ text: 'Content & Keyword Strategy Recommendations', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    if (cks.keyword_opportunities && cks.keyword_opportunities.length) {
+      const rows = [
+        new TableRow({
+          children: [headerCell('Keyword', brandHex), headerCell('Intent', brandHex), headerCell('Priority Page', brandHex)],
+          tableHeader: true,
+        }),
+        ...cks.keyword_opportunities.map((k, i) => new TableRow({
+          children: [bodyCell(k.keyword, i % 2 === 1), bodyCell(k.intent, i % 2 === 1), bodyCell(k.priority_page, i % 2 === 1)],
+        })),
+      ];
+      children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }));
+    }
+    if (cks.content_gaps && cks.content_gaps.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'Content Gap Analysis:', bold: true })], spacing: { before: 200, after: 80 } }));
+      for (const g of cks.content_gaps) children.push(new Paragraph({ text: g, bullet: { level: 0 } }));
+    }
+    if (cks.recommended_content && cks.recommended_content.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'Recommended Content Pieces:', bold: true })], spacing: { before: 160, after: 80 } }));
+      for (const c of cks.recommended_content) children.push(new Paragraph({ text: c, bullet: { level: 0 } }));
+    }
+  }
+
+  // ── Section: Next Steps (narrative) ──
+  if (narrative && narrative.next_steps && narrative.next_steps.length) {
+    children.push(new Paragraph({ text: 'Next Steps & Action Plan', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    narrative.next_steps.forEach((step, i) => {
+      children.push(new Paragraph({ text: `${i + 1}. ${step}`, spacing: { after: 80 } }));
+    });
   }
 
   // ── Section: All Pages table ──

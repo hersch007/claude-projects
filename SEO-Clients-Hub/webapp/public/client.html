@@ -51,6 +51,17 @@
   </div>
 
   <div class="card">
+    <h2>Business Notes</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Niche, location, services, certifications — used to generate the E-E-A-T and local SEO
+      sections of the Word report. Not shown to the client.
+    </p>
+    <textarea id="business-notes" rows="3" style="width:100%;font-size:13px;padding:10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit" placeholder="e.g. Family-owned plumbing company serving the Austin, TX metro area since 2005. Licensed & insured (TX License #12345). No physical storefront — service area business."></textarea>
+    <div style="margin-top:8px"><button id="notes-save">Save Notes</button></div>
+    <div id="notes-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -114,6 +125,8 @@
       await fetch(`/api/clients/${encodeURIComponent(slug)}`, { method: 'DELETE' });
       window.location.href = '/';
     });
+
+    document.getElementById('business-notes').value = data.client.business_notes || '';
 
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
@@ -186,6 +199,24 @@
       return;
     }
     poll(data.runId);
+  });
+
+  document.getElementById('notes-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('notes-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ business_notes: document.getElementById('business-notes').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
   });
 
   document.querySelector('#history-table tbody').addEventListener('click', async (e) => {
