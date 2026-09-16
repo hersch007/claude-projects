@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Quote Builder
  * Description: Quote Builder — database-backed pricing calculator. Shortcodes: [sqs_portal] (Portal), [sqs_pricing_calculator] (Quotes), [sqs_pricing_data_admin] (Editor).
- * Version: 8.9.19
+ * Version: 8.9.20
  * Author: Start Advertising | RH Brashear
  */
 
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Keep this in sync with the "Version:" line in the header comment above --
 // tests/check-plugin-versions.js enforces this automatically on every run.
-define( 'SQS_VERSION', '8.9.19' );
+define( 'SQS_VERSION', '8.9.20' );
 define( 'SQS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SQS_DEFAULT_DATA_B64', 'eyJwYWNrYWdpbmciOnsiTm8gQmFncyI6MCwiU2luZ2xlIEJhZyI6MC4wMiwiRG91YmxlIEJhZyI6MC4wMywiVHJpcGxlIEJhZyI6MC4wNX0sInJlc2luRGVuc2l0eSI6eyJMRFBFIjowLjkyNCwiT2N0ZW5lIjowLjkyLCJOeWxvbiI6MS4xMywiQWRmbGV4IChQb2x5cHJvKSI6MC44OSwiVFItMTMwIChIRFBFKSI6MC45MzcsIkJsYWNrIENvbmR1Y3RpdmUiOjEuMSwiQmlvbWUgMzAwIjoxLjMyLCJBY2xhciI6Mi4wNzUzfSwiZm9ybXVsYUNvc3RzIjp7IkNGQi0xMDAwIjoxLjA4LCJDRkItMjUwMChDRUxPKSI6MS4xNiwiQ0ZCLTUwMDAoTnlsb24pIjoyLCJGQ1ItNjAwMChOeWxvbikiOjIsIkZDUi0xMDAwIjoxLjEyNzgsIkZDUi0xMDIwKEZlbG8pIjoxLjQ1NDYsIkZJUy0xMDAwIjowLjc3NjgsIjc1JSBSZXBybyI6MC40NywiRkNSLTEwMTAgKFppcHBlcikiOjEuMTQ1LCJGQ1ItNTAxMCAoU3RlZGltKSI6MS4xOTI1LCJGQ1ItNjAxMChPQVMgTnlsb24pIjoyLjgxfSwiZm9ybXVsYU9wdGlvbnMiOlsiQ0ZCLTEwMDAiLCJDRkItMjUwMChDRUxPKSIsIkNGQi01MDAwKE55bG9uKSIsIkZDUi02MDAwKE55bG9uKSIsIkZDUi0xMDAwIiwiRkNSLTEwMjAoRmVsbykiLCJGSVMtMTAwMCIsIjc1JSBSZXBybyIsIkZDUi0xMDEwIChaaXBwZXIpIiwiRklTLTUxMDBSRCAoUmVkIFBQKSIsIkZDUi01MDEwIChTdGVkaW0pIiwiRkNSLTYwMTAoT0FTIE55bG9uKSJdLCJmaWxtVHlwZXMiOlsiUEUvUFAgQ2xlYXIiLCJQRS9QUCBDb2xvciAoVGludCkiLCJQRS9QUCBDb2xvciAoT3BhcXVlKSIsIk55bG9uIiwiQmxhY2sgQ29uZHVjdGl2ZSIsIkhEUEUvTURQRSIsIlNwZWNpYWx0eSJdLCJyZXNpblR5cGVzIjpbIkxEUEUiLCJPY3RlbmUiLCJOeWxvbiIsIkFkZmxleCAoUG9seXBybykiLCJUUi0xMzAgKEhEUEUpIiwiQmxhY2sgQ29uZHVjdGl2ZSIsIkJpb21lIDMwMCIsIkFjbGFyIl0sInNldHVwV2lkdGhCdWNrZXRzIjpbMiw2LDEwLDE2LDI0LDM2LDQ4LDYwXSwicHJvZFdpZHRoQnVja2V0cyI6WzEsMiw0LDYsOCwxMCwxMiwxNiwxOCwyNCwzMCwzNiw0OCw2MF0sInppcHBlcldpZHRoQnVja2V0cyI6WzIsNCw2LDgsMTAsMTIsMTQsMTYsMTgsMjAsMjQsMjgsMzAsMzRdLCJzZXR1cE11bHRpcGxpZXIiOnsiUEUvUFAgQ2xlYXIiOjEsIlBFL1BQIENvbG9yIChUaW50KSI6MiwiUEUvUFAgQ29sb3IgKE9wYXF1ZSkiOjMsIk55bG9uIjoxLCJCbGFjayBDb25kdWN0aXZlIjozLCJIRFBFL01EUEUiOjIsIlNwZWNpYWx0eSI6NH0sInNldHVwSG91cnMiOnsiUEUvUFAgQ2xlYXIiOjAuNSwiUEUvUFAgQ29sb3IgKFRpbnQpIjoxLCJQRS9QUCBDb2xvciAoT3BhcXVlKSI6MS41LCJOeWxvbiI6MC41LCJCbGFjayBDb25kdWN0aXZlIjoxLjUsIkhEUEUvTURQRSI6MSwiU3BlY2lhbHR5IjoyfSwic2V0dXBMYnNUYWJsZSI6eyJQRS9QUCBDbGVhciI6WzEwLDIwLDMwLDQwLDc1LDkwLDE1MCwyNTBdLCJQRS9QUCBDb2xvciAoVGludCkiOlsyMCw0MCw2MCw4MCwxNTAsMTgwLDMwMCw1MDBdLCJQRS9QUCBDb2xvciAoT3BhcXVlKSI6WzMwLDYwLDkwLDEyMCwyMjUsMjcwLDQ1MCw3NTBdLCJOeWxvbiI6WzEwLDIwLDMwLDEwMCwyMDAsMjUwLCJOQSIsIk5BIl0sIkJsYWNrIENvbmR1Y3RpdmUiOlszMCw2MCw5MCwxMjAsMjI1LDI3MCw0NTAsNzUwXSwiSERQRS9NRFBFIjpbMjAsNDAsNjAsODAsMTUwLDE4MCwzMDAsNTAwXSwiU3BlY2lhbHR5IjpbNDAsODAsMTIwLDE2MCwzMDAsMzYwLDYwMCwxMDAwXX0sInNldHVwT3BzRXh0cnVzaW9uIjpbMSwxLDEsMSwxLjUsMiwyLDJdLCJpbmxpbmVBZGRpdGlvbmFsT3BzIjpbMSwxLDEsMSwxLDEsMSwiTi9BIl0sIm1pbmltdW1TZXR1cEZlZXMiOls3NSw3NSwxMDAsMTAwLDEwMCwxMDAsMjAwLDMwMF0sImV4dHJ1c2lvblJhdGVUYWJsZSI6eyIwLjAwMiI6WzMuNzUsNy41LDE1LDIwLDI1LDMwLDQwLDUwLDcwLDEwMCwxNDAsMTUwLDIwMCwyODBdLCIwLjAwMyI6WzQuMjE4NzUsOC40Mzc1LDE2Ljg3NSwyMi41LDI4LjEyNSwzMy43NSw0NSw1Ni4yNSw3OC43NSwxMTIuNSwxNTcuNSwxNjguNzUsMjI1LDMxNV0sIjAuMDA0IjpbNC42ODc1LDkuMzc1LDE4Ljc1LDI1LDMxLjI1LDM3LjUsNTAsNjIuNSw4Ny41LDEyNSwxNzUsMTg3LjUsMjUwLDM1MF0sIjAuMDA1IjpbNS4xMDExMDI5NDExNzY0NzEsMTAuMjAyMjA1ODgyMzUyOTQyLDIwLjQwNDQxMTc2NDcwNTg4NCwyNy4yMDU4ODIzNTI5NDExNzgsMzQuMDA3MzUyOTQxMTc2NDcsNDAuODA4ODIzNTI5NDExNzcsNTQuNDExNzY0NzA1ODgyMzU1LDY4LjAxNDcwNTg4MjM1Mjk0LDk1LjIyMDU4ODIzNTI5NDEyLDEzNi4wMjk0MTE3NjQ3MDU4OCwxOTAuNDQxMTc2NDcwNTg4MjMsMjA0LjA0NDExNzY0NzA1ODg0LDI3Mi4wNTg4MjM1Mjk0MTE3NywzNzVdLCIwLjAwNiI6WzUuNTE0NzA1ODgyMzUyOTQxLDExLjAyOTQxMTc2NDcwNTg4MiwyMi4wNTg4MjM1Mjk0MTE3NjQsMjkuNDExNzY0NzA1ODgyMzU1LDM2Ljc2NDcwNTg4MjM1Mjk0LDQ0LjExNzY0NzA1ODgyMzUzLDU4LjgyMzUyOTQxMTc2NDcxLDczLjUyOTQxMTc2NDcwNTg4LDEwMi45NDExNzY0NzA1ODgyMywxNDcuMDU4ODIzNTI5NDExNzcsMjA1Ljg4MjM1Mjk0MTE3NjQ2LDIyMC41ODgyMzUyOTQxMTc2NSwyOTQuMTE3NjQ3MDU4ODIzNTQsNDAwXX0sImlubGluZVJhdGVUYWJsZSI6eyIwLjAwMiI6WzMuNzUsNy41LDE1LDIwLDI1LDMwLDQwLDUwLDcwLDEwMCwxNDAsMTUwLDIwMCwyODBdLCIwLjAwMyI6WzQuMjE4NzUsOC40Mzc1LDE2Ljg3NSwyMi41LDI4LjEyNSwzMy43NSw0NSw1Ni4yNSw3OC43NSwxMTIuNSwxNTcuNSwxNjguNzUsMjI1LDMxNV0sIjAuMDA0IjpbNC42ODc1LDkuMzc1LDE4Ljc1LDI1LDMxLjI1LDM3LjUsNTAsNjIuNSw4Ny41LDEyNSwxNzUsMTg3LjUsMjUwLDM1MF0sIjAuMDA1IjpbNS4xMDExMDI5NDExNzY0NzEsMTAuMjAyMjA1ODgyMzUyOTQyLDIwLjQwNDQxMTc2NDcwNTg4NCwyNy4yMDU4ODIzNTI5NDExNzgsMzQuMDA3MzUyOTQxMTc2NDcsNDAuODA4ODIzNTI5NDExNzcsNTQuNDExNzY0NzA1ODgyMzU1LDY4LjAxNDcwNTg4MjM1Mjk0LDk1LjIyMDU4ODIzNTI5NDEyLDEzNi4wMjk0MTE3NjQ3MDU4OCwxOTAuNDQxMTc2NDcwNTg4MjMsMjA0LjA0NDExNzY0NzA1ODg0LDI3Mi4wNTg4MjM1Mjk0MTE3NywzNzVdLCIwLjAwNiI6WzUuNTE0NzA1ODgyMzUyOTQxLDExLjAyOTQxMTc2NDcwNTg4MiwyMi4wNTg4MjM1Mjk0MTE3NjQsMjkuNDExNzY0NzA1ODgyMzU1LDM2Ljc2NDcwNTg4MjM1Mjk0LDQ0LjExNzY0NzA1ODgyMzUzLDU4LjgyMzUyOTQxMTc2NDcxLDczLjUyOTQxMTc2NDcwNTg4LDEwMi45NDExNzY0NzA1ODgyMywxNDcuMDU4ODIzNTI5NDExNzcsMjA1Ljg4MjM1Mjk0MTE3NjQ2LDIyMC41ODgyMzUyOTQxMTc2NSwyOTQuMTE3NjQ3MDU4ODIzNTQsNDAwXX0sInppcHBlclF0eVBlckhvdXIiOlsxNTYyLjUsMTg3NSwxODc1LDE1MDAsMTUwMCwxMjUwLDkzNy41LDgxMi41LDgxMi41LDcxMi41LDU5My43NSw1OTMuNzUsNDM3LjUsNDM3LjVdLCJsYWJvclJhdGVzIjp7InR1YmluZyI6MjUsImlubGluZSI6MjMuNzUsInppcHBlckV4dHJ1c2lvbiI6MjUsInppcHBlckNvbnZlcnNpb24iOjIzLjc1fSwiZGVmYXVsdHMiOnsidHViaW5nIjp7ImZpbG1UeXBlIjoiUEUvUFAgQ29sb3IgKFRpbnQpIiwicmVzaW5UeXBlIjoiTERQRSIsImZvcm11bGEiOiJGQ1ItMTAwMCIsIndpZHRoIjo0MCwibGVuZ3RoRnQiOjUwMCwiZ2F1Z2UiOjAuMDA0LCJxdHkiOjEwLCJyZXNpbkNvc3QiOjEuMDQsIm9wZXJhdG9ycyI6MSwic2NyYXBSYXRlIjowLjIsInBhY2thZ2luZyI6IkRvdWJsZSBCYWciLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsInNwZWNpYWx0eUNoYXJnZSI6MCwiY3VzdG9tU2V0dXBDaGFyZ2UiOjAsInByb2ZpdE1hcmdpbiI6MC40LCJ1cGNoYXJnZSI6MC4yLCJ0YXJnZXRVbml0UHJpY2UiOjgxLjE1LCJvdmVyaGVhZFBjdCI6MC4xNX0sImlubGluZSI6eyJmaWxtVHlwZSI6IlBFL1BQIENvbG9yIChPcGFxdWUpIiwicmVzaW5UeXBlIjoiQWRmbGV4IChQb2x5cHJvKSIsImZvcm11bGEiOiJDRkItMTAwMCIsIndpZHRoIjozMCwibGVuZ3RoSW4iOjM2LCJnYXVnZSI6MC4wMDQsInF0eSI6NTAwMCwicmVzaW5Db3N0IjoxLjkzLCJvcGVyYXRvcnMiOjIuNSwic2NyYXBSYXRlIjowLjIsInBhY2thZ2luZyI6Ik5vIEJhZ3MiLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsImVuY2xvc3VyZUNoYXJnZSI6MCwic3BlY2lhbHR5Q2hhcmdlIjowLCJjdXN0b21TZXR1cENoYXJnZSI6NDUwLCJwcm9maXRNYXJnaW4iOjAuNSwidXBjaGFyZ2UiOjAsInRhcmdldFVuaXRQcmljZSI6NDE5MCwib3ZlcmhlYWRQY3QiOjAuMTV9LCJ6aXBwZXIiOnsiZmlsbVR5cGUiOiJQRS9QUCBDb2xvciAoVGludCkiLCJyZXNpblR5cGUiOiJMRFBFIiwiZm9ybXVsYSI6IkZDUi0xMDAwIiwid2lkdGgiOjEwLCJsZW5ndGhJbiI6MTIsImxpcEluIjoxLCJnYXVnZSI6MC4wMDQsInF0eSI6MTAwMCwicmVzaW5Db3N0IjoxLjM1LCJleHRydXNpb25PcGVyYXRvcnMiOjEsImNvbnZlcnNpb25UeXBlIjoiMXVwIFppcHBlciIsInppcHBlckNvc3RQZXJGdCI6MC4wMSwiY29udmVyc2lvbk9wZXJhdG9ycyI6MiwiZXh0cnVzaW9uU2NyYXBSYXRlIjowLjEsImNvbnZlcnNpb25TY3JhcFJhdGUiOjAuMSwidG90YWxTY3JhcFJhdGUiOjAuMTUsInBhY2thZ2luZyI6IkRvdWJsZSBCYWciLCJjdXN0b21QYWNrYWdpbmdGZWUiOjAsImVuY2xvc3VyZUNoYXJnZSI6MCwic3BlY2lhbHR5Q2hhcmdlIjowLCJjdXN0b21FeHRydXNpb25TZXR1cENoYXJnZSI6MCwiY3VzdG9tQ29udmVyc2lvblNldHVwQ2hhcmdlIjowLCJwcm9maXRNYXJnaW4iOjAuNCwiY2xlYW5yb29tVXBjaGFyZ2UiOjAuMSwidGFyZ2V0VW5pdFByaWNlIjo1MDQsIm92ZXJoZWFkUGN0IjowLjE1fX19' );
 
@@ -1631,6 +1631,7 @@ function sqs_pricing_calculator_frontend_handle_save_all() {
         }
     }
     sqs_pricing_calculator_frontend_set_message( $error ? $error : 'Tables saved.' );
+    return $error;
 }
 
 function sqs_pricing_calculator_frontend_editor_shortcode() {
@@ -1796,7 +1797,7 @@ function sqs_pricing_calculator_render_frontend_editor( $message = '', $embedded
         </script>
         <?php endif; ?>
         <div style="height:12px;background:#f5f7fb;"></div>
-        <?php if ( $message ) : ?><div class="sqs-data-message"><?php echo esc_html( $message ); ?></div><?php endif; ?>
+        <div id="sqsDataMessage" class="sqs-data-message"<?php echo $message ? '' : ' style="display:none;"'; ?>><?php echo esc_html( $message ); ?></div>
         <div class="sqs-data-tabs">
             <?php foreach ( $rows as $nav_row ) : ?><a href="#sqs-front-table-<?php echo esc_attr( $nav_row['data_key'] ); ?>"><?php echo esc_html( $nav_row['data_label'] ); ?></a><?php endforeach; ?>
         </div>
@@ -1842,7 +1843,36 @@ function sqs_pricing_calculator_render_frontend_editor( $message = '', $embedded
             function serializeCard(card){const key=card.dataset.key;const editor=card.querySelector('.sqs-editor');let out;if(card.querySelector('.sqs-hidden-json').style.display==='block'){out=JSON.parse(card.querySelector('.sqs-hidden-json').value);}else if(key==='defaults'){out={};editor.querySelectorAll('table[data-kind="defaults"]').forEach(tbl=>{const section=tbl.dataset.section;out[section]={};tbl.querySelectorAll('tbody tr').forEach(tr=>{const k=tr.querySelector('.sqs-default-key').value.trim();if(k)out[section][k]=parseValue(tr.querySelector('.sqs-default-value').value);});});}else if(objectListFields[key]){out=Array.from(editor.querySelectorAll('tbody tr')).map(tr=>{const obj={};tr.querySelectorAll('.sqs-obj-value').forEach(inp=>{obj[inp.dataset.field]=inp.value.trim();});return obj;}).filter(obj=>Object.values(obj).some(v=>v!==''));}else if(matrixHeaders[key]){out={};editor.querySelectorAll('tbody tr').forEach(tr=>{const k=tr.querySelector('.sqs-matrix-key').value.trim();if(k)out[k]=Array.from(tr.querySelectorAll('.sqs-matrix-value')).map(i=>parseValue(i.value));});}else if(Array.isArray(JSON.parse(editor.dataset.value||'[]'))){out=Array.from(editor.querySelectorAll('.sqs-list-value')).map(i=>parseValue(i.value)).filter(v=>v!=='');}else{out={};editor.querySelectorAll('tbody tr').forEach(tr=>{const kEl=tr.querySelector('.sqs-map-key');const vEl=tr.querySelector('.sqs-map-value');if(kEl&&vEl&&kEl.value.trim())out[kEl.value.trim()]=parseValue(vEl.value);});}card.querySelector('.sqs-data-json').value=JSON.stringify(out);card.querySelector('.sqs-hidden-json').value=JSON.stringify(out,null,2);}
             document.querySelectorAll('.sqs-editor').forEach(renderEditor);
             document.addEventListener('click',function(e){if(e.target.classList.contains('sqs-delete-row'))e.target.closest('tr').remove();if(e.target.classList.contains('sqs-add-row')){const card=e.target.closest('.sqs-editor-card');const key=card.dataset.key;const table=card.querySelector('.sqs-data-table');if(!table||key==='defaults'){alert('Rows are fixed for this table. Edit the existing cells.');return;}const kind=table.dataset.kind;if(kind==='map')table.querySelector('tbody').insertAdjacentHTML('beforeend',`<tr><td>${input('','sqs-map-key')}</td><td>${input('','sqs-map-value')}</td><td><button type="button" class="sqs-data-remove sqs-delete-row">Remove</button></td></tr>`);if(kind==='list')table.querySelector('tbody').insertAdjacentHTML('beforeend',`<tr><td>${input('','sqs-list-value')}</td><td><button type="button" class="sqs-data-remove sqs-delete-row">Remove</button></td></tr>`);if(kind==='matrix'){const headers=JSON.parse(table.dataset.headers||'[]');table.querySelector('tbody').insertAdjacentHTML('beforeend',`<tr><td class="sqs-row-label">${input('','sqs-matrix-key')}</td>${headers.map(()=>`<td>${input('','sqs-matrix-value')}</td>`).join('')}<td><button type="button" class="sqs-data-remove sqs-delete-row">Remove</button></td></tr>`);}if(kind==='objectlist'){const fields=JSON.parse(table.dataset.fields||'[]');const cells=fields.map(f=>`<td>${input('','sqs-obj-value',f)}</td>`).join('');table.querySelector('tbody').insertAdjacentHTML('beforeend',`<tr>${cells}<td><button type="button" class="sqs-data-remove sqs-delete-row">Remove</button></td></tr>`);}}if(e.target.classList.contains('sqs-show-json')){const card=e.target.closest('.sqs-editor-card');try{serializeCard(card);}catch(err){alert('Advanced View has an error.');return;}const ta=card.querySelector('.sqs-hidden-json');ta.style.display=ta.style.display==='block'?'none':'block';e.target.textContent=ta.style.display==='block'?'Hide Advanced View':'Advanced View';}});
-            document.getElementById('sqs-frontend-form').addEventListener('submit',function(e){try{document.querySelectorAll('.sqs-editor-card').forEach(serializeCard);}catch(err){e.preventDefault();alert('One of the tables has an invalid value. Please review Advanced View.');}});
+            document.getElementById('sqs-frontend-form').addEventListener('submit',function(e){
+                e.preventDefault();
+                try{document.querySelectorAll('.sqs-editor-card').forEach(serializeCard);}catch(err){alert('One of the tables has an invalid value. Please review Advanced View.');return;}
+                const form=e.target;
+                const msgEl=document.getElementById('sqsDataMessage');
+                const btns=form.querySelectorAll('button[type="submit"]');
+                btns.forEach(b=>{b.disabled=true;});
+                const fd=new FormData(form);
+                fd.append('action','sqs_save_data_tables');
+                fetch('<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',{method:'POST',credentials:'same-origin',body:fd})
+                    .then(r=>r.json())
+                    .then(function(res){
+                        if(!msgEl)return;
+                        const ok=!!(res&&res.success);
+                        msgEl.textContent=(res&&res.data&&res.data.message)?res.data.message:(ok?'Tables saved.':'Save failed.');
+                        msgEl.style.display='block';
+                        msgEl.style.background=ok?'':'#fef2f2';
+                        msgEl.style.borderColor=ok?'':'#fecaca';
+                        msgEl.style.color=ok?'':'#991b1b';
+                    })
+                    .catch(function(){
+                        if(!msgEl)return;
+                        msgEl.textContent='Save failed -- network error. Please try again.';
+                        msgEl.style.display='block';
+                        msgEl.style.background='#fef2f2';
+                        msgEl.style.borderColor='#fecaca';
+                        msgEl.style.color='#991b1b';
+                    })
+                    .finally(function(){btns.forEach(b=>{b.disabled=false;});});
+            });
         })();
         </script>
     </div>
@@ -1851,6 +1881,30 @@ function sqs_pricing_calculator_render_frontend_editor( $message = '', $embedded
 
 
 // ─── Core Quote Save / Load Layer ────────────────────────────────────────────
+
+// Data Editor "Save All Tables" -- AJAX rather than a plain form POST because
+// this page can also render embedded inside Start Performance's app shell,
+// whose own client-side routing can intercept/swallow a normal form
+// submission before it ever reaches WordPress (the same class of problem
+// documented elsewhere in this file for CSS/JS assuming a standalone page
+// load). Quote save/load already used AJAX for exactly this reason; this
+// gives the Data Editor's save the same reliability.
+add_action( 'wp_ajax_sqs_save_data_tables', 'sqs_pricing_calculator_ajax_save_data_tables' );
+add_action( 'wp_ajax_nopriv_sqs_save_data_tables', 'sqs_pricing_calculator_ajax_save_data_tables' );
+function sqs_pricing_calculator_ajax_save_data_tables() {
+    sqs_pricing_calculator_activate();
+    if ( ! sqs_pricing_calculator_frontend_is_logged_in() && ! current_user_can( 'manage_options' ) ) {
+        wp_send_json_error( array( 'message' => 'Not authorized.' ), 403 );
+    }
+    // sqs_pricing_calculator_frontend_handle_save_all() verifies
+    // $_POST['sqs_frontend_nonce'] itself (action 'sqs_frontend_save') and
+    // returns an error string, or '' on success.
+    $error = sqs_pricing_calculator_frontend_handle_save_all();
+    if ( $error ) {
+        wp_send_json_error( array( 'message' => $error ) );
+    }
+    wp_send_json_success( array( 'message' => 'Tables saved.' ) );
+}
 
 add_action( 'wp_ajax_sqs_save_quote', 'sqs_pricing_calculator_ajax_save_quote' );
 add_action( 'wp_ajax_nopriv_sqs_save_quote', 'sqs_pricing_calculator_ajax_save_quote' );

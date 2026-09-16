@@ -53,7 +53,15 @@ New third plugin, built as an independent module attaching to Core exactly the w
 
 ## Quote Builder Core (`sales-quote-system`)
 
-### 8.9.19 (Fruth) — latest
+### 8.9.20 (Fruth) — latest
+Bug fix: Data Editor's "Save All Tables" silently failed when the page is embedded in Start Performance -- clicking it landed on the bare SP dashboard instead of saving, with no error shown and no data written.
+
+- **Root cause**: the save button was a plain, page-navigating HTML form submission (`<form method="post">`, no AJAX) -- a pattern that only works reliably on a normal standalone page load. When embedded inside Start Performance's app shell, its own client-side routing intercepts navigation/submissions within its views, swallowing the form POST before it ever reaches WordPress and falling back to the default dashboard route. The PHP-side save logic itself was already correct (`sp-views/fruth-pricing.php` properly calls the shared save handler) -- it just never got the chance to run.
+- **Fixed**: converted the Data Editor's save to the same AJAX pattern (`fetch()` to `admin-ajax.php`) that Quote Builder's Save/Load Quote already use reliably in this exact embedded environment. New `wp_ajax_sqs_save_data_tables` / `wp_ajax_nopriv_sqs_save_data_tables` endpoint wraps the existing shared `sqs_pricing_calculator_frontend_handle_save_all()` (now returns an error string instead of only setting a session message, so the AJAX handler can report success/failure directly). The save button's click no longer navigates anywhere -- an inline message (green on success, red on failure) appears at the top of the page instead, on both the standalone site and every embedded context.
+- Scoped to the front-end/embedded Data Editor (`sqs_pricing_calculator_render_frontend_editor()`) only. The separate wp-admin Pricing Tables page isn't embedded in any SPA shell and isn't affected by this bug -- its own plain form-POST save is untouched.
+- No pricing/calculation changes. Regression suite re-run clean (81/81); PHP and JS syntax verified.
+
+### 8.9.19 (Fruth)
 Bug fix: the wp-admin "Data Editor" launcher link (under the Quote Builder menu) was landing on the bare Start Performance dashboard instead of the pricing editor.
 
 - **Root cause**: `sqs_pricing_calculator_data_editor_url()` always looks for a standalone WordPress page containing `[sqs_pricing_data_admin]`, falling back to a hardcoded `/editor/` path only if no such page exists. Now that Start Performance is the primary UI on this site, that standalone page is apparently no longer published -- so the function fell through to `/editor/`, which isn't a real page either, and the site's own routing sends the unmatched path to the bare `/sp-app/` dashboard.
