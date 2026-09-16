@@ -23,8 +23,14 @@ CREATE TABLE IF NOT EXISTS clients (
   ignore_paths         jsonb DEFAULT '[]',
   gsc_property         text,
   default_provider_id  int REFERENCES providers(id),
+  archived             boolean NOT NULL DEFAULT false,
   created_at           timestamptz DEFAULT now()
 );
+
+-- clients existed before the archived column was added — CREATE TABLE IF
+-- NOT EXISTS above won't add it to an already-created table, so add it
+-- explicitly (idempotent, safe to re-run on every boot).
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
 
 CREATE TABLE IF NOT EXISTS audit_runs (
   id                serial PRIMARY KEY,
