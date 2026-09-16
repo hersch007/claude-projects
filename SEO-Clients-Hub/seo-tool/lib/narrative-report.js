@@ -124,16 +124,26 @@ async function generateNarrative({ client, results, scoreData }) {
   });
 
   try {
-    const anthropic = new Anthropic();
+    // Explicit short timeout + low retry count — this runs synchronously in
+    // the /docx download route, so a stuck network path to the API must
+    // fail fast rather than hold the request open for the SDK's 10-minute
+    // default (× retries) while the user stares at a browser that looks
+    // hung. `effort: 'medium'` also keeps normal successful calls quick —
+    // this is a writing/summarization task from data already provided, not
+    // one that needs the deepest reasoning tier.
+    const anthropic = new Anthropic({ timeout: 45000, maxRetries: 1 });
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 16000,
       system: SYSTEM_PROMPT,
+      output_config: {
+        effort: 'medium',
+        format: { type: 'json_schema', schema: OUTPUT_SCHEMA },
+      },
       messages: [{
         role: 'user',
         content: `Here is crawl data and business context for an SEO audit. Write the narrative sections of the report as structured JSON.\n\n${userContent}`,
       }],
-      output_config: { format: { type: 'json_schema', schema: OUTPUT_SCHEMA } },
     });
 
     const textBlock = response.content.find(b => b.type === 'text');
