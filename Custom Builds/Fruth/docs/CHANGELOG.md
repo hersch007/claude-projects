@@ -53,7 +53,14 @@ New third plugin, built as an independent module attaching to Core exactly the w
 
 ## Quote Builder Core (`sales-quote-system`)
 
-### 8.9.20 (Fruth) — latest
+### 8.9.21 (Fruth) — latest
+Bug fix: pressing the Up/Down arrow keys in a numeric field (Width, Length, Roll Qty, Resin Cost/LBS, etc.) opened Chrome's autofill-suggestion dropdown instead of adjusting the value.
+
+- **Same root cause as 8.6.8**, just never applied to the numeric inputs: without `autocomplete="off"`, Chrome shows saved-value suggestions for any input with form history, and the Down-arrow key is the standard keystroke that opens that dropdown -- fighting with the native `type="number"` spinner behavior the arrow keys are supposed to trigger instead.
+- **Fixed**: added `autocomplete="off"` to `makeNumber()`, the one shared builder used for every numeric field across all three products (Tubing/In-Line/Zipper) -- fixes all of them in one place rather than field-by-field.
+- No pricing/calculation changes. Regression suite re-run clean (81/81).
+
+### 8.9.20 (Fruth)
 Bug fix: Data Editor's "Save All Tables" silently failed when the page is embedded in Start Performance -- clicking it landed on the bare SP dashboard instead of saving, with no error shown and no data written.
 
 - **Root cause**: the save button was a plain, page-navigating HTML form submission (`<form method="post">`, no AJAX) -- a pattern that only works reliably on a normal standalone page load. When embedded inside Start Performance's app shell, its own client-side routing intercepts navigation/submissions within its views, swallowing the form POST before it ever reaches WordPress and falling back to the default dashboard route. The PHP-side save logic itself was already correct (`sp-views/fruth-pricing.php` properly calls the shared save handler) -- it just never got the chance to run.
