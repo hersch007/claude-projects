@@ -53,7 +53,15 @@ New third plugin, built as an independent module attaching to Core exactly the w
 
 ## Quote Builder Core (`sales-quote-system`)
 
-### 8.9.18 (Fruth) — latest
+### 8.9.19 (Fruth) — latest
+Bug fix: the wp-admin "Data Editor" launcher link (under the Quote Builder menu) was landing on the bare Start Performance dashboard instead of the pricing editor.
+
+- **Root cause**: `sqs_pricing_calculator_data_editor_url()` always looks for a standalone WordPress page containing `[sqs_pricing_data_admin]`, falling back to a hardcoded `/editor/` path only if no such page exists. Now that Start Performance is the primary UI on this site, that standalone page is apparently no longer published -- so the function fell through to `/editor/`, which isn't a real page either, and the site's own routing sends the unmatched path to the bare `/sp-app/` dashboard.
+- **Fixed**: when `sqs_pricing_calculator_sp_mode()` is true (Start Performance's core plugin is active), this link now points straight at the SP-embedded Pricing Data view (`/sp-app/?view=fruth-pricing`) instead of hunting for a standalone page that may not exist. No change when Start Performance isn't active -- the original shortcode-lookup/fallback behavior is untouched there.
+- Scoped to `sqs_pricing_calculator_data_editor_url()` only, since that's the one reported broken; `sales_quote_builder_url()` and `portal_url()` weren't touched.
+- No pricing/calculation changes. Regression suite re-run clean (81/81).
+
+### 8.9.18 (Fruth)
 Bug fix: the Product Code field's autocomplete dropdown was showing "undefined — undefined" for every entry.
 
 - **Root cause**: `productCodes` is the one Data Editor table that's a list of `{code, desc}` objects rather than a flat map/list/matrix — but the Data Editor's generic table UI (`renderEditor()`/`serializeCard()`, in both the wp-admin Pricing Tables page and the front-end/embedded `[sqs_pricing_data_admin]` view) only knew how to handle those three shapes. A list of objects fell through to the plain-list renderer, which treats each entry as one bare scalar cell. If anyone ever clicked "Add Row" or "Save All Tables" on the Product Codes table, that generic editor silently flattened every `{code, desc}` object -- and `buildProductCodeDatalist()` (which builds `pc.code + ' — ' + pc.desc` for the dropdown) then read `undefined` for both properties on every corrupted entry.
