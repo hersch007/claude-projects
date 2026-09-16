@@ -163,6 +163,7 @@ async function getProviderId(providerKey) {
 }
 
 app.get('/api/clients', async (req, res) => {
+  const archived = req.query.archived === '1';
   const { rows } = await getPool().query(`
     SELECT c.id, c.slug, c.name, c.url,
            latest.seo_health_score AS latest_score, latest.run_date AS latest_run_date
@@ -171,9 +172,27 @@ app.get('/api/clients', async (req, res) => {
       SELECT seo_health_score, run_date FROM audit_runs
       WHERE client_id = c.id ORDER BY run_date DESC LIMIT 1
     ) latest ON true
+    WHERE c.archived = $1
     ORDER BY c.name ASC
-  `);
+  `, [archived]);
   res.json(rows);
+});
+
+app.post('/api/clients', async (req, res) => {
+  const { slug, name, url, gsc_property } = req.body || {};
+  if (!slug || !name || !url) return res.status(400).json({ error: 'slug, name, and url are required' });
+  if (!/^[a-z0-9-]+$/.test(slug)) return res.status(400).json({ error: 'slug must be lowercase letters, numbers, and hyphens only' });
+
+  try {
+    const { rows } = await getPool().query(
+      `INSERT INTO clients (slug, name, url, gsc_property) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [slug, name, url, gsc_property || null]
+    );
+    res.json({ ok: true, client: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: `A client with slug "${slug}" already exists` });
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/clients/:slug', async (req, res) => {
@@ -181,12 +200,12 @@ app.get('/api/clients/:slug', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
 
   const { rows: runHistory } = await getPool().query(
-    `SELECT run_date AS date, seo_health_score AS score, 'run' AS source
+    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source
      FROM audit_runs WHERE client_id = $1`,
     [client.id]
   );
   const { rows: manualHistory } = await getPool().query(
-    `SELECT entry_date AS date, score, 'manual' AS source
+    `SELECT id, entry_date AS date, score, 'manual' AS source
      FROM manual_score_entries WHERE client_id = $1`,
     [client.id]
   );
@@ -196,10 +215,43 @@ app.get('/api/clients/:slug', async (req, res) => {
   for (const m of manualHistory) merged.set(m.date.toISOString().split('T')[0], m);
   for (const r of runHistory) merged.set(r.date.toISOString().split('T')[0], r);
   const history = [...merged.entries()]
-    .map(([date, v]) => ({ date, score: v.score, source: v.source }))
+    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({ client, history, providers: PROVIDERS });
+});
+
+app.patch('/api/clients/:slug/archive', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const archived = !!(req.body && req.body.archived);
+  await getPool().query('UPDATE clients SET archived = $1 WHERE id = $2', [archived, client.id]);
+  res.json({ ok: true });
+});
+
+app.delete('/api/clients/:slug', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const pool = getPool();
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query('BEGIN');
+    await dbClient.query(
+      `DELETE FROM page_results WHERE audit_run_id IN (SELECT id FROM audit_runs WHERE client_id = $1)`,
+      [client.id]
+    );
+    await dbClient.query('DELETE FROM audit_runs WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM manual_score_entries WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM gsc_snapshots WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM clients WHERE id = $1', [client.id]);
+    await dbClient.query('COMMIT');
+    res.json({ ok: true });
+  } catch (err) {
+    await dbClient.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    dbClient.release();
+  }
 });
 
 app.post('/api/clients/:slug/manual-score', async (req, res) => {
@@ -212,6 +264,21 @@ app.post('/api/clients/:slug/manual-score', async (req, res) => {
     `INSERT INTO manual_score_entries (client_id, entry_date, score, note) VALUES ($1, $2, $3, $4)`,
     [client.id, date, score, note || null]
   );
+  res.json({ ok: true });
+});
+
+app.delete('/api/clients/:slug/manual-score/:id', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  await getPool().query('DELETE FROM manual_score_entries WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
+  res.json({ ok: true });
+});
+
+app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  await getPool().query('DELETE FROM page_results WHERE audit_run_id = $1', [req.params.id]);
+  await getPool().query('DELETE FROM audit_runs WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
   res.json({ ok: true });
 });
 

@@ -34,13 +34,19 @@
   .source-manual { color: #7c3aed; font-size: 11px; }
   .manual-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   #manual-status { font-size: 12px; color: #16a34a; margin-top: 8px; }
+  .history-delete { background: none; border: none; color: #cbd5e1; cursor: pointer; font-size: 14px; padding: 0 4px; }
+  .history-delete:hover { color: #dc2626; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .header-actions { display: flex; gap: 8px; }
+  .btn.secondary { background: white; color: #1e293b; border: 1px solid #cbd5e1; }
+  .btn.danger { background: white; color: #dc2626; border: 1px solid #fecaca; }
 </style>
 </head>
 <body>
 
 <div class="container">
   <a class="back" href="/">&larr; All clients</a>
-  <div id="header">
+  <div id="header" class="header-row">
     <h1>Loading...</h1>
   </div>
 
@@ -56,7 +62,7 @@
   <div class="card">
     <h2>Score History</h2>
     <table id="history-table">
-      <thead><tr><th>Date</th><th>Score</th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Score</th><th></th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -86,9 +92,28 @@
     const data = await res.json();
 
     document.getElementById('header').innerHTML = `
-      <h1>${data.client.name}</h1>
-      <div class="sub">${data.client.url}</div>
+      <div>
+        <h1>${data.client.name}${data.client.archived ? ' <span style="color:#94a3b8;font-size:13px;font-weight:400">(archived)</span>' : ''}</h1>
+        <div class="sub">${data.client.url}</div>
+      </div>
+      <div class="header-actions">
+        <button id="archive-btn" class="btn secondary">${data.client.archived ? 'Unarchive' : 'Archive'}</button>
+        <button id="delete-btn" class="btn danger">Delete Client</button>
+      </div>
     `;
+    document.getElementById('archive-btn').addEventListener('click', async () => {
+      await fetch(`/api/clients/${encodeURIComponent(slug)}/archive`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived: !data.client.archived }),
+      });
+      load();
+    });
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+      if (!confirm(`Permanently delete "${data.client.name}" and all its history? This cannot be undone.`)) return;
+      await fetch(`/api/clients/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+      window.location.href = '/';
+    });
 
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
@@ -103,6 +128,7 @@
           <td>${new Date(h.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
           <td>${h.score}</td>
           <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
+          <td><button class="history-delete" data-source="${h.source}" data-id="${h.id}" title="Delete this entry">&times;</button></td>
         </tr>
       `).join('');
     }
@@ -160,6 +186,15 @@
       return;
     }
     poll(data.runId);
+  });
+
+  document.querySelector('#history-table tbody').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.history-delete');
+    if (!btn) return;
+    if (!confirm('Delete this history entry?')) return;
+    const endpoint = btn.dataset.source === 'manual' ? 'manual-score' : 'audit-run';
+    await fetch(`/api/clients/${encodeURIComponent(slug)}/${endpoint}/${btn.dataset.id}`, { method: 'DELETE' });
+    load();
   });
 
   document.getElementById('manual-submit').addEventListener('click', async () => {
