@@ -73,7 +73,7 @@
   <div class="card">
     <h2>Score History</h2>
     <table id="history-table">
-      <thead><tr><th>Date</th><th>Score</th><th></th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Score</th><th></th><th></th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -134,13 +134,14 @@
 
     const tbody = document.querySelector('#history-table tbody');
     if (!data.history.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
     } else {
       tbody.innerHTML = [...data.history].reverse().map(h => `
         <tr>
           <td>${new Date(h.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
           <td>${h.score}</td>
           <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
+          <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/report" target="_blank">View report</a>` : ''}</td>
           <td><button class="history-delete" data-source="${h.source}" data-id="${h.id}" title="Delete this entry">&times;</button></td>
         </tr>
       `).join('');

@@ -201,12 +201,13 @@ app.get('/api/clients/:slug', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
 
   const { rows: runHistory } = await getPool().query(
-    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source
+    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source,
+            (html_report IS NOT NULL) AS has_report
      FROM audit_runs WHERE client_id = $1`,
     [client.id]
   );
   const { rows: manualHistory } = await getPool().query(
-    `SELECT id, entry_date AS date, score, 'manual' AS source
+    `SELECT id, entry_date AS date, score, 'manual' AS source, false AS has_report
      FROM manual_score_entries WHERE client_id = $1`,
     [client.id]
   );
@@ -216,7 +217,7 @@ app.get('/api/clients/:slug', async (req, res) => {
   for (const m of manualHistory) merged.set(m.date.toISOString().split('T')[0], m);
   for (const r of runHistory) merged.set(r.date.toISOString().split('T')[0], r);
   const history = [...merged.entries()]
-    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id }))
+    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id, hasReport: v.has_report }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({ client, history, providers: PROVIDERS });
@@ -283,6 +284,18 @@ app.delete('/api/clients/:slug/manual-score/:id', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
   await getPool().query('DELETE FROM manual_score_entries WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
   res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).send('Client not found');
+  const { rows } = await getPool().query(
+    'SELECT html_report FROM audit_runs WHERE id = $1 AND client_id = $2',
+    [req.params.id, client.id]
+  );
+  if (!rows[0]) return res.status(404).send('Run not found');
+  if (!rows[0].html_report) return res.status(404).send('No saved report for this run (older runs imported before reports were stored don\'t have one).');
+  res.set('Content-Type', 'text/html').send(rows[0].html_report);
 });
 
 app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {

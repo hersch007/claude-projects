@@ -124,15 +124,19 @@ async function generateNarrative({ client, results, scoreData }) {
   });
 
   try {
-    // Explicit short timeout + low retry count — this runs synchronously in
-    // the /docx download route, so a stuck network path to the API must
-    // fail fast rather than hold the request open for the SDK's 10-minute
-    // default (× retries) while the user stares at a browser that looks
-    // hung. `effort: 'medium'` also keeps normal successful calls quick —
-    // this is a writing/summarization task from data already provided, not
-    // one that needs the deepest reasoning tier.
-    const anthropic = new Anthropic({ timeout: 45000, maxRetries: 1 });
-    const response = await anthropic.messages.create({
+    // Streaming (not .create()) — a non-streaming request holding a
+    // connection open while Claude thinks through a json_schema response
+    // can get cut by an idle-connection timeout on the network path
+    // (that's the "Request timed out" seen in practice); streaming keeps
+    // data flowing so that doesn't happen. Capped timeout + low retry
+    // count still bounds the worst case so a genuinely stuck request
+    // fails fast into the graceful-degradation path below rather than
+    // holding the /docx download open indefinitely. `effort: 'medium'`
+    // keeps normal calls quick — this is a writing/summarization task from
+    // data already provided in the prompt, not one needing the deepest
+    // reasoning tier.
+    const anthropic = new Anthropic({ timeout: 90000, maxRetries: 1 });
+    const stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: 16000,
       system: SYSTEM_PROMPT,
@@ -145,6 +149,7 @@ async function generateNarrative({ client, results, scoreData }) {
         content: `Here is crawl data and business context for an SEO audit. Write the narrative sections of the report as structured JSON.\n\n${userContent}`,
       }],
     });
+    const response = await stream.finalMessage();
 
     const textBlock = response.content.find(b => b.type === 'text');
     if (!textBlock) return null;
