@@ -1,11 +1,12 @@
 const { google } = require('googleapis');
 const path = require('path');
 const fs = require('fs');
+const { resolveSecretPath } = require('./lib/credential-path');
 
 const SCOPES = ['https://www.googleapis.com/auth/webmasters.readonly'];
-const OAUTH_CLIENT_PATH = path.join(__dirname, 'gsc-oauth-client.json');
-const TOKEN_PATH        = path.join(__dirname, 'gsc-token.json');
-const SA_CREDS_PATH     = path.join(__dirname, 'gsc-credentials.json');
+const OAUTH_CLIENT_PATH = resolveSecretPath(path.join(__dirname, 'gsc-oauth-client.json'));
+const TOKEN_PATH        = resolveSecretPath(path.join(__dirname, 'gsc-token.json'));
+const SA_CREDS_PATH     = resolveSecretPath(path.join(__dirname, 'gsc-credentials.json'));
 
 function getAuth() {
   // Prefer OAuth token (user account) — works with any GSC property you have access to

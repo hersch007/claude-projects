@@ -11,9 +11,10 @@
 // that's done and this has actually been run once.
 const fs = require('fs');
 const path = require('path');
+const { resolveSecretPath } = require('./credential-path');
 
-const OAUTH_CLIENT_PATH = path.join(__dirname, '..', 'gsc-oauth-client.json'); // same Cloud project/OAuth client as GSC, extended to the adwords scope
-const TOKEN_PATH = path.join(__dirname, '..', 'ads-token.json'); // separate token file — see ads-auth.js
+const OAUTH_CLIENT_PATH = resolveSecretPath(path.join(__dirname, '..', 'gsc-oauth-client.json')); // same Cloud project/OAuth client as GSC, extended to the adwords scope
+const TOKEN_PATH = resolveSecretPath(path.join(__dirname, '..', 'ads-token.json')); // separate token file — see ads-auth.js
 
 // Sensible defaults for a US-based agency's clients — override via env if
 // a client's market differs. geoTargetConstants/2840 = United States,
