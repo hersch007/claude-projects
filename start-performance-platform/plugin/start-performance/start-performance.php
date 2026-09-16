@@ -2,13 +2,13 @@
 /*
  * Plugin Name: Start Performance
  * Description: Start Performance Platform — core
- * Version:     2.5.51
+ * Version:     2.5.52
  * Author:      Richard Brashear / Start Performance
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SP_VERSION',    '2.5.51' );
+define( 'SP_VERSION',    '2.5.52' );
 define( 'SP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

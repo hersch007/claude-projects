@@ -130,6 +130,7 @@ if ( function_exists( 'sp_get_core_slots' ) ) {
     // entirely -- a focused menu, not marketing clutter for a core nobody can open.
     $nav_middle_injected = array();
     $drop_items_for = null;
+    $sp_has_locked_slot = false;
     foreach ( $nav_middle as $item ) {
         if ( ! empty( $item['section'] ) ) {
             $sid        = ! empty( $item['section_id'] ) ? $item['section_id'] : '';
@@ -137,7 +138,7 @@ if ( function_exists( 'sp_get_core_slots' ) ) {
             $is_slot    = $sid && isset( $core_slots[ $sid ] );
             $empty_slot = $is_slot && ! in_array( $sid, $sections_with_items );
 
-            if ( $empty_slot ) { $drop_items_for = $sid; continue; }
+            if ( $empty_slot ) { $drop_items_for = $sid; $sp_has_locked_slot = true; continue; }
 
             if ( ! $has_access && ! $is_slot ) { $drop_items_for = $sid; continue; }
             $drop_items_for = $has_access ? null : $sid;
@@ -150,6 +151,18 @@ if ( function_exists( 'sp_get_core_slots' ) ) {
         }
     }
     $nav_middle = $nav_middle_injected;
+
+    // At least one core slot is locked/unavailable for this member -- give them a single,
+    // consolidated click target to see what's available instead of the individually
+    // removed per-core teaser links.
+    if ( $sp_has_locked_slot ) {
+        $nav_middle[] = array( 'divider' => true );
+        $nav_middle[] = array(
+            'view'  => 'sp-core-upsell',
+            'label' => 'Explore More',
+            'icon'  => '<path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor"/>',
+        );
+    }
 }
 
 // Bottom items — always pinned last, admin-only
