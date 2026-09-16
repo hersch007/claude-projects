@@ -67,6 +67,7 @@ $anchor_tabs = apply_filters( 'sp_settings_anchor_tabs', $anchor_tabs );
     <?php wp_nonce_field( 'sp_form', 'sp_nonce' ); ?>
     <input type="hidden" name="sp_type" value="settings">
     <input type="hidden" name="sp_id" value="0">
+    <input type="hidden" name="sp_settings_section" value="general">
 
     <?php if ( $is_super ) : ?>
     <!-- Platform -->

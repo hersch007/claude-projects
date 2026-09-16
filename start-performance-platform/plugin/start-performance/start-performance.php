@@ -2,13 +2,13 @@
 /*
  * Plugin Name: Start Performance
  * Description: Start Performance Platform — core
- * Version:     2.5.49
+ * Version:     2.5.50
  * Author:      Richard Brashear / Start Performance
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SP_VERSION',    '2.5.49' );
+define( 'SP_VERSION',    '2.5.50' );
 define( 'SP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -1243,8 +1243,12 @@ function sp_handle_post() {
                 }
             }
 
-            // Super admin only: Platform branding + section labels
-            if ( sp_is_super_admin() ) {
+            // Super admin only: Platform branding + section labels. Gated on the
+            // general-section flag for the same reason the digest toggle above is --
+            // an unchecked/absent field isn't POSTed, so without this gate, saving
+            // the separate Email or Modules forms would fall through to each
+            // field's default and silently reset branding.
+            if ( sp_is_super_admin() && isset( $_POST['sp_settings_section'] ) && $_POST['sp_settings_section'] === 'general' ) {
                 update_option( 'sp_platform_name',  sanitize_text_field( isset( $_POST['sp_platform_name'] )  ? $_POST['sp_platform_name']  : 'Start Performance' ) );
                 update_option( 'sp_logo_url',        esc_url_raw( isset( $_POST['sp_logo_url'] )        ? $_POST['sp_logo_url']        : '' ) );
                 update_option( 'sp_brand_icon_url',  esc_url_raw( isset( $_POST['sp_brand_icon_url'] )  ? $_POST['sp_brand_icon_url']  : '' ) );
@@ -1273,30 +1277,39 @@ function sp_handle_post() {
                 }
             }
 
-            // Admin + super admin: Nav visibility
-            // Base must include all section headers so plugin filters can inject items after them
-            $all_nav   = apply_filters( 'sp_nav_items', array(
-                array( 'view' => 'dashboard'  ),
-                array( 'section' => true, 'section_id' => 'core-system',        'label' => 'Core System'        ),
-                array( 'view' => 'contacts'   ),
-                array( 'view' => 'companies'  ),
-                array( 'view' => 'tasks'      ),
-                array( 'section' => true, 'section_id' => 'intelligence-core',  'label' => 'Intelligence Core'  ),
-                array( 'section' => true, 'section_id' => 'sales-core',         'label' => 'Sales Core'         ),
-                array( 'section' => true, 'section_id' => 'service-core',       'label' => 'Service Core'       ),
-                array( 'section' => true, 'section_id' => 'operations-core',    'label' => 'Operations Core'    ),
-                array( 'section' => true, 'section_id' => 'knowledge-core',     'label' => 'Knowledge Core'     ),
-                array( 'section' => true, 'section_id' => 'chat-core',          'label' => 'Chat Core'          ),
-            ) );
-            $all_views = array();
-            foreach ( $all_nav as $item ) {
-                if ( ! empty( $item['view'] ) ) $all_views[] = $item['view'];
+            // Admin + super admin: Nav visibility. Gated on the general-section flag
+            // for the same reason the digest toggle and branding block above are --
+            // this block was previously unconditional, so saving the separate Email
+            // or Modules forms (neither of which include any sp_nav_visible[]
+            // checkboxes) fell through to the empty-array default and silently
+            // hid EVERY nav item, including custom ones registered by addons like
+            // Fruth's Quote Builder -- not just the ones an admin actually meant
+            // to hide from the Navigation tab.
+            if ( isset( $_POST['sp_settings_section'] ) && $_POST['sp_settings_section'] === 'general' ) {
+                // Base must include all section headers so plugin filters can inject items after them
+                $all_nav   = apply_filters( 'sp_nav_items', array(
+                    array( 'view' => 'dashboard'  ),
+                    array( 'section' => true, 'section_id' => 'core-system',        'label' => 'Core System'        ),
+                    array( 'view' => 'contacts'   ),
+                    array( 'view' => 'companies'  ),
+                    array( 'view' => 'tasks'      ),
+                    array( 'section' => true, 'section_id' => 'intelligence-core',  'label' => 'Intelligence Core'  ),
+                    array( 'section' => true, 'section_id' => 'sales-core',         'label' => 'Sales Core'         ),
+                    array( 'section' => true, 'section_id' => 'service-core',       'label' => 'Service Core'       ),
+                    array( 'section' => true, 'section_id' => 'operations-core',    'label' => 'Operations Core'    ),
+                    array( 'section' => true, 'section_id' => 'knowledge-core',     'label' => 'Knowledge Core'     ),
+                    array( 'section' => true, 'section_id' => 'chat-core',          'label' => 'Chat Core'          ),
+                ) );
+                $all_views = array();
+                foreach ( $all_nav as $item ) {
+                    if ( ! empty( $item['view'] ) ) $all_views[] = $item['view'];
+                }
+                $checked = isset( $_POST['sp_nav_visible'] ) && is_array( $_POST['sp_nav_visible'] )
+                    ? array_map( 'sanitize_key', $_POST['sp_nav_visible'] )
+                    : array();
+                $hidden = array_values( array_diff( $all_views, $checked ) );
+                update_option( 'sp_hidden_nav_items', $hidden );
             }
-            $checked = isset( $_POST['sp_nav_visible'] ) && is_array( $_POST['sp_nav_visible'] )
-                ? array_map( 'sanitize_key', $_POST['sp_nav_visible'] )
-                : array();
-            $hidden = array_values( array_diff( $all_views, $checked ) );
-            update_option( 'sp_hidden_nav_items', $hidden );
         }
         wp_redirect( home_url( '/sp-app/?view=settings&saved=1' ) ); exit;
     }
