@@ -102,12 +102,11 @@ $nav_middle = apply_filters( 'sp_nav_items', array(
 $hidden_nav_early = get_option( 'sp_hidden_nav_items', array() );
 if ( ! is_array( $hidden_nav_early ) ) $hidden_nav_early = array();
 
-// Inject locked upsell teasers + gate by member core access, in one pass. A core-slot
-// section shows a locked "upsell" teaser (in place of its real items) whenever it has
-// no accessible items — either its addon is inactive OR the current member isn't granted
-// that core. So a member SEES every core they lack (a "see but can't open" upsell hook)
-// while the real view stays blocked by the access gate above. core-system/dashboard are
-// always accessible (see sp_member_has_core_access), so only core slots are affected.
+// Drop empty core-slot sections + gate by member core access, in one pass. A core-slot
+// section (its addon inactive, or the current member not granted that core) is dropped
+// from the nav entirely, for every member including admins -- no locked "upsell" teaser
+// is injected. core-system/dashboard are always accessible (see sp_member_has_core_access),
+// so only core slots are affected.
 if ( function_exists( 'sp_get_core_slots' ) ) {
     $core_slots = sp_get_core_slots();
     $sp_has_access = function( $sid ) {
@@ -126,9 +125,9 @@ if ( function_exists( 'sp_get_core_slots' ) ) {
         }
     }
 
-    // Second pass: keep section headers; drop the real items of any section the member
-    // can't access; inject a locked teaser after each core-slot header with no accessible
-    // items. A restricted section that isn't a core slot (nothing to upsell) is hidden.
+    // Second pass: keep section headers only for sections with real, accessible items.
+    // A core-slot section with none (inactive addon, or member lacks access) is dropped
+    // entirely -- a focused menu, not marketing clutter for a core nobody can open.
     $nav_middle_injected = array();
     $drop_items_for = null;
     foreach ( $nav_middle as $item ) {
@@ -138,25 +137,11 @@ if ( function_exists( 'sp_get_core_slots' ) ) {
             $is_slot    = $sid && isset( $core_slots[ $sid ] );
             $empty_slot = $is_slot && ! in_array( $sid, $sections_with_items );
 
-            // Upsell teasers are for the BUYER: only admins see a locked "unlock this" item.
-            // For non-admin members, a core they can't use is hidden entirely — a focused menu,
-            // not marketing clutter aimed at someone who can't act on it.
-            if ( $empty_slot && ! $is_admin ) { $drop_items_for = $sid; continue; }
+            if ( $empty_slot ) { $drop_items_for = $sid; continue; }
 
             if ( ! $has_access && ! $is_slot ) { $drop_items_for = $sid; continue; }
             $drop_items_for = $has_access ? null : $sid;
             $nav_middle_injected[] = $item;
-
-            if ( $empty_slot ) {
-                $slot = $core_slots[ $sid ];
-                $nav_middle_injected[] = array(
-                    'view'   => 'sp-core-upsell',
-                    'core'   => $sid,
-                    'label'  => $slot['label'],
-                    'icon'   => $slot['icon'],
-                    'locked' => true,
-                );
-            }
         } elseif ( ! empty( $item['divider'] ) ) {
             $nav_middle_injected[] = $item;
         } else {
