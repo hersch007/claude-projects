@@ -53,7 +53,15 @@ New third plugin, built as an independent module attaching to Core exactly the w
 
 ## Quote Builder Core (`sales-quote-system`)
 
-### 8.9.17 (Fruth) — latest
+### 8.9.18 (Fruth) — latest
+Bug fix: the Product Code field's autocomplete dropdown was showing "undefined — undefined" for every entry.
+
+- **Root cause**: `productCodes` is the one Data Editor table that's a list of `{code, desc}` objects rather than a flat map/list/matrix — but the Data Editor's generic table UI (`renderEditor()`/`serializeCard()`, in both the wp-admin Pricing Tables page and the front-end/embedded `[sqs_pricing_data_admin]` view) only knew how to handle those three shapes. A list of objects fell through to the plain-list renderer, which treats each entry as one bare scalar cell. If anyone ever clicked "Add Row" or "Save All Tables" on the Product Codes table, that generic editor silently flattened every `{code, desc}` object -- and `buildProductCodeDatalist()` (which builds `pc.code + ' — ' + pc.desc` for the dropdown) then read `undefined` for both properties on every corrupted entry.
+- **Fixed**: added a proper two-column (Code / Description) editor for `productCodes` specifically (`renderObjectList()`, a new `objectListFields` registry, matching `data-kind="objectlist"` handling in the Add Row logic and `serializeCard()`), in both editor entry points. Every other table's rendering is untouched.
+- **Does not by itself repair already-corrupted data** on an already-activated site -- same DB-override mechanism as always (`SQS_DEFAULT_DATA_B64` only fills missing rows, never overwrites an existing one). See `docs/productCodes-restore.json` for the original 82-entry list (extracted directly from this file's own PHP defaults) to paste into the Product Codes table's Advanced View if a site's copy is already corrupted.
+- No pricing/calculation changes. Regression suite re-run clean (81/81).
+
+### 8.9.17 (Fruth)
 Client request: Zipper is no longer an active product line, remove it from the Quote Builder.
 
 - **Hidden, not deleted** (per client direction, for reversibility and to avoid any risk to already-saved Zipper quotes): removed the "Zipper" button from the Quote Builder's product switcher (`sqc-product-switch`) -- Tubing and In-Line BSB are the only reachable tabs now. `calculateZipper()`, its input container (`#inputs-zipper`), and all of its data (`zipperWidthBuckets`, `zipperQtyPerHour`, `laborRates.zipperExtrusion`/`zipperConversion`, the `defaults.zipper` block, Zipper-labeled formula options) are untouched in the code and database.

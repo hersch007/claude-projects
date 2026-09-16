@@ -1,0 +1,330 @@
+[
+  {
+    "code": "FCR-1000",
+    "desc": "Fruth Code"
+  },
+  {
+    "code": "CFB1000",
+    "desc": "LDPE"
+  },
+  {
+    "code": "CFB1100",
+    "desc": "LLDPE"
+  },
+  {
+    "code": "CFB1005",
+    "desc": "LDPE Black"
+  },
+  {
+    "code": "CFB1600",
+    "desc": "LDPE Square Bottom Cover"
+  },
+  {
+    "code": "CFB1603",
+    "desc": "LDPE PAS Square Bottom Cover"
+  },
+  {
+    "code": "CFB2504",
+    "desc": "Pink A/S Low Outgassing LDPE"
+  },
+  {
+    "code": "CFB1006",
+    "desc": "Blue LDPE"
+  },
+  {
+    "code": "CFB9609",
+    "desc": "LDPE White Antistatic"
+  },
+  {
+    "code": "CFB9610",
+    "desc": "Black A/S LDPE"
+  },
+  {
+    "code": "CFB1011",
+    "desc": "Silo LDPE w/ Adds"
+  },
+  {
+    "code": "CFB1012",
+    "desc": "CFB1000 w/ AB"
+  },
+  {
+    "code": "CFB2503",
+    "desc": "Clear LAM LDPE"
+  },
+  {
+    "code": "CFB2500",
+    "desc": "CELO (formerly ULO)"
+  },
+  {
+    "code": "CFB9603",
+    "desc": "LDPE Clear Antistatic"
+  },
+  {
+    "code": "CFB9604",
+    "desc": "LDPE Pink Antistatic"
+  },
+  {
+    "code": "CFB9605",
+    "desc": "LDPE Blue Antistatic"
+  },
+  {
+    "code": "CFB9606",
+    "desc": "LDPE Green Antistatic"
+  },
+  {
+    "code": "CFB1090",
+    "desc": "Ultraclear LDPE"
+  },
+  {
+    "code": "CFB1095",
+    "desc": "Ultraclear II"
+  },
+  {
+    "code": "CFB1900",
+    "desc": "LDPE Industrial Film"
+  },
+  {
+    "code": "CFB1001",
+    "desc": "LDPE Zipper"
+  },
+  {
+    "code": "CFB1030",
+    "desc": "CLR UVI LDPE Zipper"
+  },
+  {
+    "code": "CFB1040",
+    "desc": "LDPE Black UVI Zipper"
+  },
+  {
+    "code": "CFB1061",
+    "desc": "Blue Zipper (LDPE)"
+  },
+  {
+    "code": "CFB9601",
+    "desc": "Pink A/S Zipper"
+  },
+  {
+    "code": "CFB9602",
+    "desc": "LDPE Clear A/S Zipper"
+  },
+  {
+    "code": "CFB9608",
+    "desc": "LDPE Black A/S Zipper"
+  },
+  {
+    "code": "CFB3000",
+    "desc": "MDPE"
+  },
+  {
+    "code": "CFB4000",
+    "desc": "HDPE"
+  },
+  {
+    "code": "CFB4001",
+    "desc": "HDPE Zipper"
+  },
+  {
+    "code": "CFB4003",
+    "desc": "HDPE Clear Antistatic"
+  },
+  {
+    "code": "CFB4005",
+    "desc": "Pink HDPE"
+  },
+  {
+    "code": "CFB4100",
+    "desc": "HDPE/LDPE"
+  },
+  {
+    "code": "CFB5000",
+    "desc": "Clear Nylon"
+  },
+  {
+    "code": "CFB5009",
+    "desc": "Clear Nylon II"
+  },
+  {
+    "code": "CFB5100",
+    "desc": "Orange Antistatic Nylon"
+  },
+  {
+    "code": "CFB5200",
+    "desc": "Clear A/S Nylon Zipper"
+  },
+  {
+    "code": "CFB5500",
+    "desc": "Poly/Nylon (Compos-A-Clean)"
+  },
+  {
+    "code": "CFB5510",
+    "desc": "BIAX Nylon/EVOH/Poly"
+  },
+  {
+    "code": "CFB5600",
+    "desc": "Polyester/Poly"
+  },
+  {
+    "code": "CFB5700",
+    "desc": "High Barrier ALOX"
+  },
+  {
+    "code": "CFB5800",
+    "desc": "Clear Nylon Oven Bag"
+  },
+  {
+    "code": "CFB6000",
+    "desc": "A/S Moisture Barrier Nylon/Foil/Poly"
+  },
+  {
+    "code": "CFB6500",
+    "desc": "Static Shield (CP STAT 100)"
+  },
+  {
+    "code": "CFB6600",
+    "desc": "Static Shield Zipper Bags (CP STAT 100)"
+  },
+  {
+    "code": "CFB6700",
+    "desc": "PFP PET/Foil/Poly Barrier Film 4mil"
+  },
+  {
+    "code": "CFB6710",
+    "desc": "EMI Shielding MIL-PRF-81705-T3-C2 (CP STAT 100M)"
+  },
+  {
+    "code": "CFB6720",
+    "desc": "EMI Shielding MIL-PRF-81705-T1-C1 (Cadpack ESD)"
+  },
+  {
+    "code": "CFB6800",
+    "desc": "Poly/Aclar Barrier MIL-PRF-22191-T1 (Cadpak CL)"
+  },
+  {
+    "code": "CFB6810",
+    "desc": "Foil Barrier MIL-PRF-131-C1 (Cadpak PL)"
+  },
+  {
+    "code": "CFB7000",
+    "desc": "Aclar 22a 2mil (Hydroblock 22a)"
+  },
+  {
+    "code": "CFB7100",
+    "desc": "FR 5500 POLY/ACLAR"
+  },
+  {
+    "code": "CT100",
+    "desc": "LDPE Cleantuff"
+  },
+  {
+    "code": "CT101",
+    "desc": "LDPE Cleantuff Blue Antistatic"
+  },
+  {
+    "code": "CT102",
+    "desc": "LDPE Cleantuff Pink Antistatic"
+  },
+  {
+    "code": "CT103",
+    "desc": "LDPE Cleantuff Clear Antistatic"
+  },
+  {
+    "code": "CT104",
+    "desc": "LDPE Cleantuff Orange"
+  },
+  {
+    "code": "CT108",
+    "desc": "Red Cleantuff"
+  },
+  {
+    "code": "CT110",
+    "desc": "Green Cleantuff"
+  },
+  {
+    "code": "CT150",
+    "desc": "Super Cleantuff"
+  },
+  {
+    "code": "CT200",
+    "desc": "HDPE Cleantuff"
+  },
+  {
+    "code": "CT300",
+    "desc": "Max Strength Cleantuff"
+  },
+  {
+    "code": "CT1001",
+    "desc": "Cleantuff Zipper Bags"
+  },
+  {
+    "code": "CFB8000",
+    "desc": "EZ-Tear Cleantuff Poly"
+  },
+  {
+    "code": "CFS50",
+    "desc": "Corning Special"
+  },
+  {
+    "code": "CFB8100",
+    "desc": "Green Nuclear Film"
+  },
+  {
+    "code": "CTY100",
+    "desc": "TYVEK Pouch Unprinted Uncoated (1073B/PETPE)"
+  },
+  {
+    "code": "CTY101",
+    "desc": "TYVEK Header Bag Unprinted Uncoated (1073B/PETPE)"
+  },
+  {
+    "code": "CTY200",
+    "desc": "TYVEK Printed Pouch Uncoated (1073B/PETPE)"
+  },
+  {
+    "code": "CTY201",
+    "desc": "TYVEK Printed Header Bag Uncoated (1073B/PETPE)"
+  },
+  {
+    "code": "CTY300",
+    "desc": "TYVEK Header Bag Unprinted Coated (1073B/PE)"
+  },
+  {
+    "code": "CTY400",
+    "desc": "TYVEK Header Bag Printed Coated (1073B/PE)"
+  },
+  {
+    "code": "CTY500",
+    "desc": "TYVEK Coated Roll Unprinted 1073B"
+  },
+  {
+    "code": "CTY600",
+    "desc": "TYVEK Roll Printed 1073B"
+  },
+  {
+    "code": "CTYV100",
+    "desc": "TYVEK Pouch Unprinted Uncoated (1073B/4mil PAPE)"
+  },
+  {
+    "code": "CPET100",
+    "desc": "Multi-Layer Film Unprinted (12um PET/PE)"
+  },
+  {
+    "code": "CPET101",
+    "desc": "Multi-Layer Film Printed (12um PET/PE)"
+  },
+  {
+    "code": "CPET200",
+    "desc": "Multi-Layer Foil Unprinted (12um PET/Foil/LLDPE)"
+  },
+  {
+    "code": "CPET201",
+    "desc": "Multi-Layer Foil Printed (12um PET/Foil/LLDPE)"
+  },
+  {
+    "code": "CPAP100",
+    "desc": "Medical Paper Roll 60 gsm"
+  },
+  {
+    "code": "CPAP200",
+    "desc": "Medical Paper Roll 70 gsm"
+  }
+]
