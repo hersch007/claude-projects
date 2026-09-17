@@ -28,7 +28,7 @@ add_action('wp_footer', function() {
         var community=document.getElementById('rallyop-community'),groupHead=document.querySelector('.app-wrap .rop-group-head'),fallback=document.querySelector('.app-wrap .rop-profile');
         var anchor=groupHead||fallback;if(community&&anchor&&community.previousElementSibling!==anchor){anchor.parentNode.insertBefore(community,anchor.nextSibling);}
         if(community){document.querySelectorAll('a').forEach(function(link){if(link.textContent.trim()==='Clubhouse')link.href=location.origin+'/?group='+community.dataset.group+'#clubhouse';});}
-        document.querySelectorAll('.rop-feed-card[data-game] p').forEach(function(p){p.textContent=p.textContent.replace(/\s*(?:\|\s*)?TEAM/g,' | TEAM');});
+        document.querySelectorAll('.rop-feed-card[data-game] p').forEach(function(p){if(p.classList.contains('rop-feed-matchup'))return;p.textContent=p.textContent.replace(/\s*(?:\|\s*)?TEAM/g,' | TEAM');});
         var labels={'🔥':' Fire','👏':' Applaud','🥒':' Pickle'};
         document.querySelectorAll('.rop-reactions button[name="reaction"]').forEach(function(button){var emoji=button.value,count=(button.textContent.match(/\d+/)||[])[0];if(!labels[emoji])return;button.textContent=emoji+labels[emoji];if(count){var badge=document.createElement('span');badge.className='rop-reaction-count';badge.textContent=count;button.appendChild(badge);}});
       }

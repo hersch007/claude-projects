@@ -150,7 +150,11 @@
       "Bash(rm -f '/c/Users/richa/Documents/Claude Projects/start-performance-platform/plugin/government-service-core-1.2.15.zip')",
       "Bash(node build-zip.js)",
       "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" add .)",
-      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" status --short)"
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" status --short)",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\.claude\" add .)",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\.claude\" status --short)",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" commit -q -m \"sync: $\\(date '+%Y-%m-%d %H:%M'\\)\")",
+      "Bash(git -C \"C:\\\\Users\\\\richa\\\\Documents\\\\Claude Projects\" log --oneline -1)"
     ]
   }
 }

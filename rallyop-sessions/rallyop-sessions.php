@@ -11,6 +11,8 @@ if (!defined('ABSPATH')) { exit; }
 require_once __DIR__ . '/rallyop-content.php';
 require_once __DIR__ . '/rallyop-community.php';
 require_once __DIR__ . '/rallyop-feed-order.php';
+require_once __DIR__ . '/rallyop-public-access.php';
+require_once __DIR__ . '/rallyop-pwa.php';
 require_once __DIR__ . '/rallyop-community-fixes.php';
 require_once __DIR__ . '/rallyop-app-shell.php';
 
