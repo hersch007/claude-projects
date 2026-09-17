@@ -83,9 +83,43 @@ async function parseSitemap(url, depth = 0) {
   } catch { return []; }
 }
 
+// Groups of (non-error) pages that share the exact same non-empty value for
+// a field, e.g. two pages with the identical <title>. Google can't tell
+// duplicates apart even when each page individually looks fine, and this
+// can only be found by comparing pages to each other — analyzePage() above
+// only ever sees one page at a time.
+function findDuplicateGroups(pages, field) {
+  const seen = new Map();
+  pages.forEach(p => {
+    const val = (p[field] || '').trim().toLowerCase();
+    if (!val) return; // empty values are already caught as "missing" per-page
+    if (!seen.has(val)) seen.set(val, []);
+    seen.get(val).push(p.url);
+  });
+  return [...seen.values()].filter(urls => urls.length > 1);
+}
+
+// Annotates affected pages' `warnings` in place so the page table, Findings
+// cards, and score deductions all agree on which pages have a duplicate
+// title/meta description — same warnings array the per-page checks in
+// analyzePage() already populate, just filled in after the fact once every
+// page has been crawled.
+function annotateDuplicates(results) {
+  const pages = results.filter(r => !r.error);
+  for (const [field, label] of [['title', 'title tag'], ['metaDesc', 'meta description']]) {
+    for (const group of findDuplicateGroups(pages, field)) {
+      for (const url of group) {
+        const page = pages.find(p => p.url === url);
+        const othersCount = group.length - 1;
+        page.warnings.push(`Duplicate ${label} (shared with ${othersCount} other page${othersCount > 1 ? 's' : ''})`);
+      }
+    }
+  }
+}
+
 // ─── Score ────────────────────────────────────────────────────────────────────
 
-function calcScore(results) {
+function calcScore(results, { hasSitemap = true } = {}) {
   const pages = results.filter(r => !r.error);
   if (!pages.length) return { score: 0, deductions: [{ pts: 0, label: 'No pages could be crawled' }] };
 
@@ -123,8 +157,20 @@ function calcScore(results) {
   if (badTitleLength) deduct(Math.min(12, Math.max(1, Math.round((badTitleLength / totalPages) * 12))), `${badTitleLength} page(s) with a poorly sized title tag (too short or too long)`);
   if (multipleH1) deduct(Math.min(5, Math.max(1, Math.round((multipleH1 / totalPages) * 5))), `${multipleH1} page(s) with multiple H1 tags`);
 
+  // Cross-page checks: a page can individually have a present, correctly
+  // sized title/meta and still be a real SEO problem if another page on the
+  // same site reuses the exact same value — Google can't tell the pages
+  // apart. These are scored on their own (not lumped into the catch-all
+  // bucket below) since they're a distinct, higher-weight issue, same as
+  // multipleH1/badTitleLength above. Requires results (not just pages) to
+  // already have been annotated via annotateDuplicates().
+  const duplicateTitlePages = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag'))).length;
+  const duplicateMetaPages = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description'))).length;
+  if (duplicateTitlePages) deduct(Math.min(10, Math.round((duplicateTitlePages / totalPages) * 10)), `${duplicateTitlePages} page(s) with a duplicate title tag`);
+  if (duplicateMetaPages) deduct(Math.min(8, Math.round((duplicateMetaPages / totalPages) * 8)), `${duplicateMetaPages} page(s) with a duplicate meta description`);
+
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
-  const scoredWarningPatterns = [/^Title too (short|long)/, /^Multiple H1 tags/];
+  const scoredWarningPatterns = [/^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
     const remaining = p.warnings.filter(w => !scoredWarningPatterns.some(re => re.test(w)));
@@ -134,6 +180,11 @@ function calcScore(results) {
     const warnPts = Math.min(15, Math.round(warningOnlyPages * 0.5));
     deduct(warnPts, `${warningOnlyPages} page(s) with other improvement opportunities`);
   }
+
+  // Site-wide (not per-page): no sitemap.xml means search engines and our
+  // own crawler can only discover pages by following internal links, so
+  // anything not linked from the nav goes unaudited and unindexed.
+  if (!hasSitemap) deduct(5, 'No sitemap.xml found');
 
   return { score: Math.max(0, score), deductions: docked };
 }
@@ -160,6 +211,8 @@ function friendlyIssue(text) {
   if (text.match(/Meta description short/i)) return { label: text, why: 'Short meta descriptions waste valuable space to attract clicks from search results.', priority: 'low' };
   if (text.match(/Meta description long/i)) return { label: text, why: 'Long meta descriptions get truncated in search results.', priority: 'low' };
   if (text.match(/Low word count/i)) return { label: text, why: 'Pages with very little content are harder for Google to rank.', priority: 'medium' };
+  if (text.match(/Duplicate title tag/i)) return { label: text, why: 'Google can\'t tell duplicate-titled pages apart, which hurts both pages\' ability to rank for their intended keywords.', priority: 'medium' };
+  if (text.match(/Duplicate meta description/i)) return { label: text, why: 'Search results for these pages will show the same snippet, making it harder for users to tell them apart and choose the right one.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -214,7 +267,7 @@ const fileStorage = {
 
 // ─── Quick wins ───────────────────────────────────────────────────────────────
 
-function getQuickWins(pages) {
+function getQuickWins(pages, { hasSitemap = true } = {}) {
   const wins = [];
 
   const noCanonical = pages.filter(p => !p.canonical).length;
@@ -226,6 +279,8 @@ function getQuickWins(pages) {
   const emptyAlt = pages.filter(p => p.imagesEmptyAlt > 0).length;
   const lowWord = pages.filter(p => p.wordCount < 150).length;
   const multiH1 = pages.filter(p => p.h1Count > 1).length;
+  const duplicateTitle = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag'))).length;
+  const duplicateMeta = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description'))).length;
 
   if (noCanonical) wins.push({ effort: 'Low', impact: 'Medium', pages: noCanonical, action: `Add canonical tags to ${noCanonical} page${noCanonical > 1 ? 's' : ''}`, detail: 'Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.' });
   if (emptyAlt) wins.push({ effort: 'Low', impact: 'Medium', pages: emptyAlt, action: `Fill in empty image alt text on ${emptyAlt} page${emptyAlt > 1 ? 's' : ''}`, detail: 'Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.' });
@@ -234,6 +289,9 @@ function getQuickWins(pages) {
   if (multiH1) wins.push({ effort: 'Low', impact: 'Medium', pages: multiH1, action: `Fix multiple H1 tags on ${multiH1} page${multiH1 > 1 ? 's' : ''}`, detail: 'Each page should have exactly one H1. Multiple H1s dilute the main topic signal Google uses to understand the page.' });
   if (noSchema) wins.push({ effort: 'Medium', impact: 'High', pages: noSchema, action: `Add structured data (schema) to ${noSchema} page${noSchema > 1 ? 's' : ''}`, detail: 'Schema markup helps Google display rich results (star ratings, FAQs, product details). Product and service pages especially benefit from this.' });
   if (lowWord) wins.push({ effort: 'High', impact: 'High', pages: lowWord, action: `Expand thin content on ${lowWord} page${lowWord > 1 ? 's' : ''}`, detail: 'Pages under 150 words give Google very little to rank. Adding descriptive copy, FAQs, or specifications strengthens these pages significantly.' });
+  if (duplicateTitle) wins.push({ effort: 'Low', impact: 'High', pages: duplicateTitle, action: `Write unique title tags for ${duplicateTitle} page${duplicateTitle > 1 ? 's' : ''}`, detail: 'These pages currently share an identical title tag with another page, so Google can\'t tell them apart in search results.' });
+  if (duplicateMeta) wins.push({ effort: 'Low', impact: 'Medium', pages: duplicateMeta, action: `Write unique meta descriptions for ${duplicateMeta} page${duplicateMeta > 1 ? 's' : ''}`, detail: 'These pages currently share an identical meta description with another page, producing duplicate-looking search snippets.' });
+  if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
 
   // Sort: low effort first, then by pages affected
   const effortOrder = { Low: 0, Medium: 1, High: 2 };
@@ -420,7 +478,7 @@ function createEngine(client) {
       const sitemapUrl = `${BASE_URL}/sitemap.xml`;
       try {
         const locs = await parseSitemap(sitemapUrl);
-        if (!locs.length) { console.log(`  (sitemap not found, crawling by links only)`); return; }
+        if (!locs.length) { console.log(`  (sitemap not found, crawling by links only)`); return false; }
         let added = 0;
         for (const loc of locs) {
           const norm = normalizeUrl(loc, BASE_URL);
@@ -430,15 +488,17 @@ function createEngine(client) {
           }
         }
         console.log(`  Sitemap: found ${locs.length} URLs, queued ${added} new pages`);
+        return true;
       } catch (e) {
         console.log(`  (sitemap fetch failed: ${e.message})`);
+        return false;
       }
     }
 
     console.log(`\nAuditing: ${client.name} (${BASE_URL})`);
     console.log(`Max pages: ${MAX_PAGES}\n`);
 
-    await seedFromSitemap();
+    const hasSitemap = await seedFromSitemap();
 
     let count = 0;
     while (queue.length > 0 && count < MAX_PAGES) {
@@ -477,10 +537,10 @@ function createEngine(client) {
     }
 
     console.log(`\nCrawled ${results.length} pages.`);
-    return results;
+    return { results, hasSitemap };
   }
 
-  function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1']) {
+  function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1'], hasSitemap = true) {
     const pages = results.filter(r => !r.error);
     const errors = results.filter(r => r.error);
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -506,6 +566,8 @@ function createEngine(client) {
     const missingAltPgs = pages.filter(p => p.imagesNoAlt > 0);
     const badTitlePgs = pages.filter(p => p.title && (p.titleLen < 30 || p.titleLen > 65));
     const multipleH1Pgs = pages.filter(p => p.h1Count > 1);
+    const duplicateTitlePgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag')));
+    const duplicateMetaPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description')));
 
     function priorityBadge(p) {
       if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -817,6 +879,18 @@ function createEngine(client) {
       <div class="snap-label">Missing Canonical Tag</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${duplicateTitlePgs.length === 0 ? 'good' : 'warn'}">${duplicateTitlePgs.length}</div>
+      <div class="snap-label">Duplicate Title Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${duplicateMetaPgs.length === 0 ? 'good' : 'warn'}">${duplicateMetaPgs.length}</div>
+      <div class="snap-label">Duplicate Meta Descriptions</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${hasSitemap ? 'good' : 'warn'}">${hasSitemap ? 'Yes' : 'No'}</div>
+      <div class="snap-label">Sitemap.xml Found</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num good">${healthyPages.length}</div>
       <div class="snap-label">Fully Healthy Pages</div>
     </div>
@@ -934,7 +1008,7 @@ function createEngine(client) {
 
   <!-- QUICK WINS -->
   ${(() => {
-    const wins = getQuickWins(pages);
+    const wins = getQuickWins(pages, { hasSitemap });
     if (!wins.length) return '';
     return `
   <div class="section">
@@ -968,6 +1042,9 @@ function createEngine(client) {
       ${badTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a title tag outside the ideal 30&ndash;65 character range</span><span class="sr-val warn">${badTitlePgs.length} page${badTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noSchemaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">${noSchemaPgs.length} page${noSchemaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingAltPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with images missing alt text</span><span class="sr-val warn">${missingAltPgs.length} page${missingAltPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${duplicateTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a duplicate title tag</span><span class="sr-val warn">${duplicateTitlePgs.length} page${duplicateTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${duplicateMetaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a duplicate meta description</span><span class="sr-val warn">${duplicateMetaPgs.length} page${duplicateMetaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
         <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
         <span class="sr-val warn">${warningPages.length} of ${pages.length} pages</span>
@@ -1055,8 +1132,9 @@ function createEngine(client) {
     const outDir = client.output_dir || process.cwd();
     const store = storage || fileStorage;
 
-    const results = await crawl(onProgress);
-    const scoreData = calcScore(results);
+    const { results, hasSitemap } = await crawl(onProgress);
+    annotateDuplicates(results);
+    const scoreData = calcScore(results, { hasSitemap });
 
     const today = new Date().toISOString().split('T')[0];
     const history = await store.loadHistory(client);
@@ -1085,7 +1163,7 @@ function createEngine(client) {
     // of the storage abstraction.
     const metrics = gscData || (onNeedMetrics ? await onNeedMetrics(outDir) : await store.loadMetrics(client));
 
-    const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider);
+    const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider, hasSitemap);
 
     return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider };
   }
