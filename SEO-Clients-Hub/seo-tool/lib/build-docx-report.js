@@ -67,7 +67,7 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes }) {
+function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
@@ -142,6 +142,25 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     if (!changes.newIssues.length && !changes.resolvedIssues.length) {
       children.push(new Paragraph({ children: [new TextRun({ text: 'No individual issues changed since the last audit.', size: 20, color: '64748B' })] }));
     }
+  }
+
+  // ── Section: Core Web Vitals ──
+  if (pageSpeed) {
+    const ratingColor = (r) => r === 'good' ? '16A34A' : r === 'needs-improvement' ? 'D97706' : r === 'poor' ? 'DC2626' : '64748B';
+    const ratingLabel = (r) => r === 'good' ? 'Good' : r === 'needs-improvement' ? 'Needs Improvement' : r === 'poor' ? 'Poor' : 'No data';
+    const overallRating = pageSpeed.performanceScore == null ? null
+      : pageSpeed.performanceScore >= 90 ? 'good' : pageSpeed.performanceScore >= 50 ? 'needs-improvement' : 'poor';
+    children.push(
+      sectionHeading('Core Web Vitals', brandHex),
+      new Paragraph({
+        children: [new TextRun({ text: `Overall Performance Score: ${pageSpeed.performanceScore != null ? pageSpeed.performanceScore : 'N/A'} / 100`, bold: true, size: 22, color: ratingColor(overallRating) })],
+        spacing: { after: 100 },
+      }),
+      new Paragraph({ text: `Largest Contentful Paint: ${pageSpeed.lcp.value != null ? (pageSpeed.lcp.value / 1000).toFixed(1) + 's' : 'N/A'} (${ratingLabel(pageSpeed.lcp.rating)})`, bullet: { level: 0 } }),
+      new Paragraph({ text: `Cumulative Layout Shift: ${pageSpeed.cls.value != null ? pageSpeed.cls.value.toFixed(2) : 'N/A'} (${ratingLabel(pageSpeed.cls.rating)})`, bullet: { level: 0 } }),
+      new Paragraph({ text: `Interaction to Next Paint: ${pageSpeed.inp && pageSpeed.inp.value != null ? Math.round(pageSpeed.inp.value) + 'ms' : 'Not enough real-world traffic data'}${pageSpeed.inp ? ` (${ratingLabel(pageSpeed.inp.rating)})` : ''}`, bullet: { level: 0 } }),
+      new Paragraph({ children: [new TextRun({ text: `Measured on: ${client.url} (homepage, ${pageSpeed.strategy})`, size: 18, italics: true, color: '94A3B8' })], spacing: { before: 100, after: 200 } }),
+    );
   }
 
   // ── Section: Top Priorities (narrative) ──

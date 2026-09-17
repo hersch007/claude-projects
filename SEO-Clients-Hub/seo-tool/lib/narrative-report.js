@@ -114,7 +114,10 @@ The "summary" field is a short snapshot ONLY — 2-3 sentences, about
 specific fixes in the summary; those belong in the structured sections
 below. If the business context doesn't mention a physical location or
 local service area, say local SEO signals are "not applicable" rather
-than guessing.`;
+than guessing. core_web_vitals is homepage-only lab/field data — only
+raise it as a top priority or in next_steps when a rating is genuinely
+"poor" (a "good" or "needs-improvement" rating is not worth mentioning
+on its own).`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.
@@ -137,7 +140,7 @@ function summarizePages(pages) {
     }));
 }
 
-async function generateNarrative({ client, results, scoreData }) {
+async function generateNarrative({ client, results, scoreData, pageSpeed }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('Narrative report skipped: ANTHROPIC_API_KEY is not set.');
     return null;
@@ -149,6 +152,15 @@ async function generateNarrative({ client, results, scoreData }) {
     business_notes: client.business_notes || '(none provided)',
     seo_health_score: scoreData.score,
     score_deductions: scoreData.deductions,
+    // Homepage-only (see page-speed.js) — only worth mentioning in the
+    // narrative when it's genuinely bad; a good/borderline score isn't a
+    // priority-worthy finding.
+    core_web_vitals: pageSpeed ? {
+      performance_score: pageSpeed.performanceScore,
+      lcp_rating: pageSpeed.lcp.rating,
+      cls_rating: pageSpeed.cls.rating,
+      inp_rating: pageSpeed.inp ? pageSpeed.inp.rating : 'no field data',
+    } : '(not measured)',
     pages: summarizePages(results),
   });
 

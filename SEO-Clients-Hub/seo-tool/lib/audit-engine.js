@@ -8,6 +8,7 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const path = require('path');
 const { getGSCMetrics } = require('../gsc');
+const { getCoreWebVitals } = require('./page-speed');
 
 // ─── Provider companies (who this audit is prepared/billed under) ─────────────
 // All four sets of colors are confirmed real brand values.
@@ -540,7 +541,7 @@ function createEngine(client) {
     return { results, hasSitemap };
   }
 
-  function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1'], hasSitemap = true) {
+  function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1'], hasSitemap = true, pageSpeed = null) {
     const pages = results.filter(r => !r.error);
     const errors = results.filter(r => r.error);
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -732,6 +733,17 @@ function createEngine(client) {
   .perf-change.up   { background: #dcfce7; color: #166534; }
   .perf-change.down { background: #fee2e2; color: #991b1b; }
   .perf-arrow { font-size: 10px; }
+
+  /* ── Core Web Vitals ── */
+  .cwv-card { position: relative; }
+  .cwv-rating { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .03em; margin-top: 8px; }
+  .cwv-rating.good { background: #dcfce7; color: #166534; }
+  .cwv-rating.needs-improvement { background: #fef9c3; color: #92400e; }
+  .cwv-rating.poor { background: #fee2e2; color: #991b1b; }
+  .cwv-score-ring { font-size: 28px; font-weight: 800; }
+  .cwv-score-ring.good { color: #16a34a; }
+  .cwv-score-ring.needs-improvement { color: #d97706; }
+  .cwv-score-ring.poor { color: #dc2626; }
 
   /* ── Keyword tracker ── */
   .kw-change.improved { color: #16a34a; font-weight: 700; }
@@ -951,6 +963,40 @@ function createEngine(client) {
   </div>`;
   })() : ''}
 
+  <!-- CORE WEB VITALS -->
+  ${pageSpeed ? (() => {
+    const ratingLabel = (r) => r === 'good' ? 'Good' : r === 'needs-improvement' ? 'Needs Improvement' : r === 'poor' ? 'Poor' : 'No data';
+    const overallRating = pageSpeed.performanceScore == null ? null
+      : pageSpeed.performanceScore >= 90 ? 'good' : pageSpeed.performanceScore >= 50 ? 'needs-improvement' : 'poor';
+
+    const metricCard = (label, metric, formatFn) => `
+      <div class="perf-card cwv-card">
+        <div class="perf-value">${metric && metric.value != null ? formatFn(metric.value) : '&mdash;'}</div>
+        <div class="perf-label">${label}</div>
+        ${metric && metric.rating ? `<span class="cwv-rating ${metric.rating}">${ratingLabel(metric.rating)}</span>` : ''}
+      </div>`;
+
+    return `
+  <div class="section">
+    <div class="perf-header">
+      <div class="section-title" style="margin-bottom:0;border:none;padding:0">Core Web Vitals</div>
+      <div class="perf-period">${pageSpeed.strategy === 'mobile' ? 'Mobile' : 'Desktop'} &bull; Homepage &bull; via Google PageSpeed Insights</div>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card cwv-card">
+        <div class="cwv-score-ring ${overallRating || ''}">${pageSpeed.performanceScore != null ? pageSpeed.performanceScore : '&mdash;'}</div>
+        <div class="perf-label">Overall Performance Score</div>
+      </div>
+      ${metricCard('Largest Contentful Paint', pageSpeed.lcp, v => `${(v / 1000).toFixed(1)}s`)}
+      ${metricCard('Cumulative Layout Shift', pageSpeed.cls, v => v.toFixed(2))}
+      ${pageSpeed.inp
+        ? metricCard('Interaction to Next Paint', pageSpeed.inp, v => `${Math.round(v)}ms`)
+        : `<div class="perf-card cwv-card"><div class="perf-value">&mdash;</div><div class="perf-label">Interaction to Next Paint</div><span class="cwv-rating needs-improvement" style="background:#f1f5f9;color:#64748b">Not enough traffic data</span></div>`}
+    </div>
+    <div class="cover-note" style="margin-top:14px;color:#64748b">Core Web Vitals measure real-world loading speed, visual stability, and responsiveness &mdash; all confirmed Google ranking factors. Good/Needs Improvement/Poor thresholds are Google's own published benchmarks.</div>
+  </div>`;
+  })() : ''}
+
   <!-- KEYWORD RANKINGS -->
   ${(() => {
     if (!liveGSC || keywordHistory.length === 0) return '';
@@ -1135,6 +1181,10 @@ function createEngine(client) {
     const { results, hasSitemap } = await crawl(onProgress);
     annotateDuplicates(results);
     const scoreData = calcScore(results, { hasSitemap });
+    // Kicked off early and awaited later (not right away) so the ~5-15s
+    // PSI/Lighthouse round trip overlaps with the GSC fetch below instead
+    // of adding to the audit's total wall-clock time.
+    const pageSpeedPromise = getCoreWebVitals(BASE_URL + '/');
 
     const today = new Date().toISOString().split('T')[0];
     const history = await store.loadHistory(client);
@@ -1162,10 +1212,11 @@ function createEngine(client) {
     // adapter is in use, since it's the CLI wrapper's own fallback, not part
     // of the storage abstraction.
     const metrics = gscData || (onNeedMetrics ? await onNeedMetrics(outDir) : await store.loadMetrics(client));
+    const pageSpeed = await pageSpeedPromise;
 
-    const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider, hasSitemap);
+    const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider, hasSitemap, pageSpeed);
 
-    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider };
+    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider, pageSpeed };
   }
 
   return { runAudit };
