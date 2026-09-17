@@ -62,6 +62,19 @@
   </div>
 
   <div class="card">
+    <h2>Search Console Property</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Enables real rank/click data and keyword search volume in reports. Must be granted access
+      in Google Search Console first — enter the exact property string it's registered under
+      (e.g. <code>https://example.com/</code> for a URL-prefix property, or <code>sc-domain:example.com</code>
+      for a domain property). Leave blank if not set up yet.
+    </p>
+    <input id="gsc-property" type="text" style="width:100%;font-size:13px;padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1" placeholder="https://example.com/">
+    <div style="margin-top:8px"><button id="gsc-save">Save Property</button></div>
+    <div id="gsc-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -127,6 +140,7 @@
     });
 
     document.getElementById('business-notes').value = data.client.business_notes || '';
+    document.getElementById('gsc-property').value = data.client.gsc_property || '';
 
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
@@ -308,6 +322,24 @@
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ business_notes: document.getElementById('business-notes').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('gsc-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('gsc-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gsc_property: document.getElementById('gsc-property').value }),
     });
     const data = await res.json();
     if (data.error) {

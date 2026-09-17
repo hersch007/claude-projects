@@ -226,10 +226,26 @@ app.get('/api/clients/:slug', async (req, res) => {
 app.patch('/api/clients/:slug', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).json({ error: 'Client not found' });
-  if (typeof (req.body && req.body.business_notes) !== 'string') {
-    return res.status(400).json({ error: 'business_notes (string) is required' });
+  const body = req.body || {};
+
+  const updates = [];
+  const values = [];
+  if (typeof body.business_notes === 'string') {
+    values.push(body.business_notes);
+    updates.push(`business_notes = $${values.length}`);
   }
-  await getPool().query('UPDATE clients SET business_notes = $1 WHERE id = $2', [req.body.business_notes, client.id]);
+  if (typeof body.gsc_property === 'string') {
+    // Empty string clears it (client had access revoked, or was set up wrong) —
+    // stored as NULL so gsc.js's `if (client.gsc_property)` check skips it cleanly.
+    values.push(body.gsc_property.trim() || null);
+    updates.push(`gsc_property = $${values.length}`);
+  }
+  if (!updates.length) {
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property' });
+  }
+
+  values.push(client.id);
+  await getPool().query(`UPDATE clients SET ${updates.join(', ')} WHERE id = $${values.length}`, values);
   res.json({ ok: true });
 });
 
