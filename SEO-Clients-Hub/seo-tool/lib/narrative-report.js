@@ -15,6 +15,20 @@ const Anthropic = require('@anthropic-ai/sdk');
 
 const MODEL = 'claude-opus-5';
 
+// Every recommendation/finding is a short headline + one supporting
+// sentence, never a single dense paragraph — same shape as the mechanical
+// Quick Wins section already renders well (bold action line + lighter
+// detail line below).
+const REC_ITEM = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    detail: { type: 'string' },
+  },
+  required: ['title', 'detail'],
+  additionalProperties: false,
+};
+
 const OUTPUT_SCHEMA = {
   type: 'object',
   properties: {
@@ -32,10 +46,10 @@ const OUTPUT_SCHEMA = {
         additionalProperties: false,
       },
     },
-    medium_term: { type: 'array', items: { type: 'string' } },
-    long_term: { type: 'array', items: { type: 'string' } },
-    eeat_signals_present: { type: 'array', items: { type: 'string' } },
-    eeat_gaps: { type: 'array', items: { type: 'string' } },
+    medium_term: { type: 'array', items: REC_ITEM },
+    long_term: { type: 'array', items: REC_ITEM },
+    eeat_signals_present: { type: 'array', items: REC_ITEM },
+    eeat_gaps: { type: 'array', items: REC_ITEM },
     local_seo: {
       type: 'object',
       properties: {
@@ -63,13 +77,13 @@ const OUTPUT_SCHEMA = {
             additionalProperties: false,
           },
         },
-        content_gaps: { type: 'array', items: { type: 'string' } },
-        recommended_content: { type: 'array', items: { type: 'string' } },
+        content_gaps: { type: 'array', items: REC_ITEM },
+        recommended_content: { type: 'array', items: REC_ITEM },
       },
       required: ['keyword_opportunities', 'content_gaps', 'recommended_content'],
       additionalProperties: false,
     },
-    next_steps: { type: 'array', items: { type: 'string' } },
+    next_steps: { type: 'array', items: REC_ITEM },
   },
   required: [
     'summary', 'top_priorities', 'medium_term', 'long_term', 'eeat_signals_present',
@@ -79,12 +93,21 @@ const OUTPUT_SCHEMA = {
 };
 
 const SYSTEM_PROMPT = `You are an expert SEO strategist and auditor. You write structured,
-professional, and constructive assessments. Prioritize E-E-A-T signals,
-especially for therapy/health/wellness/professional-services businesses.
-Give clear, specific, actionable recommendations rather than generic advice
-— cite exact page URLs, titles, or missing elements from the crawl data
-provided. If the business context doesn't mention a physical location or
-local service area, say local SEO signals are "not applicable" rather than
+professional, and constructive assessments for a client-facing report.
+Prioritize E-E-A-T signals, especially for therapy/health/wellness/
+professional-services businesses. Be specific — cite exact page URLs,
+titles, or missing elements from the crawl data provided — but every
+individual finding or recommendation must be split into:
+- "title": a short, scannable headline in imperative voice (5-10 words,
+  e.g. "Add H1 tags to 4 service pages")
+- "detail": ONE supporting sentence (under 25 words) with the specific
+  fact or reasoning behind it
+
+Never combine multiple ideas, multiple pages, or multiple reasons into one
+sentence. Never write a dense paragraph inside a list item — this is a
+scannable business report meant to be read in a few minutes, not an essay.
+If the business context doesn't mention a physical location or local
+service area, say local SEO signals are "not applicable" rather than
 guessing.`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with

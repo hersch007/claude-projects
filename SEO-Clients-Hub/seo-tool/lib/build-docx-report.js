@@ -24,6 +24,28 @@ const CELL_MARGIN = { top: 80, bottom: 80, left: 120, right: 120 };
 const THIN_BORDER = { style: BorderStyle.SINGLE, size: 2, color: 'CCCCCC' };
 const CELL_BORDERS = { top: THIN_BORDER, bottom: THIN_BORDER, left: THIN_BORDER, right: THIN_BORDER };
 
+// Section spacing is intentionally generous (600 before / 240 after, plus a
+// brand-colored underline) so sections read as clearly separated, scannable
+// blocks in a client-facing report rather than a dense wall of headings.
+function sectionHeading(text, brandHex) {
+  return new Paragraph({
+    children: [new TextRun({ text, bold: true, size: 26, color: brandHex })],
+    heading: HeadingLevel.HEADING_1,
+    spacing: { before: 600, after: 240 },
+    border: { bottom: { color: brandHex, space: 4, style: BorderStyle.SINGLE, size: 6 } },
+  });
+}
+
+// Every recommendation/finding is rendered as a short bold headline plus one
+// lighter supporting sentence — never a single dense paragraph — matching
+// {title, detail} objects from narrative-report.js.
+function recItem(item) {
+  return [
+    new Paragraph({ children: [new TextRun({ text: item.title, bold: true, size: 21 })], spacing: { before: 140 } }),
+    new Paragraph({ children: [new TextRun({ text: item.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
+  ];
+}
+
 function headerCell(text, brandHex) {
   return new TableCell({
     children: [new Paragraph({ children: [new TextRun({ text, bold: true, color: 'FFFFFF', size: 18 })] })],
@@ -83,7 +105,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: Score summary ──
   children.push(
-    new Paragraph({ text: 'Overall SEO Health Score', heading: HeadingLevel.HEADING_1, spacing: { after: 160 } }),
+    sectionHeading('Overall SEO Health Score', brandHex),
     new Paragraph({ children: [new TextRun({ text: `${scoreData.score} / 100 — ${scoreLabel}`, bold: true, size: 24 })], spacing: { after: 200 } }),
   );
   if (scoreData.deductions.length) {
@@ -96,11 +118,11 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // ── Section: Top Priorities (narrative) ──
   if (narrative && narrative.summary) {
     children.push(
-      new Paragraph({ children: [new TextRun({ text: narrative.summary, italics: true, size: 22, color: '333333' })], spacing: { after: 300 } }),
+      new Paragraph({ children: [new TextRun({ text: narrative.summary, italics: true, size: 22, color: '333333' })], spacing: { before: 200, after: 100 } }),
     );
   }
   if (narrative && narrative.top_priorities && narrative.top_priorities.length) {
-    children.push(new Paragraph({ text: 'Top Priorities', heading: HeadingLevel.HEADING_1, spacing: { before: 200, after: 160 } }));
+    children.push(sectionHeading('Top Priorities', brandHex));
     const rows = [
       new TableRow({
         children: [headerCell('Priority', brandHex), headerCell('Impact', brandHex), headerCell('Effort', brandHex)],
@@ -116,27 +138,23 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // ── Section: Quick Wins ──
   const wins = getQuickWins(pages);
   if (wins.length) {
-    children.push(new Paragraph({ text: 'Quick Wins & Recommendations', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    children.push(sectionHeading('Quick Wins & Recommendations', brandHex));
     for (const w of wins) {
       children.push(
-        new Paragraph({ children: [new TextRun({ text: `${w.action} `, bold: true }), new TextRun({ text: `(${w.effort} effort, ${w.impact} impact)`, italics: true, color: '595959' })], spacing: { before: 100 } }),
-        new Paragraph({ children: [new TextRun({ text: w.detail, size: 20, color: '444444' })], spacing: { after: 100 } }),
+        new Paragraph({ children: [new TextRun({ text: `${w.action} `, bold: true }), new TextRun({ text: `(${w.effort} effort, ${w.impact} impact)`, italics: true, color: '595959' })], spacing: { before: 140 } }),
+        new Paragraph({ children: [new TextRun({ text: w.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
       );
     }
   }
 
   // ── Section: Medium/Long-term recommendations (narrative) ──
   if (narrative && narrative.medium_term && narrative.medium_term.length) {
-    children.push(new Paragraph({ text: 'Medium-Term Recommendations (2–8 Weeks)', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
-    for (const item of narrative.medium_term) {
-      children.push(new Paragraph({ text: item, bullet: { level: 0 } }));
-    }
+    children.push(sectionHeading('Medium-Term Recommendations (2–8 Weeks)', brandHex));
+    for (const item of narrative.medium_term) children.push(...recItem(item));
   }
   if (narrative && narrative.long_term && narrative.long_term.length) {
-    children.push(new Paragraph({ text: 'Long-Term / Strategic Recommendations', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
-    for (const item of narrative.long_term) {
-      children.push(new Paragraph({ text: item, bullet: { level: 0 } }));
-    }
+    children.push(sectionHeading('Long-Term / Strategic Recommendations', brandHex));
+    for (const item of narrative.long_term) children.push(...recItem(item));
   }
 
   // ── Section: Findings by Page ──
@@ -144,7 +162,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     .filter(p => p.issues.length > 0 || p.warnings.length > 0)
     .sort((a, b) => (b.issues.length * 10 + b.warnings.length) - (a.issues.length * 10 + a.warnings.length));
   if (issuePages.length) {
-    children.push(new Paragraph({ text: `Findings by Page (${issuePages.length} pages need attention)`, heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    children.push(sectionHeading(`Findings by Page (${issuePages.length} pages need attention)`, brandHex));
     for (const p of issuePages) {
       const slug = p.url.replace(client.url.replace(/\/$/, ''), '') || '/';
       children.push(new Paragraph({ children: [new TextRun({ text: slug, bold: true, font: 'Courier New', size: 20 })], spacing: { before: 200, after: 60 } }));
@@ -157,19 +175,19 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: E-E-A-T & Local SEO (narrative) ──
   if (narrative && (narrative.eeat_signals_present || narrative.eeat_gaps || narrative.local_seo)) {
-    children.push(new Paragraph({ text: 'E-E-A-T & Local SEO Analysis', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    children.push(sectionHeading('E-E-A-T & Local SEO Analysis', brandHex));
     if (narrative.eeat_signals_present && narrative.eeat_signals_present.length) {
-      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Signals Present:', bold: true })], spacing: { after: 80 } }));
-      for (const s of narrative.eeat_signals_present) children.push(new Paragraph({ text: s, bullet: { level: 0 } }));
+      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Signals Present', bold: true, color: brandHex })], spacing: { after: 100 } }));
+      for (const item of narrative.eeat_signals_present) children.push(...recItem(item));
     }
     if (narrative.eeat_gaps && narrative.eeat_gaps.length) {
-      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Gaps:', bold: true })], spacing: { before: 160, after: 80 } }));
-      for (const g of narrative.eeat_gaps) children.push(new Paragraph({ text: g, bullet: { level: 0 } }));
+      children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Gaps', bold: true, color: brandHex })], spacing: { before: 240, after: 100 } }));
+      for (const item of narrative.eeat_gaps) children.push(...recItem(item));
     }
     if (narrative.local_seo) {
       const l = narrative.local_seo;
       children.push(
-        new Paragraph({ children: [new TextRun({ text: 'Local SEO:', bold: true })], spacing: { before: 160, after: 80 } }),
+        new Paragraph({ children: [new TextRun({ text: 'Local SEO', bold: true, color: brandHex })], spacing: { before: 240, after: 100 } }),
         new Paragraph({ text: `Google Business Profile: ${l.google_business_profile}`, bullet: { level: 0 } }),
         new Paragraph({ text: `NAP Consistency: ${l.nap_consistency}`, bullet: { level: 0 } }),
         new Paragraph({ text: `Geographic Targeting: ${l.geographic_targeting}`, bullet: { level: 0 } }),
@@ -181,7 +199,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // ── Section: Content & Keyword Strategy (narrative) ──
   if (narrative && narrative.content_keyword_strategy) {
     const cks = narrative.content_keyword_strategy;
-    children.push(new Paragraph({ text: 'Content & Keyword Strategy Recommendations', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    children.push(sectionHeading('Content & Keyword Strategy Recommendations', brandHex));
     if (cks.keyword_opportunities && cks.keyword_opportunities.length) {
       const rows = [
         new TableRow({
@@ -195,25 +213,28 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
       children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }));
     }
     if (cks.content_gaps && cks.content_gaps.length) {
-      children.push(new Paragraph({ children: [new TextRun({ text: 'Content Gap Analysis:', bold: true })], spacing: { before: 200, after: 80 } }));
-      for (const g of cks.content_gaps) children.push(new Paragraph({ text: g, bullet: { level: 0 } }));
+      children.push(new Paragraph({ children: [new TextRun({ text: 'Content Gap Analysis', bold: true, color: brandHex })], spacing: { before: 240, after: 100 } }));
+      for (const item of cks.content_gaps) children.push(...recItem(item));
     }
     if (cks.recommended_content && cks.recommended_content.length) {
-      children.push(new Paragraph({ children: [new TextRun({ text: 'Recommended Content Pieces:', bold: true })], spacing: { before: 160, after: 80 } }));
-      for (const c of cks.recommended_content) children.push(new Paragraph({ text: c, bullet: { level: 0 } }));
+      children.push(new Paragraph({ children: [new TextRun({ text: 'Recommended Content Pieces', bold: true, color: brandHex })], spacing: { before: 240, after: 100 } }));
+      for (const item of cks.recommended_content) children.push(...recItem(item));
     }
   }
 
   // ── Section: Next Steps (narrative) ──
   if (narrative && narrative.next_steps && narrative.next_steps.length) {
-    children.push(new Paragraph({ text: 'Next Steps & Action Plan', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+    children.push(sectionHeading('Next Steps & Action Plan', brandHex));
     narrative.next_steps.forEach((step, i) => {
-      children.push(new Paragraph({ text: `${i + 1}. ${step}`, spacing: { after: 80 } }));
+      children.push(
+        new Paragraph({ children: [new TextRun({ text: `${i + 1}. ${step.title}`, bold: true, size: 21 })], spacing: { before: 140 } }),
+        new Paragraph({ children: [new TextRun({ text: step.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
+      );
     });
   }
 
   // ── Section: All Pages table ──
-  children.push(new Paragraph({ text: 'All Pages at a Glance', heading: HeadingLevel.HEADING_1, spacing: { before: 400, after: 160 } }));
+  children.push(sectionHeading('All Pages at a Glance', brandHex));
   const tableRows = [
     new TableRow({
       children: [headerCell('Page URL', brandHex), headerCell('Title', brandHex), headerCell('H1', brandHex), headerCell('Meta Desc', brandHex), headerCell('Schema', brandHex), headerCell('Image Alts', brandHex)],
