@@ -15,7 +15,7 @@
 // audit-engine.js's runAudit doc comment / db-storage.js), so a Word export
 // of an arbitrary past run isn't available, only of a run just completed.
 const {
-  Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+  Document, Packer, Paragraph, TextRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
 } = require('docx');
 const { getQuickWins, friendlyIssue } = require('./audit-engine');
@@ -27,10 +27,13 @@ const CELL_BORDERS = { top: THIN_BORDER, bottom: THIN_BORDER, left: THIN_BORDER,
 // Section spacing is intentionally generous (600 before / 240 after, plus a
 // brand-colored underline) so sections read as clearly separated, scannable
 // blocks in a client-facing report rather than a dense wall of headings.
+// Deliberately does NOT use `heading: HeadingLevel.HEADING_1` — the
+// built-in Heading 1 style's own color overrides the run's explicit brand
+// color in some viewers (observed in Google Drive's docx preview), so the
+// heading look is fully hand-formatted here instead of relying on a style.
 function sectionHeading(text, brandHex) {
   return new Paragraph({
     children: [new TextRun({ text, bold: true, size: 26, color: brandHex })],
-    heading: HeadingLevel.HEADING_1,
     spacing: { before: 600, after: 240 },
     border: { bottom: { color: brandHex, space: 4, style: BorderStyle.SINGLE, size: 6 } },
   });

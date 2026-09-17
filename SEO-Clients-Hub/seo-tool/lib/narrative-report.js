@@ -32,7 +32,10 @@ const REC_ITEM = {
 const OUTPUT_SCHEMA = {
   type: 'object',
   properties: {
-    summary: { type: 'string' },
+    summary: {
+      type: 'string',
+      description: 'A 2-3 sentence overview, roughly 40-60 words total. Not a deep dive — every specific finding belongs in the structured sections below, not crammed in here.',
+    },
     top_priorities: {
       type: 'array',
       items: {
@@ -106,9 +109,12 @@ individual finding or recommendation must be split into:
 Never combine multiple ideas, multiple pages, or multiple reasons into one
 sentence. Never write a dense paragraph inside a list item — this is a
 scannable business report meant to be read in a few minutes, not an essay.
-If the business context doesn't mention a physical location or local
-service area, say local SEO signals are "not applicable" rather than
-guessing.`;
+The "summary" field is a short snapshot ONLY — 2-3 sentences, about
+40-60 words total. Do not list individual findings, page names, or
+specific fixes in the summary; those belong in the structured sections
+below. If the business context doesn't mention a physical location or
+local service area, say local SEO signals are "not applicable" rather
+than guessing.`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.
