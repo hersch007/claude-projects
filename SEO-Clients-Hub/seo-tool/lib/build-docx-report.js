@@ -221,6 +221,26 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     }
   }
 
+  // ── Section: Content Quality Findings (narrative) ──
+  // From actually reading each page's copy (narrative-report.js's
+  // contentSample) — thin/generic writing, missing credentials, tone
+  // mismatches. Grouped by page, same visual convention as the mechanical
+  // "Findings by Page" section above (bold monospace page path), since a
+  // page can have more than one content-quality finding.
+  if (narrative && narrative.content_quality_findings && narrative.content_quality_findings.length) {
+    children.push(sectionHeading('Content Quality Findings', brandHex));
+    const findingsByPage = new Map();
+    for (const item of narrative.content_quality_findings) {
+      if (!findingsByPage.has(item.page)) findingsByPage.set(item.page, []);
+      findingsByPage.get(item.page).push(item);
+    }
+    for (const [page, items] of findingsByPage) {
+      const slug = page.replace(client.url.replace(/\/$/, ''), '') || page;
+      children.push(new Paragraph({ children: [new TextRun({ text: slug, bold: true, font: 'Courier New', size: 20 })], spacing: { before: 200, after: 60 } }));
+      for (const item of items) children.push(...recItem(item));
+    }
+  }
+
   // ── Section: E-E-A-T & Local SEO (narrative) ──
   if (narrative && (narrative.eeat_signals_present || narrative.eeat_gaps || narrative.local_seo)) {
     children.push(sectionHeading('E-E-A-T & Local SEO Analysis', brandHex));

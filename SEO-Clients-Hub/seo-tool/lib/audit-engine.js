@@ -462,6 +462,12 @@ function createEngine(client) {
       canonical,
       schemaTypes,
       wordCount,
+      // Kept (not just wordCount) so narrative-report.js's content-quality
+      // pass can read actual page copy — judging thin/generic writing,
+      // missing credentials, or tone requires the real text, not just a
+      // count of it. Never rendered directly by this file's own HTML/docx
+      // report; those still only use the structural fields above.
+      bodyText,
       internalLinks,
       issues,
       warnings,
