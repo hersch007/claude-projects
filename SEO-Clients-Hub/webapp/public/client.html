@@ -51,6 +51,17 @@
   </div>
 
   <div class="card">
+    <h2>Business Notes</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Niche, location, services, certifications — used to generate the E-E-A-T and local SEO
+      sections of the Word report. Not shown to the client.
+    </p>
+    <textarea id="business-notes" rows="3" style="width:100%;font-size:13px;padding:10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit" placeholder="e.g. Family-owned plumbing company serving the Austin, TX metro area since 2005. Licensed & insured (TX License #12345). No physical storefront — service area business."></textarea>
+    <div style="margin-top:8px"><button id="notes-save">Save Notes</button></div>
+    <div id="notes-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -62,7 +73,7 @@
   <div class="card">
     <h2>Score History</h2>
     <table id="history-table">
-      <thead><tr><th>Date</th><th>Score</th><th></th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Score</th><th></th><th></th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -115,19 +126,22 @@
       window.location.href = '/';
     });
 
+    document.getElementById('business-notes').value = data.client.business_notes || '';
+
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
       .map(([key, p]) => `<option value="${key}">${p.name}</option>`).join('');
 
     const tbody = document.querySelector('#history-table tbody');
     if (!data.history.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
     } else {
       tbody.innerHTML = [...data.history].reverse().map(h => `
         <tr>
           <td>${new Date(h.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
           <td>${h.score}</td>
           <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
+          <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/report" target="_blank">View report</a>` : ''}</td>
           <td><button class="history-delete" data-source="${h.source}" data-id="${h.id}" title="Delete this entry">&times;</button></td>
         </tr>
       `).join('');
@@ -149,9 +163,20 @@
         statusEl.className = 'done';
         statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` +
           `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>` +
-          ` &nbsp;|&nbsp; <a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx">Download Word report &rarr;</a>`;
+          ` &nbsp;|&nbsp; <a id="quick-docx-link" class="report-link" href="#">Download Word report &rarr;</a>` +
+          `<span id="quick-docx-status" style="margin-left:8px;font-size:12px;color:#64748b"></span>` +
+          `<br><button id="narrative-btn" class="btn secondary" style="margin-top:8px">+ Generate Full Strategy Report</button>` +
+          `<span id="narrative-status" style="margin-left:8px;font-size:12px;color:#64748b"></span>`;
         document.getElementById('run-btn').disabled = false;
         document.getElementById('run-btn').textContent = 'Run Audit Again';
+        document.getElementById('narrative-btn').addEventListener('click', () => generateFullReport(runId));
+        document.getElementById('quick-docx-link').addEventListener('click', (e) => {
+          e.preventDefault();
+          triggerDownload(
+            `/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx`,
+            document.getElementById('quick-docx-status')
+          );
+        });
         load();
       } else if (s.status === 'error') {
         clearInterval(pollTimer);
@@ -161,6 +186,81 @@
         document.getElementById('run-btn').textContent = 'Retry';
       }
     }, 2000);
+  }
+
+  // Fetches a file as a blob and triggers a real browser download, with
+  // status text before/during/after — a plain <a href> click gives no
+  // in-page confirmation anything happened, which is exactly what caused
+  // confusion earlier (users unsure if a "download" had silently failed).
+  async function triggerDownload(url, statusEl) {
+    statusEl.style.color = '#64748b';
+    statusEl.textContent = 'Preparing download...';
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      const blob = await res.blob();
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="(.+?)"/);
+      const filename = match ? match[1] : 'SEO-Audit-Report.docx';
+
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+
+      statusEl.style.color = '#16a34a';
+      statusEl.textContent = `Downloaded — check your Downloads folder (${filename}).`;
+    } catch (err) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = `Download failed: ${err.message}`;
+    }
+  }
+
+  async function generateFullReport(runId) {
+    const btn = document.getElementById('narrative-btn');
+    const statusEl = document.getElementById('narrative-status');
+    btn.disabled = true;
+
+    let elapsed = 0;
+    statusEl.style.color = '#64748b';
+    statusEl.textContent = 'Generating strategy sections — this can take up to a couple of minutes...';
+    const elapsedTimer = setInterval(() => {
+      elapsed += 1;
+      statusEl.textContent = `Generating strategy sections... (${elapsed}s elapsed — can take up to a couple of minutes)`;
+    }, 1000);
+
+    await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx/prepare`, { method: 'POST' });
+
+    const pollTimer2 = setInterval(async () => {
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx/status`);
+      const s = await res.json();
+      if (s.status === 'done') {
+        clearInterval(pollTimer2);
+        clearInterval(elapsedTimer);
+        statusEl.style.color = '#16a34a';
+        statusEl.innerHTML = `Ready — <a id="full-docx-link" class="report-link" href="#">Download Full Strategy Report &rarr;</a>`;
+        document.getElementById('full-docx-link').addEventListener('click', (e) => {
+          e.preventDefault();
+          const linkStatus = document.createElement('span');
+          linkStatus.style.marginLeft = '8px';
+          linkStatus.style.fontSize = '12px';
+          statusEl.appendChild(linkStatus);
+          triggerDownload(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx`, linkStatus);
+        });
+        btn.style.display = 'none';
+      } else if (s.status === 'error') {
+        clearInterval(pollTimer2);
+        clearInterval(elapsedTimer);
+        statusEl.style.color = '#dc2626';
+        statusEl.textContent = 'Strategy generation failed — the standard Word report above still works fine.';
+        btn.disabled = false;
+        btn.textContent = 'Retry Full Strategy Report';
+      }
+    }, 3000);
   }
 
   document.getElementById('run-btn').addEventListener('click', async () => {
@@ -186,6 +286,24 @@
       return;
     }
     poll(data.runId);
+  });
+
+  document.getElementById('notes-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('notes-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ business_notes: document.getElementById('business-notes').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
   });
 
   document.querySelector('#history-table tbody').addEventListener('click', async (e) => {

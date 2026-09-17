@@ -13,6 +13,7 @@ const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
+const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -200,12 +201,13 @@ app.get('/api/clients/:slug', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
 
   const { rows: runHistory } = await getPool().query(
-    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source
+    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source,
+            (html_report IS NOT NULL) AS has_report
      FROM audit_runs WHERE client_id = $1`,
     [client.id]
   );
   const { rows: manualHistory } = await getPool().query(
-    `SELECT id, entry_date AS date, score, 'manual' AS source
+    `SELECT id, entry_date AS date, score, 'manual' AS source, false AS has_report
      FROM manual_score_entries WHERE client_id = $1`,
     [client.id]
   );
@@ -215,10 +217,20 @@ app.get('/api/clients/:slug', async (req, res) => {
   for (const m of manualHistory) merged.set(m.date.toISOString().split('T')[0], m);
   for (const r of runHistory) merged.set(r.date.toISOString().split('T')[0], r);
   const history = [...merged.entries()]
-    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id }))
+    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id, hasReport: v.has_report }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({ client, history, providers: PROVIDERS });
+});
+
+app.patch('/api/clients/:slug', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  if (typeof (req.body && req.body.business_notes) !== 'string') {
+    return res.status(400).json({ error: 'business_notes (string) is required' });
+  }
+  await getPool().query('UPDATE clients SET business_notes = $1 WHERE id = $2', [req.body.business_notes, client.id]);
+  res.json({ ok: true });
 });
 
 app.patch('/api/clients/:slug/archive', async (req, res) => {
@@ -272,6 +284,18 @@ app.delete('/api/clients/:slug/manual-score/:id', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
   await getPool().query('DELETE FROM manual_score_entries WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
   res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).send('Client not found');
+  const { rows } = await getPool().query(
+    'SELECT html_report FROM audit_runs WHERE id = $1 AND client_id = $2',
+    [req.params.id, client.id]
+  );
+  if (!rows[0]) return res.status(404).send('Run not found');
+  if (!rows[0].html_report) return res.status(404).send('No saved report for this run (older runs imported before reports were stored don\'t have one).');
+  res.set('Content-Type', 'text/html').send(rows[0].html_report);
 });
 
 app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
@@ -363,7 +387,12 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
   if (!run || run.slug !== req.params.slug) return res.status(404).send('Unknown runId');
   if (run.status !== 'done') return res.status(425).send('Report not ready yet');
   try {
-    const buffer = await buildDocxReport(run.docxSource);
+    // Narrative is never generated inline here — it's a slow LLM call (the
+    // network path to it has been observed stalling for 90s+ per attempt)
+    // and this route needs to stay fast for the plain mechanical report,
+    // which is the common case. Uses whatever narrative (if any) the
+    // /docx/prepare route has already produced and cached on the run.
+    const buffer = await buildDocxReport({ ...run.docxSource, narrative: run.narrative || null });
     const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -374,6 +403,34 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
     console.error(`Docx generation for run ${req.params.runId} failed:`, err);
     res.status(500).send('Failed to generate Word document');
   }
+});
+
+// Kicks off narrative generation in the background (fire-and-forget, same
+// pattern as /audit/run) and returns immediately — the slow LLM call never
+// blocks an HTTP response. The browser polls the status route below, then
+// hits the plain /docx route above once ready, which will find the cached
+// narrative and include it.
+app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  if (run.status !== 'done') return res.status(425).json({ error: 'Report not ready yet' });
+
+  run.narrativeStatus = 'generating';
+  generateNarrative(run.docxSource).then((narrative) => {
+    run.narrative = narrative;
+    run.narrativeStatus = narrative ? 'done' : 'error';
+  }).catch((err) => {
+    console.error(`Narrative generation for run ${req.params.runId} failed:`, err);
+    run.narrativeStatus = 'error';
+  });
+
+  res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit/report/:runId/docx/status', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  res.json({ status: run.narrativeStatus || 'not_started' });
 });
 
 (async () => {
