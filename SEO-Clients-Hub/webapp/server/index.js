@@ -306,6 +306,32 @@ app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
   res.json({ ok: true });
 });
 
+// Diffs the just-completed run's deductions against the immediately prior
+// run for the same client — audit_runs already stores both score and the
+// full deductions list per run, so this needs no new schema or crawl work.
+// Matches deductions by label since that's what identifies "the same issue"
+// across runs. Returns null when there's no prior run to compare against,
+// or the prior run predates deductions being stored (old migrated data).
+async function computeChanges(clientId, currentRunDate, currentScore, currentDeductions) {
+  const { rows } = await getPool().query(
+    `SELECT run_date, seo_health_score, deductions FROM audit_runs
+     WHERE client_id = $1 AND run_date < $2 AND deductions IS NOT NULL
+     ORDER BY run_date DESC LIMIT 1`,
+    [clientId, currentRunDate]
+  );
+  if (!rows[0]) return null;
+  const prev = rows[0];
+  const prevLabels = new Set((prev.deductions || []).map(d => d.label));
+  const currLabels = new Set((currentDeductions || []).map(d => d.label));
+  return {
+    previousScore: prev.seo_health_score,
+    previousDate: prev.run_date,
+    scoreDelta: currentScore - prev.seo_health_score,
+    newIssues: (currentDeductions || []).filter(d => !prevLabels.has(d.label)),
+    resolvedIssues: (prev.deductions || []).filter(d => !currLabels.has(d.label)),
+  };
+}
+
 // runId -> { status: 'crawling'|'done'|'error', pagesCrawled, totalQueued, score, html, error, slug }
 const runs = new Map();
 
@@ -350,14 +376,15 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
        WHERE client_id = $5 AND run_date = $6`,
       [providerId, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
     );
+    const changes = await computeChanges(clientRow.id, result.date, result.scoreData.score, result.scoreData.deductions);
     runs.set(runId, {
       status: 'done', pagesCrawled: result.results.length, score: result.scoreData.score,
-      html: result.html, slug: clientRow.slug,
+      html: result.html, slug: clientRow.slug, changes,
       // Kept for the Word export route (§8) — generated on demand rather
       // than pre-built, since not every run's report gets downloaded as
       // .docx. Not persisted to the DB; only available for a run just
       // completed, same lifecycle as the HTML report.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date },
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
