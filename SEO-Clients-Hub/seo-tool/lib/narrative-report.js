@@ -1,9 +1,10 @@
 // Generates the narrative sections (Top Priorities, Medium/Long-term
-// recommendations, E-E-A-T & Local SEO analysis, Content & Keyword
-// Strategy, Next Steps) that build-docx-report.js's mechanical sections
-// deliberately don't attempt — these require reasoning about the business,
-// not just deriving facts from crawl data. See PHASE1-DESIGN.md §8 and
-// REQUIREMENTS.md's Phase 2+ candidates.
+// recommendations, Content Quality, E-E-A-T & Local SEO analysis, Content &
+// Keyword Strategy, Next Steps) that build-docx-report.js's mechanical
+// sections deliberately don't attempt — these require reasoning about the
+// business and actually reading page copy, not just deriving facts from
+// crawl data (title lengths, missing tags, etc.). See PHASE1-DESIGN.md §8
+// and REQUIREMENTS.md's Phase 2+ candidates.
 //
 // On-demand only (called from the /docx route right before generating the
 // Word doc, same lifecycle as buildDocxReport itself) — not run on every
@@ -29,6 +30,21 @@ const REC_ITEM = {
   additionalProperties: false,
 };
 
+// Same title/detail shape as REC_ITEM, plus which page it's about — these
+// come from actually reading a page's copy (contentSample below), not from
+// crawl-derived facts, so citing the specific page matters more here than
+// for the site-wide REC_ITEM findings.
+const CONTENT_QUALITY_ITEM = {
+  type: 'object',
+  properties: {
+    page: { type: 'string', description: 'The page URL this finding is about.' },
+    title: { type: 'string' },
+    detail: { type: 'string' },
+  },
+  required: ['page', 'title', 'detail'],
+  additionalProperties: false,
+};
+
 const OUTPUT_SCHEMA = {
   type: 'object',
   properties: {
@@ -51,6 +67,11 @@ const OUTPUT_SCHEMA = {
     },
     medium_term: { type: 'array', items: REC_ITEM },
     long_term: { type: 'array', items: REC_ITEM },
+    content_quality_findings: {
+      type: 'array',
+      items: CONTENT_QUALITY_ITEM,
+      description: 'Findings from actually reading each page\'s contentSample — thin/generic copy, missing credentials or expertise signals, tone mismatches for the audience. Empty array if the copy genuinely has no such issues; do not invent findings to fill this out.',
+    },
     eeat_signals_present: { type: 'array', items: REC_ITEM },
     eeat_gaps: { type: 'array', items: REC_ITEM },
     local_seo: {
@@ -89,8 +110,8 @@ const OUTPUT_SCHEMA = {
     next_steps: { type: 'array', items: REC_ITEM },
   },
   required: [
-    'summary', 'top_priorities', 'medium_term', 'long_term', 'eeat_signals_present',
-    'eeat_gaps', 'local_seo', 'content_keyword_strategy', 'next_steps',
+    'summary', 'top_priorities', 'medium_term', 'long_term', 'content_quality_findings',
+    'eeat_signals_present', 'eeat_gaps', 'local_seo', 'content_keyword_strategy', 'next_steps',
   ],
   additionalProperties: false,
 };
@@ -117,11 +138,34 @@ local service area, say local SEO signals are "not applicable" rather
 than guessing. core_web_vitals is homepage-only lab/field data — only
 raise it as a top priority or in next_steps when a rating is genuinely
 "poor" (a "good" or "needs-improvement" rating is not worth mentioning
-on its own).`;
+on its own).
+
+For content_quality_findings: actually read each page's "contentSample"
+(the real body copy, not just its structural facts) and judge writing
+quality the way a skeptical potential client would — not just whether SEO
+tags are present. Flag only genuine problems:
+- Thin or generic copy: stock phrasing that could describe any business in
+  the industry, not this one specifically.
+- Missing credentials or expertise signals: a page that should establish
+  trust (About, service pages) but doesn't name a license, certification,
+  years of experience, or specific qualification, especially for
+  therapy/health/wellness/professional-services businesses.
+- Tone mismatches: copy that reads inconsistently with the business type or
+  audience (e.g. overly casual/salesy copy for a clinical/therapeutic
+  service, or a jarring shift in voice between pages).
+Cite the specific page for every finding. If a page's copy is genuinely
+fine, say nothing about it — an empty content_quality_findings array is the
+correct output for a well-written site, not a sign you didn't look hard
+enough.`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.
 const MAX_PAGES_IN_PROMPT = 30;
+// Per-page cap on how much real body copy goes into the prompt — enough
+// for a genuine content-quality read (thin/generic copy, missing
+// credentials, tone) without the cost/size of sending full-length pages
+// (blog posts, long service pages) for up to 30 pages at once.
+const MAX_CONTENT_SAMPLE_CHARS = 1500;
 
 function summarizePages(pages) {
   return pages
@@ -137,6 +181,7 @@ function summarizePages(pages) {
       schemaTypes: p.schemaTypes,
       issues: p.issues,
       warnings: p.warnings,
+      contentSample: (p.bodyText || '').slice(0, MAX_CONTENT_SAMPLE_CHARS),
     }));
 }
 
@@ -172,17 +217,18 @@ async function generateNarrative({ client, results, scoreData, pageSpeed }) {
     // data flowing so that doesn't happen. Capped timeout + low retry
     // count still bounds the worst case so a genuinely stuck request
     // fails fast into the graceful-degradation path below rather than
-    // holding the /docx download open indefinitely. `effort: 'medium'`
-    // keeps normal calls quick — this is a writing/summarization task from
-    // data already provided in the prompt, not one needing the deepest
-    // reasoning tier.
-    const anthropic = new Anthropic({ timeout: 90000, maxRetries: 1 });
+    // holding the /docx download open indefinitely. `effort: 'high'`
+    // (raised from 'medium') because content_quality_findings requires
+    // actually reading and judging page copy for thin/generic writing,
+    // missing credentials, and tone — a real judgment call, not just
+    // summarizing/reformatting facts already handed to it in the prompt.
+    const anthropic = new Anthropic({ timeout: 120000, maxRetries: 1 });
     const stream = anthropic.messages.stream({
       model: MODEL,
       max_tokens: 16000,
       system: SYSTEM_PROMPT,
       output_config: {
-        effort: 'medium',
+        effort: 'high',
         format: { type: 'json_schema', schema: OUTPUT_SCHEMA },
       },
       messages: [{
