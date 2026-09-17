@@ -255,10 +255,10 @@
 
     let elapsed = 0;
     statusEl.style.color = '#64748b';
-    statusEl.textContent = 'Generating strategy sections — this can take up to a couple of minutes...';
+    statusEl.textContent = 'Generating strategy sections — this can take up to a few minutes...';
     const elapsedTimer = setInterval(() => {
       elapsed += 1;
-      statusEl.textContent = `Generating strategy sections... (${elapsed}s elapsed — can take up to a couple of minutes)`;
+      statusEl.textContent = `Generating strategy sections... (${elapsed}s elapsed — can take up to a few minutes)`;
     }, 1000);
 
     await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx/prepare`, { method: 'POST' });
