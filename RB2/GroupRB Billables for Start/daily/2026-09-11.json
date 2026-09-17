@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-11",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    {"time": "6:45a-7:00a",   "client": "CFB", "note": "Nylon Page SEO Research",         "job": "0920027", "billable": true},
+    {"time": "7:00a-7:15a",   "client": "CFB", "note": "Nylon Page SEO AI SEO",           "job": "0920012", "billable": true},
+    {"time": "7:15a-7:30a",   "client": "CFB", "note": "Nylon Page SEO Schema",           "job": "0920018", "billable": true},
+    {"time": "7:30a-7:45a",   "client": "CFB", "note": "Nylon Page SEO Imp",              "job": "0920028", "billable": true},
+    {"time": "7:45a-8:00a",   "client": "CFB", "note": "Nylon Poly Page SEO Research",    "job": "0920027", "billable": true},
+    {"time": "8:00a-8:15a",   "client": "CFB", "note": "Nylon Poly Page SEO AI SEO",      "job": "0920012", "billable": true},
+    {"time": "8:15a-8:30a",   "client": "CFB", "note": "Nylon Poly Page SEO Schema",      "job": "0920018", "billable": true},
+    {"time": "8:30a-8:45a",   "client": "CFB", "note": "Nylon Poly Page SEO Imp",         "job": "0920028", "billable": true},
+    {"time": "8:45a-9:00a",   "client": "CFB", "note": "Healthcare Page SEO Research",    "job": "0920027", "billable": true},
+    {"time": "9:00a-9:15a",   "client": "CFB", "note": "Healthcare Page SEO AISEO",       "job": "0920012", "billable": true},
+    {"time": "9:15a-9:30a",   "client": "CFB", "note": "Healthcare Page SEO Scehma",      "job": "0920018", "billable": true},
+    {"time": "9:30a-9:45a",   "client": "CFB", "note": "Healthcare Page SEO Imp",         "job": "0920028", "billable": true},
+    {"time": "10:15a-10:30a", "client": "CFB", "note": "Audit update and doc prep",       "job": "0920013", "billable": true},
+    {"time": "10:30a-10:45a", "client": "CFB", "note": "Audit update and doc prep",       "job": "0920013", "billable": true},
+    {"time": "10:45a-11:00a", "client": "CFB", "note": "Audit update and doc prep",       "job": "0920013", "billable": true},
+    {"time": "11:00a-11:15a", "client": "CFB", "note": "Audit update and doc prep",       "job": "0920013", "billable": true},
+    {"time": "11:15a-11:30a", "client": "CFB", "note": "Audit update and doc prep",       "job": "0920013", "billable": true}
+  ]
+}

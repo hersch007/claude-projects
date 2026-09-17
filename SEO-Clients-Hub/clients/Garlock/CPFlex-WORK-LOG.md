@@ -54,9 +54,11 @@ Paste-ready title/meta/schema for each is in the Word log under the article head
 
 The audit's "Internal Links to Add" are mostly not in the post bodies yet (18 articles), and the three cold-seal articles (#1, #2, #4) do not yet link up to the cluster hub (#3 How to Choose a Cold-Seal Supplier). Do this as one pass after the 7 above.
 
-### Billing
+### Billing (reconciled against daily billables 2026-09-15)
 
-3 articles billed (HPP Lidding, Virtual Press Check, Hand Sanitizer). 28 unbilled — bill by hours logged under Garlock, per the usual model.
+29 of 31 articles are billed via per-article entries in `RB2/GroupRB Billables for Start/daily/*.json` (Aug 17–28 and Sep 7–9). Virtual Press Check (1.00 h) and Voortman (1.00 h) were billed 2026-09-15 — all 31 articles now billed.
+
+Tracking work billed under 0790168 (SEO Tracking): 1.50 h for Sep 7 (staging verification of 77 pages + 31 articles, logs reconciled) and 1.50 h for Sep 15 (running-log review, billing reconciliation) — both logged 2026-09-15. Possible double-billing to review: Cut Costs (Aug 21 + Sep 7) and Stand-Up Pouches (Aug 19 + Sep 8 + a 1.0 h "Pouches" entry Sep 9). The Word log billing lines now carry the date and hours per article.
 
 ---
 

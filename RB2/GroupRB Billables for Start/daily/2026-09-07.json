@@ -32,6 +32,12 @@
     {"time": "2:15p-2:30p",   "client": "GAR", "note": "BLOG Cut Costs SEO Add Cont",             "job": "0790148", "billable": true},
     {"time": "2:30p-2:45p",   "client": "GAR", "note": "BLOG Cut Costs SEO AISEO",                "job": "0790146", "billable": true},
     {"time": "2:45p-3:00p",   "client": "GAR", "note": "BLOG Cut Costs SEO Schema",               "job": "0790149", "billable": true},
-    {"time": "3:00p-3:15p",   "client": "GAR", "note": "BLOG Cut Costs SEO Implementatino",       "job": "0790166", "billable": true}
+    {"time": "3:00p-3:15p",   "client": "GAR", "note": "BLOG Cut Costs SEO Implementatino",       "job": "0790166", "billable": true},
+    {"time": "6:15p-6:30p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true},
+    {"time": "6:30p-6:45p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true},
+    {"time": "6:45p-7:00p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true},
+    {"time": "7:00p-7:15p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true},
+    {"time": "7:15p-7:30p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true},
+    {"time": "7:30p-7:45p",   "client": "GAR", "note": "GAR SEO Tracking — staging verification", "job": "0790168", "billable": true}
   ]
 }
