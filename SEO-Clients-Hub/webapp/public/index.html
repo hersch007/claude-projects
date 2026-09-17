@@ -42,7 +42,21 @@
     padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
   }
   .btn.secondary { background: white; color: #1e293b; border: 1px solid #cbd5e1; }
+  .btn.danger { background: white; color: #dc2626; border: 1px solid #fecaca; }
   #migrate-status { font-size: 12px; color: #64748b; margin-top: 10px; }
+  .header-actions { display: flex; gap: 8px; }
+  .client-link { flex: 1; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 16px; }
+  .client-actions { display: flex; gap: 6px; margin-left: 16px; }
+  .client-actions button { padding: 6px 10px; font-size: 12px; }
+  .toggle-archived { font-size: 12px; color: #64748b; background: none; border: none; text-decoration: underline; cursor: pointer; padding: 0; margin-bottom: 14px; }
+  .new-client-form {
+    background: white; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center; box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  }
+  .new-client-form input { font-size: 13px; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; }
+  .new-client-form input[name="name"] { flex: 1; min-width: 140px; }
+  .new-client-form input[name="url"] { flex: 1; min-width: 160px; }
+  #new-client-status { font-size: 12px; margin-top: 8px; width: 100%; }
 </style>
 </head>
 <body>
@@ -50,15 +64,31 @@
 <div class="container">
   <div class="header">
     <h1>SEO Platform</h1>
-    <button id="migrate-btn" class="btn secondary">Sync Clients from Config</button>
+    <div class="header-actions">
+      <button id="new-client-btn" class="btn secondary">+ New Client</button>
+      <button id="migrate-btn" class="btn secondary">Sync Clients from Config</button>
+    </div>
   </div>
   <div id="migrate-status"></div>
+
+  <form id="new-client-form" class="new-client-form" style="display:none">
+    <input name="name" placeholder="Client name" required>
+    <input name="url" placeholder="https://example.com" required>
+    <input name="slug" placeholder="slug (e.g. example-co)" required>
+    <button type="submit">Add Client</button>
+    <button type="button" id="new-client-cancel" class="btn secondary">Cancel</button>
+    <div id="new-client-status"></div>
+  </form>
+
+  <button id="toggle-archived" class="toggle-archived">Show archived clients</button>
   <div id="client-list" class="client-list">
     <div class="empty">Loading clients...</div>
   </div>
 </div>
 
 <script>
+  let showingArchived = false;
+
   function scoreClass(score) {
     if (score === null || score === undefined) return 'none';
     if (score >= 80) return 'good';
@@ -67,26 +97,95 @@
   }
 
   async function loadClients() {
-    const res = await fetch('/api/clients');
+    const res = await fetch(`/api/clients?archived=${showingArchived ? '1' : '0'}`);
     const clients = await res.json();
     const listEl = document.getElementById('client-list');
 
     if (!clients.length) {
-      listEl.innerHTML = '<div class="empty">No clients yet — click "Sync Clients from Config" above to import them.</div>';
+      listEl.innerHTML = showingArchived
+        ? '<div class="empty">No archived clients.</div>'
+        : '<div class="empty">No clients yet — click "Sync Clients from Config" or "+ New Client" above.</div>';
       return;
     }
 
     listEl.innerHTML = clients.map(c => `
-      <a class="client-row" href="/client.html?slug=${encodeURIComponent(c.slug)}">
-        <div>
-          <div class="client-name">${c.name}</div>
-          <div class="client-url">${c.url}</div>
+      <div class="client-row">
+        <a class="client-link" href="/client.html?slug=${encodeURIComponent(c.slug)}">
+          <div>
+            <div class="client-name">${c.name}</div>
+            <div class="client-url">${c.url}</div>
+          </div>
+          <div class="client-date">${c.latest_run_date ? new Date(c.latest_run_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never audited'}</div>
+          <div class="client-score ${scoreClass(c.latest_score)}">${c.latest_score !== null ? c.latest_score : '—'}</div>
+        </a>
+        <div class="client-actions">
+          <button class="btn secondary" data-action="archive" data-slug="${c.slug}">${showingArchived ? 'Unarchive' : 'Archive'}</button>
+          <button class="btn danger" data-action="delete" data-slug="${c.slug}" data-name="${c.name}">Delete</button>
         </div>
-        <div class="client-date">${c.latest_run_date ? new Date(c.latest_run_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never audited'}</div>
-        <div class="client-score ${scoreClass(c.latest_score)}">${c.latest_score !== null ? c.latest_score : '—'}</div>
-      </a>
+      </div>
     `).join('');
   }
+
+  document.getElementById('client-list').addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const slug = btn.dataset.slug;
+
+    if (btn.dataset.action === 'archive') {
+      await fetch(`/api/clients/${encodeURIComponent(slug)}/archive`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived: !showingArchived }),
+      });
+      loadClients();
+    } else if (btn.dataset.action === 'delete') {
+      if (!confirm(`Permanently delete "${btn.dataset.name}" and all its history? This cannot be undone.`)) return;
+      await fetch(`/api/clients/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+      loadClients();
+    }
+  });
+
+  document.getElementById('toggle-archived').addEventListener('click', () => {
+    showingArchived = !showingArchived;
+    document.getElementById('toggle-archived').textContent = showingArchived ? 'Show active clients' : 'Show archived clients';
+    loadClients();
+  });
+
+  document.getElementById('new-client-btn').addEventListener('click', () => {
+    document.getElementById('new-client-form').style.display = 'flex';
+    document.getElementById('new-client-btn').style.display = 'none';
+  });
+  document.getElementById('new-client-cancel').addEventListener('click', () => {
+    document.getElementById('new-client-form').style.display = 'none';
+    document.getElementById('new-client-btn').style.display = 'inline-block';
+  });
+
+  document.getElementById('new-client-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const statusEl = document.getElementById('new-client-status');
+    const body = {
+      name: form.name.value.trim(),
+      url: form.url.value.trim(),
+      slug: form.slug.value.trim().toLowerCase(),
+    };
+    const res = await fetch('/api/clients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    form.reset();
+    form.style.display = 'none';
+    document.getElementById('new-client-btn').style.display = 'inline-block';
+    statusEl.textContent = '';
+    loadClients();
+  });
 
   document.getElementById('migrate-btn').addEventListener('click', async () => {
     const statusEl = document.getElementById('migrate-status');

@@ -12,6 +12,9 @@ const fs = require('fs');
 const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
+const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
+const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
+const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -162,6 +165,7 @@ async function getProviderId(providerKey) {
 }
 
 app.get('/api/clients', async (req, res) => {
+  const archived = req.query.archived === '1';
   const { rows } = await getPool().query(`
     SELECT c.id, c.slug, c.name, c.url,
            latest.seo_health_score AS latest_score, latest.run_date AS latest_run_date
@@ -170,9 +174,27 @@ app.get('/api/clients', async (req, res) => {
       SELECT seo_health_score, run_date FROM audit_runs
       WHERE client_id = c.id ORDER BY run_date DESC LIMIT 1
     ) latest ON true
+    WHERE c.archived = $1
     ORDER BY c.name ASC
-  `);
+  `, [archived]);
   res.json(rows);
+});
+
+app.post('/api/clients', async (req, res) => {
+  const { slug, name, url, gsc_property } = req.body || {};
+  if (!slug || !name || !url) return res.status(400).json({ error: 'slug, name, and url are required' });
+  if (!/^[a-z0-9-]+$/.test(slug)) return res.status(400).json({ error: 'slug must be lowercase letters, numbers, and hyphens only' });
+
+  try {
+    const { rows } = await getPool().query(
+      `INSERT INTO clients (slug, name, url, gsc_property) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [slug, name, url, gsc_property || null]
+    );
+    res.json({ ok: true, client: rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: `A client with slug "${slug}" already exists` });
+    res.status(500).json({ error: err.message });
+  }
 });
 
 app.get('/api/clients/:slug', async (req, res) => {
@@ -180,12 +202,13 @@ app.get('/api/clients/:slug', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'Client not found' });
 
   const { rows: runHistory } = await getPool().query(
-    `SELECT run_date AS date, seo_health_score AS score, 'run' AS source
+    `SELECT id, run_date AS date, seo_health_score AS score, 'run' AS source,
+            (html_report IS NOT NULL) AS has_report
      FROM audit_runs WHERE client_id = $1`,
     [client.id]
   );
   const { rows: manualHistory } = await getPool().query(
-    `SELECT entry_date AS date, score, 'manual' AS source
+    `SELECT id, entry_date AS date, score, 'manual' AS source, false AS has_report
      FROM manual_score_entries WHERE client_id = $1`,
     [client.id]
   );
@@ -195,10 +218,69 @@ app.get('/api/clients/:slug', async (req, res) => {
   for (const m of manualHistory) merged.set(m.date.toISOString().split('T')[0], m);
   for (const r of runHistory) merged.set(r.date.toISOString().split('T')[0], r);
   const history = [...merged.entries()]
-    .map(([date, v]) => ({ date, score: v.score, source: v.source }))
+    .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id, hasReport: v.has_report }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   res.json({ client, history, providers: PROVIDERS });
+});
+
+app.patch('/api/clients/:slug', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const body = req.body || {};
+
+  const updates = [];
+  const values = [];
+  if (typeof body.business_notes === 'string') {
+    values.push(body.business_notes);
+    updates.push(`business_notes = $${values.length}`);
+  }
+  if (typeof body.gsc_property === 'string') {
+    // Empty string clears it (client had access revoked, or was set up wrong) —
+    // stored as NULL so gsc.js's `if (client.gsc_property)` check skips it cleanly.
+    values.push(body.gsc_property.trim() || null);
+    updates.push(`gsc_property = $${values.length}`);
+  }
+  if (!updates.length) {
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property' });
+  }
+
+  values.push(client.id);
+  await getPool().query(`UPDATE clients SET ${updates.join(', ')} WHERE id = $${values.length}`, values);
+  res.json({ ok: true });
+});
+
+app.patch('/api/clients/:slug/archive', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const archived = !!(req.body && req.body.archived);
+  await getPool().query('UPDATE clients SET archived = $1 WHERE id = $2', [archived, client.id]);
+  res.json({ ok: true });
+});
+
+app.delete('/api/clients/:slug', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const pool = getPool();
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query('BEGIN');
+    await dbClient.query(
+      `DELETE FROM page_results WHERE audit_run_id IN (SELECT id FROM audit_runs WHERE client_id = $1)`,
+      [client.id]
+    );
+    await dbClient.query('DELETE FROM audit_runs WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM manual_score_entries WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM gsc_snapshots WHERE client_id = $1', [client.id]);
+    await dbClient.query('DELETE FROM clients WHERE id = $1', [client.id]);
+    await dbClient.query('COMMIT');
+    res.json({ ok: true });
+  } catch (err) {
+    await dbClient.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    dbClient.release();
+  }
 });
 
 app.post('/api/clients/:slug/manual-score', async (req, res) => {
@@ -213,6 +295,64 @@ app.post('/api/clients/:slug/manual-score', async (req, res) => {
   );
   res.json({ ok: true });
 });
+
+app.delete('/api/clients/:slug/manual-score/:id', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  await getPool().query('DELETE FROM manual_score_entries WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
+  res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).send('Client not found');
+  const { rows } = await getPool().query(
+    'SELECT html_report FROM audit_runs WHERE id = $1 AND client_id = $2',
+    [req.params.id, client.id]
+  );
+  if (!rows[0]) return res.status(404).send('Run not found');
+  if (!rows[0].html_report) return res.status(404).send('No saved report for this run (older runs imported before reports were stored don\'t have one).');
+  res.set('Content-Type', 'text/html').send(rows[0].html_report);
+});
+
+app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  await getPool().query('DELETE FROM page_results WHERE audit_run_id = $1', [req.params.id]);
+  await getPool().query('DELETE FROM audit_runs WHERE id = $1 AND client_id = $2', [req.params.id, client.id]);
+  res.json({ ok: true });
+});
+
+// Diffs the just-completed run's deductions against the immediately prior
+// run for the same client — audit_runs already stores both score and the
+// full deductions list per run, so this needs no new schema or crawl work.
+// Matches deductions by label since that's what identifies "the same issue"
+// across runs. Returns null when there's no prior run to compare against,
+// or the prior run predates deductions being stored (old migrated data).
+async function computeChanges(clientId, currentRunDate, currentScore, currentDeductions) {
+  const { rows } = await getPool().query(
+    `SELECT run_date, seo_health_score, deductions FROM audit_runs
+     WHERE client_id = $1 AND run_date < $2 AND deductions IS NOT NULL
+     ORDER BY run_date DESC LIMIT 1`,
+    [clientId, currentRunDate]
+  );
+  if (!rows[0]) return null;
+  const prev = rows[0];
+  const prevLabels = new Set((prev.deductions || []).map(d => d.label));
+  const currLabels = new Set((currentDeductions || []).map(d => d.label));
+  return {
+    previousScore: prev.seo_health_score,
+    // Plain "YYYY-MM-DD", not the raw Date object — matches how the
+    // history endpoint above already handles this same pg date-column
+    // gotcha. A raw Date serializes to a full UTC-midnight ISO string,
+    // which then renders as the previous calendar day in any timezone
+    // behind UTC once a client formats it with toLocaleDateString.
+    previousDate: prev.run_date.toISOString().split('T')[0],
+    scoreDelta: currentScore - prev.seo_health_score,
+    newIssues: (currentDeductions || []).filter(d => !prevLabels.has(d.label)),
+    resolvedIssues: (prev.deductions || []).filter(d => !currLabels.has(d.label)),
+  };
+}
 
 // runId -> { status: 'crawling'|'done'|'error', pagesCrawled, totalQueued, score, html, error, slug }
 const runs = new Map();
@@ -237,6 +377,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
   runAudit(clientForEngine, {
     provider: providerKey,
     storage: dbStorage,
+    enrichKeywords: enrichWithVolumes,
     onProgress: (e) => {
       const run = runs.get(runId);
       if (run) Object.assign(run, { pagesCrawled: e.pagesCrawled, totalQueued: e.totalQueued, currentUrl: e.currentUrl });
@@ -257,14 +398,18 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
        WHERE client_id = $5 AND run_date = $6`,
       [providerId, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
     );
+    const changes = await computeChanges(clientRow.id, result.date, result.scoreData.score, result.scoreData.deductions);
     runs.set(runId, {
       status: 'done', pagesCrawled: result.results.length, score: result.scoreData.score,
-      html: result.html, slug: clientRow.slug,
+      html: result.html, slug: clientRow.slug, changes,
       // Kept for the Word export route (§8) — generated on demand rather
       // than pre-built, since not every run's report gets downloaded as
       // .docx. Not persisted to the DB; only available for a run just
       // completed, same lifecycle as the HTML report.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date },
+      // pageSpeed starts null and is filled in later by /docx/prepare below
+      // — a live PSI check has been observed taking 90s+, so it can't run
+      // as part of this already-fast audit completion path.
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: null },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
@@ -294,7 +439,12 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
   if (!run || run.slug !== req.params.slug) return res.status(404).send('Unknown runId');
   if (run.status !== 'done') return res.status(425).send('Report not ready yet');
   try {
-    const buffer = await buildDocxReport(run.docxSource);
+    // Narrative is never generated inline here — it's a slow LLM call (the
+    // network path to it has been observed stalling for 90s+ per attempt)
+    // and this route needs to stay fast for the plain mechanical report,
+    // which is the common case. Uses whatever narrative (if any) the
+    // /docx/prepare route has already produced and cached on the run.
+    const buffer = await buildDocxReport({ ...run.docxSource, narrative: run.narrative || null });
     const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -305,6 +455,49 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
     console.error(`Docx generation for run ${req.params.runId} failed:`, err);
     res.status(500).send('Failed to generate Word document');
   }
+});
+
+// Kicks off narrative generation in the background (fire-and-forget, same
+// pattern as /audit/run) and returns immediately — the slow LLM call never
+// blocks an HTTP response. The browser polls the status route below, then
+// hits the plain /docx route above once ready, which will find the cached
+// narrative and include it.
+app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  if (run.status !== 'done') return res.status(425).json({ error: 'Report not ready yet' });
+
+  run.narrativeStatus = 'generating';
+  (async () => {
+    // Homepage Core Web Vitals runs first (not concurrently with the
+    // narrative call below) so its result is available in run.docxSource
+    // in time for generateNarrative() to actually see it — narrative-
+    // report.js reads pageSpeed off the object passed to it, and only
+    // mentions it when the rating is genuinely "poor". Same reason it's
+    // not part of /audit/run at all: a live PSI check has been observed
+    // taking 90s+, so it can't run on that already-fast path.
+    try {
+      run.docxSource.pageSpeed = await getCoreWebVitals(run.docxSource.client.url);
+    } catch (err) {
+      console.error(`Core Web Vitals check for run ${req.params.runId} failed:`, err);
+      run.docxSource.pageSpeed = null;
+    }
+    try {
+      run.narrative = await generateNarrative(run.docxSource);
+    } catch (err) {
+      console.error(`Narrative generation for run ${req.params.runId} failed:`, err);
+      run.narrative = null;
+    }
+    run.narrativeStatus = run.narrative ? 'done' : 'error';
+  })();
+
+  res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit/report/:runId/docx/status', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  res.json({ status: run.narrativeStatus || 'not_started' });
 });
 
 (async () => {

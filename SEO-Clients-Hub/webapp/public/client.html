@@ -34,14 +34,44 @@
   .source-manual { color: #7c3aed; font-size: 11px; }
   .manual-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   #manual-status { font-size: 12px; color: #16a34a; margin-top: 8px; }
+  .history-delete { background: none; border: none; color: #cbd5e1; cursor: pointer; font-size: 14px; padding: 0 4px; }
+  .history-delete:hover { color: #dc2626; }
+  .header-row { display: flex; justify-content: space-between; align-items: flex-start; }
+  .header-actions { display: flex; gap: 8px; }
+  .btn.secondary { background: white; color: #1e293b; border: 1px solid #cbd5e1; }
+  .btn.danger { background: white; color: #dc2626; border: 1px solid #fecaca; }
 </style>
 </head>
 <body>
 
 <div class="container">
   <a class="back" href="/">&larr; All clients</a>
-  <div id="header">
+  <div id="header" class="header-row">
     <h1>Loading...</h1>
+  </div>
+
+  <div class="card">
+    <h2>Business Notes</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Niche, location, services, certifications — used to generate the E-E-A-T and local SEO
+      sections of the Word report. Not shown to the client.
+    </p>
+    <textarea id="business-notes" rows="3" style="width:100%;font-size:13px;padding:10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit" placeholder="e.g. Family-owned plumbing company serving the Austin, TX metro area since 2005. Licensed & insured (TX License #12345). No physical storefront — service area business."></textarea>
+    <div style="margin-top:8px"><button id="notes-save">Save Notes</button></div>
+    <div id="notes-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Search Console Property</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Enables real rank/click data and keyword search volume in reports. Must be granted access
+      in Google Search Console first — enter the exact property string it's registered under
+      (e.g. <code>https://example.com/</code> for a URL-prefix property, or <code>sc-domain:example.com</code>
+      for a domain property). Leave blank if not set up yet.
+    </p>
+    <input id="gsc-property" type="text" style="width:100%;font-size:13px;padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1" placeholder="https://example.com/">
+    <div style="margin-top:8px"><button id="gsc-save">Save Property</button></div>
+    <div id="gsc-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
   </div>
 
   <div class="card">
@@ -56,7 +86,7 @@
   <div class="card">
     <h2>Score History</h2>
     <table id="history-table">
-      <thead><tr><th>Date</th><th>Score</th><th></th></tr></thead>
+      <thead><tr><th>Date</th><th>Score</th><th></th><th></th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -86,9 +116,31 @@
     const data = await res.json();
 
     document.getElementById('header').innerHTML = `
-      <h1>${data.client.name}</h1>
-      <div class="sub">${data.client.url}</div>
+      <div>
+        <h1>${data.client.name}${data.client.archived ? ' <span style="color:#94a3b8;font-size:13px;font-weight:400">(archived)</span>' : ''}</h1>
+        <div class="sub">${data.client.url}</div>
+      </div>
+      <div class="header-actions">
+        <button id="archive-btn" class="btn secondary">${data.client.archived ? 'Unarchive' : 'Archive'}</button>
+        <button id="delete-btn" class="btn danger">Delete Client</button>
+      </div>
     `;
+    document.getElementById('archive-btn').addEventListener('click', async () => {
+      await fetch(`/api/clients/${encodeURIComponent(slug)}/archive`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ archived: !data.client.archived }),
+      });
+      load();
+    });
+    document.getElementById('delete-btn').addEventListener('click', async () => {
+      if (!confirm(`Permanently delete "${data.client.name}" and all its history? This cannot be undone.`)) return;
+      await fetch(`/api/clients/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+      window.location.href = '/';
+    });
+
+    document.getElementById('business-notes').value = data.client.business_notes || '';
+    document.getElementById('gsc-property').value = data.client.gsc_property || '';
 
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
@@ -96,13 +148,15 @@
 
     const tbody = document.querySelector('#history-table tbody');
     if (!data.history.length) {
-      tbody.innerHTML = '<tr><td colspan="3" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="color:#94a3b8">No history yet — run an audit or add a historical score.</td></tr>';
     } else {
       tbody.innerHTML = [...data.history].reverse().map(h => `
         <tr>
           <td>${new Date(h.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
           <td>${h.score}</td>
           <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
+          <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/report" target="_blank">View report</a>` : ''}</td>
+          <td><button class="history-delete" data-source="${h.source}" data-id="${h.id}" title="Delete this entry">&times;</button></td>
         </tr>
       `).join('');
     }
@@ -121,11 +175,36 @@
       } else if (s.status === 'done') {
         clearInterval(pollTimer);
         statusEl.className = 'done';
-        statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` +
+        let changesHtml = '';
+        if (s.changes) {
+          const delta = s.changes.scoreDelta;
+          const deltaColor = delta > 0 ? '#16a34a' : delta < 0 ? '#dc2626' : '#64748b';
+          const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} pt${Math.abs(delta) === 1 ? '' : 's'}`;
+          const prevDateLabel = new Date(s.changes.previousDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          changesHtml = `<div style="margin-top:6px;font-size:13px;color:${deltaColor};font-weight:600">${deltaText} vs ${prevDateLabel} (was ${s.changes.previousScore})</div>`;
+          if (s.changes.newIssues.length) {
+            changesHtml += `<div style="font-size:12px;color:#dc2626;margin-top:4px">New: ${s.changes.newIssues.map(d => d.label).join('; ')}</div>`;
+          }
+          if (s.changes.resolvedIssues.length) {
+            changesHtml += `<div style="font-size:12px;color:#16a34a;margin-top:2px">Resolved: ${s.changes.resolvedIssues.map(d => d.label).join('; ')}</div>`;
+          }
+        }
+        statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` + changesHtml +
           `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>` +
-          ` &nbsp;|&nbsp; <a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx">Download Word report &rarr;</a>`;
+          ` &nbsp;|&nbsp; <a id="quick-docx-link" class="report-link" href="#">Download Word report &rarr;</a>` +
+          `<span id="quick-docx-status" style="margin-left:8px;font-size:12px;color:#64748b"></span>` +
+          `<br><button id="narrative-btn" class="btn secondary" style="margin-top:8px">+ Generate Full Strategy Report</button>` +
+          `<span id="narrative-status" style="margin-left:8px;font-size:12px;color:#64748b"></span>`;
         document.getElementById('run-btn').disabled = false;
         document.getElementById('run-btn').textContent = 'Run Audit Again';
+        document.getElementById('narrative-btn').addEventListener('click', () => generateFullReport(runId));
+        document.getElementById('quick-docx-link').addEventListener('click', (e) => {
+          e.preventDefault();
+          triggerDownload(
+            `/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx`,
+            document.getElementById('quick-docx-status')
+          );
+        });
         load();
       } else if (s.status === 'error') {
         clearInterval(pollTimer);
@@ -135,6 +214,81 @@
         document.getElementById('run-btn').textContent = 'Retry';
       }
     }, 2000);
+  }
+
+  // Fetches a file as a blob and triggers a real browser download, with
+  // status text before/during/after — a plain <a href> click gives no
+  // in-page confirmation anything happened, which is exactly what caused
+  // confusion earlier (users unsure if a "download" had silently failed).
+  async function triggerDownload(url, statusEl) {
+    statusEl.style.color = '#64748b';
+    statusEl.textContent = 'Preparing download...';
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Server returned ${res.status}`);
+      const blob = await res.blob();
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="(.+?)"/);
+      const filename = match ? match[1] : 'SEO-Audit-Report.docx';
+
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
+
+      statusEl.style.color = '#16a34a';
+      statusEl.textContent = `Downloaded — check your Downloads folder (${filename}).`;
+    } catch (err) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = `Download failed: ${err.message}`;
+    }
+  }
+
+  async function generateFullReport(runId) {
+    const btn = document.getElementById('narrative-btn');
+    const statusEl = document.getElementById('narrative-status');
+    btn.disabled = true;
+
+    let elapsed = 0;
+    statusEl.style.color = '#64748b';
+    statusEl.textContent = 'Generating strategy sections — this can take up to a few minutes...';
+    const elapsedTimer = setInterval(() => {
+      elapsed += 1;
+      statusEl.textContent = `Generating strategy sections... (${elapsed}s elapsed — can take up to a few minutes)`;
+    }, 1000);
+
+    await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx/prepare`, { method: 'POST' });
+
+    const pollTimer2 = setInterval(async () => {
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx/status`);
+      const s = await res.json();
+      if (s.status === 'done') {
+        clearInterval(pollTimer2);
+        clearInterval(elapsedTimer);
+        statusEl.style.color = '#16a34a';
+        statusEl.innerHTML = `Ready — <a id="full-docx-link" class="report-link" href="#">Download Full Strategy Report &rarr;</a>`;
+        document.getElementById('full-docx-link').addEventListener('click', (e) => {
+          e.preventDefault();
+          const linkStatus = document.createElement('span');
+          linkStatus.style.marginLeft = '8px';
+          linkStatus.style.fontSize = '12px';
+          statusEl.appendChild(linkStatus);
+          triggerDownload(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx`, linkStatus);
+        });
+        btn.style.display = 'none';
+      } else if (s.status === 'error') {
+        clearInterval(pollTimer2);
+        clearInterval(elapsedTimer);
+        statusEl.style.color = '#dc2626';
+        statusEl.textContent = 'Strategy generation failed — the standard Word report above still works fine.';
+        btn.disabled = false;
+        btn.textContent = 'Retry Full Strategy Report';
+      }
+    }, 3000);
   }
 
   document.getElementById('run-btn').addEventListener('click', async () => {
@@ -160,6 +314,51 @@
       return;
     }
     poll(data.runId);
+  });
+
+  document.getElementById('notes-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('notes-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ business_notes: document.getElementById('business-notes').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('gsc-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('gsc-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gsc_property: document.getElementById('gsc-property').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.querySelector('#history-table tbody').addEventListener('click', async (e) => {
+    const btn = e.target.closest('.history-delete');
+    if (!btn) return;
+    if (!confirm('Delete this history entry?')) return;
+    const endpoint = btn.dataset.source === 'manual' ? 'manual-score' : 'audit-run';
+    await fetch(`/api/clients/${encodeURIComponent(slug)}/${endpoint}/${btn.dataset.id}`, { method: 'DELETE' });
+    load();
   });
 
   document.getElementById('manual-submit').addEventListener('click', async () => {

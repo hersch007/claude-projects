@@ -59,7 +59,7 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 | **Performance / Core Web Vitals** | Ubersuggest Site Audit speed section | Google PageSpeed Insights API (free) | Per-page or homepage-only for v1 |
 | **On-page SEO checker (single URL)** | Ubersuggest On-Page SEO Analyzer | Own crawler, single-page mode | Title/meta length checks, keyword-in-title/H1 check, readability, internal link count |
 | **Rank / search visibility tracking** | Ubersuggest/Moz rank tracker | Google Search Console API (already integrated via `gsc.js`) | Real position/impressions/clicks/CTR per query. Only 6 of 15 current clients have `gsc_property` configured today (ariandava, cfb, fruth, grouprb, root-and-grow, techousecorp) — **decision: ship with partial coverage**, dashboard shows "no data" gracefully for the rest, add clients as GSC access is obtained |
-| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; deferred to Phase 2. **GroupRB MCC account (169-720-1017) exists** — remaining prerequisite is Google Ads API/developer token approval, not account setup |
+| **Keyword research / ideas** | Ubersuggest keyword tool, Moz Keyword Explorer | Google Ads Keyword Planner API (free, no ad spend required) | Real search volume; Phase 2. **GroupRB MCC account (169-720-1017)** used to authorize OAuth; API access is Explorer-tier on "GroupRB SEO Software Project" — see §10a |
 | **E-E-A-T / local SEO signals** | Not a direct competitor feature, but core to your current audit template | Own crawler + manual checklist | Carry forward the existing 11-section rubric's E-E-A-T and Local sections |
 | **SEO Health Score** | Ubersuggest/SEObility overall score | Computed from the above | Reuse and codify the existing 100-point rubric (§3 table) instead of ad hoc scoring |
 | **Client dashboard** | Moz/SEObility "Campaigns" list | Own DB | List of clients, latest score, trend sparkline, last-crawled date |
@@ -70,7 +70,7 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
 ## 7. Deferred / Phase 2+ candidates
 
 - Keyword Planner API integration — GroupRB MCC account (169-720-1017) exists;
-  **needs Google Ads API access + developer token approval** before this can start.
+  Explorer-tier API access approved on "GroupRB SEO Software Project" — see §10a.
 - Scheduled/automatic re-crawls (e.g. weekly) with email/Slack summary of score changes.
 - Competitor comparison (crawl a client-named competitor URL side by side) — fully
   achievable on free sources, just not in v1 scope.
@@ -124,10 +124,11 @@ client reports, aiming for feature parity with **Ubersuggest**, **SEObility**, a
    launches for the clients that already have it; the rest show "no data" until
    access is set up, added incrementally rather than blocking launch.
 2. **Google Ads Keyword Planner access** — resolved: **GroupRB has an existing
-   MCC (manager) account, ID 169-720-1017**, which can be used for Keyword
-   Planner API access. Remaining prerequisite before Phase 2: confirm/enable
-   Google Ads API access under this MCC and obtain a developer token (Google's
-   API approval process, not just a config change) — see §12.
+   MCC (manager) account, ID 169-720-1017**, used to authorize OAuth for
+   Keyword Planner API access. Explorer-tier access approved on the "GroupRB
+   SEO Software Project" Cloud project (2026-09-15) — no developer token is
+   needed (Google sunset developer tokens API-wide on 2026-09-09; access is
+   now tied to the Cloud project behind the OAuth credentials) — see §10a.
 3. **Hosting** — resolved: **small hosted server**, not local-only. Team needs
    to reach the dashboard and trigger audits from anywhere; background crawl
    jobs shouldn't depend on a machine staying powered on. This raises the bar
@@ -168,9 +169,20 @@ lost between sessions:
   clients queried periodically. Revisit only if quota is actually hit.
 - Note for later: the Google Ads UI's own "API Center" page (Tools & Settings)
   is now scoped only to the unrelated App Conversion Tracking and Remarketing
-  API — don't look there for Google Ads API access/developer token again;
-  it's managed entirely from Cloud Console → APIs & Services → Google Ads API
-  → Access levels, as confirmed above.
+  API — don't look there for Google Ads API access again; it's managed
+  entirely from Cloud Console → APIs & Services → Google Ads API → Access
+  levels, as confirmed above.
+- [x] **Developer tokens confirmed unnecessary** (2026-09-15): Google sunset
+  developer tokens API-wide on 2026-09-09 (docs:
+  developers.google.com/google-ads/api/docs/first-call/dev-token). API access
+  levels are now tied to the Cloud project that owns the OAuth credentials
+  used in each call — "GroupRB SEO Software Project" already has Explorer
+  access, so no separate token/application step remains.
+  `keyword-planner.js` was updated to stop requiring
+  `GOOGLE_ADS_DEVELOPER_TOKEN` (the `google-ads-api` npm client still wants a
+  non-empty string for that field client-side, but the API server ignores
+  it). Remaining step: run `node ads-auth.js` once locally to produce
+  `ads-token.json`, authorizing the `adwords` scope.
 
 ## 11. Proposed Phases
 
@@ -199,6 +211,15 @@ lost between sessions:
 4. ~~Design doc for Phase 1~~ — **done, see `PHASE1-DESIGN.md`** (auth,
    Postgres schema, engine storage-adapter plan, migration script scope, and
    a flagged gap on the Prospect report needing LLM integration).
-5. **Next up:** build Phase 1 against `PHASE1-DESIGN.md`'s definition of
-   done (§10) — starting with auth, since the Phase 0 app is currently
-   public with no login.
+5. ~~Build Phase 1~~ — **done, see `PHASE1-DESIGN.md` §10.** All 7 criteria
+   met: auth, multi-client dashboard, Postgres-backed history, migration
+   (15 clients, 26 history rows, 7 keyword snapshots), live audits with
+   correct provider branding, and Master report Word export. Merged to
+   `main` via [PR #8](https://github.com/hersch007/claude-projects/pull/8).
+6. ~~Design doc for Phase 2~~ — **done, see `PHASE2-DESIGN.md`** (Keyword
+   Planner enrichment scope, Render Cron Job for weekly re-crawls since the
+   free web service sleeps when idle, Resend for email alerts, a
+   3-point score-drop threshold as a starting default).
+7. **Next up:** build Phase 2 against `PHASE2-DESIGN.md`'s definition of
+   done (§6) — likely starting with the Google Ads OAuth setup, since that
+   mirrors work already done for GSC and unblocks the keyword-volume piece.
