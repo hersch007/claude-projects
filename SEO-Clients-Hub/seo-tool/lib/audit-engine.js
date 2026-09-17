@@ -56,9 +56,35 @@ async function fetchPage(url) {
     const res = await fetch(url, { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
     if (!res.ok) return { url, error: `HTTP ${res.status}` };
     const html = await res.text();
-    return { url, html, status: res.status };
+    return { url, html, status: res.status, contentEncoding: res.headers.get('content-encoding') || '' };
   } catch (e) {
     return { url, error: e.message };
+  }
+}
+
+// Minimal robots.txt parser — only "Disallow:" prefix rules under
+// "User-agent: *" (the common case for these small business sites), no
+// "Allow:" override handling. Good enough to catch the real failure mode
+// we care about (a page fully built but accidentally blocked from
+// crawling), not meant to be a spec-complete robots.txt implementation.
+async function fetchDisallowedPrefixes(baseUrl) {
+  try {
+    const res = await fetch(`${baseUrl}/robots.txt`, { headers: BROWSER_HEADERS, timeout: 10000 });
+    if (!res.ok) return [];
+    const text = await res.text();
+    const lines = text.split('\n').map(l => l.trim());
+    let inWildcardBlock = false;
+    const prefixes = [];
+    for (const line of lines) {
+      const [rawKey, ...rest] = line.split(':');
+      const key = (rawKey || '').trim().toLowerCase();
+      const value = rest.join(':').trim();
+      if (key === 'user-agent') inWildcardBlock = (value === '*');
+      else if (key === 'disallow' && inWildcardBlock && value) prefixes.push(value);
+    }
+    return prefixes;
+  } catch {
+    return [];
   }
 }
 
@@ -101,12 +127,12 @@ function findDuplicateGroups(pages, field) {
 
 // Annotates affected pages' `warnings` in place so the page table, Findings
 // cards, and score deductions all agree on which pages have a duplicate
-// title/meta description — same warnings array the per-page checks in
+// title/meta description/H1 — same warnings array the per-page checks in
 // analyzePage() already populate, just filled in after the fact once every
 // page has been crawled.
 function annotateDuplicates(results) {
   const pages = results.filter(r => !r.error);
-  for (const [field, label] of [['title', 'title tag'], ['metaDesc', 'meta description']]) {
+  for (const [field, label] of [['title', 'title tag'], ['metaDesc', 'meta description'], ['h1', 'H1 tag']]) {
     for (const group of findDuplicateGroups(pages, field)) {
       for (const url of group) {
         const page = pages.find(p => p.url === url);
@@ -138,6 +164,8 @@ function calcScore(results, { hasSitemap = true } = {}) {
   const missingAlt = pages.filter(p => p.imagesNoAlt > 0).length;
   const badTitleLength = pages.filter(p => p.title && (p.titleLen < 30 || p.titleLen > 65)).length;
   const multipleH1 = pages.filter(p => p.h1Count > 1).length;
+  const noindexed = pages.filter(p => p.issues.includes('Meta robots tag set to noindex')).length;
+  const robotsBlocked = pages.filter(p => p.issues.includes('Blocked by robots.txt')).length;
   const totalPages = pages.length;
 
   const deduct = (pts, label) => { score -= pts; docked.push({ pts, label }); };
@@ -151,6 +179,10 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (noSchema) deduct(Math.min(15, Math.round((noSchema / totalPages) * 15)), `${noSchema} page(s) missing schema`);
   if (noCanonical) deduct(Math.min(8, Math.round((noCanonical / totalPages) * 8)), `${noCanonical} page(s) missing canonical`);
   if (missingAlt) deduct(Math.min(10, Math.round((missingAlt / totalPages) * 10)), `${missingAlt} page(s) have images without alt`);
+  // A page can pass every check above and still never show up in search —
+  // weighted as heavily as a missing title for exactly that reason.
+  if (noindexed) deduct(Math.min(25, Math.round((noindexed / totalPages) * 25)), `${noindexed} page(s) set to noindex (excluded from search results)`);
+  if (robotsBlocked) deduct(Math.min(15, Math.round((robotsBlocked / totalPages) * 15)), `${robotsBlocked} page(s) blocked by robots.txt`);
 
   // A page can have a present-but-wrong title/H1 (too short, too long, duplicated) —
   // that's not "missing" so it wouldn't be caught above, but it's still a real quality problem.
@@ -166,11 +198,26 @@ function calcScore(results, { hasSitemap = true } = {}) {
   // already have been annotated via annotateDuplicates().
   const duplicateTitlePages = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag'))).length;
   const duplicateMetaPages = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description'))).length;
+  const duplicateH1Pages = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate H1 tag'))).length;
   if (duplicateTitlePages) deduct(Math.min(10, Math.round((duplicateTitlePages / totalPages) * 10)), `${duplicateTitlePages} page(s) with a duplicate title tag`);
   if (duplicateMetaPages) deduct(Math.min(8, Math.round((duplicateMetaPages / totalPages) * 8)), `${duplicateMetaPages} page(s) with a duplicate meta description`);
+  if (duplicateH1Pages) deduct(Math.min(8, Math.round((duplicateH1Pages / totalPages) * 8)), `${duplicateH1Pages} page(s) with a duplicate H1 tag`);
+
+  // Mobile-friendliness / accessibility / performance basics — real
+  // ranking-adjacent signals, but each one alone is minor, so weighted
+  // lightly relative to the critical/duplicate checks above.
+  const missingViewport = pages.filter(p => p.warnings.includes('Missing viewport meta tag')).length;
+  const missingLang = pages.filter(p => p.warnings.includes('Missing html lang attribute')).length;
+  const missingCompression = pages.filter(p => p.warnings.some(w => w.startsWith('No HTTP compression'))).length;
+  if (missingViewport) deduct(Math.min(8, Math.round((missingViewport / totalPages) * 8)), `${missingViewport} page(s) missing a viewport meta tag`);
+  if (missingLang) deduct(Math.min(4, Math.round((missingLang / totalPages) * 4)), `${missingLang} page(s) missing an html lang attribute`);
+  if (missingCompression) deduct(Math.min(6, Math.round((missingCompression / totalPages) * 6)), `${missingCompression} page(s) served without HTTP compression`);
 
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
-  const scoredWarningPatterns = [/^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/];
+  const scoredWarningPatterns = [
+    /^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/,
+    /^Duplicate H1 tag/, /^Missing viewport meta tag/, /^Missing html lang attribute/, /^No HTTP compression/,
+  ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
     const remaining = p.warnings.filter(w => !scoredWarningPatterns.some(re => re.test(w)));
@@ -195,6 +242,8 @@ const ISSUE_LABELS = {
   'Missing title tag': { label: 'Page is missing a title tag', why: 'Google uses the title tag as the clickable headline in search results. Without one, Google will generate its own — often poorly.', priority: 'critical' },
   'No H1 tag found': { label: 'Page has no main heading (H1)', why: 'The H1 tells search engines what the page is about. Every page should have exactly one.', priority: 'critical' },
   'Missing meta description': { label: 'Missing meta description', why: 'Meta descriptions appear as the summary text in search results. Missing ones lead to lower click-through rates.', priority: 'high' },
+  'Meta robots tag set to noindex': { label: 'Page is set to noindex', why: 'This tells Google not to show the page in search results at all — usually leftover from a staging environment. Every other SEO improvement on this page is wasted until this is removed.', priority: 'critical' },
+  'Blocked by robots.txt': { label: 'Page is blocked by robots.txt', why: 'robots.txt is telling search engines not to crawl this page at all, so it can\'t be indexed regardless of how well-built the page itself is.', priority: 'critical' },
 };
 
 const WARN_LABELS = {
@@ -213,6 +262,10 @@ function friendlyIssue(text) {
   if (text.match(/Low word count/i)) return { label: text, why: 'Pages with very little content are harder for Google to rank.', priority: 'medium' };
   if (text.match(/Duplicate title tag/i)) return { label: text, why: 'Google can\'t tell duplicate-titled pages apart, which hurts both pages\' ability to rank for their intended keywords.', priority: 'medium' };
   if (text.match(/Duplicate meta description/i)) return { label: text, why: 'Search results for these pages will show the same snippet, making it harder for users to tell them apart and choose the right one.', priority: 'medium' };
+  if (text.match(/Duplicate H1 tag/i)) return { label: text, why: 'Reusing the same main heading across pages dilutes the topical signal Google uses to tell them apart.', priority: 'medium' };
+  if (text.match(/Missing viewport meta tag/i)) return { label: text, why: 'Without a viewport tag, mobile browsers may render the page at desktop width, hurting mobile usability and rankings.', priority: 'medium' };
+  if (text.match(/Missing html lang attribute/i)) return { label: text, why: 'The lang attribute tells search engines and screen readers what language the page is in — a basic accessibility and SEO signal.', priority: 'low' };
+  if (text.match(/No HTTP compression/i)) return { label: text, why: 'Serving pages without gzip/br compression means slower load times than necessary, which affects both user experience and Core Web Vitals.', priority: 'low' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -281,7 +334,18 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const multiH1 = pages.filter(p => p.h1Count > 1).length;
   const duplicateTitle = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag'))).length;
   const duplicateMeta = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description'))).length;
+  const duplicateH1 = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate H1 tag'))).length;
+  const noindexed = pages.filter(p => p.issues.includes('Meta robots tag set to noindex')).length;
+  const robotsBlocked = pages.filter(p => p.issues.includes('Blocked by robots.txt')).length;
+  const missingViewport = pages.filter(p => p.warnings.includes('Missing viewport meta tag')).length;
+  const missingLang = pages.filter(p => p.warnings.includes('Missing html lang attribute')).length;
+  const missingCompression = pages.filter(p => p.warnings.some(w => w.startsWith('No HTTP compression'))).length;
 
+  // critical: true always sorts these to the very top, ahead of effort/
+  // impact — a page that can't be indexed at all outranks every other win
+  // on this list regardless of how many pages the others affect.
+  if (noindexed) wins.push({ effort: 'Low', impact: 'High', critical: true, pages: noindexed, action: `Remove noindex from ${noindexed} page${noindexed > 1 ? 's' : ''}`, detail: 'These pages are set to noindex, so Google won\'t show them in search results at all — usually leftover from a staging environment. This is a one-line fix per page.' });
+  if (robotsBlocked) wins.push({ effort: 'Low', impact: 'High', critical: true, pages: robotsBlocked, action: `Un-block ${robotsBlocked} page${robotsBlocked > 1 ? 's' : ''} in robots.txt`, detail: 'robots.txt is currently telling search engines not to crawl these pages at all, regardless of how well-built the pages themselves are.' });
   if (noCanonical) wins.push({ effort: 'Low', impact: 'Medium', pages: noCanonical, action: `Add canonical tags to ${noCanonical} page${noCanonical > 1 ? 's' : ''}`, detail: 'Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.' });
   if (emptyAlt) wins.push({ effort: 'Low', impact: 'Medium', pages: emptyAlt, action: `Fill in empty image alt text on ${emptyAlt} page${emptyAlt > 1 ? 's' : ''}`, detail: 'Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.' });
   if (shortTitle || longTitle) { const n = shortTitle + longTitle; wins.push({ effort: 'Low', impact: 'High', pages: n, action: `Optimize title tag length on ${n} page${n > 1 ? 's' : ''}`, detail: `${shortTitle ? shortTitle + ' titles are under 30 characters (missing keyword opportunities). ' : ''}${longTitle ? longTitle + ' titles exceed 65 characters and will be cut off in search results.' : ''}` }); }
@@ -291,11 +355,15 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (lowWord) wins.push({ effort: 'High', impact: 'High', pages: lowWord, action: `Expand thin content on ${lowWord} page${lowWord > 1 ? 's' : ''}`, detail: 'Pages under 150 words give Google very little to rank. Adding descriptive copy, FAQs, or specifications strengthens these pages significantly.' });
   if (duplicateTitle) wins.push({ effort: 'Low', impact: 'High', pages: duplicateTitle, action: `Write unique title tags for ${duplicateTitle} page${duplicateTitle > 1 ? 's' : ''}`, detail: 'These pages currently share an identical title tag with another page, so Google can\'t tell them apart in search results.' });
   if (duplicateMeta) wins.push({ effort: 'Low', impact: 'Medium', pages: duplicateMeta, action: `Write unique meta descriptions for ${duplicateMeta} page${duplicateMeta > 1 ? 's' : ''}`, detail: 'These pages currently share an identical meta description with another page, producing duplicate-looking search snippets.' });
+  if (duplicateH1) wins.push({ effort: 'Low', impact: 'Medium', pages: duplicateH1, action: `Write unique H1 headings for ${duplicateH1} page${duplicateH1 > 1 ? 's' : ''}`, detail: 'These pages currently share an identical main heading with another page, diluting the topic signal for both.' });
+  if (missingViewport) wins.push({ effort: 'Low', impact: 'Medium', pages: missingViewport, action: `Add a viewport meta tag to ${missingViewport} page${missingViewport > 1 ? 's' : ''}`, detail: 'Without this tag, mobile browsers may render the page at desktop width, hurting mobile usability and rankings.' });
+  if (missingLang) wins.push({ effort: 'Low', impact: 'Low', pages: missingLang, action: `Add an html lang attribute to ${missingLang} page${missingLang > 1 ? 's' : ''}`, detail: 'A one-line fix that tells search engines and screen readers what language the page is in.' });
+  if (missingCompression) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingCompression, action: `Enable HTTP compression on ${missingCompression} page${missingCompression > 1 ? 's' : ''}`, detail: 'Serving pages without gzip/br compression means slower load times than necessary — usually a one-time hosting/server config change.' });
   if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
 
-  // Sort: low effort first, then by pages affected
+  // Sort: critical (unindexable pages) first, then low effort first, then by pages affected
   const effortOrder = { Low: 0, Medium: 1, High: 2 };
-  wins.sort((a, b) => effortOrder[a.effort] - effortOrder[b.effort] || b.pages - a.pages);
+  wins.sort((a, b) => (b.critical ? 1 : 0) - (a.critical ? 1 : 0) || effortOrder[a.effort] - effortOrder[b.effort] || b.pages - a.pages);
 
   return wins.slice(0, 5);
 }
@@ -363,10 +431,22 @@ function createEngine(client) {
     return IGNORE.some(p => url.includes(p));
   }
 
-  function analyzePage(url, html) {
+  function analyzePage(url, html, contentEncoding = '') {
     const $ = cheerio.load(html);
     const issues = [];
     const warnings = [];
+
+    // Meta robots noindex — checked first and treated as critical: a page
+    // can pass every other check here and still never appear in search if
+    // this is set, usually left over from a staging environment.
+    const robotsMeta = ($('meta[name="robots"]').attr('content') || '').toLowerCase();
+    if (robotsMeta.includes('noindex')) issues.push('Meta robots tag set to noindex');
+
+    // Mobile-friendliness / accessibility basics — cheap to check since the
+    // page is already parsed, and both are checks Ubersuggest/SEObility run.
+    if (!$('meta[name="viewport"]').attr('content')) warnings.push('Missing viewport meta tag');
+    if (!$('html').attr('lang')) warnings.push('Missing html lang attribute');
+    if (!contentEncoding) warnings.push('No HTTP compression (gzip/br) on this page');
 
     // Title
     const title = $('title').first().text().trim();
@@ -504,6 +584,9 @@ function createEngine(client) {
     console.log(`\nAuditing: ${client.name} (${BASE_URL})`);
     console.log(`Max pages: ${MAX_PAGES}\n`);
 
+    // Kicked off alongside the sitemap fetch (both are one-time, cheap
+    // requests) rather than sequentially, to avoid adding to crawl time.
+    const disallowedPrefixesPromise = fetchDisallowedPrefixes(BASE_URL);
     const hasSitemap = await seedFromSitemap();
 
     let count = 0;
@@ -515,7 +598,7 @@ function createEngine(client) {
 
       process.stdout.write(`[${count + 1}] ${normalized.replace(BASE_URL, '')} ... `);
 
-      const { html, error } = await fetchPage(normalized);
+      const { html, error, contentEncoding } = await fetchPage(normalized);
       if (error) {
         console.log(`ERROR: ${error}`);
         results.push({ url: normalized, error });
@@ -524,7 +607,7 @@ function createEngine(client) {
         continue;
       }
 
-      const data = analyzePage(normalized, html);
+      const data = analyzePage(normalized, html, contentEncoding);
       results.push(data);
 
       const issueCount = data.issues.length;
@@ -540,6 +623,21 @@ function createEngine(client) {
       count++;
       if (onProgress) onProgress({ pagesCrawled: count, totalQueued: queue.length + count, currentUrl: normalized, issueCount, warnCount });
       await new Promise(r => setTimeout(r, 300)); // polite crawl
+    }
+
+    // A page can be perfectly built and still never get indexed if
+    // robots.txt disallows its path — can only be checked after the full
+    // crawl (fetchDisallowedPrefixes) is done, same as the cross-page
+    // duplicate checks in annotateDuplicates().
+    const disallowedPrefixes = await disallowedPrefixesPromise;
+    if (disallowedPrefixes.length) {
+      for (const page of results) {
+        if (page.error) continue;
+        const path = page.url.replace(BASE_URL, '') || '/';
+        if (disallowedPrefixes.some(prefix => path.startsWith(prefix))) {
+          page.issues.push('Blocked by robots.txt');
+        }
+      }
     }
 
     console.log(`\nCrawled ${results.length} pages.`);
@@ -574,6 +672,12 @@ function createEngine(client) {
     const multipleH1Pgs = pages.filter(p => p.h1Count > 1);
     const duplicateTitlePgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag')));
     const duplicateMetaPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description')));
+    const duplicateH1Pgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate H1 tag')));
+    const noindexedPgs = pages.filter(p => p.issues.includes('Meta robots tag set to noindex'));
+    const robotsBlockedPgs = pages.filter(p => p.issues.includes('Blocked by robots.txt'));
+    const missingViewportPgs = pages.filter(p => p.warnings.includes('Missing viewport meta tag'));
+    const missingLangPgs = pages.filter(p => p.warnings.includes('Missing html lang attribute'));
+    const missingCompressionPgs = pages.filter(p => p.warnings.some(w => w.startsWith('No HTTP compression')));
 
     function priorityBadge(p) {
       if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -897,6 +1001,30 @@ function createEngine(client) {
       <div class="snap-label">Sitemap.xml Found</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${duplicateH1Pgs.length === 0 ? 'good' : 'warn'}">${duplicateH1Pgs.length}</div>
+      <div class="snap-label">Duplicate H1 Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${noindexedPgs.length === 0 ? 'good' : 'bad'}">${noindexedPgs.length}</div>
+      <div class="snap-label">Pages Set to Noindex</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${robotsBlockedPgs.length === 0 ? 'good' : 'bad'}">${robotsBlockedPgs.length}</div>
+      <div class="snap-label">Blocked by robots.txt</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${missingViewportPgs.length === 0 ? 'good' : 'warn'}">${missingViewportPgs.length}</div>
+      <div class="snap-label">Missing Viewport Tag</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${missingLangPgs.length === 0 ? 'good' : 'warn'}">${missingLangPgs.length}</div>
+      <div class="snap-label">Missing HTML Lang</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${missingCompressionPgs.length === 0 ? 'good' : 'warn'}">${missingCompressionPgs.length}</div>
+      <div class="snap-label">No HTTP Compression</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num good">${healthyPages.length}</div>
       <div class="snap-label">Fully Healthy Pages</div>
     </div>
@@ -1048,12 +1176,18 @@ function createEngine(client) {
       ${noTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a title tag</span><span class="sr-val bad">${noTitlePgs.length} page${noTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noMetaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a meta description</span><span class="sr-val bad">${noMetaPgs.length} page${noMetaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noH1Pgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing an H1 heading</span><span class="sr-val bad">${noH1Pgs.length} page${noH1Pgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${noindexedPgs.length ? `<div class="summary-row"><span class="sr-label">Pages set to noindex (excluded from search)</span><span class="sr-val bad">${noindexedPgs.length} page${noindexedPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${robotsBlockedPgs.length ? `<div class="summary-row"><span class="sr-label">Pages blocked by robots.txt</span><span class="sr-val bad">${robotsBlockedPgs.length} page${robotsBlockedPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${multipleH1Pgs.length ? `<div class="summary-row"><span class="sr-label">Pages with more than one H1 heading</span><span class="sr-val warn">${multipleH1Pgs.length} page${multipleH1Pgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${badTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a title tag outside the ideal 30&ndash;65 character range</span><span class="sr-val warn">${badTitlePgs.length} page${badTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${noSchemaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages without structured data (schema)</span><span class="sr-val warn">${noSchemaPgs.length} page${noSchemaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingAltPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with images missing alt text</span><span class="sr-val warn">${missingAltPgs.length} page${missingAltPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${duplicateTitlePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a duplicate title tag</span><span class="sr-val warn">${duplicateTitlePgs.length} page${duplicateTitlePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${duplicateMetaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a duplicate meta description</span><span class="sr-val warn">${duplicateMetaPgs.length} page${duplicateMetaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${duplicateH1Pgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a duplicate H1 tag</span><span class="sr-val warn">${duplicateH1Pgs.length} page${duplicateH1Pgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingViewportPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a viewport meta tag</span><span class="sr-val warn">${missingViewportPgs.length} page${missingViewportPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingLangPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing an html lang attribute</span><span class="sr-val warn">${missingLangPgs.length} page${missingLangPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingCompressionPgs.length ? `<div class="summary-row"><span class="sr-label">Pages served without HTTP compression</span><span class="sr-val warn">${missingCompressionPgs.length} page${missingCompressionPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
         <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
