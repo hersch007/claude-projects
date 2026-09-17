@@ -213,10 +213,39 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (missingLang) deduct(Math.min(4, Math.round((missingLang / totalPages) * 4)), `${missingLang} page(s) missing an html lang attribute`);
   if (missingCompression) deduct(Math.min(6, Math.round((missingCompression / totalPages) * 6)), `${missingCompression} page(s) served without HTTP compression`);
 
+  // Markup/link integrity — a page can be structurally fine but still have
+  // broken or malformed pieces that hurt trust or indexing.
+  const multipleTitleTags = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple title tags'))).length;
+  const multipleMetaTags = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple meta description tags'))).length;
+  const invalidSchemaPages = pages.filter(p => p.issues.some(i => i.includes('invalid (malformed) JSON-LD'))).length;
+  const mixedContentPages = pages.filter(p => p.issues.some(i => i.includes('mixed-content resource'))).length;
+  const brokenLinkPages = pages.filter(p => p.issues.some(i => i.startsWith('Links to') && i.includes('broken internal'))).length;
+  const missingImageDimensionPages = pages.filter(p => p.warnings.some(w => w.includes('missing width/height attributes'))).length;
+  if (multipleTitleTags) deduct(Math.min(6, Math.round((multipleTitleTags / totalPages) * 6)), `${multipleTitleTags} page(s) with multiple title tags`);
+  if (multipleMetaTags) deduct(Math.min(5, Math.round((multipleMetaTags / totalPages) * 5)), `${multipleMetaTags} page(s) with multiple meta description tags`);
+  if (invalidSchemaPages) deduct(Math.min(6, Math.round((invalidSchemaPages / totalPages) * 6)), `${invalidSchemaPages} page(s) with invalid (malformed) schema markup`);
+  if (mixedContentPages) deduct(Math.min(8, Math.round((mixedContentPages / totalPages) * 8)), `${mixedContentPages} page(s) with mixed-content (http://) resources`);
+  if (brokenLinkPages) deduct(Math.min(10, Math.round((brokenLinkPages / totalPages) * 10)), `${brokenLinkPages} page(s) link to a broken internal page`);
+  if (missingImageDimensionPages) deduct(Math.min(6, Math.round((missingImageDimensionPages / totalPages) * 6)), `${missingImageDimensionPages} page(s) have images missing width/height attributes`);
+
+  // Minor completeness checks — each individually low-severity, but kept
+  // as their own itemized deductions (rather than melting into the
+  // generic catch-all bucket below) for the same transparency every other
+  // check on this list gets: a client should be able to see exactly what
+  // "88/100" is made of, not a vague "other issues" bucket.
+  const missingOgTags = pages.filter(p => p.warnings.some(w => w.startsWith('Missing Open Graph tags'))).length;
+  const missingCharset = pages.filter(p => p.warnings.includes('Missing character encoding declaration')).length;
+  const missingDoctype = pages.filter(p => p.warnings.includes('Missing doctype declaration')).length;
+  if (missingOgTags) deduct(Math.min(4, Math.round((missingOgTags / totalPages) * 4)), `${missingOgTags} page(s) missing Open Graph tags`);
+  if (missingCharset) deduct(Math.min(3, Math.round((missingCharset / totalPages) * 3)), `${missingCharset} page(s) missing a character encoding declaration`);
+  if (missingDoctype) deduct(Math.min(2, Math.round((missingDoctype / totalPages) * 2)), `${missingDoctype} page(s) missing a doctype declaration`);
+
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
   const scoredWarningPatterns = [
     /^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/,
     /^Duplicate H1 tag/, /^Missing viewport meta tag/, /^Missing html lang attribute/, /^No HTTP compression/,
+    /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
+    /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -266,6 +295,15 @@ function friendlyIssue(text) {
   if (text.match(/Missing viewport meta tag/i)) return { label: text, why: 'Without a viewport tag, mobile browsers may render the page at desktop width, hurting mobile usability and rankings.', priority: 'medium' };
   if (text.match(/Missing html lang attribute/i)) return { label: text, why: 'The lang attribute tells search engines and screen readers what language the page is in — a basic accessibility and SEO signal.', priority: 'low' };
   if (text.match(/No HTTP compression/i)) return { label: text, why: 'Serving pages without gzip/br compression means slower load times than necessary, which affects both user experience and Core Web Vitals.', priority: 'low' };
+  if (text.match(/Multiple title tags/i)) return { label: text, why: 'Browsers and Google will only use one of these title tags, and it\'s unpredictable which — this should be a single, deliberate title.', priority: 'medium' };
+  if (text.match(/Multiple meta description tags/i)) return { label: text, why: 'Only one meta description will actually be used in search results, and it may not be the one intended.', priority: 'medium' };
+  if (text.match(/invalid \(malformed\) JSON-LD/i)) return { label: text, why: 'Malformed schema markup is ignored by Google entirely — it provides none of the benefit of valid structured data.', priority: 'medium' };
+  if (text.match(/mixed-content resource/i)) return { label: text, why: 'Browsers block or warn on http:// resources loaded on an https:// page, which can visibly break the page or trigger a security warning.', priority: 'high' };
+  if (text.match(/Links to \d+ broken internal/i)) return { label: text, why: 'A link on this page points to a page that no longer exists, creating a dead end for visitors and search engines.', priority: 'high' };
+  if (text.match(/missing width\/height attributes/i)) return { label: text, why: 'Without explicit dimensions, the browser doesn\'t know how much space to reserve for the image, causing content to jump around as it loads (a Core Web Vitals penalty).', priority: 'medium' };
+  if (text.match(/Missing Open Graph tags/i)) return { label: text, why: 'Without these tags, links to this page shared on social media or messaging apps show a generic or broken preview instead of a proper title/image.', priority: 'low' };
+  if (text.match(/Missing character encoding declaration/i)) return { label: text, why: 'Without a declared character encoding, special characters can render incorrectly in some browsers.', priority: 'low' };
+  if (text.match(/Missing doctype declaration/i)) return { label: text, why: 'Without a doctype, browsers may render the page in a legacy "quirks mode" with inconsistent behavior.', priority: 'low' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -340,12 +378,19 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const missingViewport = pages.filter(p => p.warnings.includes('Missing viewport meta tag')).length;
   const missingLang = pages.filter(p => p.warnings.includes('Missing html lang attribute')).length;
   const missingCompression = pages.filter(p => p.warnings.some(w => w.startsWith('No HTTP compression'))).length;
+  const multipleTitleTags = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple title tags'))).length;
+  const multipleMetaTags = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple meta description tags'))).length;
+  const invalidSchema = pages.filter(p => p.issues.some(i => i.includes('invalid (malformed) JSON-LD'))).length;
+  const mixedContent = pages.filter(p => p.issues.some(i => i.includes('mixed-content resource'))).length;
+  const brokenLinks = pages.filter(p => p.issues.some(i => i.startsWith('Links to') && i.includes('broken internal'))).length;
+  const missingImageDimensions = pages.filter(p => p.warnings.some(w => w.includes('missing width/height attributes'))).length;
 
   // critical: true always sorts these to the very top, ahead of effort/
   // impact — a page that can't be indexed at all outranks every other win
   // on this list regardless of how many pages the others affect.
   if (noindexed) wins.push({ effort: 'Low', impact: 'High', critical: true, pages: noindexed, action: `Remove noindex from ${noindexed} page${noindexed > 1 ? 's' : ''}`, detail: 'These pages are set to noindex, so Google won\'t show them in search results at all — usually leftover from a staging environment. This is a one-line fix per page.' });
   if (robotsBlocked) wins.push({ effort: 'Low', impact: 'High', critical: true, pages: robotsBlocked, action: `Un-block ${robotsBlocked} page${robotsBlocked > 1 ? 's' : ''} in robots.txt`, detail: 'robots.txt is currently telling search engines not to crawl these pages at all, regardless of how well-built the pages themselves are.' });
+  if (mixedContent) wins.push({ effort: 'Low', impact: 'High', critical: true, pages: mixedContent, action: `Fix mixed-content resources on ${mixedContent} page${mixedContent > 1 ? 's' : ''}`, detail: 'These pages load http:// resources on an https:// page, which browsers actively block or warn about — usually just needs the resource URL switched to https://.' });
   if (noCanonical) wins.push({ effort: 'Low', impact: 'Medium', pages: noCanonical, action: `Add canonical tags to ${noCanonical} page${noCanonical > 1 ? 's' : ''}`, detail: 'Canonical tags are a single line of code. They tell Google which version of a page to index and prevent duplicate content penalties.' });
   if (emptyAlt) wins.push({ effort: 'Low', impact: 'Medium', pages: emptyAlt, action: `Fill in empty image alt text on ${emptyAlt} page${emptyAlt > 1 ? 's' : ''}`, detail: 'Alt text is already in the code but blank. Adding keyword-relevant descriptions takes minutes and improves both accessibility and image search rankings.' });
   if (shortTitle || longTitle) { const n = shortTitle + longTitle; wins.push({ effort: 'Low', impact: 'High', pages: n, action: `Optimize title tag length on ${n} page${n > 1 ? 's' : ''}`, detail: `${shortTitle ? shortTitle + ' titles are under 30 characters (missing keyword opportunities). ' : ''}${longTitle ? longTitle + ' titles exceed 65 characters and will be cut off in search results.' : ''}` }); }
@@ -359,6 +404,10 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (missingViewport) wins.push({ effort: 'Low', impact: 'Medium', pages: missingViewport, action: `Add a viewport meta tag to ${missingViewport} page${missingViewport > 1 ? 's' : ''}`, detail: 'Without this tag, mobile browsers may render the page at desktop width, hurting mobile usability and rankings.' });
   if (missingLang) wins.push({ effort: 'Low', impact: 'Low', pages: missingLang, action: `Add an html lang attribute to ${missingLang} page${missingLang > 1 ? 's' : ''}`, detail: 'A one-line fix that tells search engines and screen readers what language the page is in.' });
   if (missingCompression) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingCompression, action: `Enable HTTP compression on ${missingCompression} page${missingCompression > 1 ? 's' : ''}`, detail: 'Serving pages without gzip/br compression means slower load times than necessary — usually a one-time hosting/server config change.' });
+  if (brokenLinks) wins.push({ effort: 'Medium', impact: 'High', pages: brokenLinks, action: `Fix broken internal links on ${brokenLinks} page${brokenLinks > 1 ? 's' : ''}`, detail: 'These pages link to another page on the site that no longer exists — a dead end for visitors and search engines alike.' });
+  if (invalidSchema) wins.push({ effort: 'Low', impact: 'Medium', pages: invalidSchema, action: `Fix invalid schema markup on ${invalidSchema} page${invalidSchema > 1 ? 's' : ''}`, detail: 'The structured data on these pages is malformed JSON, so Google ignores it entirely — usually a small syntax fix.' });
+  if (multipleTitleTags || multipleMetaTags) { const n = multipleTitleTags + multipleMetaTags; wins.push({ effort: 'Low', impact: 'Medium', pages: n, action: `Remove duplicate title/meta tags on ${n} page${n > 1 ? 's' : ''}`, detail: 'These pages have more than one title or meta description tag — only one is actually used, and it may not be the intended one.' }); }
+  if (missingImageDimensions) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingImageDimensions, action: `Add width/height to images on ${missingImageDimensions} page${missingImageDimensions > 1 ? 's' : ''}`, detail: 'Without explicit dimensions, images cause content to jump around as the page loads — a Core Web Vitals (layout shift) penalty.' });
   if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
 
   // Sort: critical (unindexable pages) first, then low effort first, then by pages affected
@@ -447,20 +496,37 @@ function createEngine(client) {
     if (!$('meta[name="viewport"]').attr('content')) warnings.push('Missing viewport meta tag');
     if (!$('html').attr('lang')) warnings.push('Missing html lang attribute');
     if (!contentEncoding) warnings.push('No HTTP compression (gzip/br) on this page');
+    if (!$('meta[charset]').attr('charset') && !$('meta[http-equiv="Content-Type"]').attr('content')) warnings.push('Missing character encoding declaration');
+    if (!/<!doctype\s+html/i.test(html)) warnings.push('Missing doctype declaration');
 
     // Title
-    const title = $('title').first().text().trim();
+    const titleTags = $('title');
+    const title = titleTags.first().text().trim();
     const titleLen = title.length;
+    if (titleTags.length > 1) warnings.push(`Multiple title tags (${titleTags.length})`);
     if (!title) issues.push('Missing title tag');
     else if (titleLen < 30) warnings.push(`Title too short (${titleLen} chars)`);
     else if (titleLen > 65) warnings.push(`Title too long (${titleLen} chars, aim for 50-65)`);
 
     // Meta description
-    const metaDesc = $('meta[name="description"]').attr('content') || '';
+    const metaDescTags = $('meta[name="description"]');
+    const metaDesc = metaDescTags.first().attr('content') || '';
     const metaLen = metaDesc.trim().length;
+    if (metaDescTags.length > 1) warnings.push(`Multiple meta description tags (${metaDescTags.length})`);
     if (!metaDesc.trim()) issues.push('Missing meta description');
     else if (metaLen < 100) warnings.push(`Meta description short (${metaLen} chars)`);
     else if (metaLen > 165) warnings.push(`Meta description long (${metaLen} chars, aim for 140-160)`);
+
+    // Open Graph — affects how the page looks when shared on social/
+    // messaging apps rather than search rankings directly, but it's a
+    // completeness signal most audit tools check and costs nothing extra
+    // to look for since the <head> is already parsed. Combined into one
+    // warning rather than three, since sites either have the full set or
+    // none of it.
+    const hasFullOpenGraph = $('meta[property="og:title"]').attr('content')
+      && $('meta[property="og:description"]').attr('content')
+      && $('meta[property="og:image"]').attr('content');
+    if (!hasFullOpenGraph) warnings.push('Missing Open Graph tags (social sharing preview)');
 
     // H1
     const h1s = $('h1').map((i, el) => $(el).text().trim()).get();
@@ -483,6 +549,23 @@ function createEngine(client) {
     if (imagesNoAlt.length) issues.push(`${imagesNoAlt.length} image(s) missing alt attribute`);
     if (imagesEmptyAlt.length) warnings.push(`${imagesEmptyAlt.length} image(s) have empty alt text`);
 
+    // Images missing explicit width/height — a real Core Web Vitals (CLS)
+    // risk, checkable for free from the markup alone without needing a
+    // live PageSpeed Insights run.
+    const imagesMissingDimensions = images.filter(img => !$(img).attr('width') || !$(img).attr('height'));
+    if (imagesMissingDimensions.length) warnings.push(`${imagesMissingDimensions.length} image(s) missing width/height attributes`);
+
+    // Mixed content — an http:// resource loaded on an https:// page.
+    // Browsers actively warn/block on this, so it's a real trust and
+    // sometimes functional issue, not just a style nit.
+    let mixedContentCount = 0;
+    if (url.startsWith('https://')) {
+      $('img[src]').each((i, el) => { if (($(el).attr('src') || '').startsWith('http://')) mixedContentCount++; });
+      $('script[src]').each((i, el) => { if (($(el).attr('src') || '').startsWith('http://')) mixedContentCount++; });
+      $('link[rel="stylesheet"][href]').each((i, el) => { if (($(el).attr('href') || '').startsWith('http://')) mixedContentCount++; });
+    }
+    if (mixedContentCount) issues.push(`${mixedContentCount} mixed-content resource(s) (http:// loaded on an https:// page)`);
+
     // Canonical
     const canonical = $('link[rel="canonical"]').attr('href') || '';
     if (!canonical) warnings.push('No canonical tag');
@@ -503,6 +586,12 @@ function createEngine(client) {
       } catch { return 'Invalid JSON-LD'; }
     });
     if (schemas.length === 0) issues.push('No JSON-LD schema found');
+    // A page can have schema present but malformed — that previously never
+    // got flagged at all (schemas.length was non-zero, so the check above
+    // silently passed even though the schema is broken and useless to
+    // Google). Worth catching as its own, separate issue.
+    const invalidSchemaCount = schemaTypes.filter(t => t === 'Invalid JSON-LD').length;
+    if (invalidSchemaCount) issues.push(`${invalidSchemaCount} invalid (malformed) JSON-LD schema block(s)`);
 
     // Word count (body text only)
     $('script, style, nav, footer, header').remove();
@@ -559,6 +648,11 @@ function createEngine(client) {
     const visited = new Set();
     const queue = [BASE_URL + '/'];
     const results = [];
+    // target URL -> Set of page URLs that link to it — lets a 404'd page
+    // be attributed to whichever page(s) actually reference it, instead of
+    // just being counted as "a broken page exists" with no actionable
+    // source. Populated as links are discovered below.
+    const linkSources = new Map();
 
     async function seedFromSitemap() {
       const sitemapUrl = `${BASE_URL}/sitemap.xml`;
@@ -617,6 +711,8 @@ function createEngine(client) {
 
       // Queue new links
       for (const link of data.links) {
+        if (!linkSources.has(link)) linkSources.set(link, new Set());
+        linkSources.get(link).add(normalized);
         if (!visited.has(link)) queue.push(link);
       }
 
@@ -637,6 +733,24 @@ function createEngine(client) {
         if (disallowedPrefixes.some(prefix => path.startsWith(prefix))) {
           page.issues.push('Blocked by robots.txt');
         }
+      }
+    }
+
+    // Attribute broken internal links to whichever page(s) actually link to
+    // them — a raw count of 404'd URLs isn't actionable on its own; knowing
+    // "the /about page links to something broken" is what someone can fix.
+    for (const errored of results.filter(r => r.error)) {
+      const sources = linkSources.get(errored.url);
+      if (!sources) continue;
+      for (const sourceUrl of sources) {
+        const sourcePage = results.find(p => p.url === sourceUrl && !p.error);
+        if (sourcePage) (sourcePage._brokenLinkCount = (sourcePage._brokenLinkCount || 0) + 1);
+      }
+    }
+    for (const page of results) {
+      if (page._brokenLinkCount) {
+        page.issues.push(`Links to ${page._brokenLinkCount} broken internal page${page._brokenLinkCount > 1 ? 's' : ''}`);
+        delete page._brokenLinkCount;
       }
     }
 
@@ -678,6 +792,15 @@ function createEngine(client) {
     const missingViewportPgs = pages.filter(p => p.warnings.includes('Missing viewport meta tag'));
     const missingLangPgs = pages.filter(p => p.warnings.includes('Missing html lang attribute'));
     const missingCompressionPgs = pages.filter(p => p.warnings.some(w => w.startsWith('No HTTP compression')));
+    const multipleTitleTagsPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple title tags')));
+    const multipleMetaTagsPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Multiple meta description tags')));
+    const invalidSchemaPgs = pages.filter(p => p.issues.some(i => i.includes('invalid (malformed) JSON-LD')));
+    const mixedContentPgs = pages.filter(p => p.issues.some(i => i.includes('mixed-content resource')));
+    const brokenLinkPgs = pages.filter(p => p.issues.some(i => i.startsWith('Links to') && i.includes('broken internal')));
+    const missingImageDimensionPgs = pages.filter(p => p.warnings.some(w => w.includes('missing width/height attributes')));
+    const missingOgTagsPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Missing Open Graph tags')));
+    const missingCharsetPgs = pages.filter(p => p.warnings.includes('Missing character encoding declaration'));
+    const missingDoctypePgs = pages.filter(p => p.warnings.includes('Missing doctype declaration'));
 
     function priorityBadge(p) {
       if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -1025,6 +1148,26 @@ function createEngine(client) {
       <div class="snap-label">No HTTP Compression</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${(multipleTitleTagsPgs.length + multipleMetaTagsPgs.length) === 0 ? 'good' : 'warn'}">${multipleTitleTagsPgs.length + multipleMetaTagsPgs.length}</div>
+      <div class="snap-label">Multiple Title/Meta Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${invalidSchemaPgs.length === 0 ? 'good' : 'bad'}">${invalidSchemaPgs.length}</div>
+      <div class="snap-label">Invalid Schema Markup</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${mixedContentPgs.length === 0 ? 'good' : 'bad'}">${mixedContentPgs.length}</div>
+      <div class="snap-label">Mixed-Content Resources</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${brokenLinkPgs.length === 0 ? 'good' : 'bad'}">${brokenLinkPgs.length}</div>
+      <div class="snap-label">Pages w/ Broken Internal Links</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${missingImageDimensionPgs.length === 0 ? 'good' : 'warn'}">${missingImageDimensionPgs.length}</div>
+      <div class="snap-label">Images Missing Dimensions</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num good">${healthyPages.length}</div>
       <div class="snap-label">Fully Healthy Pages</div>
     </div>
@@ -1188,6 +1331,15 @@ function createEngine(client) {
       ${missingViewportPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a viewport meta tag</span><span class="sr-val warn">${missingViewportPgs.length} page${missingViewportPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingLangPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing an html lang attribute</span><span class="sr-val warn">${missingLangPgs.length} page${missingLangPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingCompressionPgs.length ? `<div class="summary-row"><span class="sr-label">Pages served without HTTP compression</span><span class="sr-val warn">${missingCompressionPgs.length} page${missingCompressionPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${mixedContentPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with mixed-content (http://) resources</span><span class="sr-val bad">${mixedContentPgs.length} page${mixedContentPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${brokenLinkPgs.length ? `<div class="summary-row"><span class="sr-label">Pages linking to a broken internal page</span><span class="sr-val bad">${brokenLinkPgs.length} page${brokenLinkPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${invalidSchemaPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with invalid (malformed) schema markup</span><span class="sr-val warn">${invalidSchemaPgs.length} page${invalidSchemaPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${multipleTitleTagsPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with multiple title tags</span><span class="sr-val warn">${multipleTitleTagsPgs.length} page${multipleTitleTagsPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${multipleMetaTagsPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with multiple meta description tags</span><span class="sr-val warn">${multipleMetaTagsPgs.length} page${multipleMetaTagsPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingImageDimensionPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with images missing width/height attributes</span><span class="sr-val warn">${missingImageDimensionPgs.length} page${missingImageDimensionPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingOgTagsPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing Open Graph tags</span><span class="sr-val warn">${missingOgTagsPgs.length} page${missingOgTagsPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingCharsetPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a character encoding declaration</span><span class="sr-val warn">${missingCharsetPgs.length} page${missingCharsetPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingDoctypePgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a doctype declaration</span><span class="sr-val warn">${missingDoctypePgs.length} page${missingDoctypePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
         <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
