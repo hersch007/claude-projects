@@ -180,7 +180,7 @@
           const delta = s.changes.scoreDelta;
           const deltaColor = delta > 0 ? '#16a34a' : delta < 0 ? '#dc2626' : '#64748b';
           const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} pt${Math.abs(delta) === 1 ? '' : 's'}`;
-          const prevDateLabel = new Date(s.changes.previousDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          const prevDateLabel = new Date(s.changes.previousDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
           changesHtml = `<div style="margin-top:6px;font-size:13px;color:${deltaColor};font-weight:600">${deltaText} vs ${prevDateLabel} (was ${s.changes.previousScore})</div>`;
           if (s.changes.newIssues.length) {
             changesHtml += `<div style="font-size:12px;color:#dc2626;margin-top:4px">New: ${s.changes.newIssues.map(d => d.label).join('; ')}</div>`;

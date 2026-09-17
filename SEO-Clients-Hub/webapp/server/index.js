@@ -341,7 +341,12 @@ async function computeChanges(clientId, currentRunDate, currentScore, currentDed
   const currLabels = new Set((currentDeductions || []).map(d => d.label));
   return {
     previousScore: prev.seo_health_score,
-    previousDate: prev.run_date,
+    // Plain "YYYY-MM-DD", not the raw Date object — matches how the
+    // history endpoint above already handles this same pg date-column
+    // gotcha. A raw Date serializes to a full UTC-midnight ISO string,
+    // which then renders as the previous calendar day in any timezone
+    // behind UTC once a client formats it with toLocaleDateString.
+    previousDate: prev.run_date.toISOString().split('T')[0],
     scoreDelta: currentScore - prev.seo_health_score,
     newIssues: (currentDeductions || []).filter(d => !prevLabels.has(d.label)),
     resolvedIssues: (prev.deductions || []).filter(d => !currLabels.has(d.label)),
