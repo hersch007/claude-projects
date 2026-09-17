@@ -67,7 +67,7 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date, narrative }) {
+function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
@@ -115,6 +115,32 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     children.push(new Paragraph({ children: [new TextRun({ text: 'Score deductions:', bold: true })], spacing: { after: 100 } }));
     for (const d of scoreData.deductions) {
       children.push(new Paragraph({ text: `-${d.pts}  ${d.label}`, bullet: { level: 0 } }));
+    }
+  }
+
+  // ── Section: Changes Since Last Audit ──
+  if (changes) {
+    const prevDateLabel = new Date(changes.previousDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const delta = changes.scoreDelta;
+    const deltaColor = delta > 0 ? '16A34A' : delta < 0 ? 'DC2626' : '64748B';
+    const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} point${Math.abs(delta) === 1 ? '' : 's'}`;
+    children.push(
+      sectionHeading('Changes Since Last Audit', brandHex),
+      new Paragraph({
+        children: [new TextRun({ text: `${deltaText} vs ${prevDateLabel} (was ${changes.previousScore}/100)`, bold: true, size: 22, color: deltaColor })],
+        spacing: { after: 200 },
+      }),
+    );
+    if (changes.newIssues.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'New Since Last Audit', bold: true, color: 'DC2626' })], spacing: { after: 80 } }));
+      for (const d of changes.newIssues) children.push(new Paragraph({ text: `-${d.pts}  ${d.label}`, bullet: { level: 0 } }));
+    }
+    if (changes.resolvedIssues.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'Resolved Since Last Audit', bold: true, color: '16A34A' })], spacing: { before: 160, after: 80 } }));
+      for (const d of changes.resolvedIssues) children.push(new Paragraph({ text: d.label, bullet: { level: 0 } }));
+    }
+    if (!changes.newIssues.length && !changes.resolvedIssues.length) {
+      children.push(new Paragraph({ children: [new TextRun({ text: 'No individual issues changed since the last audit.', size: 20, color: '64748B' })] }));
     }
   }
 
