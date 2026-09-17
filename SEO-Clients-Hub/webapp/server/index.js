@@ -14,6 +14,7 @@ const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
+const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -405,7 +406,10 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // than pre-built, since not every run's report gets downloaded as
       // .docx. Not persisted to the DB; only available for a run just
       // completed, same lifecycle as the HTML report.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: result.pageSpeed },
+      // pageSpeed starts null and is filled in later by /docx/prepare below
+      // — a live PSI check has been observed taking 90s+, so it can't run
+      // as part of this already-fast audit completion path.
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: null },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
@@ -464,13 +468,28 @@ app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
   if (run.status !== 'done') return res.status(425).json({ error: 'Report not ready yet' });
 
   run.narrativeStatus = 'generating';
-  generateNarrative(run.docxSource).then((narrative) => {
-    run.narrative = narrative;
-    run.narrativeStatus = narrative ? 'done' : 'error';
-  }).catch((err) => {
-    console.error(`Narrative generation for run ${req.params.runId} failed:`, err);
-    run.narrativeStatus = 'error';
-  });
+  (async () => {
+    // Homepage Core Web Vitals runs first (not concurrently with the
+    // narrative call below) so its result is available in run.docxSource
+    // in time for generateNarrative() to actually see it — narrative-
+    // report.js reads pageSpeed off the object passed to it, and only
+    // mentions it when the rating is genuinely "poor". Same reason it's
+    // not part of /audit/run at all: a live PSI check has been observed
+    // taking 90s+, so it can't run on that already-fast path.
+    try {
+      run.docxSource.pageSpeed = await getCoreWebVitals(run.docxSource.client.url);
+    } catch (err) {
+      console.error(`Core Web Vitals check for run ${req.params.runId} failed:`, err);
+      run.docxSource.pageSpeed = null;
+    }
+    try {
+      run.narrative = await generateNarrative(run.docxSource);
+    } catch (err) {
+      console.error(`Narrative generation for run ${req.params.runId} failed:`, err);
+      run.narrative = null;
+    }
+    run.narrativeStatus = run.narrative ? 'done' : 'error';
+  })();
 
   res.json({ ok: true });
 });
