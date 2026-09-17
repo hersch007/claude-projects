@@ -405,7 +405,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // than pre-built, since not every run's report gets downloaded as
       // .docx. Not persisted to the DB; only available for a run just
       // completed, same lifecycle as the HTML report.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes },
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: result.pageSpeed },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
