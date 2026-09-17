@@ -4,10 +4,11 @@
 // renders or times a page the way a browser would.
 //
 // Deliberately scoped to the homepage only, not every crawled page: a real
-// PSI/Lighthouse run takes 5-15 seconds per URL, so running it against
-// every page of a 60-page site on every weekly audit would make audits
-// impractically slow for very little extra signal — Core Web Vitals are
-// usually a site-wide template/hosting problem, not a page-by-page one,
+// PSI/Lighthouse run against the "mobile" strategy (simulated throttled
+// connection) commonly takes 15-60+ seconds per URL in practice, so running
+// it against every page of a 60-page site on every weekly audit would make
+// audits impractically slow for very little extra signal — Core Web Vitals
+// are usually a site-wide template/hosting problem, not a page-by-page one,
 // and Google's own real-world (CrUX) data is commonly reported at the
 // origin level for smaller sites that don't get enough per-URL traffic to
 // report individually anyway (exactly the case for our client base).
@@ -19,7 +20,12 @@
 const fetch = require('node-fetch');
 
 const API_URL = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
-const TIMEOUT_MS = 30000;
+// 90s, not the API's own theoretical 30s-ish typical runtime — a live run
+// against karenwelchtherapist.com timed out at 30s in practice (mobile
+// strategy's full-throttle simulation is slow), and 90s is the same value
+// already proven to work for this codebase's other slow external API call
+// (narrative-report.js's Claude request).
+const TIMEOUT_MS = 90000;
 
 // Field-level thresholds Google itself uses to label a metric "good" vs
 // "needs improvement" vs "poor" — https://web.dev/articles/defining-core-web-vitals-thresholds
