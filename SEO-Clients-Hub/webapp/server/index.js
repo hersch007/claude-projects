@@ -387,8 +387,12 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
   if (!run || run.slug !== req.params.slug) return res.status(404).send('Unknown runId');
   if (run.status !== 'done') return res.status(425).send('Report not ready yet');
   try {
-    const narrative = await generateNarrative(run.docxSource);
-    const buffer = await buildDocxReport({ ...run.docxSource, narrative });
+    // Narrative is never generated inline here — it's a slow LLM call (the
+    // network path to it has been observed stalling for 90s+ per attempt)
+    // and this route needs to stay fast for the plain mechanical report,
+    // which is the common case. Uses whatever narrative (if any) the
+    // /docx/prepare route has already produced and cached on the run.
+    const buffer = await buildDocxReport({ ...run.docxSource, narrative: run.narrative || null });
     const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -399,6 +403,34 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
     console.error(`Docx generation for run ${req.params.runId} failed:`, err);
     res.status(500).send('Failed to generate Word document');
   }
+});
+
+// Kicks off narrative generation in the background (fire-and-forget, same
+// pattern as /audit/run) and returns immediately — the slow LLM call never
+// blocks an HTTP response. The browser polls the status route below, then
+// hits the plain /docx route above once ready, which will find the cached
+// narrative and include it.
+app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  if (run.status !== 'done') return res.status(425).json({ error: 'Report not ready yet' });
+
+  run.narrativeStatus = 'generating';
+  generateNarrative(run.docxSource).then((narrative) => {
+    run.narrative = narrative;
+    run.narrativeStatus = narrative ? 'done' : 'error';
+  }).catch((err) => {
+    console.error(`Narrative generation for run ${req.params.runId} failed:`, err);
+    run.narrativeStatus = 'error';
+  });
+
+  res.json({ ok: true });
+});
+
+app.get('/api/clients/:slug/audit/report/:runId/docx/status', (req, res) => {
+  const run = runs.get(req.params.runId);
+  if (!run || run.slug !== req.params.slug) return res.status(404).json({ error: 'Unknown runId' });
+  res.json({ status: run.narrativeStatus || 'not_started' });
 });
 
 (async () => {
