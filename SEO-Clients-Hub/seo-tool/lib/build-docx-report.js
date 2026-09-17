@@ -120,7 +120,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: Changes Since Last Audit ──
   if (changes) {
-    const prevDateLabel = new Date(changes.previousDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const prevDateLabel = new Date(changes.previousDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const delta = changes.scoreDelta;
     const deltaColor = delta > 0 ? '16A34A' : delta < 0 ? 'DC2626' : '64748B';
     const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} point${Math.abs(delta) === 1 ? '' : 's'}`;
