@@ -136,6 +136,20 @@ function findDuplicateGroups(pages, field) {
   return [...seen.values()].filter(urls => urls.length > 1);
 }
 
+// US phone numbers only (every current client is US-based) — strips
+// formatting down to a canonical 10-digit string so "(555) 123-4567" and
+// "555.123.4567" compare as identical instead of registering as a false
+// NAP-consistency mismatch. Returns null for anything that isn't a plain
+// 10 or 11-digit (leading 1) US number.
+function normalizePhone(raw) {
+  const digits = String(raw || '').replace(/\D/g, '');
+  const trimmed = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+  return trimmed.length === 10 ? trimmed : null;
+}
+function formatPhone(digits) {
+  return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 // Annotates affected pages' `warnings` in place so the page table, Findings
 // cards, and score deductions all agree on which pages have a duplicate
 // title/meta description/H1 — same warnings array the per-page checks in
@@ -283,10 +297,18 @@ function calcScore(results, { hasSitemap = true } = {}) {
   const skippedHeadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
   const difficultReadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
   const missingLocalBusinessFieldPages = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
+  // NAP consistency — a page whose shown phone number doesn't match the
+  // site's dominant one (see crawl()'s post-crawl pass). A real trust/local-
+  // SEO signal: Google cross-checks a business's listed number against its
+  // Google Business Profile, and a mismatched footer number (usually left
+  // over from an old template edit) is exactly the kind of thing that
+  // erodes that match.
+  const inconsistentPhonePages = pages.filter(p => p.warnings.some(w => w.startsWith("Phone number doesn't match"))).length;
   if (orphanPages) deduct(Math.min(8, Math.round((orphanPages / totalPages) * 8)), `${orphanPages} orphan page(s) (no internal links point to them)`);
   if (skippedHeadingPages) deduct(Math.min(4, Math.round((skippedHeadingPages / totalPages) * 4)), `${skippedHeadingPages} page(s) with a skipped heading level`);
   if (difficultReadingPages) deduct(Math.min(6, Math.round((difficultReadingPages / totalPages) * 6)), `${difficultReadingPages} page(s) with difficult-to-read copy`);
   if (missingLocalBusinessFieldPages) deduct(Math.min(6, Math.round((missingLocalBusinessFieldPages / totalPages) * 6)), `${missingLocalBusinessFieldPages} page(s) with incomplete LocalBusiness schema (missing phone/address/hours)`);
+  if (inconsistentPhonePages) deduct(Math.min(6, Math.round((inconsistentPhonePages / totalPages) * 6)), `${inconsistentPhonePages} page(s) showing a phone number that doesn't match the rest of the site`);
 
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
   const scoredWarningPatterns = [
@@ -295,6 +317,7 @@ function calcScore(results, { hasSitemap = true } = {}) {
     /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
     /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
+    /^Phone number doesn't match/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -357,6 +380,7 @@ function friendlyIssue(text) {
   if (text.match(/Heading hierarchy skips/i)) return { label: text, why: 'Skipping a heading level breaks the logical document outline search engines and screen readers rely on.', priority: 'low' };
   if (text.match(/Difficult to read/i)) return { label: text, why: 'Dense, hard-to-read copy loses visitors and gives Google less clear signal about what the page is actually about.', priority: 'medium' };
   if (text.match(/LocalBusiness schema missing/i)) return { label: text, why: 'Missing phone/address/hours in structured data means Google has less to work with for map listings and knowledge panels, even though the schema is technically present and valid.', priority: 'medium' };
+  if (text.match(/Phone number doesn't match/i)) return { label: text, why: 'An inconsistent phone number (a NAP signal) makes it harder for Google to confirm this is the same business as your Google Business Profile listing, and confuses visitors about which number is current.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -441,6 +465,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const skippedHeadings = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
   const difficultReading = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
   const missingLocalBusinessFields = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
+  const inconsistentPhone = pages.filter(p => p.warnings.some(w => w.startsWith("Phone number doesn't match"))).length;
 
   // critical: true always sorts these to the very top, ahead of effort/
   // impact — a page that can't be indexed at all outranks every other win
@@ -469,6 +494,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (missingLocalBusinessFields) wins.push({ effort: 'Low', impact: 'Medium', pages: missingLocalBusinessFields, action: `Fill in missing LocalBusiness schema fields on ${missingLocalBusinessFields} page${missingLocalBusinessFields > 1 ? 's' : ''}`, detail: 'Phone, address, or hours are missing from the structured data — a quick addition that gives Google more to work with for map listings and knowledge panels.' });
   if (difficultReading) wins.push({ effort: 'Medium', impact: 'Medium', pages: difficultReading, action: `Simplify dense copy on ${difficultReading} page${difficultReading > 1 ? 's' : ''}`, detail: 'These pages score as difficult to read (Flesch reading ease under 30) — shorter sentences and simpler wording would help both visitors and search engines.' });
   if (skippedHeadings) wins.push({ effort: 'Low', impact: 'Low', pages: skippedHeadings, action: `Fix heading hierarchy on ${skippedHeadings} page${skippedHeadings > 1 ? 's' : ''}`, detail: 'A heading level (H2 or H3) is being skipped, breaking the logical outline of the page.' });
+  if (inconsistentPhone) wins.push({ effort: 'Low', impact: 'Medium', pages: inconsistentPhone, action: `Fix the mismatched phone number on ${inconsistentPhone} page${inconsistentPhone > 1 ? 's' : ''}`, detail: 'These pages show a different phone number than the rest of the site — usually a footer template that wasn\'t updated after a number change. Inconsistent contact info (NAP) is a local-SEO trust signal Google checks against your Google Business Profile.' });
   if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
 
   // Sort: critical (unindexable pages) first, then low effort first, then by pages affected
@@ -639,6 +665,17 @@ function createEngine(client) {
     const canonical = $('link[rel="canonical"]').attr('href') || '';
     if (!canonical) warnings.push('No canonical tag');
 
+    // Phone number(s) shown on this page — from tel: links (a clickable
+    // "call us" number is near-always the real contact line, unlike raw
+    // digits that might appear in testimonial text or an image) plus
+    // LocalBusiness schema's telephone field below. Feeds a cross-page
+    // NAP-consistency check after the whole site is crawled (see crawl()).
+    const phoneNumbers = new Set();
+    $('a[href^="tel:"]').each((i, el) => {
+      const norm = normalizePhone(($(el).attr('href') || '').replace('tel:', ''));
+      if (norm) phoneNumbers.add(norm);
+    });
+
     // Schema / JSON-LD
     const schemas = $('script[type="application/ld+json"]').toArray();
     const missingLocalBusinessFields = new Set();
@@ -661,6 +698,7 @@ function createEngine(client) {
           const itemTypes = Array.isArray(item['@type']) ? item['@type'] : [item['@type']];
           if (!itemTypes.some(t => LOCAL_BUSINESS_TYPES.has(t))) continue;
           if (!item.telephone) missingLocalBusinessFields.add('telephone');
+          else { const norm = normalizePhone(item.telephone); if (norm) phoneNumbers.add(norm); }
           if (!item.address) missingLocalBusinessFields.add('address');
           if (!item.priceRange && !item.openingHours && !item.openingHoursSpecification) missingLocalBusinessFields.add('priceRange/openingHours');
         }
@@ -723,6 +761,7 @@ function createEngine(client) {
       imagesEmptyAlt: imagesEmptyAlt.length,
       canonical,
       schemaTypes,
+      phoneNumbers: [...phoneNumbers],
       wordCount,
       readabilityScore,
       // Kept (not just wordCount) so narrative-report.js's content-quality
@@ -867,8 +906,32 @@ function createEngine(client) {
       }
     }
 
+    // NAP consistency: if more than one distinct phone number shows up
+    // across the site, find the one appearing on the most pages (the
+    // site's "real" number) and flag every page whose own number(s) don't
+    // include it — e.g. a footer template that never got updated after a
+    // number change. Pages with no phone number at all aren't flagged;
+    // this only catches an actual mismatch, not an absence.
+    const phoneCounts = new Map();
+    for (const page of results) {
+      if (page.error) continue;
+      for (const ph of page.phoneNumbers || []) phoneCounts.set(ph, (phoneCounts.get(ph) || 0) + 1);
+    }
+    let dominantPhone = null;
+    if (phoneCounts.size > 1) {
+      dominantPhone = [...phoneCounts.entries()].sort((a, b) => b[1] - a[1])[0][0];
+      for (const page of results) {
+        if (page.error || !page.phoneNumbers || !page.phoneNumbers.length) continue;
+        if (!page.phoneNumbers.includes(dominantPhone)) {
+          page.warnings.push(`Phone number doesn't match the site's primary number (${formatPhone(dominantPhone)})`);
+        }
+      }
+    } else if (phoneCounts.size === 1) {
+      dominantPhone = [...phoneCounts.keys()][0];
+    }
+
     console.log(`\nCrawled ${results.length} pages.`);
-    return { results, hasSitemap };
+    return { results, hasSitemap, dominantPhone };
   }
 
   function buildReport(results, scoreData, history = [], metrics = null, liveGSC = false, keywordHistory = [], provider = PROVIDERS['1'], hasSitemap = true) {
@@ -932,6 +995,7 @@ function createEngine(client) {
     const skippedHeadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips')));
     const difficultReadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read')));
     const missingLocalBusinessFieldPgs = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing')));
+    const inconsistentPhonePgs = pages.filter(p => p.warnings.some(w => w.startsWith("Phone number doesn't match")));
 
     function priorityBadge(p) {
       if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -1336,6 +1400,10 @@ function createEngine(client) {
       <div class="snap-label">Incomplete LocalBusiness Schema</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${inconsistentPhonePgs.length === 0 ? 'good' : 'warn'}">${inconsistentPhonePgs.length}</div>
+      <div class="snap-label">Inconsistent Phone Number</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num good">${healthyPages.length}</div>
       <div class="snap-label">Fully Healthy Pages</div>
     </div>
@@ -1512,6 +1580,7 @@ function createEngine(client) {
       ${skippedHeadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a skipped heading level</span><span class="sr-val warn">${skippedHeadingPgs.length} page${skippedHeadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${difficultReadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with difficult-to-read copy</span><span class="sr-val warn">${difficultReadingPgs.length} page${difficultReadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingLocalBusinessFieldPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with incomplete LocalBusiness schema</span><span class="sr-val warn">${missingLocalBusinessFieldPgs.length} page${missingLocalBusinessFieldPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${inconsistentPhonePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with an inconsistent phone number</span><span class="sr-val warn">${inconsistentPhonePgs.length} page${inconsistentPhonePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
         <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
@@ -1600,7 +1669,7 @@ function createEngine(client) {
     const outDir = client.output_dir || process.cwd();
     const store = storage || fileStorage;
 
-    const { results, hasSitemap } = await crawl(onProgress);
+    const { results, hasSitemap, dominantPhone } = await crawl(onProgress);
     annotateDuplicates(results);
     const scoreData = calcScore(results, { hasSitemap });
 
@@ -1640,7 +1709,7 @@ function createEngine(client) {
     // Word/strategy report, not this quick HTML one.
     const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider, hasSitemap);
 
-    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider };
+    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider, dominantPhone };
   }
 
   return { runAudit };
@@ -1653,4 +1722,9 @@ module.exports = {
   // HTML report's Quick Wins and Findings by Page sections are built from.
   getQuickWins,
   friendlyIssue,
+  // Exported so the Google Business Profile comparison (server-side, see
+  // local-seo.js) normalizes/formats phone numbers the exact same way the
+  // on-site NAP-consistency check above does.
+  normalizePhone,
+  formatPhone,
 };

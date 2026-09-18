@@ -16,6 +16,7 @@ const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
 const { fetchCompetitorSummaries } = require('../../seo-tool/lib/competitor-analysis');
+const { getGoogleBusinessProfile } = require('../../seo-tool/lib/local-seo');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -299,8 +300,14 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(JSON.stringify(cleaned));
     updates.push(`competitor_urls = $${values.length}`);
   }
+  if (typeof body.google_place_id === 'string') {
+    // Empty string clears it, same as gsc_property above — stored as NULL
+    // so local-seo.js's `if (!placeId) return null` check skips it cleanly.
+    values.push(body.google_place_id.trim() || null);
+    updates.push(`google_place_id = $${values.length}`);
+  }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id' });
   }
 
   values.push(client.id);
@@ -666,7 +673,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // pageSpeed starts null and is filled in later by /docx/prepare below
       // — a live PSI check has been observed taking 90s+, so it can't run
       // as part of this already-fast audit completion path.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: null, competitors: [] },
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, dominantPhone: result.dominantPhone, pageSpeed: null, competitors: [], gbp: null },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
@@ -740,7 +747,7 @@ app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
     // /audit/run at all: a live PSI check has been observed taking 90s+,
     // so neither this nor a multi-site competitor fetch can run on that
     // already-fast common-case path.
-    const [pageSpeed, competitors] = await Promise.all([
+    const [pageSpeed, competitors, gbp] = await Promise.all([
       getCoreWebVitals(run.docxSource.client.url).catch((err) => {
         console.error(`Core Web Vitals check for run ${req.params.runId} failed:`, err);
         return null;
@@ -749,9 +756,14 @@ app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
         console.error(`Competitor analysis for run ${req.params.runId} failed:`, err);
         return [];
       }),
+      getGoogleBusinessProfile(run.docxSource.client.google_place_id).catch((err) => {
+        console.error(`Google Business Profile lookup for run ${req.params.runId} failed:`, err);
+        return null;
+      }),
     ]);
     run.docxSource.pageSpeed = pageSpeed;
     run.docxSource.competitors = competitors;
+    run.docxSource.gbp = gbp;
     try {
       run.narrative = await generateNarrative(run.docxSource);
     } catch (err) {
