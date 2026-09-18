@@ -161,8 +161,25 @@ The "summary" field is a short snapshot ONLY — 2-3 sentences, about
 40-60 words total. Do not list individual findings, page names, or
 specific fixes in the summary; those belong in the structured sections
 below. If the business context doesn't mention a physical location or
-local service area, say local SEO signals are "not applicable" rather
-than guessing. core_web_vitals is homepage-only lab/field data — only
+local service area, say geographic_targeting and local_citations are "not
+applicable" rather than guessing.
+
+For local_seo.google_business_profile and local_seo.nap_consistency: these
+have real, verified data behind them when available — never speculate
+beyond what's given.
+- If google_business_profile (the JSON key, not the report field) is
+  "(not connected...)", say GBP isn't connected for this audit rather than
+  guessing at its rating, review count, or completeness.
+- If it's provided, report its actual rating/review count/hours-listed
+  status in the google_business_profile field — don't invent or round
+  favorably.
+- Use nap_phone_check verbatim as the basis for nap_consistency: if it
+  reports a mismatch, state that plainly (it's a real, mechanically-
+  verified finding); if it says there isn't enough data, say NAP
+  consistency couldn't be verified rather than guessing one way or the
+  other.
+
+core_web_vitals is homepage-only lab/field data — only
 raise it as a top priority or in next_steps when a rating is genuinely
 "poor" (a "good" or "needs-improvement" rating is not worth mentioning
 on its own).
@@ -225,7 +242,7 @@ function summarizePages(pages) {
     }));
 }
 
-async function generateNarrative({ client, results, scoreData, pageSpeed, competitors }) {
+async function generateNarrative({ client, results, scoreData, pageSpeed, competitors, gbp, dominantPhone }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('Narrative report skipped: ANTHROPIC_API_KEY is not set.');
     return null;
@@ -251,6 +268,19 @@ async function generateNarrative({ client, results, scoreData, pageSpeed, compet
     // audits of the competitor, just enough structural/content facts to
     // compare against. Empty when the client has no competitor_urls set.
     competitor_summaries: (competitors && competitors.length) ? competitors : '(none provided)',
+    // Real Google Business Profile data (local-seo.js) — only present when
+    // the client has a Google Place ID configured. Grounds local_seo's
+    // google_business_profile/nap_consistency fields in verified facts
+    // instead of guesses from business_notes text alone.
+    google_business_profile: gbp ? {
+      rating: gbp.rating, review_count: gbp.reviewCount,
+      listed_phone: gbp.phone, listed_address: gbp.address, has_hours_listed: gbp.hasHours,
+    } : '(not connected — no Google Place ID configured for this client)',
+    nap_phone_check: (gbp && gbp.phoneDigits && dominantPhone)
+      ? (gbp.phoneDigits === dominantPhone
+        ? 'Verified match: the phone number shown across the website matches the one listed on Google Business Profile.'
+        : `Verified mismatch: the website's primary phone number does not match the one listed on Google Business Profile (${gbp.phone}).`)
+      : '(not enough data to verify — Google Business Profile not connected, or no phone number found on the site)',
   });
 
   try {

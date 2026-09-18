@@ -87,6 +87,19 @@
   </div>
 
   <div class="card">
+    <h2>Google Business Profile</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Adds this client's Google rating, review count, and a phone-number match check against Google's
+      own listing to the Full Strategy Report. Find the Place ID with Google's
+      <a href="https://developers.google.com/maps/documentation/places/web-service/place-id" target="_blank" rel="noopener">Place ID Finder</a>.
+      Leave blank to skip.
+    </p>
+    <input id="google-place-id" type="text" style="width:100%;font-size:13px;padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1" placeholder="ChIJ...">
+    <div style="margin-top:8px"><button id="place-id-save">Save Place ID</button></div>
+    <div id="place-id-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -154,6 +167,7 @@
     document.getElementById('business-notes').value = data.client.business_notes || '';
     document.getElementById('gsc-property').value = data.client.gsc_property || '';
     document.getElementById('competitor-urls').value = (data.client.competitor_urls || []).join('\n');
+    document.getElementById('google-place-id').value = data.client.google_place_id || '';
 
     // The dropdown itself is already scoped server-side to just this
     // client's assigned partner(s) — see GET /api/clients/:slug — falling
@@ -375,6 +389,24 @@
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ competitor_urls: urls }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('place-id-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('place-id-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ google_place_id: document.getElementById('google-place-id').value }),
     });
     const data = await res.json();
     if (data.error) {

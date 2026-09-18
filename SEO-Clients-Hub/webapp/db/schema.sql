@@ -33,6 +33,11 @@ CREATE TABLE IF NOT EXISTS clients (
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS business_notes text;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS competitor_urls jsonb DEFAULT '[]';
+-- Google Place ID (not a free-text address — Places API lookups need the
+-- specific id, found via Google's "Place ID Finder" tool) for the Full
+-- Strategy Report's Google Business Profile section (rating, review count,
+-- NAP comparison against the site's own crawled phone number).
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS google_place_id text;
 
 CREATE TABLE IF NOT EXISTS audit_runs (
   id                serial PRIMARY KEY,

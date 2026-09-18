@@ -129,7 +129,7 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed }) {
+function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed, gbp, dominantPhone }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
@@ -233,6 +233,34 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
       new Paragraph({ text: `Interaction to Next Paint: ${pageSpeed.inp && pageSpeed.inp.value != null ? Math.round(pageSpeed.inp.value) + 'ms' : 'Not enough real-world traffic data'}${pageSpeed.inp ? ` (${ratingLabel(pageSpeed.inp.rating)})` : ''}`, bullet: { level: 0 } }),
       new Paragraph({ children: [new TextRun({ text: `Measured on: ${client.url} (homepage, ${pageSpeed.strategy})`, size: 18, italics: true, color: '94A3B8' })], spacing: { before: 100, after: 200 } }),
     );
+  }
+
+  // ── Section: Google Business Profile ── (mechanical facts, same
+  // direct-display treatment as Core Web Vitals above — not filtered
+  // through the LLM narrative, which gets the same data for its own
+  // Local SEO commentary but is prose, not a source of record for numbers)
+  if (gbp) {
+    const phoneMatch = gbp.phoneDigits && dominantPhone ? gbp.phoneDigits === dominantPhone : null;
+    children.push(
+      sectionHeading('Google Business Profile', brandHex),
+      new Paragraph({
+        children: [new TextRun({ text: `Rating: ${gbp.rating != null ? gbp.rating + ' / 5' : 'N/A'}${gbp.reviewCount != null ? ` (${gbp.reviewCount} review${gbp.reviewCount === 1 ? '' : 's'})` : ''}`, bold: true, size: 22 })],
+        spacing: { after: 100 },
+      }),
+      new Paragraph({ text: `Hours listed on profile: ${gbp.hasHours ? 'Yes' : 'No'}`, bullet: { level: 0 } }),
+    );
+    if (phoneMatch !== null) {
+      children.push(new Paragraph({
+        children: [new TextRun({
+          text: phoneMatch
+            ? 'NAP check: website phone number matches Google Business Profile.'
+            : `NAP check: website phone number does NOT match Google Business Profile (${gbp.phone}).`,
+          bold: !phoneMatch, color: phoneMatch ? '16A34A' : 'DC2626',
+        })],
+        spacing: { before: 60 },
+      }));
+    }
+    children.push(new Paragraph({ children: [new TextRun({ text: 'Source: Google Business Profile (Places API)', size: 18, italics: true, color: '94A3B8' })], spacing: { before: 100, after: 200 } }));
   }
 
   // ── Section: Top Priorities (narrative) ──
