@@ -883,6 +883,19 @@ function createEngine(client) {
     const scoreColor = scoreData.score >= 80 ? '#22c55e' : scoreData.score >= 60 ? '#f59e0b' : '#ef4444';
     const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
 
+    // Score ring gauge on the cover — history is ascending by date with
+    // today's just-computed score appended last (see runAudit), so the
+    // previous run (if any) is one entry back.
+    const RING_R = 46;
+    const RING_CIRC = 2 * Math.PI * RING_R;
+    const ringOffset = RING_CIRC * (1 - Math.max(0, Math.min(100, scoreData.score)) / 100);
+    const prevScore = history.length >= 2 ? history[history.length - 2].score : null;
+    const scoreDelta = prevScore !== null ? scoreData.score - prevScore : null;
+    const scoreDeltaBadge = scoreDelta === null ? '' : `
+      <div class="score-delta-badge ${scoreDelta > 0 ? 'up' : scoreDelta < 0 ? 'down' : 'flat'}">
+        ${scoreDelta > 0 ? '&#9650;' : scoreDelta < 0 ? '&#9660;' : '&#8212;'} ${scoreDelta === 0 ? 'No change' : `${scoreDelta > 0 ? '+' : ''}${scoreDelta}`}
+      </div>`;
+
     // Aggregate issues across all pages for summary
     const criticalPages = pages.filter(p => p.issues.length > 0);
     const warningPages = pages.filter(p => p.warnings.length > 0);
@@ -981,9 +994,17 @@ function createEngine(client) {
   .cover { background: ${brand}; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
   .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
-  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 12px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
-  .cover-score-num { font-size: 40px; font-weight: 800; line-height: 1; }
-  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 2px; }
+  .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 16px; padding: 14px 20px; text-align: center; flex-shrink: 0; }
+  .score-ring-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto; }
+  .score-ring-wrap svg { display: block; }
+  .score-ring-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-ring-num .n { font-size: 28px; font-weight: 800; line-height: 1; }
+  .score-ring-num .d { font-size: 9px; opacity: .75; margin-top: 1px; }
+  .cover-score-label { font-size: 10px; text-transform: uppercase; letter-spacing: .1em; opacity: .8; margin-top: 6px; }
+  .score-delta-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 700; padding: 2px 9px; border-radius: 20px; margin-top: 6px; }
+  .score-delta-badge.up { background: rgba(74,222,128,.25); color: #dcfce7; }
+  .score-delta-badge.down { background: rgba(248,113,113,.25); color: #fee2e2; }
+  .score-delta-badge.flat { background: rgba(255,255,255,.15); color: rgba(255,255,255,.85); }
   .cover-body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 40px 0 32px; }
   .cover-title { font-size: 34px; font-weight: 800; margin-bottom: 8px; line-height: 1.15; }
   .cover-sub { font-size: 14px; opacity: .7; }
@@ -1171,9 +1192,21 @@ function createEngine(client) {
   <div class="cover-header">
     <div class="cover-agency">${provider.name} &bull; SEO Audit</div>
     <div class="cover-score-box">
-      <div class="cover-score-num">${scoreData.score}</div>
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 100 100" width="100" height="100">
+          <circle cx="50" cy="50" r="${RING_R}" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="8"/>
+          <circle cx="50" cy="50" r="${RING_R}" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"
+            stroke-dasharray="${RING_CIRC.toFixed(2)}" stroke-dashoffset="${ringOffset.toFixed(2)}"
+            transform="rotate(-90 50 50)"/>
+        </svg>
+        <div class="score-ring-num">
+          <span class="n">${scoreData.score}</span>
+          <span class="d">/ 100</span>
+        </div>
+      </div>
       <div class="cover-score-label">SEO Health Score</div>
       <div style="font-size:11px;margin-top:4px;opacity:.9">${scoreLabel}</div>
+      ${scoreDeltaBadge}
     </div>
   </div>
   <div class="cover-body">

@@ -23,6 +23,30 @@ const { getQuickWins, friendlyIssue } = require('./audit-engine');
 const CELL_MARGIN = { top: 80, bottom: 80, left: 120, right: 120 };
 const THIN_BORDER = { style: BorderStyle.SINGLE, size: 2, color: 'CCCCCC' };
 const CELL_BORDERS = { top: THIN_BORDER, bottom: THIN_BORDER, left: THIN_BORDER, right: THIN_BORDER };
+const NO_BORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
+const NO_BORDERS = { top: NO_BORDER, bottom: NO_BORDER, left: NO_BORDER, right: NO_BORDER };
+
+// A cover-page "progress bar" faked with a borderless two-cell table (docx
+// has no native shape/rect drawing primitive) — a filled cell proportional
+// to the score, colored by the same red/amber/green tiers used everywhere
+// else in the report, next to an unfilled gray remainder.
+function scoreBarTable(score) {
+  const pct = Math.max(0, Math.min(100, score));
+  const fillColor = pct >= 80 ? '22C55E' : pct >= 60 ? 'F59E0B' : 'EF4444';
+  const cell = (widthPct, fill) => new TableCell({
+    width: { size: Math.max(1, widthPct), type: WidthType.PERCENTAGE },
+    shading: { type: ShadingType.CLEAR, fill },
+    borders: NO_BORDERS,
+    margins: { top: 60, bottom: 60, left: 0, right: 0 },
+    children: [new Paragraph({ children: [] })],
+  });
+  const cells = pct >= 100 ? [cell(100, fillColor)] : pct <= 0 ? [cell(100, 'E5E7EB')] : [cell(pct, fillColor), cell(100 - pct, 'E5E7EB')];
+  return new Table({
+    width: { size: 60, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.CENTER,
+    rows: [new TableRow({ children: cells })],
+  });
+}
 
 // Section spacing is intentionally generous (600 before / 240 after, plus a
 // brand-colored underline) so sections read as clearly separated, scannable
@@ -92,8 +116,10 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: `SEO Health Score: ${scoreData.score} / 100 — ${scoreLabel}`, bold: true, size: 28, color: brandHex })],
-      spacing: { after: 600 },
+      spacing: { after: 200 },
     }),
+    scoreBarTable(scoreData.score),
+    new Paragraph({ spacing: { after: 400 }, children: [] }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: `${client.url}`, size: 22 })],
@@ -123,11 +149,12 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     const prevDateLabel = new Date(changes.previousDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     const delta = changes.scoreDelta;
     const deltaColor = delta > 0 ? '16A34A' : delta < 0 ? 'DC2626' : '64748B';
+    const deltaArrow = delta > 0 ? '▲ ' : delta < 0 ? '▼ ' : '';
     const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} point${Math.abs(delta) === 1 ? '' : 's'}`;
     children.push(
       sectionHeading('Changes Since Last Audit', brandHex),
       new Paragraph({
-        children: [new TextRun({ text: `${deltaText} vs ${prevDateLabel} (was ${changes.previousScore}/100)`, bold: true, size: 22, color: deltaColor })],
+        children: [new TextRun({ text: `${deltaArrow}${deltaText} vs ${prevDateLabel} (was ${changes.previousScore}/100)`, bold: true, size: 24, color: deltaColor })],
         spacing: { after: 200 },
       }),
     );
