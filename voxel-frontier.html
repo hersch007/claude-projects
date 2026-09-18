@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Voxel Frontier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+<style>
+  :root {
+    --bg: #0d1117;
+    --panel: #161c26;
+    --panel-border: #232c3a;
+    --grass: #3f9142;
+    --dirt: #8a5a35;
+    --gold: #ffd23f;
+    --sky: #6ec6e8;
+    --text: #eef2f6;
+    --text-dim: #8792a3;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: var(--panel);
+    border-bottom: 3px solid var(--panel-border);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.25);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .brand .swatch {
+    width: 20px;
+    height: 20px;
+    background: var(--grass);
+    border: 2px solid #245c26;
+    box-shadow: inset -3px -3px 0 rgba(0,0,0,0.25), inset 2px 2px 0 rgba(255,255,255,0.15);
+    flex: none;
+  }
+
+  h1 {
+    font-family: "Press Start 2P", monospace;
+    font-size: clamp(0.7rem, 2.6vw, 0.95rem);
+    margin: 0;
+    letter-spacing: 0.5px;
+    color: var(--gold);
+    text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .legend {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .key {
+    background: var(--bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .key b { color: var(--text); }
+
+  button {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    font-size: 0.75rem;
+    background: var(--dirt);
+    color: var(--text);
+    border: 2px solid #5c3a1f;
+    border-radius: 4px;
+    padding: 8px 14px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #5c3a1f;
+  }
+
+  button:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #5c3a1f;
+  }
+
+  #canvasWrap {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    display: flex;
+  }
+
+  #canvasWrap canvas {
+    display: block;
+  }
+
+  .hint {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    font-size: 0.68rem;
+    color: rgba(238,242,246,0.55);
+    max-width: 60ch;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="swatch"></div>
+      <h1>Voxel Frontier</h1>
+    </div>
+    <div class="legend">
+      <span class="key"><b>WASD</b> walk</span>
+      <span class="key"><b>Arrows</b> look</span>
+      <span class="key"><b>I J K L</b> move cursor</span>
+      <span class="key"><b>U / O</b> cursor up/down</span>
+      <span class="key"><b>Click</b> place block</span>
+    </div>
+    <button id="resetBtn">Reset World</button>
+  </header>
+
+  <div id="canvasWrap">
+    <p class="hint">Best played with a keyboard. Walk with WASD, look around with the arrow keys, line up the gold cursor with I/J/K/L/U/O, then click to place a block.</p>
+  </div>
+
+<script>
+/*
+  Voxel Frontier — a small blocky 3D world engine.
+  Ported from a Khan Academy / ProcessingJS-style sketch to p5.js.
+*/
+
+var cam = {
+  x: 150, y: -200, z: -300,
+  rx: 20, ry: 45
+};
+var moveSpeed = 5;
+var sensitivity = 2;
+
+var worldSize = 8;
+var blockSize = 40;
+var blocks = [];
+
+var cursorX = 4, cursorY = -1, cursorZ = 4;
+
+var keys = [];
+
+function buildWorld() {
+  blocks = [];
+  for (var x = 0; x < worldSize; x++) {
+    for (var z = 0; z < worldSize; z++) {
+      blocks.push({ x: x, y: 0, z: z, col: color(52, 145, 66) });
+    }
+  }
+}
+
+function setup() {
+  var wrap = document.getElementById('canvasWrap');
+  var cnv = createCanvas(wrap.clientWidth, wrap.clientHeight);
+  cnv.parent('canvasWrap');
+  angleMode(DEGREES);
+  textFont('IBM Plex Mono');
+  textSize(12);
+  buildWorld();
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    buildWorld();
+  });
+}
+
+function windowResized() {
+  var wrap = document.getElementById('canvasWrap');
+  resizeCanvas(wrap.clientWidth, wrap.clientHeight);
+}
+
+// --- 3D projection ---
+function projectPoint(p) {
+  var dx = p.x - cam.x;
+  var dy = p.y - cam.y;
+  var dz = p.z - cam.z;
+
+  var cosY = cos(cam.ry), sinY = sin(cam.ry);
+  var x1 = dx * cosY - dz * sinY;
+  var z1 = dx * sinY + dz * cosY;
+
+  var cosX = cos(cam.rx), sinX = sin(cam.rx);
+  var y2 = dy * cosX - z1 * sinX;
+  var z2 = dy * sinX + z1 * cosX;
+
+  if (z2 <= 10) { return null; }
+
+  var fov = 300;
+  var sx = (x1 * fov) / z2 + width / 2;
+  var sy = (y2 * fov) / z2 + height / 2;
+
+  return { x: sx, y: sy, depth: z2 };
+}
+
+// --- cube rendering ---
+var CUBE_FACES = [
+  [0, 1, 2, 3], // front
+  [5, 4, 7, 6], // back
+  [4, 5, 1, 0], // top
+  [3, 2, 6, 7], // bottom
+  [4, 0, 3, 7], // left
+  [1, 5, 6, 2]  // right
+];
+
+function drawCube(bx, by, bz, side, col, isWire) {
+  var vertices = [
+    { x: bx, y: by, z: bz },
+    { x: bx + side, y: by, z: bz },
+    { x: bx + side, y: by + side, z: bz },
+    { x: bx, y: by + side, z: bz },
+    { x: bx, y: by, z: bz + side },
+    { x: bx + side, y: by, z: bz + side },
+    { x: bx + side, y: by + side, z: bz + side },
+    { x: bx, y: by + side, z: bz + side }
+  ];
+
+  var scr = [];
+  for (var i = 0; i < 8; i++) {
+    var p = projectPoint(vertices[i]);
+    if (!p) { return; }
+    scr.push(p);
+  }
+
+  if (isWire) {
+    stroke(col);
+    strokeWeight(2);
+    noFill();
+  } else {
+    fill(col);
+    stroke(0, 0, 0, 50);
+    strokeWeight(1);
+  }
+
+  for (var f = 0; f < CUBE_FACES.length; f++) {
+    var idx = CUBE_FACES[f];
+    quad(
+      scr[idx[0]].x, scr[idx[0]].y,
+      scr[idx[1]].x, scr[idx[1]].y,
+      scr[idx[2]].x, scr[idx[2]].y,
+      scr[idx[3]].x, scr[idx[3]].y
+    );
+  }
+}
+
+function draw() {
+  background(110, 198, 232);
+
+  if (keys[LEFT_ARROW])  { cam.ry -= sensitivity; }
+  if (keys[RIGHT_ARROW]) { cam.ry += sensitivity; }
+  if (keys[UP_ARROW])    { cam.rx -= sensitivity; }
+  if (keys[DOWN_ARROW])  { cam.rx += sensitivity; }
+
+  var radY = cam.ry;
+  if (keys[87]) { cam.x += sin(radY) * moveSpeed; cam.z += cos(radY) * moveSpeed; } // W
+  if (keys[83]) { cam.x -= sin(radY) * moveSpeed; cam.z -= cos(radY) * moveSpeed; } // S
+  if (keys[65]) { cam.x -= cos(radY) * moveSpeed; cam.z += sin(radY) * moveSpeed; } // A
+  if (keys[68]) { cam.x += cos(radY) * moveSpeed; cam.z -= sin(radY) * moveSpeed; } // D
+
+  if (frameCount % 6 === 0) {
+    if (keys[73]) { cursorZ++; } // I
+    if (keys[75]) { cursorZ--; } // K
+    if (keys[74]) { cursorX--; } // J
+    if (keys[76]) { cursorX++; } // L
+    if (keys[85]) { cursorY--; } // U
+    if (keys[79]) { cursorY++; } // O
+  }
+
+  // Draw far-to-near so nearer blocks correctly occlude farther ones.
+  var ordered = blocks.slice().sort(function (a, b) {
+    var da = sq(a.x * blockSize - cam.x) + sq(a.y * blockSize - cam.y) + sq(a.z * blockSize - cam.z);
+    var db = sq(b.x * blockSize - cam.x) + sq(b.y * blockSize - cam.y) + sq(b.z * blockSize - cam.z);
+    return db - da;
+  });
+  for (var i = 0; i < ordered.length; i++) {
+    var b = ordered[i];
+    drawCube(b.x * blockSize, b.y * blockSize, b.z * blockSize, blockSize, b.col, false);
+  }
+
+  drawCube(cursorX * blockSize, cursorY * blockSize, cursorZ * blockSize, blockSize, color(255, 210, 63), true);
+
+  noStroke();
+  fill(13, 17, 23, 210);
+  rect(10, 10, 218, 40, 5);
+  fill(255, 210, 63);
+  text('Cursor  x' + cursorX + '  y' + cursorY + '  z' + cursorZ, 20, 28);
+  fill(238, 242, 246);
+  text('Blocks placed: ' + (blocks.length - worldSize * worldSize), 20, 42);
+}
+
+function keyPressed() {
+  keys[keyCode] = true;
+  if (keyCode === LEFT_ARROW || keyCode === RIGHT_ARROW || keyCode === UP_ARROW || keyCode === DOWN_ARROW) {
+    return false;
+  }
+}
+
+function keyReleased() {
+  keys[keyCode] = false;
+}
+
+function mouseClicked() {
+  if (mouseX < 0 || mouseX > width || mouseY < 0 || mouseY > height) { return; }
+
+  var shade = random(1);
+  var col = shade < 0.5
+    ? color(random(120, 150), random(90, 115), random(55, 75))   // dirt tones
+    : color(random(120, 140), random(120, 140), random(120, 140)); // stone tones
+
+  blocks.push({ x: cursorX, y: cursorY, z: cursorZ, col: col });
+}
+</script>
+
+</body>
+</html>
