@@ -45,19 +45,24 @@ const CONTENT_QUALITY_ITEM = {
   additionalProperties: false,
 };
 
-// Same title/detail shape again, plus which competitor the comparison is
-// against — only meaningful when competitor_summaries was actually
-// provided (client set competitor URLs), so this array is simply empty
-// otherwise rather than the model inventing a comparison with nothing to
-// compare against.
+// Same title/detail shape again, plus impact/effort (same as top_priorities
+// below) so a competitive finding can be sorted and prioritized exactly
+// like every other actionable item in the report, and which competitor the
+// comparison is against — cited as supporting evidence for the action, not
+// as the organizing structure (build-docx-report.js sorts this list by
+// priority, not by competitor). Only meaningful when competitor_summaries
+// was actually provided, so this array is simply empty otherwise rather
+// than the model inventing a comparison with nothing to compare against.
 const COMPETITIVE_FINDING_ITEM = {
   type: 'object',
   properties: {
     competitor: { type: 'string', description: 'The competitor URL this comparison is against.' },
     title: { type: 'string' },
     detail: { type: 'string' },
+    impact: { type: 'string', enum: ['High', 'Medium', 'Low'] },
+    effort: { type: 'string', enum: ['High', 'Medium', 'Low'] },
   },
-  required: ['competitor', 'title', 'detail'],
+  required: ['competitor', 'title', 'detail', 'impact', 'effort'],
   additionalProperties: false,
 };
 
@@ -186,9 +191,12 @@ and contentSample) and surface concrete, specific gaps or advantages —
 e.g. "Competitor has FAQPage schema and a 1,400-word service page; this
 site has neither." Never give vague competitive commentary ("competitor
 seems stronger") without pointing to the specific structural or content
-difference driving that read. If competitor_summaries is empty, return an
-empty competitive_analysis array — do not speculate about unnamed or
-hypothetical competitors.`;
+difference driving that read. Assign impact/effort to every finding the
+same way you do for top_priorities — this list gets sorted and presented
+by priority, not grouped by competitor, so a client can tell what to do
+first regardless of which competitor's page prompted the observation. If
+competitor_summaries is empty, return an empty competitive_analysis array
+— do not speculate about unnamed or hypothetical competitors.`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.

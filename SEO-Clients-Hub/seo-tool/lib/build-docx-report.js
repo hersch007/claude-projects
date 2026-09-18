@@ -242,18 +242,29 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   }
 
   // ── Section: Competitive Analysis (narrative) ──
-  // Grouped by competitor, same convention as Content Quality Findings
-  // above — a single competitor can surface more than one gap/advantage.
+  // Sorted by priority (impact/effort), same as Quick Wins — the point is
+  // "what should I do first", not "what did each competitor prompt". The
+  // competitor is cited underneath each item as supporting evidence, not
+  // as the organizing structure.
   if (narrative && narrative.competitive_analysis && narrative.competitive_analysis.length) {
     children.push(sectionHeading('Competitive Analysis', brandHex));
-    const findingsByCompetitor = new Map();
-    for (const item of narrative.competitive_analysis) {
-      if (!findingsByCompetitor.has(item.competitor)) findingsByCompetitor.set(item.competitor, []);
-      findingsByCompetitor.get(item.competitor).push(item);
-    }
-    for (const [competitor, items] of findingsByCompetitor) {
-      children.push(new Paragraph({ children: [new TextRun({ text: competitor, bold: true, font: 'Courier New', size: 20 })], spacing: { before: 200, after: 60 } }));
-      for (const item of items) children.push(...recItem(item));
+    const impactOrder = { High: 0, Medium: 1, Low: 2 };
+    const effortOrder = { Low: 0, Medium: 1, High: 2 };
+    const sortedFindings = [...narrative.competitive_analysis].sort((a, b) =>
+      impactOrder[a.impact] - impactOrder[b.impact] || effortOrder[a.effort] - effortOrder[b.effort]
+    );
+    for (const item of sortedFindings) {
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({ text: `${item.title} `, bold: true, size: 21 }),
+            new TextRun({ text: `(${item.effort} effort, ${item.impact} impact)`, italics: true, size: 18, color: '595959' }),
+          ],
+          spacing: { before: 140 },
+        }),
+        new Paragraph({ children: [new TextRun({ text: item.detail, size: 20, color: '444444' })], spacing: { after: 20 } }),
+        new Paragraph({ children: [new TextRun({ text: `vs. ${item.competitor}`, italics: true, size: 16, color: '94A3B8' })], spacing: { after: 60 } }),
+      );
     }
   }
 
