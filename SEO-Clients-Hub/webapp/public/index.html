@@ -74,10 +74,11 @@
   <form id="new-client-form" class="new-client-form" style="display:none">
     <input name="name" placeholder="Client name" required>
     <input name="url" placeholder="https://example.com" required>
-    <input name="slug" placeholder="slug (e.g. example-co)" required>
+    <input name="slug" placeholder="auto-filled from name" required>
     <button type="submit">Add Client</button>
     <button type="button" id="new-client-cancel" class="btn secondary">Cancel</button>
-    <div id="new-client-status"></div>
+    <div id="new-client-status" style="width:100%"></div>
+    <small style="width:100%;color:#94a3b8">Slug is this app's internal ID for the client (used in its dashboard URL) — auto-filled from the name above, not related to the client's own website. Edit it only if you want something different.</small>
   </form>
 
   <button id="toggle-archived" class="toggle-archived">Show archived clients</button>
@@ -151,7 +152,25 @@
     loadClients();
   });
 
+  // Slug auto-fills from the client name (like most admin panels) so it's
+  // normally a "set it and forget it" field, not something a user needs to
+  // hand-craft. slugManuallyEdited tracks real keystrokes in the slug
+  // field itself (not our own programmatic .value writes below, which
+  // don't fire 'input') so a deliberate custom slug never gets clobbered.
+  function slugify(str) {
+    return str.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+  let slugManuallyEdited = false;
+  const newClientForm = document.getElementById('new-client-form');
+  const nameInput = newClientForm.querySelector('input[name="name"]');
+  const slugInput = newClientForm.querySelector('input[name="slug"]');
+  nameInput.addEventListener('input', () => {
+    if (!slugManuallyEdited) slugInput.value = slugify(nameInput.value);
+  });
+  slugInput.addEventListener('input', () => { slugManuallyEdited = true; });
+
   document.getElementById('new-client-btn').addEventListener('click', () => {
+    slugManuallyEdited = false;
     document.getElementById('new-client-form').style.display = 'flex';
     document.getElementById('new-client-btn').style.display = 'none';
   });
