@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Platform — Settings</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; }
+  .app-shell { display: flex; min-height: 100vh; align-items: stretch; }
+  .sidebar {
+    width: 220px; flex-shrink: 0; background: white; border-right: 1px solid #e2e8f0;
+    padding: 20px 14px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-brand {
+    font-weight: 800; font-size: 15px; margin-bottom: 22px; padding: 0 10px;
+    text-decoration: none; color: #0B0B0C;
+  }
+  .sidebar-section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8;
+    margin: 18px 10px 6px; font-weight: 700;
+  }
+  .sidebar-link, .sidebar-btn {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: #475569; text-decoration: none; cursor: pointer;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidebar-link:hover, .sidebar-btn:hover { background: #f1f5f9; }
+  .sidebar-link.active { background: #eef2ff; color: #1d4ed8; }
+  .sidebar-link svg, .sidebar-btn svg { flex-shrink: 0; width: 18px; height: 18px; }
+  .sidebar-spacer { flex: 1; }
+  .main-content { flex: 1; padding: 32px; min-width: 0; }
+  .container { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 20px; margin-bottom: 6px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  .card {
+    background: white; border-radius: 10px; padding: 30px 22px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07); text-align: center; color: #64748b; font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <nav class="sidebar">
+    <a class="sidebar-brand" href="/">SEO Platform</a>
+
+    <a class="sidebar-link" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="sidebar-link" href="/referral-partners.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Referral Partners
+    </a>
+    <a class="sidebar-link active" href="/settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+
+    <div class="sidebar-spacer"></div>
+  </nav>
+
+  <div class="main-content">
+    <div class="container">
+      <h1>Settings</h1>
+      <div class="sub">Account and platform-wide settings.</div>
+      <div class="card">Nothing to configure here yet — more settings coming soon.</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
