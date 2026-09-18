@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Platform — Referral Partners</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; }
+  .app-shell { display: flex; min-height: 100vh; align-items: stretch; }
+  .sidebar {
+    width: 220px; flex-shrink: 0; background: white; border-right: 1px solid #e2e8f0;
+    padding: 20px 14px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-brand {
+    font-weight: 800; font-size: 15px; margin-bottom: 22px; padding: 0 10px;
+    text-decoration: none; color: #0B0B0C;
+  }
+  .sidebar-section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8;
+    margin: 18px 10px 6px; font-weight: 700;
+  }
+  .sidebar-link, .sidebar-btn {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: #475569; text-decoration: none; cursor: pointer;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidebar-link:hover, .sidebar-btn:hover { background: #f1f5f9; }
+  .sidebar-link.active { background: #eef2ff; color: #1d4ed8; }
+  .sidebar-link svg, .sidebar-btn svg { flex-shrink: 0; width: 18px; height: 18px; }
+  .sidebar-spacer { flex: 1; }
+  .main-content { flex: 1; padding: 32px; min-width: 0; }
+  .container { max-width: 760px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  h1 { font-size: 20px; }
+  .sub { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+  button, .btn {
+    background: #0B0B0C; color: white; border: none; border-radius: 20px;
+    padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .btn.secondary { background: #f1f5f9; color: #475569; border: 1px solid transparent; }
+  .btn.secondary:hover { background: #e2e8f0; }
+  .btn.danger { background: #fef2f2; color: #dc2626; border: 1px solid transparent; }
+  .btn.danger:hover { background: #fee2e2; }
+  .card {
+    background: white; border-radius: 10px; padding: 20px 22px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.07); margin-bottom: 14px;
+  }
+  .card h2 { font-size: 14px; margin-bottom: 12px; }
+  .partner-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .partner-name { font-weight: 700; font-size: 14px; }
+  .partner-meta { color: #64748b; font-size: 12px; margin-top: 4px; }
+  .partner-clients { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .client-chip {
+    background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 12px;
+  }
+  .partner-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .partner-actions button { padding: 6px 10px; font-size: 12px; }
+  .empty { text-align: center; color: #64748b; padding: 40px 0; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .form-grid input {
+    font-size: 13px; padding: 9px 10px; border-radius: 6px; border: 1px solid #cbd5e1; width: 100%;
+  }
+  .form-grid label { font-size: 11px; color: #64748b; font-weight: 600; display: block; margin-bottom: 4px; }
+  .client-checklist {
+    display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto;
+    border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 12px;
+  }
+  .client-checklist label { font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  #partner-form-status { font-size: 12px; margin-top: 6px; }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <nav class="sidebar">
+    <a class="sidebar-brand" href="/">SEO Platform</a>
+
+    <a class="sidebar-link" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="sidebar-link active" href="/referral-partners.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Referral Partners
+    </a>
+    <a class="sidebar-link" href="/settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+
+    <div class="sidebar-section-label">Admin</div>
+    <button id="add-partner-btn" class="sidebar-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Partner
+    </button>
+
+    <div class="sidebar-spacer"></div>
+  </nav>
+
+  <div class="main-content">
+    <div class="container">
+      <div class="header">
+        <h1>Referral Partners</h1>
+      </div>
+      <div class="sub">Agencies and individuals who refer clients to us — tracked here for attribution, not login access.</div>
+
+      <div id="partner-form-card" class="card" style="display:none">
+        <h2 id="partner-form-title">Add Referral Partner</h2>
+        <input type="hidden" id="partner-form-id">
+        <div class="form-grid">
+          <div>
+            <label for="pf-name">Company Name *</label>
+            <input id="pf-name" required>
+          </div>
+          <div>
+            <label for="pf-contact">Contact Name</label>
+            <input id="pf-contact">
+          </div>
+          <div>
+            <label for="pf-email">Email</label>
+            <input id="pf-email" type="email">
+          </div>
+          <div>
+            <label for="pf-phone">Phone Number</label>
+            <input id="pf-phone" type="tel">
+          </div>
+        </div>
+        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">Default Clients</label>
+        <div id="pf-client-checklist" class="client-checklist"></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button id="partner-form-save">Save Partner</button>
+          <button type="button" id="partner-form-cancel" class="btn secondary">Cancel</button>
+          <div id="partner-form-status"></div>
+        </div>
+      </div>
+
+      <div id="partner-list"><div class="empty">Loading referral partners...</div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let allClients = [];
+  let editingId = null;
+
+  async function loadPartners() {
+    const res = await fetch('/api/referral-partners');
+    const data = await res.json();
+    allClients = data.allClients || [];
+    renderChecklist([]);
+    const listEl = document.getElementById('partner-list');
+
+    if (!data.partners.length) {
+      listEl.innerHTML = '<div class="card empty">No referral partners yet — click "New Partner" in the sidebar.</div>';
+      return;
+    }
+
+    listEl.innerHTML = data.partners.map(p => `
+      <div class="card partner-row">
+        <div>
+          <div class="partner-name">${p.name}</div>
+          <div class="partner-meta">
+            ${[p.contact_name, p.email, p.phone].filter(Boolean).join(' &nbsp;·&nbsp; ') || 'No contact details on file'}
+          </div>
+          <div class="partner-clients">
+            ${p.clients.length
+              ? p.clients.map(c => `<span class="client-chip">${c.name}</span>`).join('')
+              : '<span class="partner-meta">No clients assigned</span>'}
+          </div>
+        </div>
+        <div class="partner-actions">
+          <button class="btn secondary" data-action="edit" data-id="${p.id}">Edit</button>
+          <button class="btn danger" data-action="delete" data-id="${p.id}" data-name="${p.name}">Delete</button>
+        </div>
+      </div>
+    `).join('');
+
+    listEl.dataset.partners = JSON.stringify(data.partners);
+  }
+
+  function renderChecklist(checkedClientIds) {
+    const checklistEl = document.getElementById('pf-client-checklist');
+    if (!allClients.length) {
+      checklistEl.innerHTML = '<div class="partner-meta">No clients yet.</div>';
+      return;
+    }
+    checklistEl.innerHTML = allClients.map(c => `
+      <label>
+        <input type="checkbox" value="${c.id}" ${checkedClientIds.includes(c.id) ? 'checked' : ''}>
+        ${c.name}
+      </label>
+    `).join('');
+  }
+
+  function openForm(partner) {
+    editingId = partner ? partner.id : null;
+    document.getElementById('partner-form-title').textContent = partner ? 'Edit Referral Partner' : 'Add Referral Partner';
+    document.getElementById('pf-name').value = partner ? partner.name : '';
+    document.getElementById('pf-contact').value = partner ? (partner.contact_name || '') : '';
+    document.getElementById('pf-email').value = partner ? (partner.email || '') : '';
+    document.getElementById('pf-phone').value = partner ? (partner.phone || '') : '';
+    renderChecklist(partner ? partner.clients.map(c => c.id) : []);
+    document.getElementById('partner-form-status').textContent = '';
+    document.getElementById('partner-form-card').style.display = 'block';
+    document.getElementById('partner-form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function closeForm() {
+    editingId = null;
+    document.getElementById('partner-form-card').style.display = 'none';
+  }
+
+  document.getElementById('add-partner-btn').addEventListener('click', () => openForm(null));
+  document.getElementById('partner-form-cancel').addEventListener('click', closeForm);
+
+  document.getElementById('partner-form-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('partner-form-status');
+    const name = document.getElementById('pf-name').value.trim();
+    if (!name) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = 'Company name is required.';
+      return;
+    }
+    const client_ids = [...document.querySelectorAll('#pf-client-checklist input:checked')].map(el => Number(el.value));
+    const body = {
+      name,
+      contact_name: document.getElementById('pf-contact').value.trim(),
+      email: document.getElementById('pf-email').value.trim(),
+      phone: document.getElementById('pf-phone').value.trim(),
+      client_ids,
+    };
+
+    const url = editingId ? `/api/referral-partners/${editingId}` : '/api/referral-partners';
+    const method = editingId ? 'PATCH' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    closeForm();
+    loadPartners();
+  });
+
+  document.getElementById('partner-list').addEventListener('click', async (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const partners = JSON.parse(document.getElementById('partner-list').dataset.partners || '[]');
+    const partner = partners.find(p => p.id === Number(btn.dataset.id));
+
+    if (btn.dataset.action === 'edit') {
+      openForm(partner);
+    } else if (btn.dataset.action === 'delete') {
+      if (!confirm(`Delete referral partner "${btn.dataset.name}"? Clients stay — only the attribution is removed.`)) return;
+      await fetch(`/api/referral-partners/${btn.dataset.id}`, { method: 'DELETE' });
+      loadPartners();
+    }
+  });
+
+  loadPartners();
+</script>
+
+</body>
+</html>

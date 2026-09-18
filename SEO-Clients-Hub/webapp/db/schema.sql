@@ -91,6 +91,19 @@ CREATE TABLE IF NOT EXISTS manual_score_entries (
   created_at      timestamptz DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS referral_partners (
+  id            serial PRIMARY KEY,
+  name          text NOT NULL,
+  contact_name  text,
+  email         text,
+  phone         text,
+  created_at    timestamptz DEFAULT now()
+);
+
+-- Attribution only (§ referral/reseller partners who send clients our way) —
+-- one partner per client, not a login or access boundary.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS referral_partner_id int REFERENCES referral_partners(id);
+
 -- Seed the 4 known provider companies (from seo-tool/lib/audit-engine.js's
 -- PROVIDERS map) — safe to re-run, does nothing if already seeded.
 INSERT INTO providers (name, email, brand_hex, brand2_hex) VALUES

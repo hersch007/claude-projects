@@ -296,6 +296,108 @@ app.delete('/api/clients/:slug', async (req, res) => {
   }
 });
 
+// Referral/reseller partners — attribution only (which of our clients came
+// from which partner), not a login or access boundary. "Default clients" is
+// modeled as a single FK on clients (one partner per client) rather than a
+// join table, since a client only ever comes from one referral source.
+app.get('/api/referral-partners', async (req, res) => {
+  const pool = getPool();
+  const { rows: partners } = await pool.query('SELECT * FROM referral_partners ORDER BY name ASC');
+  const { rows: clients } = await pool.query('SELECT id, slug, name, referral_partner_id FROM clients ORDER BY name ASC');
+  const withClients = partners.map(p => ({
+    ...p,
+    clients: clients.filter(c => c.referral_partner_id === p.id).map(c => ({ id: c.id, slug: c.slug, name: c.name })),
+  }));
+  res.json({
+    partners: withClients,
+    allClients: clients.map(({ id, slug, name, referral_partner_id }) => ({ id, slug, name, referral_partner_id })),
+  });
+});
+
+app.post('/api/referral-partners', async (req, res) => {
+  const { name, contact_name, email, phone, client_ids } = req.body || {};
+  if (!name || !String(name).trim()) return res.status(400).json({ error: 'Company name is required' });
+
+  const pool = getPool();
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query('BEGIN');
+    const { rows } = await dbClient.query(
+      `INSERT INTO referral_partners (name, contact_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING *`,
+      [String(name).trim(), (contact_name || '').trim() || null, (email || '').trim() || null, (phone || '').trim() || null]
+    );
+    const partner = rows[0];
+    if (Array.isArray(client_ids) && client_ids.length) {
+      await dbClient.query('UPDATE clients SET referral_partner_id = $1 WHERE id = ANY($2::int[])', [partner.id, client_ids]);
+    }
+    await dbClient.query('COMMIT');
+    res.json({ ok: true, partner });
+  } catch (err) {
+    await dbClient.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    dbClient.release();
+  }
+});
+
+app.patch('/api/referral-partners/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  const pool = getPool();
+  const { rows: existing } = await pool.query('SELECT * FROM referral_partners WHERE id = $1', [id]);
+  if (!existing[0]) return res.status(404).json({ error: 'Referral partner not found' });
+
+  const { name, contact_name, email, phone, client_ids } = req.body || {};
+  const updates = [];
+  const values = [];
+  if (typeof name === 'string' && name.trim()) { values.push(name.trim()); updates.push(`name = $${values.length}`); }
+  if (typeof contact_name === 'string') { values.push(contact_name.trim() || null); updates.push(`contact_name = $${values.length}`); }
+  if (typeof email === 'string') { values.push(email.trim() || null); updates.push(`email = $${values.length}`); }
+  if (typeof phone === 'string') { values.push(phone.trim() || null); updates.push(`phone = $${values.length}`); }
+
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query('BEGIN');
+    if (updates.length) {
+      values.push(id);
+      await dbClient.query(`UPDATE referral_partners SET ${updates.join(', ')} WHERE id = $${values.length}`, values);
+    }
+    if (Array.isArray(client_ids)) {
+      // The submitted list is the full checklist state, not a delta — clear
+      // this partner's current assignments first, then set the new set.
+      await dbClient.query('UPDATE clients SET referral_partner_id = NULL WHERE referral_partner_id = $1', [id]);
+      if (client_ids.length) {
+        await dbClient.query('UPDATE clients SET referral_partner_id = $1 WHERE id = ANY($2::int[])', [id, client_ids]);
+      }
+    }
+    await dbClient.query('COMMIT');
+    res.json({ ok: true });
+  } catch (err) {
+    await dbClient.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    dbClient.release();
+  }
+});
+
+app.delete('/api/referral-partners/:id', async (req, res) => {
+  const id = Number(req.params.id);
+  const pool = getPool();
+  const dbClient = await pool.connect();
+  try {
+    await dbClient.query('BEGIN');
+    await dbClient.query('UPDATE clients SET referral_partner_id = NULL WHERE referral_partner_id = $1', [id]);
+    const result = await dbClient.query('DELETE FROM referral_partners WHERE id = $1', [id]);
+    await dbClient.query('COMMIT');
+    if (!result.rowCount) return res.status(404).json({ error: 'Referral partner not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    await dbClient.query('ROLLBACK');
+    res.status(500).json({ error: err.message });
+  } finally {
+    dbClient.release();
+  }
+});
+
 app.post('/api/clients/:slug/manual-score', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).json({ error: 'Client not found' });
@@ -458,7 +560,13 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
     // which is the common case. Uses whatever narrative (if any) the
     // /docx/prepare route has already produced and cached on the run.
     const buffer = await buildDocxReport({ ...run.docxSource, narrative: run.narrative || null });
-    const fileName = `${run.docxSource.client.name.replace(/\s+/g, '-')}-SEO-Audit-${run.docxSource.date}.docx`;
+    const namePart = run.docxSource.client.name.replace(/\s+/g, '-');
+    // Quick report and Full Strategy Report were sharing one filename, so the
+    // second download would silently overwrite (or get "(1)"-suffixed by the
+    // browser instead of) the first — distinguish them so both survive.
+    const fileName = run.narrative
+      ? `${namePart}-Full-Strategy-Report-${run.docxSource.date}.docx`
+      : `${namePart}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'Content-Disposition': `attachment; filename="${fileName}"`,

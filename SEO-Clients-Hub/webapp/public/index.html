@@ -10,11 +10,33 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     background: #f5f6fa;
     color: #1e293b;
-    padding: 32px;
   }
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; max-width: 900px; margin-left: auto; margin-right: auto; }
-  h1 { font-size: 20px; }
+  .app-shell { display: flex; min-height: 100vh; align-items: stretch; }
+  .sidebar {
+    width: 220px; flex-shrink: 0; background: white; border-right: 1px solid #e2e8f0;
+    padding: 20px 14px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar-brand {
+    font-weight: 800; font-size: 15px; margin-bottom: 22px; padding: 0 10px;
+    text-decoration: none; color: #0B0B0C;
+  }
+  .sidebar-section-label {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #94a3b8;
+    margin: 18px 10px 6px; font-weight: 700;
+  }
+  .sidebar-link, .sidebar-btn {
+    display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; color: #475569; text-decoration: none; cursor: pointer;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidebar-link:hover, .sidebar-btn:hover { background: #f1f5f9; }
+  .sidebar-link.active { background: #eef2ff; color: #1d4ed8; }
+  .sidebar-link svg, .sidebar-btn svg { flex-shrink: 0; width: 18px; height: 18px; }
+  .sidebar-spacer { flex: 1; }
+  .main-content { flex: 1; padding: 32px; min-width: 0; }
   .container { max-width: 900px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  h1 { font-size: 20px; }
   .client-list { display: flex; flex-direction: column; gap: 10px; }
   .client-row {
     background: white;
@@ -42,7 +64,6 @@
   .btn.danger { background: #fef2f2; color: #dc2626; border: 1px solid transparent; }
   .btn.danger:hover { background: #fee2e2; }
   #migrate-status { font-size: 12px; color: #64748b; margin-top: 10px; }
-  .header-actions { display: flex; gap: 8px; }
   .client-link { flex: 1; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 16px; }
   .client-actions { display: flex; gap: 6px; margin-left: 16px; }
   .client-actions button { padding: 6px 10px; font-size: 12px; }
@@ -59,29 +80,58 @@
 </head>
 <body>
 
-<div class="container">
-  <div class="header">
-    <h1>SEO Platform</h1>
-    <div class="header-actions">
-      <button id="new-client-btn" class="btn secondary">+ New Client</button>
-      <button id="migrate-btn" class="btn secondary">Sync Clients from Config</button>
+<div class="app-shell">
+  <nav class="sidebar">
+    <a class="sidebar-brand" href="/">SEO Platform</a>
+
+    <a class="sidebar-link active" href="/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="sidebar-link" href="/referral-partners.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Referral Partners
+    </a>
+    <a class="sidebar-link" href="/settings.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </a>
+
+    <div class="sidebar-section-label">Admin</div>
+    <button id="new-client-btn" class="sidebar-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Client
+    </button>
+    <button id="migrate-btn" class="sidebar-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync from Config
+    </button>
+    <div id="migrate-status" style="padding:0 10px"></div>
+
+    <div class="sidebar-spacer"></div>
+  </nav>
+
+  <div class="main-content">
+    <div class="container">
+      <div class="header">
+        <h1>Clients</h1>
+      </div>
+
+      <form id="new-client-form" class="new-client-form" style="display:none">
+        <input name="name" placeholder="Client name" required>
+        <input name="url" placeholder="https://example.com" required>
+        <input name="slug" placeholder="auto-filled from name" required>
+        <button type="submit">Add Client</button>
+        <button type="button" id="new-client-cancel" class="btn secondary">Cancel</button>
+        <div id="new-client-status" style="width:100%"></div>
+        <small style="width:100%;color:#94a3b8">Slug is this app's internal ID for the client (used in its dashboard URL) — auto-filled from the name above, not related to the client's own website. Edit it only if you want something different.</small>
+      </form>
+
+      <button id="toggle-archived" class="toggle-archived">Show archived clients</button>
+      <div id="client-list" class="client-list">
+        <div class="empty">Loading clients...</div>
+      </div>
     </div>
-  </div>
-  <div id="migrate-status"></div>
-
-  <form id="new-client-form" class="new-client-form" style="display:none">
-    <input name="name" placeholder="Client name" required>
-    <input name="url" placeholder="https://example.com" required>
-    <input name="slug" placeholder="auto-filled from name" required>
-    <button type="submit">Add Client</button>
-    <button type="button" id="new-client-cancel" class="btn secondary">Cancel</button>
-    <div id="new-client-status" style="width:100%"></div>
-    <small style="width:100%;color:#94a3b8">Slug is this app's internal ID for the client (used in its dashboard URL) — auto-filled from the name above, not related to the client's own website. Edit it only if you want something different.</small>
-  </form>
-
-  <button id="toggle-archived" class="toggle-archived">Show archived clients</button>
-  <div id="client-list" class="client-list">
-    <div class="empty">Loading clients...</div>
   </div>
 </div>
 
@@ -122,7 +172,7 @@
     if (!clients.length) {
       listEl.innerHTML = showingArchived
         ? '<div class="empty">No archived clients.</div>'
-        : '<div class="empty">No clients yet — click "Sync Clients from Config" or "+ New Client" above.</div>';
+        : '<div class="empty">No clients yet — click "Sync from Config" or "New Client" in the sidebar.</div>';
       return;
     }
 
@@ -189,11 +239,10 @@
   document.getElementById('new-client-btn').addEventListener('click', () => {
     slugManuallyEdited = false;
     document.getElementById('new-client-form').style.display = 'flex';
-    document.getElementById('new-client-btn').style.display = 'none';
+    document.getElementById('new-client-form').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   });
   document.getElementById('new-client-cancel').addEventListener('click', () => {
     document.getElementById('new-client-form').style.display = 'none';
-    document.getElementById('new-client-btn').style.display = 'inline-block';
   });
 
   document.getElementById('new-client-form').addEventListener('submit', async (e) => {
@@ -218,7 +267,6 @@
     }
     form.reset();
     form.style.display = 'none';
-    document.getElementById('new-client-btn').style.display = 'inline-block';
     statusEl.textContent = '';
     loadClients();
   });
