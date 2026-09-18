@@ -9,7 +9,7 @@ const cookieSession = require('cookie-session');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
-const { runAudit, PROVIDERS } = require('../../seo-tool/lib/audit-engine');
+const { runAudit } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
@@ -159,10 +159,20 @@ async function findClientBySlug(slug) {
   return rows[0] || null;
 }
 
-async function getProviderId(providerKey) {
-  const name = (PROVIDERS[providerKey] || PROVIDERS['1']).name;
-  const { rows } = await getPool().query('SELECT id FROM providers WHERE name = $1', [name]);
-  return rows[0] ? rows[0].id : null;
+// Referral partners are also the Run Audit dropdown's option list — a
+// client's report is branded with whichever partner's colors/name/email
+// were picked. Falls back to the first (alphabetically) partner when the
+// picked id doesn't resolve to a row (deleted between page load and
+// submit, or no id sent at all).
+async function resolveReferralPartner(partnerId) {
+  const pool = getPool();
+  if (partnerId) {
+    const { rows } = await pool.query('SELECT * FROM referral_partners WHERE id = $1', [Number(partnerId)]);
+    if (rows[0]) return rows[0];
+  }
+  const { rows } = await pool.query('SELECT * FROM referral_partners ORDER BY name ASC LIMIT 1');
+  if (!rows[0]) throw new Error('No referral partners configured — add one on the Referral Partners page first.');
+  return rows[0];
 }
 
 app.get('/api/clients', async (req, res) => {
@@ -222,7 +232,16 @@ app.get('/api/clients/:slug', async (req, res) => {
     .map(([date, v]) => ({ date, score: v.score, source: v.source, id: v.id, hasReport: v.has_report }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
-  res.json({ client, history, providers: PROVIDERS });
+  // Shape matches what audit-engine.js's resolveProvider()/buildReport()
+  // expect (name/email/brand/brand2/accent) — keyed by id so the dropdown's
+  // option value round-trips straight back as the referral partner id.
+  const { rows: partnerRows } = await getPool().query('SELECT * FROM referral_partners ORDER BY name ASC');
+  const providers = {};
+  for (const p of partnerRows) {
+    providers[p.id] = { name: p.name, email: p.email, brand: p.brand_hex, brand2: p.brand2_hex, accent: p.accent_hex };
+  }
+
+  res.json({ client, history, providers });
 });
 
 app.patch('/api/clients/:slug', async (req, res) => {
@@ -296,10 +315,17 @@ app.delete('/api/clients/:slug', async (req, res) => {
   }
 });
 
-// Referral/reseller partners — attribution only (which of our clients came
-// from which partner), not a login or access boundary. "Default clients" is
-// modeled as a single FK on clients (one partner per client) rather than a
-// join table, since a client only ever comes from one referral source.
+// Referral/reseller partners — also the Run Audit dropdown's option list
+// (§ resolveReferralPartner above), so each one carries branding (2 brand
+// colors + an accent) alongside contact info. "Default clients" is modeled
+// as a single FK on clients (one partner per client) rather than a join
+// table, since a client only ever comes from/runs under one such company.
+const HEX_COLOR_RE = /^#[0-9a-f]{6}$/i;
+function cleanHex(v) {
+  const trimmed = String(v || '').trim();
+  return HEX_COLOR_RE.test(trimmed) ? trimmed : null;
+}
+
 app.get('/api/referral-partners', async (req, res) => {
   const pool = getPool();
   const { rows: partners } = await pool.query('SELECT * FROM referral_partners ORDER BY name ASC');
@@ -315,7 +341,7 @@ app.get('/api/referral-partners', async (req, res) => {
 });
 
 app.post('/api/referral-partners', async (req, res) => {
-  const { name, contact_name, email, phone, client_ids } = req.body || {};
+  const { name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex, client_ids } = req.body || {};
   if (!name || !String(name).trim()) return res.status(400).json({ error: 'Company name is required' });
 
   const pool = getPool();
@@ -323,8 +349,18 @@ app.post('/api/referral-partners', async (req, res) => {
   try {
     await dbClient.query('BEGIN');
     const { rows } = await dbClient.query(
-      `INSERT INTO referral_partners (name, contact_name, email, phone) VALUES ($1, $2, $3, $4) RETURNING *`,
-      [String(name).trim(), (contact_name || '').trim() || null, (email || '').trim() || null, (phone || '').trim() || null]
+      `INSERT INTO referral_partners (name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [
+        String(name).trim(),
+        (contact_name || '').trim() || null,
+        (email || '').trim() || null,
+        (phone || '').trim() || null,
+        (website || '').trim() || null,
+        cleanHex(brand_hex),
+        cleanHex(brand2_hex),
+        cleanHex(accent_hex),
+      ]
     );
     const partner = rows[0];
     if (Array.isArray(client_ids) && client_ids.length) {
@@ -334,6 +370,7 @@ app.post('/api/referral-partners', async (req, res) => {
     res.json({ ok: true, partner });
   } catch (err) {
     await dbClient.query('ROLLBACK');
+    if (err.code === '23505') return res.status(409).json({ error: `A referral partner named "${name}" already exists` });
     res.status(500).json({ error: err.message });
   } finally {
     dbClient.release();
@@ -346,13 +383,17 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
   const { rows: existing } = await pool.query('SELECT * FROM referral_partners WHERE id = $1', [id]);
   if (!existing[0]) return res.status(404).json({ error: 'Referral partner not found' });
 
-  const { name, contact_name, email, phone, client_ids } = req.body || {};
+  const { name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex, client_ids } = req.body || {};
   const updates = [];
   const values = [];
   if (typeof name === 'string' && name.trim()) { values.push(name.trim()); updates.push(`name = $${values.length}`); }
   if (typeof contact_name === 'string') { values.push(contact_name.trim() || null); updates.push(`contact_name = $${values.length}`); }
   if (typeof email === 'string') { values.push(email.trim() || null); updates.push(`email = $${values.length}`); }
   if (typeof phone === 'string') { values.push(phone.trim() || null); updates.push(`phone = $${values.length}`); }
+  if (typeof website === 'string') { values.push(website.trim() || null); updates.push(`website = $${values.length}`); }
+  if (typeof brand_hex === 'string') { values.push(cleanHex(brand_hex)); updates.push(`brand_hex = $${values.length}`); }
+  if (typeof brand2_hex === 'string') { values.push(cleanHex(brand2_hex)); updates.push(`brand2_hex = $${values.length}`); }
+  if (typeof accent_hex === 'string') { values.push(cleanHex(accent_hex)); updates.push(`accent_hex = $${values.length}`); }
 
   const dbClient = await pool.connect();
   try {
@@ -373,6 +414,7 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
     res.json({ ok: true });
   } catch (err) {
     await dbClient.query('ROLLBACK');
+    if (err.code === '23505') return res.status(409).json({ error: `A referral partner named "${name}" already exists` });
     res.status(500).json({ error: err.message });
   } finally {
     dbClient.release();
@@ -476,7 +518,14 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
   const clientRow = await findClientBySlug(req.params.slug);
   if (!clientRow) return res.status(404).json({ error: 'Client not found' });
 
-  const providerKey = (req.body && req.body.provider) || '1';
+  let partner;
+  try {
+    partner = await resolveReferralPartner(req.body && req.body.provider);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  const providerForEngine = { name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex };
+
   const runId = crypto.randomUUID();
   runs.set(runId, { status: 'crawling', pagesCrawled: 0, totalQueued: 0, slug: clientRow.slug });
 
@@ -490,7 +539,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
   // the browser polls /api/clients/:slug/audit/status/:runId instead of
   // holding this request open for the full crawl duration.
   runAudit(clientForEngine, {
-    provider: providerKey,
+    provider: providerForEngine,
     storage: dbStorage,
     enrichKeywords: enrichWithVolumes,
     onProgress: (e) => {
@@ -507,11 +556,10 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
     // html_report column already carries full page-level detail for the
     // UI's needs; adding a separate queryable page_results table is deferred
     // until something actually needs to query across pages/clients directly.
-    const providerId = await getProviderId(providerKey);
     await getPool().query(
-      `UPDATE audit_runs SET provider_id = $1, pages_crawled = $2, deductions = $3, html_report = $4
+      `UPDATE audit_runs SET referral_partner_id = $1, pages_crawled = $2, deductions = $3, html_report = $4
        WHERE client_id = $5 AND run_date = $6`,
-      [providerId, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
+      [partner.id, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
     );
     const changes = await computeChanges(clientRow.id, result.date, result.scoreData.score, result.scoreData.deductions);
     runs.set(runId, {
