@@ -158,6 +158,9 @@
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
       .map(([key, p]) => `<option value="${key}">${p.name}</option>`).join('');
+    // Pre-select the client's assigned referral partner (set on the
+    // Referral Partners page), if any — saves re-picking it on every run.
+    if (data.client.referral_partner_id) providerSelect.value = data.client.referral_partner_id;
 
     const tbody = document.querySelector('#history-table tbody');
     if (!data.history.length) {

@@ -69,6 +69,11 @@
   }
   .client-checklist label { font-size: 13px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
   #partner-form-status { font-size: 12px; margin-top: 6px; }
+  .color-row { display: flex; gap: 18px; margin-bottom: 14px; }
+  .color-field { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #64748b; font-weight: 600; }
+  .color-field input[type="color"] { width: 34px; height: 34px; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; cursor: pointer; }
+  .partner-swatches { display: flex; gap: 4px; margin-top: 8px; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.08); }
 </style>
 </head>
 <body>
@@ -104,7 +109,7 @@
       <div class="header">
         <h1>Referral Partners</h1>
       </div>
-      <div class="sub">Agencies and individuals who refer clients to us — tracked here for attribution, not login access.</div>
+      <div class="sub">Companies who refer clients to us or run audits under their own brand — this list also fills the Run Audit dropdown on each client's page.</div>
 
       <div id="partner-form-card" class="card" style="display:none">
         <h2 id="partner-form-title">Add Referral Partner</h2>
@@ -125,6 +130,27 @@
           <div>
             <label for="pf-phone">Phone Number</label>
             <input id="pf-phone" type="tel">
+          </div>
+          <div>
+            <label for="pf-website">Web Address</label>
+            <input id="pf-website" type="url" placeholder="https://example.com">
+          </div>
+        </div>
+        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">
+          Brand Colors — used on this partner's reports (cover, headers)
+        </label>
+        <div class="color-row">
+          <div class="color-field">
+            <input id="pf-brand" type="color" value="#0b0b0c">
+            <span>Primary 1</span>
+          </div>
+          <div class="color-field">
+            <input id="pf-brand2" type="color" value="#1d4ed8">
+            <span>Primary 2</span>
+          </div>
+          <div class="color-field">
+            <input id="pf-accent" type="color" value="#f59e0b">
+            <span>Accent</span>
           </div>
         </div>
         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">Default Clients</label>
@@ -162,7 +188,10 @@
         <div>
           <div class="partner-name">${p.name}</div>
           <div class="partner-meta">
-            ${[p.contact_name, p.email, p.phone].filter(Boolean).join(' &nbsp;·&nbsp; ') || 'No contact details on file'}
+            ${[p.contact_name, p.email, p.phone, p.website].filter(Boolean).join(' &nbsp;·&nbsp; ') || 'No contact details on file'}
+          </div>
+          <div class="partner-swatches">
+            ${[p.brand_hex, p.brand2_hex, p.accent_hex].filter(Boolean).map(hex => `<span class="swatch" style="background:${hex}" title="${hex}"></span>`).join('')}
           </div>
           <div class="partner-clients">
             ${p.clients.length
@@ -201,6 +230,10 @@
     document.getElementById('pf-contact').value = partner ? (partner.contact_name || '') : '';
     document.getElementById('pf-email').value = partner ? (partner.email || '') : '';
     document.getElementById('pf-phone').value = partner ? (partner.phone || '') : '';
+    document.getElementById('pf-website').value = partner ? (partner.website || '') : '';
+    document.getElementById('pf-brand').value = (partner && partner.brand_hex) || '#0b0b0c';
+    document.getElementById('pf-brand2').value = (partner && partner.brand2_hex) || '#1d4ed8';
+    document.getElementById('pf-accent').value = (partner && partner.accent_hex) || '#f59e0b';
     renderChecklist(partner ? partner.clients.map(c => c.id) : []);
     document.getElementById('partner-form-status').textContent = '';
     document.getElementById('partner-form-card').style.display = 'block';
@@ -229,6 +262,10 @@
       contact_name: document.getElementById('pf-contact').value.trim(),
       email: document.getElementById('pf-email').value.trim(),
       phone: document.getElementById('pf-phone').value.trim(),
+      website: document.getElementById('pf-website').value.trim(),
+      brand_hex: document.getElementById('pf-brand').value,
+      brand2_hex: document.getElementById('pf-brand2').value,
+      accent_hex: document.getElementById('pf-accent').value,
       client_ids,
     };
 

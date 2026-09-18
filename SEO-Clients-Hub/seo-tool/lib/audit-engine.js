@@ -879,6 +879,7 @@ function createEngine(client) {
     // client.brand_color, if set, is kept only as a fallback for older configs.
     const brand = provider.brand || client.brand_color || '#003366';
     const brand2 = provider.brand2 || brand;
+    const accent = provider.accent || brand2;
 
     const scoreColor = scoreData.score >= 80 ? '#22c55e' : scoreData.score >= 60 ? '#f59e0b' : '#ef4444';
     const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
@@ -991,7 +992,7 @@ function createEngine(client) {
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f6fa; color: #1e293b; font-size: 13px; line-height: 1.5; }
 
   /* ── Cover Page ── */
-  .cover { background: ${brand}; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; }
+  .cover { background: ${brand}; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; border-bottom: 4px solid ${accent}; }
   .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
   .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
   .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 16px; padding: 14px 20px; text-align: center; flex-shrink: 0; }

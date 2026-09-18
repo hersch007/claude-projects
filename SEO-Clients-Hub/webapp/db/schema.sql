@@ -91,22 +91,50 @@ CREATE TABLE IF NOT EXISTS manual_score_entries (
   created_at      timestamptz DEFAULT now()
 );
 
+-- referral_partners is also the "which company account is this audit
+-- prepared/branded under" list that drives the Run Audit dropdown — it
+-- replaced the old hardcoded PROVIDERS map in audit-engine.js and the
+-- `providers` table above (kept only so historical audit_runs.provider_id
+-- values still resolve; nothing new writes to it).
 CREATE TABLE IF NOT EXISTS referral_partners (
   id            serial PRIMARY KEY,
   name          text NOT NULL,
   contact_name  text,
   email         text,
   phone         text,
+  website       text,
+  brand_hex     text,
+  brand2_hex    text,
+  accent_hex    text,
   created_at    timestamptz DEFAULT now()
 );
+CREATE UNIQUE INDEX IF NOT EXISTS referral_partners_name_idx ON referral_partners (name);
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS website text;
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS brand_hex text;
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS brand2_hex text;
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS accent_hex text;
 
--- Attribution only (§ referral/reseller partners who send clients our way) —
--- one partner per client, not a login or access boundary.
+-- Attribution only (§ referral/reseller partners who send clients our way,
+-- and/or the default "runs under this company" pick for the client) — one
+-- partner per client, not a login or access boundary.
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS referral_partner_id int REFERENCES referral_partners(id);
 
+-- Records which referral partner/company an audit ran under — added
+-- alongside (not replacing) the older provider_id column above, since that
+-- one points at the old `providers` table's id space, not this one's.
+ALTER TABLE audit_runs ADD COLUMN IF NOT EXISTS referral_partner_id int REFERENCES referral_partners(id);
+
 -- Seed the 4 known provider companies (from seo-tool/lib/audit-engine.js's
--- PROVIDERS map) — safe to re-run, does nothing if already seeded.
+-- former PROVIDERS map) as the first 4 referral partners — safe to re-run,
+-- does nothing once already seeded.
 INSERT INTO providers (name, email, brand_hex, brand2_hex) VALUES
+  ('Start Advertising', 'RBStart@StartAdvertising.com', '#ED1C24', '#212121'),
+  ('Start Performance', 'RBStart@StartPerformance.com', '#ED1C24', '#212121'),
+  ('Parts of Practice',  'Richard@PartsofPractice.com', '#003366', '#f59e0b'),
+  ('GroupRB',            'Richard@GroupRB.com',         '#0B0B0C', '#1D4ED8')
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO referral_partners (name, email, brand_hex, brand2_hex) VALUES
   ('Start Advertising', 'RBStart@StartAdvertising.com', '#ED1C24', '#212121'),
   ('Start Performance', 'RBStart@StartPerformance.com', '#ED1C24', '#212121'),
   ('Parts of Practice',  'Richard@PartsofPractice.com', '#003366', '#f59e0b'),
