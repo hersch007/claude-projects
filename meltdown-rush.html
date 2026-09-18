@@ -338,6 +338,28 @@
   function jumpSound() { blip(420, 900, 0.12, 'square'); }
   function crashSound() { blip(260, 30, 0.35, 'sawtooth'); }
 
+  // ---- four-on-the-floor beat driving the background flash ----
+  function kick() {
+    var ac = ensureAudio();
+    if (!ac) return;
+    try {
+      var osc = ac.createOscillator();
+      var gain = ac.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(120, ac.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(35, ac.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.2, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.16);
+      osc.connect(gain).connect(ac.destination);
+      osc.start();
+      osc.stop(ac.currentTime + 0.18);
+    } catch (e) {}
+  }
+  function triggerBeat() {
+    flashEnergy = 1;
+    kick();
+  }
+
   // ---- background dog bark ambience (synthesized, no audio files) ----
   var noiseBuffer = null;
   function getNoiseBuffer(ac) {
@@ -408,6 +430,12 @@
   var shakeTime = 0;
   var hue = 190;
 
+  var BPM = 130;
+  var BEAT_INTERVAL = 60 / BPM;
+  var beatClock = 0;
+  var lastBeatIndex = -1;
+  var flashEnergy = 0;
+
   function computeConstants() {
     anchorX = w * 0.2;
     groundY = h * 0.8;
@@ -427,6 +455,9 @@
     particles = [];
     nextObstacleWorldX = anchorX + w * 0.9;
     shakeTime = 0;
+    beatClock = 0;
+    lastBeatIndex = -1;
+    flashEnergy = 0;
   }
 
   function spawnObstacleIfNeeded() {
@@ -572,13 +603,14 @@
   // ---- drawing ----
   function drawBackground(t) {
     hue += 10 * (1 / 60);
+    var boost = flashEnergy * 22;
     var g = ctx.createLinearGradient(0, 0, 0, h);
-    g.addColorStop(0, 'hsl(' + (hue % 360) + ', 60%, 10%)');
-    g.addColorStop(1, '#05060c');
+    g.addColorStop(0, 'hsl(' + (hue % 360) + ', 65%, ' + (10 + boost) + '%)');
+    g.addColorStop(1, 'hsl(' + (hue % 360) + ', 45%, ' + (3 + boost * 0.5) + '%)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, w, h);
 
-    ctx.strokeStyle = 'rgba(52, 245, 255, 0.08)';
+    ctx.strokeStyle = 'rgba(52, 245, 255, ' + (0.08 + flashEnergy * 0.15).toFixed(3) + ')';
     ctx.lineWidth = 1;
     var gridSize = playerSize * 1.4;
     var offset = (totalDistance * 0.6) % gridSize;
@@ -589,7 +621,7 @@
     }
     ctx.stroke();
 
-    ctx.strokeStyle = 'rgba(255, 46, 166, 0.55)';
+    ctx.strokeStyle = 'rgba(255, 46, 166, ' + (0.55 + flashEnergy * 0.35).toFixed(3) + ')';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, groundY + 1);
@@ -735,6 +767,8 @@
     var dt = Math.min((now - lastT) / 1000, 0.033);
     lastT = now;
 
+    flashEnergy = Math.max(0, flashEnergy - dt / 0.18);
+
     var shakeX = 0, shakeY = 0;
     if (shakeTime > 0) {
       shakeTime -= dt;
@@ -750,6 +784,13 @@
     if (state === STATE_PLAY) {
       scrollSpeed = baseScrollSpeed * (1 + Math.floor(totalDistance / 4000) * 0.14);
       totalDistance += scrollSpeed * dt;
+
+      beatClock += dt;
+      var beatIndex = Math.floor(beatClock / BEAT_INTERVAL);
+      if (beatIndex !== lastBeatIndex) {
+        lastBeatIndex = beatIndex;
+        triggerBeat();
+      }
 
       player.vy += gravity * dt;
       player.y += player.vy * dt;
