@@ -155,12 +155,12 @@
     document.getElementById('gsc-property').value = data.client.gsc_property || '';
     document.getElementById('competitor-urls').value = (data.client.competitor_urls || []).join('\n');
 
+    // The dropdown itself is already scoped server-side to just this
+    // client's assigned partner(s) — see GET /api/clients/:slug — falling
+    // back to every active partner only when none are assigned yet.
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
       .map(([key, p]) => `<option value="${key}">${p.name}</option>`).join('');
-    // Pre-select the client's assigned referral partner (set on the
-    // Referral Partners page), if any — saves re-picking it on every run.
-    if (data.client.referral_partner_id) providerSelect.value = data.client.referral_partner_id;
 
     const tbody = document.querySelector('#history-table tbody');
     if (!data.history.length) {

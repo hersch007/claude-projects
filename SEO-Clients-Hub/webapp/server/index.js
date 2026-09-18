@@ -161,17 +161,27 @@ async function findClientBySlug(slug) {
 
 // Referral partners are also the Run Audit dropdown's option list — a
 // client's report is branded with whichever partner's colors/name/email
-// were picked. Falls back to the first (alphabetically) partner when the
-// picked id doesn't resolve to a row (deleted between page load and
-// submit, or no id sent at all).
-async function resolveReferralPartner(partnerId) {
+// were picked. An explicit id is always honored even if that partner has
+// since been deactivated (it's already in the dropdown because it's this
+// client's assigned default — see the providers dict below). Without one,
+// the fallback mirrors that same dict: this client's first assigned
+// partner, or — if it has none — the first active partner globally, so
+// there's always something to fall back to before any assignment exists.
+async function resolveReferralPartner(partnerId, clientId) {
   const pool = getPool();
   if (partnerId) {
     const { rows } = await pool.query('SELECT * FROM referral_partners WHERE id = $1', [Number(partnerId)]);
     if (rows[0]) return rows[0];
   }
-  const { rows } = await pool.query('SELECT * FROM referral_partners ORDER BY name ASC LIMIT 1');
-  if (!rows[0]) throw new Error('No referral partners configured — add one on the Referral Partners page first.');
+  const { rows: assigned } = await pool.query(
+    `SELECT rp.* FROM referral_partner_clients rpc
+     JOIN referral_partners rp ON rp.id = rpc.partner_id
+     WHERE rpc.client_id = $1 ORDER BY rp.name ASC LIMIT 1`,
+    [clientId]
+  );
+  if (assigned[0]) return assigned[0];
+  const { rows } = await pool.query('SELECT * FROM referral_partners WHERE active ORDER BY name ASC LIMIT 1');
+  if (!rows[0]) throw new Error('No active referral partners configured — add or reactivate one on the Referral Partners page first.');
   return rows[0];
 }
 
@@ -235,10 +245,26 @@ app.get('/api/clients/:slug', async (req, res) => {
   // Shape matches what audit-engine.js's resolveProvider()/buildReport()
   // expect (name/email/brand/brand2/accent) — keyed by id so the dropdown's
   // option value round-trips straight back as the referral partner id.
-  const { rows: partnerRows } = await getPool().query('SELECT * FROM referral_partners ORDER BY name ASC');
+  // Restricted to the partners this client is actually assigned to (its
+  // "Default Clients" checklist entry on each partner) — an assigned one
+  // stays offered even if deactivated since it's a deliberate assignment,
+  // just labeled. A client with no assignments yet falls back to every
+  // active partner, so it's never a dead end before anyone's been assigned.
+  const { rows: assignedRows } = await getPool().query(
+    `SELECT rp.* FROM referral_partner_clients rpc
+     JOIN referral_partners rp ON rp.id = rpc.partner_id
+     WHERE rpc.client_id = $1 ORDER BY rp.name ASC`,
+    [client.id]
+  );
+  const partnerRows = assignedRows.length
+    ? assignedRows
+    : (await getPool().query('SELECT * FROM referral_partners WHERE active ORDER BY name ASC')).rows;
   const providers = {};
   for (const p of partnerRows) {
-    providers[p.id] = { name: p.name, email: p.email, brand: p.brand_hex, brand2: p.brand2_hex, accent: p.accent_hex };
+    providers[p.id] = {
+      name: p.active ? p.name : `${p.name} (inactive)`,
+      email: p.email, brand: p.brand_hex, brand2: p.brand2_hex, accent: p.accent_hex,
+    };
   }
 
   res.json({ client, history, providers });
@@ -326,31 +352,65 @@ function cleanHex(v) {
   return HEX_COLOR_RE.test(trimmed) ? trimmed : null;
 }
 
+// Logos are stored inline as data URLs (no object storage configured, and at
+// this scale — a handful of partner logos — a DB text column is simpler than
+// standing up a bucket). Capped well under Postgres's row-size comfort zone;
+// the type allowlist matches what docx's ImageRun can embed directly (no SVG).
+const LOGO_DATA_URL_RE = /^data:image\/(png|jpe?g|gif);base64,[a-z0-9+/]+=*$/i;
+const MAX_LOGO_DATA_URL_LEN = 350000; // ~250KB of raw image data once decoded
+function cleanLogoDataUrl(v) {
+  const trimmed = String(v || '').trim();
+  if (!trimmed) return null;
+  if (trimmed.length > MAX_LOGO_DATA_URL_LEN) throw new Error('Logo image is too large (max ~250KB)');
+  if (!LOGO_DATA_URL_RE.test(trimmed)) throw new Error('Logo must be a PNG, JPEG, or GIF image');
+  return trimmed;
+}
+function cleanLogoDim(v) {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? Math.round(n) : null;
+}
+
 app.get('/api/referral-partners', async (req, res) => {
   const pool = getPool();
   const { rows: partners } = await pool.query('SELECT * FROM referral_partners ORDER BY name ASC');
-  const { rows: clients } = await pool.query('SELECT id, slug, name, referral_partner_id FROM clients ORDER BY name ASC');
+  const { rows: clients } = await pool.query('SELECT id, slug, name FROM clients ORDER BY name ASC');
+  const { rows: links } = await pool.query('SELECT partner_id, client_id FROM referral_partner_clients');
+  const clientsByPartner = new Map();
+  for (const l of links) {
+    if (!clientsByPartner.has(l.partner_id)) clientsByPartner.set(l.partner_id, []);
+    clientsByPartner.get(l.partner_id).push(l.client_id);
+  }
+  const clientsById = new Map(clients.map(c => [c.id, c]));
   const withClients = partners.map(p => ({
     ...p,
-    clients: clients.filter(c => c.referral_partner_id === p.id).map(c => ({ id: c.id, slug: c.slug, name: c.name })),
+    clients: (clientsByPartner.get(p.id) || []).map(id => clientsById.get(id)).filter(Boolean),
   }));
-  res.json({
-    partners: withClients,
-    allClients: clients.map(({ id, slug, name, referral_partner_id }) => ({ id, slug, name, referral_partner_id })),
-  });
+  res.json({ partners: withClients, allClients: clients });
 });
 
 app.post('/api/referral-partners', async (req, res) => {
-  const { name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex, client_ids } = req.body || {};
+  const {
+    name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
+    active, billing_notes, logo_data_url, logo_width, logo_height, client_ids,
+  } = req.body || {};
   if (!name || !String(name).trim()) return res.status(400).json({ error: 'Company name is required' });
+
+  let cleanedLogo;
+  try {
+    cleanedLogo = cleanLogoDataUrl(logo_data_url);
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
 
   const pool = getPool();
   const dbClient = await pool.connect();
   try {
     await dbClient.query('BEGIN');
     const { rows } = await dbClient.query(
-      `INSERT INTO referral_partners (name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      `INSERT INTO referral_partners
+         (name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
+          active, billing_notes, logo_data_url, logo_width, logo_height)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
       [
         String(name).trim(),
         (contact_name || '').trim() || null,
@@ -360,11 +420,19 @@ app.post('/api/referral-partners', async (req, res) => {
         cleanHex(brand_hex),
         cleanHex(brand2_hex),
         cleanHex(accent_hex),
+        active === false ? false : true,
+        (billing_notes || '').trim() || null,
+        cleanedLogo,
+        cleanedLogo ? cleanLogoDim(logo_width) : null,
+        cleanedLogo ? cleanLogoDim(logo_height) : null,
       ]
     );
     const partner = rows[0];
     if (Array.isArray(client_ids) && client_ids.length) {
-      await dbClient.query('UPDATE clients SET referral_partner_id = $1 WHERE id = ANY($2::int[])', [partner.id, client_ids]);
+      await dbClient.query(
+        `INSERT INTO referral_partner_clients (partner_id, client_id) SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
+        [partner.id, client_ids]
+      );
     }
     await dbClient.query('COMMIT');
     res.json({ ok: true, partner });
@@ -383,7 +451,10 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
   const { rows: existing } = await pool.query('SELECT * FROM referral_partners WHERE id = $1', [id]);
   if (!existing[0]) return res.status(404).json({ error: 'Referral partner not found' });
 
-  const { name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex, client_ids } = req.body || {};
+  const {
+    name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
+    active, billing_notes, logo_data_url, logo_width, logo_height, client_ids,
+  } = req.body || {};
   const updates = [];
   const values = [];
   if (typeof name === 'string' && name.trim()) { values.push(name.trim()); updates.push(`name = $${values.length}`); }
@@ -394,6 +465,22 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
   if (typeof brand_hex === 'string') { values.push(cleanHex(brand_hex)); updates.push(`brand_hex = $${values.length}`); }
   if (typeof brand2_hex === 'string') { values.push(cleanHex(brand2_hex)); updates.push(`brand2_hex = $${values.length}`); }
   if (typeof accent_hex === 'string') { values.push(cleanHex(accent_hex)); updates.push(`accent_hex = $${values.length}`); }
+  if (typeof active === 'boolean') { values.push(active); updates.push(`active = $${values.length}`); }
+  if (typeof billing_notes === 'string') { values.push(billing_notes.trim() || null); updates.push(`billing_notes = $${values.length}`); }
+  if (typeof logo_data_url === 'string') {
+    // Presence of the key means "set or clear the logo" — an empty string
+    // clears it (and its now-meaningless stored dimensions) rather than
+    // leaving stale width/height pointing at no image.
+    let cleanedLogo;
+    try {
+      cleanedLogo = cleanLogoDataUrl(logo_data_url);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    values.push(cleanedLogo); updates.push(`logo_data_url = $${values.length}`);
+    values.push(cleanedLogo ? cleanLogoDim(logo_width) : null); updates.push(`logo_width = $${values.length}`);
+    values.push(cleanedLogo ? cleanLogoDim(logo_height) : null); updates.push(`logo_height = $${values.length}`);
+  }
 
   const dbClient = await pool.connect();
   try {
@@ -405,9 +492,12 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
     if (Array.isArray(client_ids)) {
       // The submitted list is the full checklist state, not a delta — clear
       // this partner's current assignments first, then set the new set.
-      await dbClient.query('UPDATE clients SET referral_partner_id = NULL WHERE referral_partner_id = $1', [id]);
+      await dbClient.query('DELETE FROM referral_partner_clients WHERE partner_id = $1', [id]);
       if (client_ids.length) {
-        await dbClient.query('UPDATE clients SET referral_partner_id = $1 WHERE id = ANY($2::int[])', [id, client_ids]);
+        await dbClient.query(
+          `INSERT INTO referral_partner_clients (partner_id, client_id) SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
+          [id, client_ids]
+        );
       }
     }
     await dbClient.query('COMMIT');
@@ -427,7 +517,8 @@ app.delete('/api/referral-partners/:id', async (req, res) => {
   const dbClient = await pool.connect();
   try {
     await dbClient.query('BEGIN');
-    await dbClient.query('UPDATE clients SET referral_partner_id = NULL WHERE referral_partner_id = $1', [id]);
+    // referral_partner_clients rows cascade-delete, and audit_runs/clients'
+    // references to this id go to NULL — see schema.sql's ON DELETE clauses.
     const result = await dbClient.query('DELETE FROM referral_partners WHERE id = $1', [id]);
     await dbClient.query('COMMIT');
     if (!result.rowCount) return res.status(404).json({ error: 'Referral partner not found' });
@@ -520,11 +611,14 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
 
   let partner;
   try {
-    partner = await resolveReferralPartner(req.body && req.body.provider);
+    partner = await resolveReferralPartner(req.body && req.body.provider, clientRow.id);
   } catch (err) {
     return res.status(400).json({ error: err.message });
   }
-  const providerForEngine = { name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex };
+  const providerForEngine = {
+    name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
+    logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
+  };
 
   const runId = crypto.randomUUID();
   runs.set(runId, { status: 'crawling', pagesCrawled: 0, totalQueued: 0, slug: clientRow.slug });
