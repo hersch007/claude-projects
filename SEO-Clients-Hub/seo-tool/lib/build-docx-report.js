@@ -241,6 +241,22 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     }
   }
 
+  // ── Section: Competitive Analysis (narrative) ──
+  // Grouped by competitor, same convention as Content Quality Findings
+  // above — a single competitor can surface more than one gap/advantage.
+  if (narrative && narrative.competitive_analysis && narrative.competitive_analysis.length) {
+    children.push(sectionHeading('Competitive Analysis', brandHex));
+    const findingsByCompetitor = new Map();
+    for (const item of narrative.competitive_analysis) {
+      if (!findingsByCompetitor.has(item.competitor)) findingsByCompetitor.set(item.competitor, []);
+      findingsByCompetitor.get(item.competitor).push(item);
+    }
+    for (const [competitor, items] of findingsByCompetitor) {
+      children.push(new Paragraph({ children: [new TextRun({ text: competitor, bold: true, font: 'Courier New', size: 20 })], spacing: { before: 200, after: 60 } }));
+      for (const item of items) children.push(...recItem(item));
+    }
+  }
+
   // ── Section: E-E-A-T & Local SEO (narrative) ──
   if (narrative && (narrative.eeat_signals_present || narrative.eeat_gaps || narrative.local_seo)) {
     children.push(sectionHeading('E-E-A-T & Local SEO Analysis', brandHex));
