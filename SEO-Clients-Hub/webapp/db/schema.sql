@@ -106,6 +106,11 @@ CREATE TABLE IF NOT EXISTS referral_partners (
   brand_hex     text,
   brand2_hex    text,
   accent_hex    text,
+  active        boolean NOT NULL DEFAULT true,
+  billing_notes text,
+  logo_data_url text,
+  logo_width    int,
+  logo_height   int,
   created_at    timestamptz DEFAULT now()
 );
 CREATE UNIQUE INDEX IF NOT EXISTS referral_partners_name_idx ON referral_partners (name);
@@ -113,16 +118,57 @@ ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS website text;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS brand_hex text;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS brand2_hex text;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS accent_hex text;
+-- Inactive partners drop out of the Run Audit dropdown's default list (but
+-- stay selectable for a client already assigned to one, and stay intact for
+-- historical audit_runs rows) instead of being deleted outright.
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+-- Free text, not a computed rate — no invoicing math exists in this app;
+-- this is purely a reference note ("15% markup on ad spend", "$500/mo flat").
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS billing_notes text;
+-- Data URL (small logos only, capped at upload time) plus the natural pixel
+-- size captured client-side, so the docx export can scale it into its cover
+-- layout without a server-side image-parsing dependency.
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_data_url text;
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_width int;
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_height int;
 
 -- Attribution only (§ referral/reseller partners who send clients our way,
--- and/or the default "runs under this company" pick for the client) — one
--- partner per client, not a login or access boundary.
+-- and/or the default "runs under this company" pick for the client). This
+-- single-FK column is superseded by the many-to-many referral_partner_clients
+-- table below (a client can be assigned to more than one partner/account —
+-- e.g. billed under GroupRB but also runnable under a specific reseller) —
+-- kept in place, unwritten from here on, only so it still backfills once.
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS referral_partner_id int REFERENCES referral_partners(id);
+
+-- Which partner/account(s) a client is assigned to — the Run Audit dropdown
+-- on a client's page is restricted to just these (falling back to all
+-- active partners when a client has none yet, so it's never a dead end).
+CREATE TABLE IF NOT EXISTS referral_partner_clients (
+  partner_id  int NOT NULL REFERENCES referral_partners(id) ON DELETE CASCADE,
+  client_id   int NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  PRIMARY KEY (partner_id, client_id)
+);
+
+-- One-time backfill from the old single-partner column into this table —
+-- safe to re-run (ON CONFLICT DO NOTHING once already migrated).
+INSERT INTO referral_partner_clients (partner_id, client_id)
+SELECT referral_partner_id, id FROM clients WHERE referral_partner_id IS NOT NULL
+ON CONFLICT DO NOTHING;
 
 -- Records which referral partner/company an audit ran under — added
 -- alongside (not replacing) the older provider_id column above, since that
 -- one points at the old `providers` table's id space, not this one's.
 ALTER TABLE audit_runs ADD COLUMN IF NOT EXISTS referral_partner_id int REFERENCES referral_partners(id);
+-- Both FKs above default to NO ACTION, which would block deleting a partner
+-- that has ever run an audit or had a client assigned — re-add them as
+-- ON DELETE SET NULL so deleting a partner just clears the reference
+-- instead of failing (idempotent: drop-then-add is safe to re-run).
+ALTER TABLE audit_runs DROP CONSTRAINT IF EXISTS audit_runs_referral_partner_id_fkey;
+ALTER TABLE audit_runs ADD CONSTRAINT audit_runs_referral_partner_id_fkey
+  FOREIGN KEY (referral_partner_id) REFERENCES referral_partners(id) ON DELETE SET NULL;
+ALTER TABLE clients DROP CONSTRAINT IF EXISTS clients_referral_partner_id_fkey;
+ALTER TABLE clients ADD CONSTRAINT clients_referral_partner_id_fkey
+  FOREIGN KEY (referral_partner_id) REFERENCES referral_partners(id) ON DELETE SET NULL;
 
 -- Seed the 4 known provider companies (from seo-tool/lib/audit-engine.js's
 -- former PROVIDERS map) as the first 4 referral partners — safe to re-run,

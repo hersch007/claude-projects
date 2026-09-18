@@ -15,7 +15,7 @@
 // audit-engine.js's runAudit doc comment / db-storage.js), so a Word export
 // of an arbitrary past run isn't available, only of a run just completed.
 const {
-  Document, Packer, Paragraph, TextRun, AlignmentType,
+  Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
 } = require('docx');
 const { getQuickWins, friendlyIssue } = require('./audit-engine');
@@ -45,6 +45,44 @@ function scoreBarTable(score) {
     width: { size: 60, type: WidthType.PERCENTAGE },
     alignment: AlignmentType.CENTER,
     rows: [new TableRow({ children: cells })],
+  });
+}
+
+// Same borderless-table trick as scoreBarTable, but a single full-width
+// cell — a thin colored rule closing out the cover, matching the HTML
+// report cover's accent-colored bottom border (audit-engine.js's `.cover`).
+function accentRuleTable(accentHex) {
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({
+      children: [new TableCell({
+        shading: { type: ShadingType.CLEAR, fill: accentHex },
+        borders: NO_BORDERS,
+        margins: { top: 40, bottom: 40, left: 0, right: 0 },
+        children: [new Paragraph({ children: [] })],
+      })],
+    })],
+  });
+}
+
+// Cover logo, scaled to fit a small letterhead-sized box while preserving
+// aspect ratio — docx's ImageRun needs explicit width/height (no built-in
+// image-dimension reading), so it relies on the natural pixel size captured
+// client-side when the logo was uploaded (referral-partners.html) rather
+// than parsing the image buffer here. Returns null when there's no logo, or
+// its data URL/type isn't one ImageRun can embed (mirrors the server's own
+// upload-time allowlist, so this is a belt-and-suspenders check).
+const LOGO_MAX_W = 160;
+const LOGO_MAX_H = 56;
+function coverLogoImageRun(provider) {
+  const match = /^data:image\/(png|jpe?g|gif);base64,(.+)$/i.exec(provider.logo || '');
+  if (!match || !provider.logoWidth || !provider.logoHeight) return null;
+  const type = match[1].toLowerCase() === 'jpeg' ? 'jpg' : match[1].toLowerCase();
+  const scale = Math.min(LOGO_MAX_W / provider.logoWidth, LOGO_MAX_H / provider.logoHeight, 1);
+  return new ImageRun({
+    type,
+    data: Buffer.from(match[2], 'base64'),
+    transformation: { width: Math.round(provider.logoWidth * scale), height: Math.round(provider.logoHeight * scale) },
   });
 }
 
@@ -95,14 +133,19 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
+  const accentHex = (provider.accent || provider.brand2 || provider.brand || '#003366').replace('#', '');
   const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
 
   const children = [];
+  const logoImageRun = coverLogoImageRun(provider);
 
   // ── Cover ──
   children.push(
-    new Paragraph({ spacing: { before: 1600 }, children: [] }),
+    new Paragraph({ spacing: { before: logoImageRun ? 1000 : 1600 }, children: [] }),
+    ...(logoImageRun
+      ? [new Paragraph({ alignment: AlignmentType.CENTER, children: [logoImageRun], spacing: { after: 200 } })]
+      : []),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: client.name, bold: true, size: 56, color: brandHex })],
@@ -128,8 +171,10 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: `Audit Date: ${dateLabel}  |  Prepared by: ${provider.name}`, size: 20, color: '595959' })],
-      pageBreakAfter: true,
+      spacing: { after: 400 },
     }),
+    accentRuleTable(accentHex),
+    new Paragraph({ children: [], pageBreakAfter: true }),
   );
 
   // ── Section: Score summary ──

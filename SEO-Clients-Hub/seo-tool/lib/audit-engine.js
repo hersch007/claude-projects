@@ -994,7 +994,8 @@ function createEngine(client) {
   /* ── Cover Page ── */
   .cover { background: ${brand}; color: white; min-height: 220px; padding: 48px 56px 44px; display: flex; flex-direction: column; page-break-after: always; border-bottom: 4px solid ${accent}; }
   .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
-  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; }
+  .cover-agency { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; display: flex; align-items: center; gap: 8px; }
+  .cover-logo { height: 22px; max-width: 120px; object-fit: contain; }
   .cover-score-box { background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.4); border-radius: 16px; padding: 14px 20px; text-align: center; flex-shrink: 0; }
   .score-ring-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto; }
   .score-ring-wrap svg { display: block; }
@@ -1191,7 +1192,7 @@ function createEngine(client) {
 <!-- COVER -->
 <div class="cover">
   <div class="cover-header">
-    <div class="cover-agency">${provider.name} &bull; SEO Audit</div>
+    <div class="cover-agency">${provider.logo ? `<img src="${provider.logo}" alt="${provider.name}" class="cover-logo">` : ''}${provider.name} &bull; SEO Audit</div>
     <div class="cover-score-box">
       <div class="score-ring-wrap">
         <svg viewBox="0 0 100 100" width="100" height="100">

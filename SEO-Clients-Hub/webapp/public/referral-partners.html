@@ -72,8 +72,23 @@
   .color-row { display: flex; gap: 18px; margin-bottom: 14px; }
   .color-field { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #64748b; font-weight: 600; }
   .color-field input[type="color"] { width: 34px; height: 34px; padding: 2px; border-radius: 6px; border: 1px solid #cbd5e1; cursor: pointer; }
-  .partner-swatches { display: flex; gap: 4px; margin-top: 8px; }
+  .partner-swatches { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
   .swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid rgba(0,0,0,.08); }
+  .partner-row.inactive { opacity: .55; }
+  .inactive-badge {
+    background: #f1f5f9; color: #94a3b8; font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .04em; padding: 2px 7px; border-radius: 10px; margin-left: 8px;
+  }
+  .logo-thumb { height: 24px; max-width: 90px; object-fit: contain; margin-right: 6px; vertical-align: middle; }
+  .logo-field { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .logo-preview { height: 40px; width: 90px; border: 1px dashed #cbd5e1; border-radius: 6px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #fafafa; }
+  .logo-preview img { max-height: 100%; max-width: 100%; object-fit: contain; }
+  .logo-preview span { font-size: 10px; color: #94a3b8; }
+  .active-toggle { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #475569; font-weight: 600; margin-bottom: 14px; }
+  .billing-field { margin-bottom: 14px; }
+  .billing-field textarea {
+    width: 100%; font-size: 13px; padding: 9px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: inherit; resize: vertical;
+  }
 </style>
 </head>
 <body>
@@ -153,6 +168,28 @@
             <span>Accent</span>
           </div>
         </div>
+        <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">
+          Logo — shown on this partner's report cover (PNG/JPEG/GIF, max ~250KB)
+        </label>
+        <div class="logo-field">
+          <div id="pf-logo-preview" class="logo-preview"><span>No logo</span></div>
+          <input type="file" id="pf-logo-file" accept="image/png,image/jpeg,image/gif">
+          <button type="button" id="pf-logo-remove" class="btn secondary" style="display:none">Remove</button>
+          <input type="hidden" id="pf-logo-data-url">
+          <input type="hidden" id="pf-logo-width">
+          <input type="hidden" id="pf-logo-height">
+        </div>
+        <div id="pf-logo-error" style="font-size:12px;color:#dc2626;margin-bottom:10px"></div>
+        <div class="billing-field">
+          <label for="pf-billing" style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">
+            Billing / Rate Notes — reference only, not used in any calculation
+          </label>
+          <textarea id="pf-billing" rows="2" placeholder="e.g. 15% markup on ad spend, or $500/mo flat retainer"></textarea>
+        </div>
+        <label class="active-toggle">
+          <input type="checkbox" id="pf-active" checked>
+          Active — shows up in the Run Audit dropdown
+        </label>
         <label style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">Default Clients</label>
         <div id="pf-client-checklist" class="client-checklist"></div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -184,12 +221,16 @@
     }
 
     listEl.innerHTML = data.partners.map(p => `
-      <div class="card partner-row">
+      <div class="card partner-row ${p.active ? '' : 'inactive'}">
         <div>
-          <div class="partner-name">${p.name}</div>
+          <div class="partner-name">
+            ${p.logo_data_url ? `<img src="${p.logo_data_url}" class="logo-thumb" alt="">` : ''}${p.name}
+            ${p.active ? '' : '<span class="inactive-badge">Inactive</span>'}
+          </div>
           <div class="partner-meta">
             ${[p.contact_name, p.email, p.phone, p.website].filter(Boolean).join(' &nbsp;·&nbsp; ') || 'No contact details on file'}
           </div>
+          ${p.billing_notes ? `<div class="partner-meta">${p.billing_notes}</div>` : ''}
           <div class="partner-swatches">
             ${[p.brand_hex, p.brand2_hex, p.accent_hex].filter(Boolean).map(hex => `<span class="swatch" style="background:${hex}" title="${hex}"></span>`).join('')}
           </div>
@@ -201,6 +242,7 @@
         </div>
         <div class="partner-actions">
           <button class="btn secondary" data-action="edit" data-id="${p.id}">Edit</button>
+          <button class="btn secondary" data-action="toggle-active" data-id="${p.id}" data-active="${p.active}">${p.active ? 'Deactivate' : 'Activate'}</button>
           <button class="btn danger" data-action="delete" data-id="${p.id}" data-name="${p.name}">Delete</button>
         </div>
       </div>
@@ -223,6 +265,13 @@
     `).join('');
   }
 
+  function setLogoPreview(dataUrl) {
+    const previewEl = document.getElementById('pf-logo-preview');
+    previewEl.innerHTML = dataUrl ? `<img src="${dataUrl}" alt="">` : '<span>No logo</span>';
+    document.getElementById('pf-logo-remove').style.display = dataUrl ? 'inline-block' : 'none';
+    document.getElementById('pf-logo-data-url').value = dataUrl || '';
+  }
+
   function openForm(partner) {
     editingId = partner ? partner.id : null;
     document.getElementById('partner-form-title').textContent = partner ? 'Edit Referral Partner' : 'Add Referral Partner';
@@ -234,6 +283,13 @@
     document.getElementById('pf-brand').value = (partner && partner.brand_hex) || '#0b0b0c';
     document.getElementById('pf-brand2').value = (partner && partner.brand2_hex) || '#1d4ed8';
     document.getElementById('pf-accent').value = (partner && partner.accent_hex) || '#f59e0b';
+    document.getElementById('pf-billing').value = partner ? (partner.billing_notes || '') : '';
+    document.getElementById('pf-active').checked = partner ? partner.active : true;
+    document.getElementById('pf-logo-file').value = '';
+    document.getElementById('pf-logo-width').value = (partner && partner.logo_width) || '';
+    document.getElementById('pf-logo-height').value = (partner && partner.logo_height) || '';
+    document.getElementById('pf-logo-error').textContent = '';
+    setLogoPreview(partner ? partner.logo_data_url : null);
     renderChecklist(partner ? partner.clients.map(c => c.id) : []);
     document.getElementById('partner-form-status').textContent = '';
     document.getElementById('partner-form-card').style.display = 'block';
@@ -247,6 +303,37 @@
 
   document.getElementById('add-partner-btn').addEventListener('click', () => openForm(null));
   document.getElementById('partner-form-cancel').addEventListener('click', closeForm);
+  document.getElementById('pf-logo-remove').addEventListener('click', () => {
+    setLogoPreview(null);
+    document.getElementById('pf-logo-width').value = '';
+    document.getElementById('pf-logo-height').value = '';
+  });
+
+  const MAX_LOGO_BYTES = 250 * 1024;
+  document.getElementById('pf-logo-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    const errorEl = document.getElementById('pf-logo-error');
+    errorEl.textContent = '';
+    if (!file) return;
+    if (file.size > MAX_LOGO_BYTES) {
+      errorEl.textContent = 'Logo is too large (max ~250KB) — resize it and try again.';
+      e.target.value = '';
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result;
+      const img = new Image();
+      img.onload = () => {
+        document.getElementById('pf-logo-width').value = img.naturalWidth;
+        document.getElementById('pf-logo-height').value = img.naturalHeight;
+        setLogoPreview(dataUrl);
+      };
+      img.onerror = () => { errorEl.textContent = 'Could not read that image — try a different file.'; };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
 
   document.getElementById('partner-form-save').addEventListener('click', async () => {
     const statusEl = document.getElementById('partner-form-status');
@@ -266,6 +353,11 @@
       brand_hex: document.getElementById('pf-brand').value,
       brand2_hex: document.getElementById('pf-brand2').value,
       accent_hex: document.getElementById('pf-accent').value,
+      billing_notes: document.getElementById('pf-billing').value.trim(),
+      active: document.getElementById('pf-active').checked,
+      logo_data_url: document.getElementById('pf-logo-data-url').value,
+      logo_width: document.getElementById('pf-logo-width').value,
+      logo_height: document.getElementById('pf-logo-height').value,
       client_ids,
     };
 
@@ -294,6 +386,14 @@
 
     if (btn.dataset.action === 'edit') {
       openForm(partner);
+    } else if (btn.dataset.action === 'toggle-active') {
+      const nowActive = btn.dataset.active !== 'true';
+      await fetch(`/api/referral-partners/${btn.dataset.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: nowActive }),
+      });
+      loadPartners();
     } else if (btn.dataset.action === 'delete') {
       if (!confirm(`Delete referral partner "${btn.dataset.name}"? Clients stay — only the attribution is removed.`)) return;
       await fetch(`/api/referral-partners/${btn.dataset.id}`, { method: 'DELETE' });
