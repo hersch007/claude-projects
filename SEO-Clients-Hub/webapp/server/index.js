@@ -15,6 +15,7 @@ const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
+const { fetchCompetitorSummaries } = require('../../seo-tool/lib/competitor-analysis');
 const { getPool } = dbStorage;
 
 const app = express();
@@ -241,8 +242,20 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(body.gsc_property.trim() || null);
     updates.push(`gsc_property = $${values.length}`);
   }
+  if (Array.isArray(body.competitor_urls)) {
+    // Capped at 3 (matches fetchCompetitorSummaries' own cap) and validated
+    // as real URLs here rather than trusting the client — this feeds a
+    // server-side fetch during /docx/prepare, not just display.
+    const cleaned = body.competitor_urls
+      .map(u => String(u || '').trim())
+      .filter(Boolean)
+      .filter(u => { try { new URL(u); return true; } catch { return false; } })
+      .slice(0, 3);
+    values.push(JSON.stringify(cleaned));
+    updates.push(`competitor_urls = $${values.length}`);
+  }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls' });
   }
 
   values.push(client.id);
@@ -409,7 +422,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // pageSpeed starts null and is filled in later by /docx/prepare below
       // — a live PSI check has been observed taking 90s+, so it can't run
       // as part of this already-fast audit completion path.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: null },
+      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, pageSpeed: null, competitors: [] },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);
@@ -469,19 +482,26 @@ app.post('/api/clients/:slug/audit/report/:runId/docx/prepare', (req, res) => {
 
   run.narrativeStatus = 'generating';
   (async () => {
-    // Homepage Core Web Vitals runs first (not concurrently with the
-    // narrative call below) so its result is available in run.docxSource
-    // in time for generateNarrative() to actually see it — narrative-
-    // report.js reads pageSpeed off the object passed to it, and only
-    // mentions it when the rating is genuinely "poor". Same reason it's
-    // not part of /audit/run at all: a live PSI check has been observed
-    // taking 90s+, so it can't run on that already-fast path.
-    try {
-      run.docxSource.pageSpeed = await getCoreWebVitals(run.docxSource.client.url);
-    } catch (err) {
-      console.error(`Core Web Vitals check for run ${req.params.runId} failed:`, err);
-      run.docxSource.pageSpeed = null;
-    }
+    // Core Web Vitals and competitor summaries are independent of each
+    // other, so they run concurrently — but both must finish before the
+    // narrative call below, since narrative-report.js reads pageSpeed and
+    // competitors off run.docxSource and can't react to data that arrives
+    // after its prompt was already sent. Same reason CWV isn't part of
+    // /audit/run at all: a live PSI check has been observed taking 90s+,
+    // so neither this nor a multi-site competitor fetch can run on that
+    // already-fast common-case path.
+    const [pageSpeed, competitors] = await Promise.all([
+      getCoreWebVitals(run.docxSource.client.url).catch((err) => {
+        console.error(`Core Web Vitals check for run ${req.params.runId} failed:`, err);
+        return null;
+      }),
+      fetchCompetitorSummaries(run.docxSource.client.competitor_urls).catch((err) => {
+        console.error(`Competitor analysis for run ${req.params.runId} failed:`, err);
+        return [];
+      }),
+    ]);
+    run.docxSource.pageSpeed = pageSpeed;
+    run.docxSource.competitors = competitors;
     try {
       run.narrative = await generateNarrative(run.docxSource);
     } catch (err) {

@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS clients (
 -- table, so add them explicitly (idempotent, safe to re-run on every boot).
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS archived boolean NOT NULL DEFAULT false;
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS business_notes text;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS competitor_urls jsonb DEFAULT '[]';
 
 CREATE TABLE IF NOT EXISTS audit_runs (
   id                serial PRIMARY KEY,

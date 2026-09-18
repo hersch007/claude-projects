@@ -45,6 +45,22 @@ const CONTENT_QUALITY_ITEM = {
   additionalProperties: false,
 };
 
+// Same title/detail shape again, plus which competitor the comparison is
+// against — only meaningful when competitor_summaries was actually
+// provided (client set competitor URLs), so this array is simply empty
+// otherwise rather than the model inventing a comparison with nothing to
+// compare against.
+const COMPETITIVE_FINDING_ITEM = {
+  type: 'object',
+  properties: {
+    competitor: { type: 'string', description: 'The competitor URL this comparison is against.' },
+    title: { type: 'string' },
+    detail: { type: 'string' },
+  },
+  required: ['competitor', 'title', 'detail'],
+  additionalProperties: false,
+};
+
 const OUTPUT_SCHEMA = {
   type: 'object',
   properties: {
@@ -71,6 +87,11 @@ const OUTPUT_SCHEMA = {
       type: 'array',
       items: CONTENT_QUALITY_ITEM,
       description: 'Findings from actually reading each page\'s contentSample — thin/generic copy, missing credentials or expertise signals, tone mismatches for the audience. Empty array if the copy genuinely has no such issues; do not invent findings to fill this out.',
+    },
+    competitive_analysis: {
+      type: 'array',
+      items: COMPETITIVE_FINDING_ITEM,
+      description: 'Concrete gaps or advantages found by comparing this site against the provided competitor_summaries — e.g. a competitor has FAQ schema and 1200-word service pages, this site doesn\'t. Empty array when competitor_summaries is empty; never invent a comparison against a competitor that wasn\'t provided.',
     },
     eeat_signals_present: { type: 'array', items: REC_ITEM },
     eeat_gaps: { type: 'array', items: REC_ITEM },
@@ -111,7 +132,8 @@ const OUTPUT_SCHEMA = {
   },
   required: [
     'summary', 'top_priorities', 'medium_term', 'long_term', 'content_quality_findings',
-    'eeat_signals_present', 'eeat_gaps', 'local_seo', 'content_keyword_strategy', 'next_steps',
+    'competitive_analysis', 'eeat_signals_present', 'eeat_gaps', 'local_seo',
+    'content_keyword_strategy', 'next_steps',
   ],
   additionalProperties: false,
 };
@@ -156,7 +178,17 @@ tags are present. Flag only genuine problems:
 Cite the specific page for every finding. If a page's copy is genuinely
 fine, say nothing about it — an empty content_quality_findings array is the
 correct output for a well-written site, not a sign you didn't look hard
-enough.`;
+enough.
+
+For competitive_analysis: compare this site against each entry in
+competitor_summaries (title, meta description, word count, schema types,
+and contentSample) and surface concrete, specific gaps or advantages —
+e.g. "Competitor has FAQPage schema and a 1,400-word service page; this
+site has neither." Never give vague competitive commentary ("competitor
+seems stronger") without pointing to the specific structural or content
+difference driving that read. If competitor_summaries is empty, return an
+empty competitive_analysis array — do not speculate about unnamed or
+hypothetical competitors.`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.
@@ -185,7 +217,7 @@ function summarizePages(pages) {
     }));
 }
 
-async function generateNarrative({ client, results, scoreData, pageSpeed }) {
+async function generateNarrative({ client, results, scoreData, pageSpeed, competitors }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('Narrative report skipped: ANTHROPIC_API_KEY is not set.');
     return null;
@@ -207,6 +239,10 @@ async function generateNarrative({ client, results, scoreData, pageSpeed }) {
       inp_rating: pageSpeed.inp ? pageSpeed.inp.rating : 'no field data',
     } : '(not measured)',
     pages: summarizePages(results),
+    // Single-page summaries only (competitor-analysis.js) — not full
+    // audits of the competitor, just enough structural/content facts to
+    // compare against. Empty when the client has no competitor_urls set.
+    competitor_summaries: (competitors && competitors.length) ? competitors : '(none provided)',
   });
 
   try {

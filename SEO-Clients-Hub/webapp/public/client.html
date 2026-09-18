@@ -75,6 +75,18 @@
   </div>
 
   <div class="card">
+    <h2>Competitor URLs</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      Up to 3 competitor homepages to compare against in the Full Strategy Report — one per line.
+      Each is a lightweight, single-page comparison (title, content, schema), not a full audit of
+      the competitor. Leave blank to skip competitive analysis.
+    </p>
+    <textarea id="competitor-urls" rows="3" style="width:100%;font-size:13px;padding:10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit" placeholder="https://competitor-one.com/&#10;https://competitor-two.com/"></textarea>
+    <div style="margin-top:8px"><button id="competitors-save">Save Competitor URLs</button></div>
+    <div id="competitors-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -141,6 +153,7 @@
 
     document.getElementById('business-notes').value = data.client.business_notes || '';
     document.getElementById('gsc-property').value = data.client.gsc_property || '';
+    document.getElementById('competitor-urls').value = (data.client.competitor_urls || []).join('\n');
 
     const providerSelect = document.getElementById('provider-select');
     providerSelect.innerHTML = Object.entries(data.providers)
@@ -340,6 +353,25 @@
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ gsc_property: document.getElementById('gsc-property').value }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('competitors-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('competitors-status');
+    const urls = document.getElementById('competitor-urls').value.split('\n').map(u => u.trim()).filter(Boolean);
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ competitor_urls: urls }),
     });
     const data = await res.json();
     if (data.error) {
