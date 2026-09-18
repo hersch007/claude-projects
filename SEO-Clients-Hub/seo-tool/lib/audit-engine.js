@@ -18,6 +18,17 @@ const PROVIDERS = {
   '4': { name: 'GroupRB', email: 'Richard@GroupRB.com', brand: '#0B0B0C', brand2: '#1D4ED8' },
 };
 
+// schema.org @type values worth checking for the LocalBusiness-specific
+// recommended fields below (address/telephone/hours) — not exhaustive, but
+// covers the subtypes an actual small-business/professional-services
+// client is likely to use (every current client's schema uses
+// ProfessionalService specifically).
+const LOCAL_BUSINESS_TYPES = new Set([
+  'LocalBusiness', 'ProfessionalService', 'MedicalBusiness', 'Physician', 'Dentist',
+  'LegalService', 'Restaurant', 'Store', 'HomeAndConstructionBusiness', 'AutomotiveBusiness',
+  'HealthAndBeautyBusiness', 'FinancialService', 'RealEstateAgent',
+]);
+
 function resolveProvider(provider) {
   if (!provider) return PROVIDERS['1'];
   if (typeof provider === 'object' && provider.name) return provider;
@@ -143,6 +154,31 @@ function annotateDuplicates(results) {
   }
 }
 
+// Approximate syllable count for a single English word — no dictionary
+// lookup, just the standard vowel-group heuristic used by most readability
+// tools (Yoast, Hemingway, etc.). Good enough for a Flesch Reading Ease
+// estimate; not meant to be linguistically exact.
+function countSyllables(word) {
+  const w = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (!w) return 0;
+  if (w.length <= 3) return 1;
+  const trimmed = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
+  const matches = trimmed.match(/[aeiouy]{1,2}/g);
+  return matches ? matches.length : 1;
+}
+
+// Flesch Reading Ease score (0-100, higher = easier to read) — a standard,
+// well-known formula, not something we invented. Returns null when there
+// isn't enough text to make the estimate meaningful.
+function calcReadability(text) {
+  const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
+  const words = text.split(/\s+/).filter(w => w.length > 0);
+  if (sentences.length < 2 || words.length < 30) return null;
+  const syllables = words.reduce((sum, w) => sum + countSyllables(w), 0);
+  const score = 206.835 - 1.015 * (words.length / sentences.length) - 84.6 * (syllables / words.length);
+  return Math.round(score);
+}
+
 // ─── Score ────────────────────────────────────────────────────────────────────
 
 function calcScore(results, { hasSitemap = true } = {}) {
@@ -240,12 +276,25 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (missingCharset) deduct(Math.min(3, Math.round((missingCharset / totalPages) * 3)), `${missingCharset} page(s) missing a character encoding declaration`);
   if (missingDoctype) deduct(Math.min(2, Math.round((missingDoctype / totalPages) * 2)), `${missingDoctype} page(s) missing a doctype declaration`);
 
+  // Internal-linking / content-quality / structured-data-completeness
+  // signals — none of these are "broken" in the strict sense, but each is
+  // a real ranking-adjacent factor that's checkable for free.
+  const orphanPages = pages.filter(p => p.warnings.includes('Orphan page (no internal links point to it)')).length;
+  const skippedHeadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
+  const difficultReadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
+  const missingLocalBusinessFieldPages = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
+  if (orphanPages) deduct(Math.min(8, Math.round((orphanPages / totalPages) * 8)), `${orphanPages} orphan page(s) (no internal links point to them)`);
+  if (skippedHeadingPages) deduct(Math.min(4, Math.round((skippedHeadingPages / totalPages) * 4)), `${skippedHeadingPages} page(s) with a skipped heading level`);
+  if (difficultReadingPages) deduct(Math.min(6, Math.round((difficultReadingPages / totalPages) * 6)), `${difficultReadingPages} page(s) with difficult-to-read copy`);
+  if (missingLocalBusinessFieldPages) deduct(Math.min(6, Math.round((missingLocalBusinessFieldPages / totalPages) * 6)), `${missingLocalBusinessFieldPages} page(s) with incomplete LocalBusiness schema (missing phone/address/hours)`);
+
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
   const scoredWarningPatterns = [
     /^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/,
     /^Duplicate H1 tag/, /^Missing viewport meta tag/, /^Missing html lang attribute/, /^No HTTP compression/,
     /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
+    /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -304,6 +353,10 @@ function friendlyIssue(text) {
   if (text.match(/Missing Open Graph tags/i)) return { label: text, why: 'Without these tags, links to this page shared on social media or messaging apps show a generic or broken preview instead of a proper title/image.', priority: 'low' };
   if (text.match(/Missing character encoding declaration/i)) return { label: text, why: 'Without a declared character encoding, special characters can render incorrectly in some browsers.', priority: 'low' };
   if (text.match(/Missing doctype declaration/i)) return { label: text, why: 'Without a doctype, browsers may render the page in a legacy "quirks mode" with inconsistent behavior.', priority: 'low' };
+  if (text.match(/Orphan page/i)) return { label: text, why: 'No other page on the site links to this one, so visitors browsing normally can\'t find it and it gets little to no internal link authority.', priority: 'medium' };
+  if (text.match(/Heading hierarchy skips/i)) return { label: text, why: 'Skipping a heading level breaks the logical document outline search engines and screen readers rely on.', priority: 'low' };
+  if (text.match(/Difficult to read/i)) return { label: text, why: 'Dense, hard-to-read copy loses visitors and gives Google less clear signal about what the page is actually about.', priority: 'medium' };
+  if (text.match(/LocalBusiness schema missing/i)) return { label: text, why: 'Missing phone/address/hours in structured data means Google has less to work with for map listings and knowledge panels, even though the schema is technically present and valid.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -384,6 +437,10 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const mixedContent = pages.filter(p => p.issues.some(i => i.includes('mixed-content resource'))).length;
   const brokenLinks = pages.filter(p => p.issues.some(i => i.startsWith('Links to') && i.includes('broken internal'))).length;
   const missingImageDimensions = pages.filter(p => p.warnings.some(w => w.includes('missing width/height attributes'))).length;
+  const orphanPages = pages.filter(p => p.warnings.includes('Orphan page (no internal links point to it)')).length;
+  const skippedHeadings = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
+  const difficultReading = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
+  const missingLocalBusinessFields = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
 
   // critical: true always sorts these to the very top, ahead of effort/
   // impact — a page that can't be indexed at all outranks every other win
@@ -408,6 +465,10 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (invalidSchema) wins.push({ effort: 'Low', impact: 'Medium', pages: invalidSchema, action: `Fix invalid schema markup on ${invalidSchema} page${invalidSchema > 1 ? 's' : ''}`, detail: 'The structured data on these pages is malformed JSON, so Google ignores it entirely — usually a small syntax fix.' });
   if (multipleTitleTags || multipleMetaTags) { const n = multipleTitleTags + multipleMetaTags; wins.push({ effort: 'Low', impact: 'Medium', pages: n, action: `Remove duplicate title/meta tags on ${n} page${n > 1 ? 's' : ''}`, detail: 'These pages have more than one title or meta description tag — only one is actually used, and it may not be the intended one.' }); }
   if (missingImageDimensions) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingImageDimensions, action: `Add width/height to images on ${missingImageDimensions} page${missingImageDimensions > 1 ? 's' : ''}`, detail: 'Without explicit dimensions, images cause content to jump around as the page loads — a Core Web Vitals (layout shift) penalty.' });
+  if (orphanPages) wins.push({ effort: 'Low', impact: 'Medium', pages: orphanPages, action: `Add internal links to ${orphanPages} orphan page${orphanPages > 1 ? 's' : ''}`, detail: 'No other page on the site links to these pages, so visitors browsing normally can\'t find them and they get little internal link authority.' });
+  if (missingLocalBusinessFields) wins.push({ effort: 'Low', impact: 'Medium', pages: missingLocalBusinessFields, action: `Fill in missing LocalBusiness schema fields on ${missingLocalBusinessFields} page${missingLocalBusinessFields > 1 ? 's' : ''}`, detail: 'Phone, address, or hours are missing from the structured data — a quick addition that gives Google more to work with for map listings and knowledge panels.' });
+  if (difficultReading) wins.push({ effort: 'Medium', impact: 'Medium', pages: difficultReading, action: `Simplify dense copy on ${difficultReading} page${difficultReading > 1 ? 's' : ''}`, detail: 'These pages score as difficult to read (Flesch reading ease under 30) — shorter sentences and simpler wording would help both visitors and search engines.' });
+  if (skippedHeadings) wins.push({ effort: 'Low', impact: 'Low', pages: skippedHeadings, action: `Fix heading hierarchy on ${skippedHeadings} page${skippedHeadings > 1 ? 's' : ''}`, detail: 'A heading level (H2 or H3) is being skipped, breaking the logical outline of the page.' });
   if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
 
   // Sort: critical (unindexable pages) first, then low effort first, then by pages affected
@@ -536,6 +597,14 @@ function createEngine(client) {
     // H2s
     const h2s = $('h2').map((i, el) => $(el).text().trim()).get();
 
+    // Heading hierarchy — a skipped level (H3 with no H2 above it, H4 with
+    // no H3) confuses the document outline search engines and screen
+    // readers build from headings, even when H1 itself is fine.
+    const h3Count = $('h3').length;
+    const h4Count = $('h4').length;
+    if (h3Count > 0 && h2s.length === 0) warnings.push('Heading hierarchy skips H2 (H3 used with no H2 on the page)');
+    if (h4Count > 0 && h3Count === 0) warnings.push('Heading hierarchy skips H3 (H4 used with no H3 on the page)');
+
     // Images without alt
     const images = $('img').toArray();
     const imagesNoAlt = images.filter(img => {
@@ -572,6 +641,7 @@ function createEngine(client) {
 
     // Schema / JSON-LD
     const schemas = $('script[type="application/ld+json"]').toArray();
+    const missingLocalBusinessFields = new Set();
     const schemaTypes = schemas.map(s => {
       try {
         const parsed = JSON.parse($(s).html());
@@ -582,6 +652,18 @@ function createEngine(client) {
           .map(it => it && it['@type'])
           .filter(Boolean)
           .flatMap(t => Array.isArray(t) ? t : [t]);
+        // Presence/validity alone doesn't mean the schema is actually
+        // useful — a LocalBusiness-type block with no phone/address gives
+        // Google (and the LLM narrative, which was catching this manually
+        // before) nothing to build a knowledge panel or map listing from.
+        for (const item of items) {
+          if (!item) continue;
+          const itemTypes = Array.isArray(item['@type']) ? item['@type'] : [item['@type']];
+          if (!itemTypes.some(t => LOCAL_BUSINESS_TYPES.has(t))) continue;
+          if (!item.telephone) missingLocalBusinessFields.add('telephone');
+          if (!item.address) missingLocalBusinessFields.add('address');
+          if (!item.priceRange && !item.openingHours && !item.openingHoursSpecification) missingLocalBusinessFields.add('priceRange/openingHours');
+        }
         return types.length ? [...new Set(types)].join('+') : 'Unknown';
       } catch { return 'Invalid JSON-LD'; }
     });
@@ -592,12 +674,23 @@ function createEngine(client) {
     // Google). Worth catching as its own, separate issue.
     const invalidSchemaCount = schemaTypes.filter(t => t === 'Invalid JSON-LD').length;
     if (invalidSchemaCount) issues.push(`${invalidSchemaCount} invalid (malformed) JSON-LD schema block(s)`);
+    if (missingLocalBusinessFields.size) warnings.push(`LocalBusiness schema missing recommended field(s): ${[...missingLocalBusinessFields].join(', ')}`);
 
     // Word count (body text only)
     $('script, style, nav, footer, header').remove();
     const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
     const wordCount = bodyText.split(' ').filter(w => w.length > 1).length;
     if (wordCount < 150) warnings.push(`Low word count (${wordCount} words)`);
+
+    // Readability (Flesch Reading Ease) — an objective, numeric complement
+    // to the LLM's subjective content-quality read. Only flagged when
+    // genuinely "very difficult" (score < 30 on the standard 0-100 scale)
+    // to avoid nagging about normal professional/clinical language that
+    // just isn't a magazine article.
+    const readabilityScore = calcReadability(bodyText);
+    if (readabilityScore !== null && readabilityScore < 30) {
+      warnings.push(`Difficult to read (Flesch reading ease: ${readabilityScore}/100)`);
+    }
 
     // Internal links
     const internalLinks = $('a[href]').toArray()
@@ -631,6 +724,7 @@ function createEngine(client) {
       canonical,
       schemaTypes,
       wordCount,
+      readabilityScore,
       // Kept (not just wordCount) so narrative-report.js's content-quality
       // pass can read actual page copy — judging thin/generic writing,
       // missing credentials, or tone requires the real text, not just a
@@ -754,6 +848,25 @@ function createEngine(client) {
       }
     }
 
+    // Orphan pages: crawled successfully (whether found via sitemap or a
+    // link) but no other page on the site actually links to it. Reuses
+    // linkSources from the broken-link check above — a page only appears
+    // there if some other page's <a href> pointed at it, so an absent
+    // entry means it's reachable only via the sitemap or a direct URL,
+    // never through normal site navigation.
+    // normalizeUrl() strips trailing slashes (see above), so the homepage's
+    // actual stored page.url is BASE_URL with no trailing slash — comparing
+    // against a literal `${BASE_URL}/` here would never match and every
+    // audit's homepage would wrongly get flagged as its own orphan page.
+    const homepageUrl = normalizeUrl(`${BASE_URL}/`, BASE_URL) || `${BASE_URL}/`;
+    for (const page of results) {
+      if (page.error || page.url === homepageUrl) continue;
+      const sources = linkSources.get(page.url);
+      if (!sources || sources.size === 0) {
+        page.warnings.push('Orphan page (no internal links point to it)');
+      }
+    }
+
     console.log(`\nCrawled ${results.length} pages.`);
     return { results, hasSitemap };
   }
@@ -801,6 +914,10 @@ function createEngine(client) {
     const missingOgTagsPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Missing Open Graph tags')));
     const missingCharsetPgs = pages.filter(p => p.warnings.includes('Missing character encoding declaration'));
     const missingDoctypePgs = pages.filter(p => p.warnings.includes('Missing doctype declaration'));
+    const orphanPgs = pages.filter(p => p.warnings.includes('Orphan page (no internal links point to it)'));
+    const skippedHeadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips')));
+    const difficultReadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read')));
+    const missingLocalBusinessFieldPgs = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing')));
 
     function priorityBadge(p) {
       if (p === 'critical') return `<span class="priority critical">Critical</span>`;
@@ -1168,6 +1285,22 @@ function createEngine(client) {
       <div class="snap-label">Images Missing Dimensions</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${orphanPgs.length === 0 ? 'good' : 'warn'}">${orphanPgs.length}</div>
+      <div class="snap-label">Orphan Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${skippedHeadingPgs.length === 0 ? 'good' : 'warn'}">${skippedHeadingPgs.length}</div>
+      <div class="snap-label">Skipped Heading Levels</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${difficultReadingPgs.length === 0 ? 'good' : 'warn'}">${difficultReadingPgs.length}</div>
+      <div class="snap-label">Difficult-to-Read Pages</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${missingLocalBusinessFieldPgs.length === 0 ? 'good' : 'warn'}">${missingLocalBusinessFieldPgs.length}</div>
+      <div class="snap-label">Incomplete LocalBusiness Schema</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num good">${healthyPages.length}</div>
       <div class="snap-label">Fully Healthy Pages</div>
     </div>
@@ -1340,6 +1473,10 @@ function createEngine(client) {
       ${missingOgTagsPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing Open Graph tags</span><span class="sr-val warn">${missingOgTagsPgs.length} page${missingOgTagsPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingCharsetPgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a character encoding declaration</span><span class="sr-val warn">${missingCharsetPgs.length} page${missingCharsetPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingDoctypePgs.length ? `<div class="summary-row"><span class="sr-label">Pages missing a doctype declaration</span><span class="sr-val warn">${missingDoctypePgs.length} page${missingDoctypePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${orphanPgs.length ? `<div class="summary-row"><span class="sr-label">Orphan pages (no internal links point to them)</span><span class="sr-val warn">${orphanPgs.length} page${orphanPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${skippedHeadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a skipped heading level</span><span class="sr-val warn">${skippedHeadingPgs.length} page${skippedHeadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${difficultReadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with difficult-to-read copy</span><span class="sr-val warn">${difficultReadingPgs.length} page${difficultReadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${missingLocalBusinessFieldPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with incomplete LocalBusiness schema</span><span class="sr-val warn">${missingLocalBusinessFieldPgs.length} page${missingLocalBusinessFieldPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
         <span class="sr-label">Pages with improvement opportunities (schema, word count, canonical)</span>
