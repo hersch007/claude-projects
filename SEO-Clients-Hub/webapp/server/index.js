@@ -673,7 +673,17 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // pageSpeed starts null and is filled in later by /docx/prepare below
       // — a live PSI check has been observed taking 90s+, so it can't run
       // as part of this already-fast audit completion path.
-      docxSource: { client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date, changes, dominantPhone: result.dominantPhone, pageSpeed: null, competitors: [], gbp: null },
+      docxSource: {
+        client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date,
+        changes, dominantPhone: result.dominantPhone,
+        // Real GSC ranking-keyword data (with Google Ads search-volume
+        // enrichment already applied by enrichKeywords above, when it
+        // succeeds) — grounds the narrative's keyword recommendations in
+        // what the client actually ranks for instead of pure LLM guessing.
+        // null for a client with no gsc_property configured.
+        gscKeywords: result.metrics && result.metrics.topKeywords ? result.metrics.topKeywords : null,
+        pageSpeed: null, competitors: [], gbp: null,
+      },
     });
   }).catch(err => {
     console.error(`Audit run ${runId} for ${clientRow.slug} failed:`, err);

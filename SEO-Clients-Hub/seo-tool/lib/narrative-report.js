@@ -213,7 +213,23 @@ same way you do for top_priorities — this list gets sorted and presented
 by priority, not grouped by competitor, so a client can tell what to do
 first regardless of which competitor's page prompted the observation. If
 competitor_summaries is empty, return an empty competitive_analysis array
-— do not speculate about unnamed or hypothetical competitors.`;
+— do not speculate about unnamed or hypothetical competitors.
+
+For content_keyword_strategy.keyword_opportunities: when gsc_top_keywords
+is real data (not the "not connected" placeholder), ground every
+suggestion in it — the site's actual clicks/impressions/position/search
+volume, not invented keywords. The strongest, most defensible opportunities
+are usually keywords already getting real impressions but ranking poorly
+(page 2+, i.e. avg_position > 10) with no page clearly targeting them, or
+decent-volume keywords close to page 1 (position 8-15) that a small
+content push could realistically improve — cite the actual numbers (e.g.
+"680 impressions/mo at position 14, no dedicated page") rather than vague
+language. When gsc_top_keywords is the "not connected" placeholder, say so
+plainly in relevant recommendations rather than presenting invented
+keywords as if they were backed by real search data — base
+keyword_opportunities on page content and business_notes only in that
+case, and keep them qualitative (topic/intent-based, not fabricated
+volumes or positions).`;
 
 // Keeps the prompt to a manageable size for large sites — the pages with
 // the most issues are the most useful signal for prioritization anyway.
@@ -242,7 +258,7 @@ function summarizePages(pages) {
     }));
 }
 
-async function generateNarrative({ client, results, scoreData, pageSpeed, competitors, gbp, dominantPhone }) {
+async function generateNarrative({ client, results, scoreData, pageSpeed, competitors, gbp, dominantPhone, gscKeywords }) {
   if (!process.env.ANTHROPIC_API_KEY) {
     console.warn('Narrative report skipped: ANTHROPIC_API_KEY is not set.');
     return null;
@@ -281,6 +297,18 @@ async function generateNarrative({ client, results, scoreData, pageSpeed, compet
         ? 'Verified match: the phone number shown across the website matches the one listed on Google Business Profile.'
         : `Verified mismatch: the website's primary phone number does not match the one listed on Google Business Profile (${gbp.phone}).`)
       : '(not enough data to verify — Google Business Profile not connected, or no phone number found on the site)',
+    // Real Google Search Console data (gsc.js), search-volume-enriched by
+    // keyword-planner.js when that succeeds — the site's actual ranking
+    // keywords over the last 28 days, sorted by clicks. Grounds
+    // content_keyword_strategy in what the client really ranks for instead
+    // of the LLM inventing plausible-sounding keywords from page content
+    // alone. null/absent when the client has no gsc_property configured.
+    gsc_top_keywords: (gscKeywords && gscKeywords.length)
+      ? gscKeywords.slice(0, 20).map(k => ({
+          keyword: k.keyword, clicks: k.clicks, impressions: k.impressions,
+          avg_position: k.position, monthly_search_volume: k.volume ?? '(volume lookup unavailable)',
+        }))
+      : '(not connected — no Google Search Console property configured for this client)',
   });
 
   try {
