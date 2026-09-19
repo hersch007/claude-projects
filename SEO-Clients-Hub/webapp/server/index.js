@@ -306,8 +306,20 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(body.google_place_id.trim() || null);
     updates.push(`google_place_id = $${values.length}`);
   }
+  if (typeof body.url === 'string' && body.url.trim()) {
+    // Unlike the fields above, url can't be cleared to null — it's the
+    // client's actual site and drives every crawl. Trailing slash stripped
+    // to match how audit-engine.js's BASE_URL always normalizes it anyway
+    // (a www/non-www or http/https mismatch against the site's real
+    // canonical domain no longer matters here — the crawler self-corrects
+    // for that at the start of every crawl, see audit-engine.js's crawl()).
+    const trimmedUrl = body.url.trim().replace(/\/$/, '');
+    try { new URL(trimmedUrl); } catch { return res.status(400).json({ error: 'url must be a valid URL' }); }
+    values.push(trimmedUrl);
+    updates.push(`url = $${values.length}`);
+  }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url' });
   }
 
   values.push(client.id);
