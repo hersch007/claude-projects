@@ -17,7 +17,7 @@
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
-  Header, Footer, PageNumber,
+  Header, Footer, PageNumber, TableOfContents,
 } = require('docx');
 const { getQuickWins, friendlyIssue } = require('./audit-engine');
 
@@ -30,21 +30,28 @@ const { getQuickWins, friendlyIssue } = require('./audit-engine');
 const BODY_FONT = 'Calibri';
 const HEADING_FONT = 'Cambria';
 
-const CELL_MARGIN = { top: 80, bottom: 80, left: 120, right: 120 };
+const CELL_MARGIN = { top: 50, bottom: 50, left: 110, right: 110 };
 const THIN_BORDER = { style: BorderStyle.SINGLE, size: 2, color: 'CCCCCC' };
 const CELL_BORDERS = { top: THIN_BORDER, bottom: THIN_BORDER, left: THIN_BORDER, right: THIN_BORDER };
 const NO_BORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
 const NO_BORDERS = { top: NO_BORDER, bottom: NO_BORDER, left: NO_BORDER, right: NO_BORDER };
 
+// Shared red/amber/green tiering for a score — used by both the cover's
+// big score number and its progress bar below, so the two always agree.
+function scoreTierColor(score) {
+  return score >= 80 ? '22C55E' : score >= 60 ? 'F59E0B' : 'EF4444';
+}
+
 // A cover-page "progress bar" faked with a borderless two-cell table (docx
 // has no native shape/rect drawing primitive) — a filled cell proportional
-// to the score, colored by the same red/amber/green tiers used everywhere
-// else in the report, next to an unfilled gray remainder.
-function scoreBarTable(score) {
+// to the score, next to an unfilled gray remainder. Width is a fraction of
+// the page (not the bar's own percentage fill) — the cover uses a slim 40%
+// so it reads as an accent under the score rather than a dominant element.
+function scoreBarTable(score, widthPct = 60) {
   const pct = Math.max(0, Math.min(100, score));
-  const fillColor = pct >= 80 ? '22C55E' : pct >= 60 ? 'F59E0B' : 'EF4444';
-  const cell = (widthPct, fill) => new TableCell({
-    width: { size: Math.max(1, widthPct), type: WidthType.PERCENTAGE },
+  const fillColor = scoreTierColor(pct);
+  const cell = (w, fill) => new TableCell({
+    width: { size: Math.max(1, w), type: WidthType.PERCENTAGE },
     shading: { type: ShadingType.CLEAR, fill },
     borders: NO_BORDERS,
     margins: { top: 60, bottom: 60, left: 0, right: 0 },
@@ -52,7 +59,7 @@ function scoreBarTable(score) {
   });
   const cells = pct >= 100 ? [cell(100, fillColor)] : pct <= 0 ? [cell(100, 'E5E7EB')] : [cell(pct, fillColor), cell(100 - pct, 'E5E7EB')];
   return new Table({
-    width: { size: 60, type: WidthType.PERCENTAGE },
+    width: { size: widthPct, type: WidthType.PERCENTAGE },
     alignment: AlignmentType.CENTER,
     rows: [new TableRow({ children: cells })],
   });
@@ -126,11 +133,17 @@ function coverLogoImageRun(provider) {
 // built-in Heading 1 style's own color overrides the run's explicit brand
 // color in some viewers (observed in Google Drive's docx preview), so the
 // heading look is fully hand-formatted here instead of relying on a style.
-function sectionHeading(text, brandHex) {
+// `outlineLevel: 0` marks it as a level-1 entry for the Table of Contents
+// field further down (built with `useAppliedParagraphOutlineLevel`, which
+// reads this instead of requiring the built-in Heading style we're
+// avoiding) — pass `excludeFromToc` for the "Table of Contents" heading
+// itself, so it doesn't list itself as its own entry.
+function sectionHeading(text, brandHex, { excludeFromToc } = {}) {
   return new Paragraph({
     children: [new TextRun({ text, bold: true, size: 26, color: brandHex, font: HEADING_FONT })],
     spacing: { before: 600, after: 240 },
     border: { bottom: { color: brandHex, space: 4, style: BorderStyle.SINGLE, size: 6 } },
+    outlineLevel: excludeFromToc ? undefined : 0,
   });
 }
 
@@ -142,6 +155,21 @@ function recItem(item) {
     new Paragraph({ children: [new TextRun({ text: item.title, bold: true, size: 21 })], spacing: { before: 140 } }),
     new Paragraph({ children: [new TextRun({ text: item.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
   ];
+}
+
+// A glyph-prefixed line used in place of Word's native round bullet for
+// point-valued lists (score deductions, changes since last audit) — the
+// previous version hand-typed a "-8" prefix on top of a separate native
+// bullet character, so every line showed two markers. The glyph is colored
+// by meaning (red minus for a point loss, green check for a resolution)
+// and the paragraph uses a hanging indent so a wrapped second line aligns
+// under the text rather than under the glyph.
+function glyphLine(glyph, glyphColor, runs, spacing) {
+  return new Paragraph({
+    indent: { left: 260, hanging: 260 },
+    spacing: spacing || { after: 40 },
+    children: [new TextRun({ text: `${glyph}  `, bold: true, color: glyphColor, size: 20 }), ...runs],
+  });
 }
 
 function headerCell(text, brandHex) {
@@ -169,46 +197,79 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   const accentHex = (provider.accent || provider.brand2 || provider.brand || '#003366').replace('#', '');
   const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
+  const scoreColor = scoreTierColor(scoreData.score);
 
   const children = [];
   const logoImageRun = coverLogoImageRun(provider);
 
-  // ── Cover ──
+  // ── Cover ── A restrained stat treatment (small caps eyebrow, one big
+  // number, a short qualitative label, then a slim accent bar) reads as a
+  // single designed unit rather than a bold sentence competing with its own
+  // progress bar for attention. Spacing throughout is tighter than a first
+  // pass at this cover — enough to separate elements, not so much that the
+  // page feels like it's mostly whitespace.
   children.push(
-    new Paragraph({ spacing: { before: logoImageRun ? 1000 : 1600 }, children: [] }),
+    new Paragraph({ spacing: { before: logoImageRun ? 800 : 1200 }, children: [] }),
     ...(logoImageRun
-      ? [new Paragraph({ alignment: AlignmentType.CENTER, children: [logoImageRun], spacing: { after: 200 } })]
+      ? [new Paragraph({ alignment: AlignmentType.CENTER, children: [logoImageRun], spacing: { after: 160 } })]
       : []),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: client.name, bold: true, size: 56, color: brandHex, font: HEADING_FONT })],
-      spacing: { after: 120 },
+      children: [new TextRun({ text: client.name, bold: true, size: 52, color: brandHex, font: HEADING_FONT })],
+      spacing: { after: 80 },
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: 'SEO Audit Report', size: 32, color: '595959', font: HEADING_FONT })],
-      spacing: { after: 400 },
+      children: [new TextRun({ text: 'SEO Audit Report', size: 26, color: '595959', font: HEADING_FONT })],
+      spacing: { after: 320 },
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: `SEO Health Score: ${scoreData.score} / 100 — ${scoreLabel}`, bold: true, size: 28, color: brandHex })],
-      spacing: { after: 200 },
+      children: [new TextRun({ text: 'SEO HEALTH SCORE', size: 16, color: '94A3B8', characterSpacing: 30 })],
+      spacing: { after: 60 },
     }),
-    scoreBarTable(scoreData.score),
-    new Paragraph({ spacing: { after: 400 }, children: [] }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [
+        new TextRun({ text: String(scoreData.score), bold: true, size: 64, color: scoreColor, font: HEADING_FONT }),
+        new TextRun({ text: ' / 100', size: 26, color: '94A3B8' }),
+      ],
+      spacing: { after: 40 },
+    }),
+    new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [new TextRun({ text: scoreLabel.toUpperCase(), bold: true, size: 20, color: scoreColor, characterSpacing: 20 })],
+      spacing: { after: 220 },
+    }),
+    scoreBarTable(scoreData.score, 40),
+    new Paragraph({ spacing: { after: 300 }, children: [] }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: `${client.url}`, size: 22 })],
-      spacing: { after: 100 },
+      spacing: { after: 80 },
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
       children: [new TextRun({ text: `Audit Date: ${dateLabel}  |  Prepared by: ${provider.name}`, size: 20, color: '595959' })],
-      spacing: { after: 400 },
+      spacing: { after: 320 },
     }),
     accentRuleTable(accentHex),
     new Paragraph({ children: [], pageBreakAfter: true }),
   );
+
+  // ── Table of Contents ── full report only (the quick mechanical report
+  // is a handful of pages and doesn't need one; the full report, with all
+  // narrative sections, regularly runs 15-20+ pages). Word populates the
+  // actual entries/page numbers itself from each sectionHeading's
+  // outlineLevel when the document opens — see `features.updateFields`
+  // below, which forces that update instead of leaving a stale placeholder.
+  if (narrative) {
+    children.push(
+      sectionHeading('Table of Contents', brandHex, { excludeFromToc: true }),
+      new TableOfContents('Table of Contents', { hyperlink: true, useAppliedParagraphOutlineLevel: true }),
+      new Paragraph({ children: [], pageBreakAfter: true }),
+    );
+  }
 
   // ── Section: Score summary ──
   children.push(
@@ -218,7 +279,10 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   if (scoreData.deductions.length) {
     children.push(new Paragraph({ children: [new TextRun({ text: 'Score deductions:', bold: true })], spacing: { after: 100 } }));
     for (const d of scoreData.deductions) {
-      children.push(new Paragraph({ text: `-${d.pts}  ${d.label}`, bullet: { level: 0 } }));
+      children.push(glyphLine('−', 'DC2626', [
+        new TextRun({ text: `${d.pts} pt${d.pts === 1 ? '' : 's'}`, bold: true, color: 'DC2626', size: 20 }),
+        new TextRun({ text: `  ${d.label}`, size: 20, color: '333333' }),
+      ]));
     }
   }
 
@@ -238,11 +302,16 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     );
     if (changes.newIssues.length) {
       children.push(new Paragraph({ children: [new TextRun({ text: 'New Since Last Audit', bold: true, color: 'DC2626' })], spacing: { after: 80 } }));
-      for (const d of changes.newIssues) children.push(new Paragraph({ text: `-${d.pts}  ${d.label}`, bullet: { level: 0 } }));
+      for (const d of changes.newIssues) children.push(glyphLine('−', 'DC2626', [
+        new TextRun({ text: `${d.pts} pt${d.pts === 1 ? '' : 's'}`, bold: true, color: 'DC2626', size: 20 }),
+        new TextRun({ text: `  ${d.label}`, size: 20, color: '333333' }),
+      ]));
     }
     if (changes.resolvedIssues.length) {
       children.push(new Paragraph({ children: [new TextRun({ text: 'Resolved Since Last Audit', bold: true, color: '16A34A' })], spacing: { before: 160, after: 80 } }));
-      for (const d of changes.resolvedIssues) children.push(new Paragraph({ text: d.label, bullet: { level: 0 } }));
+      for (const d of changes.resolvedIssues) children.push(glyphLine('✓', '16A34A', [
+        new TextRun({ text: d.label, size: 20, color: '333333' }),
+      ]));
     }
     if (!changes.newIssues.length && !changes.resolvedIssues.length) {
       children.push(new Paragraph({ children: [new TextRun({ text: 'No individual issues changed since the last audit.', size: 20, color: '64748B' })] }));
@@ -349,8 +418,16 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     children.push(sectionHeading('Quick Wins & Recommendations', brandHex));
     for (const w of wins) {
       children.push(
-        new Paragraph({ children: [new TextRun({ text: `${w.action} `, bold: true }), new TextRun({ text: `(${w.effort} effort, ${w.impact} impact)`, italics: true, color: '595959' })], spacing: { before: 140 } }),
-        new Paragraph({ children: [new TextRun({ text: w.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
+        new Paragraph({
+          indent: { left: 260, hanging: 260 },
+          spacing: { before: 140 },
+          children: [
+            new TextRun({ text: '●  ', bold: true, color: brandHex, size: 20 }),
+            new TextRun({ text: `${w.action} `, bold: true }),
+            new TextRun({ text: `(${w.effort} effort, ${w.impact} impact)`, italics: true, color: '595959' }),
+          ],
+        }),
+        new Paragraph({ indent: { left: 260 }, children: [new TextRun({ text: w.detail, size: 20, color: '444444' })], spacing: { after: 60 } }),
       );
     }
   }
@@ -517,6 +594,11 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   );
 
   const doc = new Document({
+    // Without this, Word shows the TOC field (and the footer's PAGE/
+    // NUMPAGES fields) as stale/empty placeholders until the reader
+    // manually selects them and presses F9 — this forces the update to
+    // happen automatically the first time the file is opened.
+    features: { updateFields: true },
     styles: {
       default: {
         document: { run: { font: BODY_FONT, size: 20 } },
