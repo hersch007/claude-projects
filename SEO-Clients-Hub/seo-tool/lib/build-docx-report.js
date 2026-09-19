@@ -17,8 +17,18 @@
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
+  Header, Footer, PageNumber,
 } = require('docx');
 const { getQuickWins, friendlyIssue } = require('./audit-engine');
+
+// Body copy uses Word's own default (Calibri) — set explicitly rather than
+// left implicit so it renders consistently in non-Word viewers (Google
+// Docs/LibreOffice previews don't always fall back to the same default).
+// Headings/titles/table headers use a serif pairing (Cambria, Word's own
+// default heading font) so the report reads as designed rather than a
+// single-typeface wall of bold text.
+const BODY_FONT = 'Calibri';
+const HEADING_FONT = 'Cambria';
 
 const CELL_MARGIN = { top: 80, bottom: 80, left: 120, right: 120 };
 const THIN_BORDER = { style: BorderStyle.SINGLE, size: 2, color: 'CCCCCC' };
@@ -45,6 +55,29 @@ function scoreBarTable(score) {
     width: { size: 60, type: WidthType.PERCENTAGE },
     alignment: AlignmentType.CENTER,
     rows: [new TableRow({ children: cells })],
+  });
+}
+
+// Running footer on every interior page (suppressed on the cover via the
+// section's titlePage flag below) — a thin top rule, the client name/report
+// title, and Word's live PageNumber fields so it always reads "Page 3 of 14"
+// correctly regardless of final page count.
+function reportFooter(client, brandHex) {
+  return new Footer({
+    children: [
+      new Paragraph({
+        alignment: AlignmentType.CENTER,
+        border: { top: { color: 'E2E8F0', space: 6, style: BorderStyle.SINGLE, size: 4 } },
+        spacing: { before: 120 },
+        children: [
+          new TextRun({ text: `${client.name} — SEO Audit Report`, size: 16, color: '94A3B8' }),
+          new TextRun({ text: '   |   Page ', size: 16, color: '94A3B8' }),
+          new TextRun({ children: [PageNumber.CURRENT], size: 16, color: '94A3B8' }),
+          new TextRun({ text: ' of ', size: 16, color: '94A3B8' }),
+          new TextRun({ children: [PageNumber.TOTAL_PAGES], size: 16, color: '94A3B8' }),
+        ],
+      }),
+    ],
   });
 }
 
@@ -95,7 +128,7 @@ function coverLogoImageRun(provider) {
 // heading look is fully hand-formatted here instead of relying on a style.
 function sectionHeading(text, brandHex) {
   return new Paragraph({
-    children: [new TextRun({ text, bold: true, size: 26, color: brandHex })],
+    children: [new TextRun({ text, bold: true, size: 26, color: brandHex, font: HEADING_FONT })],
     spacing: { before: 600, after: 240 },
     border: { bottom: { color: brandHex, space: 4, style: BorderStyle.SINGLE, size: 6 } },
   });
@@ -113,7 +146,7 @@ function recItem(item) {
 
 function headerCell(text, brandHex) {
   return new TableCell({
-    children: [new Paragraph({ children: [new TextRun({ text, bold: true, color: 'FFFFFF', size: 18 })] })],
+    children: [new Paragraph({ children: [new TextRun({ text, bold: true, color: 'FFFFFF', size: 18, font: HEADING_FONT })] })],
     shading: { type: ShadingType.CLEAR, fill: brandHex },
     margins: CELL_MARGIN,
     borders: CELL_BORDERS,
@@ -148,12 +181,12 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
       : []),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: client.name, bold: true, size: 56, color: brandHex })],
+      children: [new TextRun({ text: client.name, bold: true, size: 56, color: brandHex, font: HEADING_FONT })],
       spacing: { after: 120 },
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: 'SEO Audit Report', size: 32, color: '595959' })],
+      children: [new TextRun({ text: 'SEO Audit Report', size: 32, color: '595959', font: HEADING_FONT })],
       spacing: { after: 400 },
     }),
     new Paragraph({
@@ -484,7 +517,22 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   );
 
   const doc = new Document({
-    sections: [{ properties: {}, children }],
+    styles: {
+      default: {
+        document: { run: { font: BODY_FONT, size: 20 } },
+      },
+    },
+    sections: [{
+      // titlePage lets the cover use its own (blank) footer below instead
+      // of the running "Page X of Y" footer, which would look out of place
+      // under the cover's own accent rule.
+      properties: { titlePage: true },
+      footers: {
+        first: new Footer({ children: [new Paragraph({ children: [] })] }),
+        default: reportFooter(client, brandHex),
+      },
+      children,
+    }],
   });
 
   return Packer.toBuffer(doc);
