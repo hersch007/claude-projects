@@ -129,7 +129,7 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed, gbp, dominantPhone }) {
+function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed, gbp, dominantPhone, gscKeywords }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
@@ -261,6 +261,33 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
       }));
     }
     children.push(new Paragraph({ children: [new TextRun({ text: 'Source: Google Business Profile (Places API)', size: 18, italics: true, color: '94A3B8' })], spacing: { before: 100, after: 200 } }));
+  }
+
+  // ── Section: Top Ranking Keywords ── (mechanical facts from Google
+  // Search Console, search-volume-enriched when Keyword Planner succeeds —
+  // same direct-display treatment as Core Web Vitals/GBP above. The
+  // narrative's own Content & Keyword Strategy section further down uses
+  // this same data for its recommendations, but this table is the source
+  // of record for the actual numbers.)
+  if (gscKeywords && gscKeywords.length) {
+    children.push(
+      sectionHeading('Top Ranking Keywords', brandHex),
+      new Paragraph({ children: [new TextRun({ text: 'Last 28 days, by clicks — from Google Search Console', size: 18, italics: true, color: '94A3B8' })], spacing: { after: 120 } }),
+    );
+    const kwRows = [
+      new TableRow({
+        children: [headerCell('Keyword', brandHex), headerCell('Clicks', brandHex), headerCell('Impressions', brandHex), headerCell('Avg. Position', brandHex), headerCell('Monthly Searches', brandHex)],
+        tableHeader: true,
+      }),
+      ...gscKeywords.slice(0, 10).map((k, i) => new TableRow({
+        children: [
+          bodyCell(k.keyword, i % 2 === 1), bodyCell(k.clicks, i % 2 === 1), bodyCell(k.impressions, i % 2 === 1),
+          bodyCell(k.position != null ? k.position : 'N/A', i % 2 === 1),
+          bodyCell(k.volume != null ? k.volume : '—', i % 2 === 1),
+        ],
+      })),
+    ];
+    children.push(new Table({ rows: kwRows, width: { size: 100, type: WidthType.PERCENTAGE } }), new Paragraph({ spacing: { after: 200 }, children: [] }));
   }
 
   // ── Section: Top Priorities (narrative) ──
