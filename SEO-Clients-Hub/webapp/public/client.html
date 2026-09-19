@@ -307,7 +307,7 @@
           linkStatus.style.marginLeft = '8px';
           linkStatus.style.fontSize = '12px';
           statusEl.appendChild(linkStatus);
-          triggerDownload(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx`, linkStatus);
+          triggerDownload(`/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}/docx?full=1`, linkStatus);
         });
         btn.style.display = 'none';
       } else if (s.status === 'error') {
