@@ -717,13 +717,19 @@ app.get('/api/clients/:slug/audit/report/:runId/docx', async (req, res) => {
     // network path to it has been observed stalling for 90s+ per attempt)
     // and this route needs to stay fast for the plain mechanical report,
     // which is the common case. Uses whatever narrative (if any) the
-    // /docx/prepare route has already produced and cached on the run.
-    const buffer = await buildDocxReport({ ...run.docxSource, narrative: run.narrative || null });
+    // /docx/prepare route has already produced and cached on the run —
+    // but only when explicitly asked for via ?full=1 (see client.html's
+    // two separate download links). Without that, this always returns the
+    // plain mechanical report even after narrative generation has
+    // completed for this run — otherwise the "quick" link (same URL,
+    // no distinguishing param) would silently start returning the full
+    // narrative report too as soon as narrative exists, which is exactly
+    // the confusing behavior a client hit in practice: both downloads
+    // came back identical and both named "Full Strategy Report".
+    const includeNarrative = req.query.full === '1' && !!run.narrative;
+    const buffer = await buildDocxReport({ ...run.docxSource, narrative: includeNarrative ? run.narrative : null });
     const namePart = run.docxSource.client.name.replace(/\s+/g, '-');
-    // Quick report and Full Strategy Report were sharing one filename, so the
-    // second download would silently overwrite (or get "(1)"-suffixed by the
-    // browser instead of) the first — distinguish them so both survive.
-    const fileName = run.narrative
+    const fileName = includeNarrative
       ? `${namePart}-Full-Strategy-Report-${run.docxSource.date}.docx`
       : `${namePart}-SEO-Audit-${run.docxSource.date}.docx`;
     res.set({
