@@ -36,6 +36,8 @@
   .main-content { flex: 1; padding: 32px; min-width: 0; }
   .container { max-width: 900px; margin: 0 auto; }
   .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+  #run-all-status { font-size: 12px; color: #64748b; }
   h1 { font-size: 20px; }
   .client-list { display: flex; flex-direction: column; gap: 10px; }
   .client-row {
@@ -67,6 +69,15 @@
   .client-link { flex: 1; text-decoration: none; color: inherit; display: flex; align-items: center; gap: 16px; }
   .client-actions { display: flex; gap: 6px; margin-left: 16px; }
   .client-actions button { padding: 6px 10px; font-size: 12px; }
+  .client-actions button:disabled { opacity: .5; cursor: default; }
+  .run-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; width: 52px; flex-shrink: 0; }
+  .run-spinner {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid #e2e8f0; border-top-color: #1d4ed8;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .run-progress-label { font-size: 10px; color: #94a3b8; white-space: nowrap; }
+  .run-error-badge { font-size: 10px; color: #dc2626; font-weight: 700; white-space: nowrap; }
   .toggle-archived { font-size: 12px; color: #64748b; background: none; border: none; text-decoration: underline; cursor: pointer; padding: 0; margin-bottom: 14px; }
   .new-client-form {
     background: white; border-radius: 10px; padding: 18px 20px; margin-bottom: 16px;
@@ -115,6 +126,10 @@
     <div class="container">
       <div class="header">
         <h1>Clients</h1>
+        <div class="header-actions">
+          <span id="run-all-status"></span>
+          <button id="run-all-btn" class="btn secondary">Run All Audits</button>
+        </div>
       </div>
 
       <form id="new-client-form" class="new-client-form" style="display:none">
@@ -164,11 +179,16 @@
       </svg>`;
   }
 
-  async function loadClients() {
-    const res = await fetch(`/api/clients?archived=${showingArchived ? '1' : '0'}`);
-    const clients = await res.json();
-    const listEl = document.getElementById('client-list');
+  // Local cache of the last server fetch, plus in-flight audit state keyed
+  // by slug — kept separate from the server data so a running audit's
+  // progress can update in place without a full re-fetch/re-render
+  // clobbering every OTHER row's own in-flight status (several audits can
+  // run at once via "Run All", each polling independently).
+  let clients = [];
+  const runningAudits = {}; // slug -> { pagesCrawled, totalQueued, status: 'crawling'|'error', error? }
 
+  function renderClients() {
+    const listEl = document.getElementById('client-list');
     if (!clients.length) {
       listEl.innerHTML = showingArchived
         ? '<div class="empty">No archived clients.</div>'
@@ -176,7 +196,14 @@
       return;
     }
 
-    listEl.innerHTML = clients.map(c => `
+    listEl.innerHTML = clients.map(c => {
+      const running = runningAudits[c.slug];
+      const progressHtml = running
+        ? (running.status === 'error'
+            ? `<div class="run-progress"><span class="run-error-badge">Failed</span></div>`
+            : `<div class="run-progress"><div class="run-spinner"></div><span class="run-progress-label">${running.pagesCrawled || 0} pages</span></div>`)
+        : `<div class="client-score-gauge">${scoreGaugeSvg(c.latest_score)}</div>`;
+      return `
       <div class="client-row">
         <a class="client-link" href="/client.html?slug=${encodeURIComponent(c.slug)}">
           <div>
@@ -184,14 +211,74 @@
             <div class="client-url">${c.url}</div>
           </div>
           <div class="client-date">${c.latest_run_date ? new Date(c.latest_run_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never audited'}</div>
-          <div class="client-score-gauge">${scoreGaugeSvg(c.latest_score)}</div>
+          ${progressHtml}
         </a>
         <div class="client-actions">
+          <button class="btn secondary" data-action="run" data-slug="${c.slug}" ${running ? 'disabled' : ''}>Run Audit</button>
           <button class="btn secondary" data-action="archive" data-slug="${c.slug}">${showingArchived ? 'Unarchive' : 'Archive'}</button>
           <button class="btn danger" data-action="delete" data-slug="${c.slug}" data-name="${c.name}">Delete</button>
         </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
+  }
+
+  async function loadClients() {
+    const res = await fetch(`/api/clients?archived=${showingArchived ? '1' : '0'}`);
+    clients = await res.json();
+    renderClients();
+  }
+
+  // Fire-and-forget from this dashboard's point of view — starts the audit,
+  // then polls status independently of whatever else is rendering/running.
+  // Uses the server's own default-provider resolution (no picker here);
+  // matches what "no provider selected" already does on the client page.
+  async function startAudit(slug) {
+    if (runningAudits[slug]) return;
+    runningAudits[slug] = { pagesCrawled: 0, totalQueued: 0, status: 'crawling' };
+    renderClients();
+
+    let runId;
+    try {
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      runId = data.runId;
+    } catch (err) {
+      runningAudits[slug] = { status: 'error', error: err.message };
+      renderClients();
+      return;
+    }
+
+    return new Promise((resolve) => {
+      const poll = setInterval(async () => {
+        const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/audit/status/${runId}`);
+        const s = await res.json();
+        if (s.status === 'done') {
+          clearInterval(poll);
+          delete runningAudits[slug];
+          const client = clients.find(c => c.slug === slug);
+          if (client) {
+            client.latest_score = s.score;
+            client.latest_run_date = new Date().toISOString();
+          }
+          renderClients();
+          resolve();
+        } else if (s.status === 'error') {
+          clearInterval(poll);
+          runningAudits[slug] = { status: 'error', error: s.error };
+          renderClients();
+          resolve();
+        } else {
+          runningAudits[slug] = { pagesCrawled: s.pagesCrawled || 0, totalQueued: s.totalQueued || 0, status: 'crawling' };
+          renderClients();
+        }
+      }, 2000);
+    });
   }
 
   document.getElementById('client-list').addEventListener('click', async (e) => {
@@ -199,7 +286,9 @@
     if (!btn) return;
     const slug = btn.dataset.slug;
 
-    if (btn.dataset.action === 'archive') {
+    if (btn.dataset.action === 'run') {
+      startAudit(slug);
+    } else if (btn.dataset.action === 'archive') {
       await fetch(`/api/clients/${encodeURIComponent(slug)}/archive`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -213,9 +302,23 @@
     }
   });
 
+  document.getElementById('run-all-btn').addEventListener('click', async () => {
+    const statusEl = document.getElementById('run-all-status');
+    const btn = document.getElementById('run-all-btn');
+    const targets = clients.filter(c => !runningAudits[c.slug]);
+    if (!targets.length) return;
+    btn.disabled = true;
+    statusEl.textContent = `Running ${targets.length} audit${targets.length > 1 ? 's' : ''}...`;
+    await Promise.all(targets.map(c => startAudit(c.slug)));
+    btn.disabled = false;
+    statusEl.textContent = 'All audits finished.';
+    setTimeout(() => { statusEl.textContent = ''; }, 4000);
+  });
+
   document.getElementById('toggle-archived').addEventListener('click', () => {
     showingArchived = !showingArchived;
     document.getElementById('toggle-archived').textContent = showingArchived ? 'Show active clients' : 'Show archived clients';
+    document.getElementById('run-all-btn').style.display = showingArchived ? 'none' : 'inline-block';
     loadClients();
   });
 
