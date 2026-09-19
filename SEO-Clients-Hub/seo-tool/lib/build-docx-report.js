@@ -17,7 +17,7 @@
 const {
   Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType,
   Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle,
-  Header, Footer, PageNumber, TableOfContents,
+  Header, Footer, PageNumber, Bookmark, InternalHyperlink,
 } = require('docx');
 const { getQuickWins, friendlyIssue } = require('./audit-engine');
 
@@ -133,14 +133,20 @@ function coverLogoImageRun(provider) {
 // built-in Heading 1 style's own color overrides the run's explicit brand
 // color in some viewers (observed in Google Drive's docx preview), so the
 // heading look is fully hand-formatted here instead of relying on a style.
-// `outlineLevel: 0` marks it as a level-1 entry for the Table of Contents
-// field further down (built with `useAppliedParagraphOutlineLevel`, which
-// reads this instead of requiring the built-in Heading style we're
-// avoiding) — pass `excludeFromToc` for the "Table of Contents" heading
-// itself, so it doesn't list itself as its own entry.
-function sectionHeading(text, brandHex, { excludeFromToc } = {}) {
+// `outlineLevel: 0` still gets set (Word's Navigation Pane picks up any
+// paragraph's outline level regardless of style, so headings show up there
+// for free) but the actual Table of Contents is NOT built from a Word TOC
+// field — a field-based TOC only populates once the viewer recalculates
+// its fields, which real-world testing showed does not reliably happen on
+// first open (Word's own "update fields on open" setting, non-Word
+// viewers, etc. — it rendered blank). Instead, `bookmarkId` wraps the
+// heading text in a Bookmark that a manually-built TOC (see
+// buildDocxReport) links to directly with InternalHyperlink, so the TOC is
+// always populated the instant the file is opened, in any viewer.
+function sectionHeading(text, brandHex, { excludeFromToc, bookmarkId } = {}) {
+  const textRun = new TextRun({ text, bold: true, size: 26, color: brandHex, font: HEADING_FONT });
   return new Paragraph({
-    children: [new TextRun({ text, bold: true, size: 26, color: brandHex, font: HEADING_FONT })],
+    children: [bookmarkId ? new Bookmark({ id: bookmarkId, children: [textRun] }) : textRun],
     spacing: { before: 600, after: 240 },
     border: { bottom: { color: brandHex, space: 4, style: BorderStyle.SINGLE, size: 6 } },
     outlineLevel: excludeFromToc ? undefined : 0,
@@ -202,6 +208,21 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   const children = [];
   const logoImageRun = coverLogoImageRun(provider);
 
+  // Every real section heading below is created through this instead of
+  // calling sectionHeading directly, so it's automatically bookmarked and
+  // recorded for the manual Table of Contents built after the whole body
+  // is assembled (see the splice near the bottom of this function) — only
+  // bothers when the full report (narrative present) will actually get a
+  // TOC.
+  const tocEntries = [];
+  let tocSeq = 0;
+  function heading(text) {
+    if (!narrative) return sectionHeading(text, brandHex);
+    const id = `toc${tocSeq++}`;
+    tocEntries.push({ title: text, id });
+    return sectionHeading(text, brandHex, { bookmarkId: id });
+  }
+
   // ── Cover ── A restrained stat treatment (small caps eyebrow, one big
   // number, a short qualitative label, then a slim accent bar) reads as a
   // single designed unit rather than a bold sentence competing with its own
@@ -257,23 +278,15 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     new Paragraph({ children: [], pageBreakAfter: true }),
   );
 
-  // ── Table of Contents ── full report only (the quick mechanical report
-  // is a handful of pages and doesn't need one; the full report, with all
-  // narrative sections, regularly runs 15-20+ pages). Word populates the
-  // actual entries/page numbers itself from each sectionHeading's
-  // outlineLevel when the document opens — see `features.updateFields`
-  // below, which forces that update instead of leaving a stale placeholder.
-  if (narrative) {
-    children.push(
-      sectionHeading('Table of Contents', brandHex, { excludeFromToc: true }),
-      new TableOfContents('Table of Contents', { hyperlink: true, useAppliedParagraphOutlineLevel: true }),
-      new Paragraph({ children: [], pageBreakAfter: true }),
-    );
-  }
+  // Table of Contents (full report only — the quick mechanical report is a
+  // handful of pages and doesn't need one) gets spliced in here, right
+  // after the cover, once every section heading below has been recorded
+  // into tocEntries — see the splice near the bottom of this function.
+  const tocInsertionIndex = children.length;
 
   // ── Section: Score summary ──
   children.push(
-    sectionHeading('Overall SEO Health Score', brandHex),
+    heading('Overall SEO Health Score'),
     new Paragraph({ children: [new TextRun({ text: `${scoreData.score} / 100 — ${scoreLabel}`, bold: true, size: 24 })], spacing: { after: 200 } }),
   );
   if (scoreData.deductions.length) {
@@ -294,7 +307,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     const deltaArrow = delta > 0 ? '▲ ' : delta < 0 ? '▼ ' : '';
     const deltaText = delta === 0 ? 'No change' : `${delta > 0 ? '+' : ''}${delta} point${Math.abs(delta) === 1 ? '' : 's'}`;
     children.push(
-      sectionHeading('Changes Since Last Audit', brandHex),
+      heading('Changes Since Last Audit'),
       new Paragraph({
         children: [new TextRun({ text: `${deltaArrow}${deltaText} vs ${prevDateLabel} (was ${changes.previousScore}/100)`, bold: true, size: 24, color: deltaColor })],
         spacing: { after: 200 },
@@ -325,7 +338,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     const overallRating = pageSpeed.performanceScore == null ? null
       : pageSpeed.performanceScore >= 90 ? 'good' : pageSpeed.performanceScore >= 50 ? 'needs-improvement' : 'poor';
     children.push(
-      sectionHeading('Core Web Vitals', brandHex),
+      heading('Core Web Vitals'),
       new Paragraph({
         children: [new TextRun({ text: `Overall Performance Score: ${pageSpeed.performanceScore != null ? pageSpeed.performanceScore : 'N/A'} / 100`, bold: true, size: 22, color: ratingColor(overallRating) })],
         spacing: { after: 100 },
@@ -344,7 +357,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   if (gbp) {
     const phoneMatch = gbp.phoneDigits && dominantPhone ? gbp.phoneDigits === dominantPhone : null;
     children.push(
-      sectionHeading('Google Business Profile', brandHex),
+      heading('Google Business Profile'),
       new Paragraph({
         children: [new TextRun({ text: `Rating: ${gbp.rating != null ? gbp.rating + ' / 5' : 'N/A'}${gbp.reviewCount != null ? ` (${gbp.reviewCount} review${gbp.reviewCount === 1 ? '' : 's'})` : ''}`, bold: true, size: 22 })],
         spacing: { after: 100 },
@@ -373,7 +386,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // of record for the actual numbers.)
   if (gscKeywords && gscKeywords.length) {
     children.push(
-      sectionHeading('Top Ranking Keywords', brandHex),
+      heading('Top Ranking Keywords'),
       new Paragraph({ children: [new TextRun({ text: 'Last 28 days, by clicks — from Google Search Console', size: 18, italics: true, color: '94A3B8' })], spacing: { after: 120 } }),
     );
     const kwRows = [
@@ -399,7 +412,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     );
   }
   if (narrative && narrative.top_priorities && narrative.top_priorities.length) {
-    children.push(sectionHeading('Top Priorities', brandHex));
+    children.push(heading('Top Priorities'));
     const rows = [
       new TableRow({
         children: [headerCell('Priority', brandHex), headerCell('Impact', brandHex), headerCell('Effort', brandHex)],
@@ -415,7 +428,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // ── Section: Quick Wins ──
   const wins = getQuickWins(pages);
   if (wins.length) {
-    children.push(sectionHeading('Quick Wins & Recommendations', brandHex));
+    children.push(heading('Quick Wins & Recommendations'));
     for (const w of wins) {
       children.push(
         new Paragraph({
@@ -434,11 +447,11 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: Medium/Long-term recommendations (narrative) ──
   if (narrative && narrative.medium_term && narrative.medium_term.length) {
-    children.push(sectionHeading('Medium-Term Recommendations (2–8 Weeks)', brandHex));
+    children.push(heading('Medium-Term Recommendations (2–8 Weeks)'));
     for (const item of narrative.medium_term) children.push(...recItem(item));
   }
   if (narrative && narrative.long_term && narrative.long_term.length) {
-    children.push(sectionHeading('Long-Term / Strategic Recommendations', brandHex));
+    children.push(heading('Long-Term / Strategic Recommendations'));
     for (const item of narrative.long_term) children.push(...recItem(item));
   }
 
@@ -447,7 +460,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     .filter(p => p.issues.length > 0 || p.warnings.length > 0)
     .sort((a, b) => (b.issues.length * 10 + b.warnings.length) - (a.issues.length * 10 + a.warnings.length));
   if (issuePages.length) {
-    children.push(sectionHeading(`Findings by Page (${issuePages.length} pages need attention)`, brandHex));
+    children.push(heading(`Findings by Page (${issuePages.length} pages need attention)`));
     for (const p of issuePages) {
       const slug = p.url.replace(client.url.replace(/\/$/, ''), '') || '/';
       children.push(new Paragraph({ children: [new TextRun({ text: slug, bold: true, font: 'Courier New', size: 20 })], spacing: { before: 200, after: 60 } }));
@@ -465,7 +478,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // "Findings by Page" section above (bold monospace page path), since a
   // page can have more than one content-quality finding.
   if (narrative && narrative.content_quality_findings && narrative.content_quality_findings.length) {
-    children.push(sectionHeading('Content Quality Findings', brandHex));
+    children.push(heading('Content Quality Findings'));
     const findingsByPage = new Map();
     for (const item of narrative.content_quality_findings) {
       if (!findingsByPage.has(item.page)) findingsByPage.set(item.page, []);
@@ -484,7 +497,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // competitor is cited underneath each item as supporting evidence, not
   // as the organizing structure.
   if (narrative && narrative.competitive_analysis && narrative.competitive_analysis.length) {
-    children.push(sectionHeading('Competitive Analysis', brandHex));
+    children.push(heading('Competitive Analysis'));
     const impactOrder = { High: 0, Medium: 1, Low: 2 };
     const effortOrder = { Low: 0, Medium: 1, High: 2 };
     const sortedFindings = [...narrative.competitive_analysis].sort((a, b) =>
@@ -507,7 +520,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: E-E-A-T & Local SEO (narrative) ──
   if (narrative && (narrative.eeat_signals_present || narrative.eeat_gaps || narrative.local_seo)) {
-    children.push(sectionHeading('E-E-A-T & Local SEO Analysis', brandHex));
+    children.push(heading('E-E-A-T & Local SEO Analysis'));
     if (narrative.eeat_signals_present && narrative.eeat_signals_present.length) {
       children.push(new Paragraph({ children: [new TextRun({ text: 'E-E-A-T Signals Present', bold: true, color: brandHex })], spacing: { after: 100 } }));
       for (const item of narrative.eeat_signals_present) children.push(...recItem(item));
@@ -531,7 +544,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   // ── Section: Content & Keyword Strategy (narrative) ──
   if (narrative && narrative.content_keyword_strategy) {
     const cks = narrative.content_keyword_strategy;
-    children.push(sectionHeading('Content & Keyword Strategy Recommendations', brandHex));
+    children.push(heading('Content & Keyword Strategy Recommendations'));
     if (cks.keyword_opportunities && cks.keyword_opportunities.length) {
       const rows = [
         new TableRow({
@@ -556,7 +569,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
 
   // ── Section: Next Steps (narrative) ──
   if (narrative && narrative.next_steps && narrative.next_steps.length) {
-    children.push(sectionHeading('Next Steps & Action Plan', brandHex));
+    children.push(heading('Next Steps & Action Plan'));
     narrative.next_steps.forEach((step, i) => {
       children.push(
         new Paragraph({ children: [new TextRun({ text: `${i + 1}. ${step.title}`, bold: true, size: 21 })], spacing: { before: 140 } }),
@@ -566,7 +579,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   }
 
   // ── Section: All Pages table ──
-  children.push(sectionHeading('All Pages at a Glance', brandHex));
+  children.push(heading('All Pages at a Glance'));
   const tableRows = [
     new TableRow({
       children: [headerCell('Page URL', brandHex), headerCell('Title', brandHex), headerCell('H1', brandHex), headerCell('Meta Desc', brandHex), headerCell('Schema', brandHex), headerCell('Image Alts', brandHex)],
@@ -585,6 +598,27 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   ];
   children.push(new Table({ rows: tableRows, width: { size: 100, type: WidthType.PERCENTAGE } }));
 
+  // ── Table of Contents (full report only) ── spliced in now that every
+  // section heading above has registered itself into tocEntries. Built as
+  // plain clickable links to each heading's Bookmark rather than a Word
+  // TOC field — no page numbers (docx has no layout engine to compute
+  // them), but every entry is populated and jumps correctly the instant
+  // the file is opened, in any viewer, with no dependency on the reader's
+  // Word settings.
+  if (narrative && tocEntries.length) {
+    children.splice(tocInsertionIndex, 0,
+      sectionHeading('Table of Contents', brandHex, { excludeFromToc: true }),
+      ...tocEntries.map(e => new Paragraph({
+        spacing: { after: 100 },
+        children: [new InternalHyperlink({
+          anchor: e.id,
+          children: [new TextRun({ text: e.title, color: brandHex, underline: {}, size: 21 })],
+        })],
+      })),
+      new Paragraph({ children: [], pageBreakAfter: true }),
+    );
+  }
+
   // ── Footer note ──
   children.push(
     new Paragraph({
@@ -594,10 +628,12 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
   );
 
   const doc = new Document({
-    // Without this, Word shows the TOC field (and the footer's PAGE/
-    // NUMPAGES fields) as stale/empty placeholders until the reader
-    // manually selects them and presses F9 — this forces the update to
-    // happen automatically the first time the file is opened.
+    // Without this, Word shows the footer's PAGE/NUMPAGES fields as a
+    // stale/empty placeholder until the reader manually selects them and
+    // presses F9 — this forces the update to happen automatically the
+    // first time the file is opened. (The Table of Contents above is
+    // deliberately NOT a Word field for the same reason — see
+    // sectionHeading's doc comment.)
     features: { updateFields: true },
     styles: {
       default: {
