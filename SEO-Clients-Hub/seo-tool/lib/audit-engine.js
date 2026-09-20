@@ -351,13 +351,21 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (inconsistentPhonePages) deduct(Math.min(6, Math.round((inconsistentPhonePages / totalPages) * 6)), `${inconsistentPhonePages} page(s) showing a phone number that doesn't match the rest of the site`);
 
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
+  // "...the auditor was blocked from reaching" is deliberately listed here
+  // with no corresponding deduct() call of its own — it's an unconfirmed,
+  // possibly-false-alarm finding (see fetchPage's 403 retry logic), and a
+  // link that's broken on every page is one unique destination, not N
+  // separate problems, so it shouldn't silently rack up points through
+  // this generic bucket just for not matching a more specific pattern
+  // above. It still appears in Findings by Page for a human to verify —
+  // it just doesn't cost score until it's confirmed.
   const scoredWarningPatterns = [
     /^Title too (short|long)/, /^Multiple H1 tags/, /^Duplicate title tag/, /^Duplicate meta description/,
     /^Duplicate H1 tag/, /^Missing viewport meta tag/, /^Missing html lang attribute/, /^No HTTP compression/,
     /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
     /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
-    /^Phone number doesn't match/,
+    /^Phone number doesn't match/, /the auditor was blocked from reaching/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -676,7 +684,13 @@ function createEngine(client) {
     // whose only H3 was a product card (already excluded) plus two footer
     // widget H4s falsely reported "skips H3" with no real heading problem
     // anywhere in the page's own content.
-    const isChromeHeading = (el) => $(el).closest('.products, .product, [class*="loop-product"], nav, footer').length > 0;
+    // `.products .product` (a card nested inside a grid) is deliberately
+    // scoped narrower than a bare `.product` — WooCommerce also wraps a
+    // SINGLE product page's entire real content in its own top-level
+    // `<div class="product">` (not nested inside `.products`), and
+    // excluding that too would silently drop that page's actual content
+    // headings from the hierarchy check, not just card titles.
+    const isChromeHeading = (el) => $(el).closest('.products .product, [class*="loop-product"], nav, footer').length > 0;
     const h3Count = $('h3').filter((i, el) => !isChromeHeading(el)).length;
     const h4Count = $('h4').filter((i, el) => !isChromeHeading(el)).length;
     if (h3Count > 0 && h2s.length === 0) warnings.push('Heading hierarchy skips H2 (H3 used with no H2 on the page)');
@@ -801,7 +815,16 @@ function createEngine(client) {
     // AND bodyText, which narrative-report.js's content-quality pass reads
     // directly — so a page like this could have been judged "thin" by the
     // LLM using less than half its actual copy.
-    $('script, style, nav, footer').remove();
+    // Product-card containers (`.products .product` — a card nested inside
+    // a grid, same narrower scope as isChromeHeading above; a single
+    // product page's own top-level `.product` wrapper holds its real
+    // content and is deliberately left alone) are removed here too, not
+    // just excluded from the heading-hierarchy count above — their price/
+    // SKU/"Add to cart" boilerplate is short, punctuation-free label text
+    // that (even with the sentence-boundary fix below) can still distort
+    // word count and readability on a page with a shop/product-teaser
+    // section, the same way nav/footer chrome would.
+    $('script, style, nav, footer, .products .product, [class*="loop-product"]').remove();
     $('header').first().remove();
 
     // A period is appended after each block-level element's own text, when
