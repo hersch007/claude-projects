@@ -762,8 +762,21 @@ function createEngine(client) {
       }
     });
 
-    // Word count (body text only)
-    $('script, style, nav, footer, header').remove();
+    // Word count (body text only). Only the FIRST <header> is removed, not
+    // every <header> in the document — confirmed on a real client site:
+    // WooCommerce's default archive template wraps a category's actual
+    // description text in `<header class="woocommerce-products-header">`
+    // (many other themes do the same for blog post titles, e.g.
+    // `<header class="entry-header">`), so blanket-removing every <header>
+    // was deleting real body copy along with the intended target — the
+    // site's own chrome header (logo/nav), which is reliably the first
+    // <header> in DOM order across virtually every theme/page builder.
+    // This was silently truncating both the mechanical word count below
+    // AND bodyText, which narrative-report.js's content-quality pass reads
+    // directly — so a page like this could have been judged "thin" by the
+    // LLM using less than half its actual copy.
+    $('script, style, nav, footer').remove();
+    $('header').first().remove();
     const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
     const wordCount = bodyText.split(' ').filter(w => w.length > 1).length;
     if (wordCount < 150) warnings.push(`Low word count (${wordCount} words)`);
@@ -927,29 +940,29 @@ function createEngine(client) {
     // Attribute broken internal links to whichever page(s) actually link to
     // them — a raw count of 404'd URLs isn't actionable on its own; knowing
     // "the /about page links to something broken" is what someone can fix.
-    // The actual destination is included too (not just a count) — a link
-    // that's broken on every single page is almost always one shared
-    // template element (nav/footer/a logged-in-only admin toolbar leaking
-    // into a cached page), and there's no way to tell which without seeing
-    // where it actually points.
+    // The actual destination and its response (e.g. "HTTP 404") are both
+    // included — a link that's broken on every single page is almost
+    // always one shared template element (nav/footer/a logged-in-only
+    // admin toolbar leaking into a cached page), and there's no way to
+    // tell which without seeing exactly where it points and how it failed.
     for (const errored of results.filter(r => r.error)) {
       const sources = linkSources.get(errored.url);
       if (!sources) continue;
       for (const sourceUrl of sources) {
         const sourcePage = results.find(p => p.url === sourceUrl && !p.error);
         if (sourcePage) {
-          if (!sourcePage._brokenLinkUrls) sourcePage._brokenLinkUrls = new Set();
-          sourcePage._brokenLinkUrls.add(errored.url);
+          if (!sourcePage._brokenLinks) sourcePage._brokenLinks = new Map();
+          sourcePage._brokenLinks.set(errored.url, errored.error);
         }
       }
     }
     for (const page of results) {
-      if (page._brokenLinkUrls && page._brokenLinkUrls.size) {
-        const urls = [...page._brokenLinkUrls].map(u => u.replace(BASE_URL, '') || '/');
-        const shown = urls.slice(0, 3).join(', ');
-        const extra = urls.length > 3 ? ` and ${urls.length - 3} more` : '';
-        page.issues.push(`Links to ${urls.length} broken internal page${urls.length > 1 ? 's' : ''}: ${shown}${extra}`);
-        delete page._brokenLinkUrls;
+      if (page._brokenLinks && page._brokenLinks.size) {
+        const entries = [...page._brokenLinks].map(([u, err]) => `${u.replace(BASE_URL, '') || '/'} (${err})`);
+        const shown = entries.slice(0, 3).join(', ');
+        const extra = entries.length > 3 ? ` and ${entries.length - 3} more` : '';
+        page.issues.push(`Links to ${entries.length} broken internal page${entries.length > 1 ? 's' : ''}: ${shown}${extra}`);
+        delete page._brokenLinks;
       }
     }
 
