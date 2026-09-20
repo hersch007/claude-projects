@@ -62,26 +62,49 @@ function normalizeUrl(href, base) {
   }
 }
 
-async function fetchPage(url) {
+// `cacheBust` is a single value generated once per crawl() call (not a
+// fresh one per request) — appended to the actual outbound request only,
+// never to the returned `url`, which is this page's identity for
+// everything downstream (link graph, broken-link destinations, dedup, the
+// "Findings by Page" slug). Confirmed on a real client site: re-running an
+// audit kept returning stale content (old word counts, resolved issues
+// still showing) even right after the client purged their host's cache —
+// most managed WordPress hosts layer more than one cache (e.g.
+// SiteGround's own Dynamic Cache is separate from the SG Optimizer
+// plugin's own full-page cache, and purging one doesn't purge the other),
+// so "purge cache" not reaching every layer is a common, easy-to-miss
+// failure mode. A query string is the standard, broadly-supported escape
+// hatch — WP Super Cache, W3 Total Cache, SG Optimizer, and WP Rocket all
+// treat any query string as "dynamic, don't serve from cache" by
+// convention — so this makes every crawled page bypass essentially any
+// URL-keyed cache layer, whichever one the client forgot to purge, not
+// just this one. One value per run (rather than one per request) keeps
+// every request in a given audit traceable back to that run and avoids
+// looking like scanning/probing traffic to a host's security layer.
+function bustedUrl(url, cacheBust) {
+  return cacheBust ? url + (url.includes('?') ? '&' : '?') + '_seoaudit=' + cacheBust : url;
+}
+
+async function fetchPage(url, cacheBust) {
   try {
-    // Append a one-off cache-busting query param to the actual outbound
-    // request only — never to the returned `url`, which is this page's
-    // identity for everything downstream (link graph, broken-link
-    // destinations, dedup, the "Findings by Page" slug). Confirmed on a
-    // real client site: re-running an audit kept returning stale content
-    // (old word counts, resolved issues still showing) even right after
-    // the client purged their host's cache — most managed WordPress hosts
-    // layer more than one cache (e.g. SiteGround's own Dynamic Cache is
-    // separate from the SG Optimizer plugin's own full-page cache, and
-    // purging one doesn't purge the other), so "purge cache" not reaching
-    // every layer is a common, easy-to-miss failure mode. A query string
-    // is the standard, broadly-supported escape hatch — WP Super Cache,
-    // W3 Total Cache, SG Optimizer, and WP Rocket all treat any query
-    // string as "dynamic, don't serve from cache" by convention — so this
-    // makes every crawled page bypass essentially any URL-keyed cache
-    // layer, whichever one the client forgot to purge, not just this one.
-    const bustUrl = url + (url.includes('?') ? '&' : '?') + '_seoaudit=' + Date.now();
-    const res = await fetch(bustUrl, { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
+    const res = await fetch(bustedUrl(url, cacheBust), { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
+    if (res.status === 403 && cacheBust) {
+      // A 403 specifically (as opposed to 404/5xx) sometimes means a
+      // security plugin or WAF is flagging the cache-busting query string
+      // itself as suspicious, rather than the page genuinely being
+      // inaccessible — confirmed as a real possibility on a client site
+      // where a page that loads normally for visitors came back 403 only
+      // from the audit. One plain retry without the query param settles
+      // it: if that succeeds, this was a false alarm from our own
+      // cache-busting and the page is fine; if it's still 403, the page
+      // really is being blocked for this kind of request.
+      const retry = await fetch(url, { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
+      if (retry.ok) {
+        const html = await retry.text();
+        return { url, html, status: retry.status, contentEncoding: retry.headers.get('content-encoding') || '' };
+      }
+      return { url, error: retry.status === 403 ? 'HTTP 403 (blocked)' : `HTTP ${retry.status}` };
+    }
     if (!res.ok) return { url, error: `HTTP ${res.status}` };
     const html = await res.text();
     return { url, html, status: res.status, contentEncoding: res.headers.get('content-encoding') || '' };
@@ -389,6 +412,7 @@ function friendlyIssue(text) {
   if (text.match(/invalid \(malformed\) JSON-LD/i)) return { label: text, why: 'Malformed schema markup is ignored by Google entirely — it provides none of the benefit of valid structured data.', priority: 'medium' };
   if (text.match(/mixed-content resource/i)) return { label: text, why: 'Browsers block or warn on http:// resources loaded on an https:// page, which can visibly break the page or trigger a security warning.', priority: 'high' };
   if (text.match(/Links to \d+ broken internal/i)) return { label: text, why: 'A link on this page points to a page that no longer exists, creating a dead end for visitors and search engines.', priority: 'high' };
+  if (text.match(/the auditor was blocked from reaching/i)) return { label: text, why: 'The destination returned "Forbidden" specifically, not "not found" — that often means a security plugin or firewall rule denied this kind of automated request, not that the page is actually broken for real visitors. Worth a manual check before treating it as a dead link.', priority: 'medium' };
   if (text.match(/missing width\/height attributes/i)) return { label: text, why: 'Without explicit dimensions, the browser doesn\'t know how much space to reserve for the image, causing content to jump around as it loads (a Core Web Vitals penalty).', priority: 'medium' };
   if (text.match(/Missing Open Graph tags/i)) return { label: text, why: 'Without these tags, links to this page shared on social media or messaging apps show a generic or broken preview instead of a proper title/image.', priority: 'low' };
   if (text.match(/Missing character encoding declaration/i)) return { label: text, why: 'Without a declared character encoding, special characters can render incorrectly in some browsers.', priority: 'low' };
@@ -642,17 +666,19 @@ function createEngine(client) {
 
     // Heading hierarchy — a skipped level (H3 with no H2 above it, H4 with
     // no H3) confuses the document outline search engines and screen
-    // readers build from headings, even when H1 itself is fine. Repeating
-    // product-card headings are excluded first — WooCommerce's own loop
-    // template renders every product title as an H3 inside .products/
-    // .product (or a woocommerce-loop-product__title class) regardless of
-    // theme, which is structural markup, not part of the page's actual
-    // content outline. Without this, an ordinary category/shop page that
-    // simply lists a handful of products looks like it "skips" H2 even
-    // when its real intro copy has no heading problem at all.
-    const isProductCardHeading = (el) => $(el).closest('.products, .product, [class*="loop-product"]').length > 0;
-    const h3Count = $('h3').filter((i, el) => !isProductCardHeading(el)).length;
-    const h4Count = $('h4').filter((i, el) => !isProductCardHeading(el)).length;
+    // readers build from headings, even when H1 itself is fine. Structural
+    // chrome headings are excluded first: WooCommerce's own loop template
+    // renders every product title as an H3 inside .products/.product (or a
+    // woocommerce-loop-product__title class) regardless of theme, and most
+    // themes title their footer widgets with H4 ("Quick Links",
+    // "Newsletter", etc.) — neither is part of the page's actual content
+    // outline. Confirmed on a real client site: a product/category page
+    // whose only H3 was a product card (already excluded) plus two footer
+    // widget H4s falsely reported "skips H3" with no real heading problem
+    // anywhere in the page's own content.
+    const isChromeHeading = (el) => $(el).closest('.products, .product, [class*="loop-product"], nav, footer').length > 0;
+    const h3Count = $('h3').filter((i, el) => !isChromeHeading(el)).length;
+    const h4Count = $('h4').filter((i, el) => !isChromeHeading(el)).length;
     if (h3Count > 0 && h2s.length === 0) warnings.push('Heading hierarchy skips H2 (H3 used with no H2 on the page)');
     if (h4Count > 0 && h3Count === 0) warnings.push('Heading hierarchy skips H3 (H4 used with no H3 on the page)');
 
@@ -777,6 +803,24 @@ function createEngine(client) {
     // LLM using less than half its actual copy.
     $('script, style, nav, footer').remove();
     $('header').first().remove();
+
+    // A period is appended after each block-level element's own text, when
+    // it doesn't already end in sentence punctuation, before the DOM
+    // collapses to one flat string below — otherwise a punctuation-free
+    // list (a specialty/service tag list, badge row, anything styled as
+    // short label fragments rather than prose) merges into one giant
+    // run-on "sentence" once everything joins on a single space. Confirmed
+    // on a real client homepage: without this, genuinely reasonable
+    // content — real paragraphs plus an unpunctuated specialty list —
+    // scored -14 on the Flesch scale (impossible to read as "the writing
+    // is that bad"); with sentence boundaries preserved at block edges,
+    // the same content scored 18. This also makes bodyText itself clearer
+    // for narrative-report.js's LLM content-quality pass, which reads it
+    // directly — list items no longer run together into one phrase.
+    $('p, li, h1, h2, h3, h4, h5, h6, td, blockquote').each((i, el) => {
+      const t = $(el).text().trim();
+      if (t && !/[.!?]$/.test(t)) $(el).append('.');
+    });
     const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
     const wordCount = bodyText.split(' ').filter(w => w.length > 1).length;
     if (wordCount < 150) warnings.push(`Low word count (${wordCount} words)`);
@@ -846,6 +890,13 @@ function createEngine(client) {
       // own fetch of the homepage below will surface the real error either way.
     }
 
+    // One cache-busting value for this whole crawl (see fetchPage/bustedUrl)
+    // rather than a fresh one per request — every request in this run
+    // still gets a unique, cache-defeating URL relative to any other run,
+    // but requests within the same run share a single identifiable value.
+    const cacheBust = Date.now();
+    console.log(`  Crawl run cache-bust value: ${cacheBust}`);
+
     const visited = new Set();
     const queue = [BASE_URL + '/'];
     const results = [];
@@ -893,7 +944,7 @@ function createEngine(client) {
 
       process.stdout.write(`[${count + 1}] ${normalized.replace(BASE_URL, '')} ... `);
 
-      const { html, error, contentEncoding } = await fetchPage(normalized);
+      const { html, error, contentEncoding } = await fetchPage(normalized, cacheBust);
       if (error) {
         console.log(`ERROR: ${error}`);
         results.push({ url: normalized, error });
@@ -945,24 +996,41 @@ function createEngine(client) {
     // always one shared template element (nav/footer/a logged-in-only
     // admin toolbar leaking into a cached page), and there's no way to
     // tell which without seeing exactly where it points and how it failed.
+    //
+    // A confirmed-blocked destination (fetchPage's retry-without-cache-bust
+    // still got 403 — see fetchPage) goes in a separate, lower-certainty
+    // bucket and a warning rather than an issue: the page might load fine
+    // for real visitors and only be denied to this kind of automated
+    // request (a security plugin/WAF rule), so it shouldn't carry the same
+    // "this is definitely broken" weight as a genuine 404/5xx — confirmed
+    // on a real client site where a Privacy Policy page that loads
+    // normally for visitors came back 403 for the auditor specifically.
     for (const errored of results.filter(r => r.error)) {
       const sources = linkSources.get(errored.url);
       if (!sources) continue;
+      const bucket = errored.error.includes('(blocked)') ? '_blockedLinks' : '_brokenLinks';
       for (const sourceUrl of sources) {
         const sourcePage = results.find(p => p.url === sourceUrl && !p.error);
         if (sourcePage) {
-          if (!sourcePage._brokenLinks) sourcePage._brokenLinks = new Map();
-          sourcePage._brokenLinks.set(errored.url, errored.error);
+          if (!sourcePage[bucket]) sourcePage[bucket] = new Map();
+          sourcePage[bucket].set(errored.url, errored.error);
         }
       }
     }
+    function describeLinks(map) {
+      const entries = [...map].map(([u, err]) => `${u.replace(BASE_URL, '') || '/'} (${err.replace(' (blocked)', '')})`);
+      return { count: entries.length, text: `${entries.slice(0, 3).join(', ')}${entries.length > 3 ? ` and ${entries.length - 3} more` : ''}` };
+    }
     for (const page of results) {
       if (page._brokenLinks && page._brokenLinks.size) {
-        const entries = [...page._brokenLinks].map(([u, err]) => `${u.replace(BASE_URL, '') || '/'} (${err})`);
-        const shown = entries.slice(0, 3).join(', ');
-        const extra = entries.length > 3 ? ` and ${entries.length - 3} more` : '';
-        page.issues.push(`Links to ${entries.length} broken internal page${entries.length > 1 ? 's' : ''}: ${shown}${extra}`);
+        const { count, text } = describeLinks(page._brokenLinks);
+        page.issues.push(`Links to ${count} broken internal page${count > 1 ? 's' : ''}: ${text}`);
         delete page._brokenLinks;
+      }
+      if (page._blockedLinks && page._blockedLinks.size) {
+        const { count, text } = describeLinks(page._blockedLinks);
+        page.warnings.push(`Links to ${count} internal page${count > 1 ? 's' : ''} the auditor was blocked from reaching: ${text} — may be a security/bot-blocking rule rather than a genuinely broken link; verify manually`);
+        delete page._blockedLinks;
       }
     }
 
