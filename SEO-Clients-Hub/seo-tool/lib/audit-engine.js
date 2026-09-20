@@ -625,9 +625,17 @@ function createEngine(client) {
 
     // Heading hierarchy — a skipped level (H3 with no H2 above it, H4 with
     // no H3) confuses the document outline search engines and screen
-    // readers build from headings, even when H1 itself is fine.
-    const h3Count = $('h3').length;
-    const h4Count = $('h4').length;
+    // readers build from headings, even when H1 itself is fine. Repeating
+    // product-card headings are excluded first — WooCommerce's own loop
+    // template renders every product title as an H3 inside .products/
+    // .product (or a woocommerce-loop-product__title class) regardless of
+    // theme, which is structural markup, not part of the page's actual
+    // content outline. Without this, an ordinary category/shop page that
+    // simply lists a handful of products looks like it "skips" H2 even
+    // when its real intro copy has no heading problem at all.
+    const isProductCardHeading = (el) => $(el).closest('.products, .product, [class*="loop-product"]').length > 0;
+    const h3Count = $('h3').filter((i, el) => !isProductCardHeading(el)).length;
+    const h4Count = $('h4').filter((i, el) => !isProductCardHeading(el)).length;
     if (h3Count > 0 && h2s.length === 0) warnings.push('Heading hierarchy skips H2 (H3 used with no H2 on the page)');
     if (h4Count > 0 && h3Count === 0) warnings.push('Heading hierarchy skips H3 (H4 used with no H3 on the page)');
 
@@ -902,18 +910,29 @@ function createEngine(client) {
     // Attribute broken internal links to whichever page(s) actually link to
     // them — a raw count of 404'd URLs isn't actionable on its own; knowing
     // "the /about page links to something broken" is what someone can fix.
+    // The actual destination is included too (not just a count) — a link
+    // that's broken on every single page is almost always one shared
+    // template element (nav/footer/a logged-in-only admin toolbar leaking
+    // into a cached page), and there's no way to tell which without seeing
+    // where it actually points.
     for (const errored of results.filter(r => r.error)) {
       const sources = linkSources.get(errored.url);
       if (!sources) continue;
       for (const sourceUrl of sources) {
         const sourcePage = results.find(p => p.url === sourceUrl && !p.error);
-        if (sourcePage) (sourcePage._brokenLinkCount = (sourcePage._brokenLinkCount || 0) + 1);
+        if (sourcePage) {
+          if (!sourcePage._brokenLinkUrls) sourcePage._brokenLinkUrls = new Set();
+          sourcePage._brokenLinkUrls.add(errored.url);
+        }
       }
     }
     for (const page of results) {
-      if (page._brokenLinkCount) {
-        page.issues.push(`Links to ${page._brokenLinkCount} broken internal page${page._brokenLinkCount > 1 ? 's' : ''}`);
-        delete page._brokenLinkCount;
+      if (page._brokenLinkUrls && page._brokenLinkUrls.size) {
+        const urls = [...page._brokenLinkUrls].map(u => u.replace(BASE_URL, '') || '/');
+        const shown = urls.slice(0, 3).join(', ');
+        const extra = urls.length > 3 ? ` and ${urls.length - 3} more` : '';
+        page.issues.push(`Links to ${urls.length} broken internal page${urls.length > 1 ? 's' : ''}: ${shown}${extra}`);
+        delete page._brokenLinkUrls;
       }
     }
 
@@ -1046,7 +1065,7 @@ function createEngine(client) {
         <td class="center">${p.h1Count === 0 ? '<span class="missing">None</span>' : p.h1Count > 1 ? `<span class="warn-text">${p.h1Count}</span>` : '&#10003;'}</td>
         <td class="center">${p.metaDesc ? '&#10003;' : '<span class="missing">Missing</span>'}</td>
         <td class="center">${p.schemaTypes.length ? p.schemaTypes.join(', ') : '<span class="warn-text">None</span>'}</td>
-        <td class="center">${p.imagesNoAlt > 0 ? `<span class="missing">${p.imagesNoAlt}</span>` : '&#10003;'}</td>
+        <td class="center">${p.imagesNoAlt > 0 ? `<span class="missing">${p.imagesNoAlt} missing</span>` : p.imagesEmptyAlt > 0 ? `<span class="warn-text">${p.imagesEmptyAlt} empty</span>` : '&#10003;'}</td>
       </tr>`;
     }
 
