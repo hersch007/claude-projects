@@ -1,7 +1,8 @@
 # Continuity Log — When the Applause Fades
 
-Extracted from V2 FULL COPY (49 chapters). Built from full manuscript read-through.  
-**Updated July 2026:** Final edited versions ch01–ch27 verified and incorporated. Corrections to V2 noted inline. Epilogue drafted and locked July 2026 — facts logged below.
+Originally extracted from V2 FULL COPY (49 chapters). Built from full manuscript read-through.  
+**Updated July 2026:** Final edited versions ch01–ch27 verified and incorporated. Corrections to V2 noted inline. Epilogue drafted and locked July 2026 — facts logged below.  
+**Updated September 2026:** Manuscript now confirmed complete at **54 chapters + 2 epilogues** (`_draft-manuscript/ch01_final.docx`–`ch54_final.docx`, `ch55_epilogue_final.docx`, `ch56_epilogue2_final.docx` — the second epilogue is Nova's "Notes from Nova" lyrics/fragments section). `when-the-applause-fades_COMPILED.docx` and `manuscript_extracted.txt` have been regenerated from these source files to match.
 
 **Market position:** Inspirational contemporary romance with crossover potential. Faith is organic and costly — not evangelistic. CBA content standards apply (no profanity; physical intimacy limited and earned). See Market Positioning section for full editorial standard.
 
