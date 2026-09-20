@@ -224,13 +224,31 @@ function countSyllables(word) {
 // Flesch Reading Ease score (0-100, higher = easier to read) — a standard,
 // well-known formula, not something we invented. Returns null when there
 // isn't enough text to make the estimate meaningful.
+//
+// Returns the full breakdown (not just the score) rather than a bare
+// number — an implausible score (very negative, or swinging wildly
+// between two runs on content that "looks" unchanged) is otherwise
+// impossible to diagnose without re-deriving these numbers by hand. In
+// particular, a high wordsPerSentence average is a strong, self-evident
+// signal that something non-prose (a list/label/widget with no
+// punctuation) is still leaking into the extracted text, as opposed to
+// genuinely dense vocabulary, which shows up as high syllablesPerWord
+// instead with a normal wordsPerSentence.
 function calcReadability(text) {
   const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0);
   const words = text.split(/\s+/).filter(w => w.length > 0);
   if (sentences.length < 2 || words.length < 30) return null;
   const syllables = words.reduce((sum, w) => sum + countSyllables(w), 0);
-  const score = 206.835 - 1.015 * (words.length / sentences.length) - 84.6 * (syllables / words.length);
-  return Math.round(score);
+  const wordsPerSentence = words.length / sentences.length;
+  const syllablesPerWord = syllables / words.length;
+  const score = 206.835 - 1.015 * wordsPerSentence - 84.6 * syllablesPerWord;
+  return {
+    score: Math.round(score),
+    wordCount: words.length,
+    sentenceCount: sentences.length,
+    wordsPerSentence: Math.round(wordsPerSentence * 10) / 10,
+    syllablesPerWord: Math.round(syllablesPerWord * 100) / 100,
+  };
 }
 
 // ─── Score ────────────────────────────────────────────────────────────────────
@@ -844,6 +862,22 @@ function createEngine(client) {
       const t = $(el).text().trim();
       if (t && !/[.!?]$/.test(t)) $(el).append('.');
     });
+    // A leaf <div> (no element children of its own — just text) gets the
+    // same treatment: a stats/badge row ("15+ Years Experience", "EMDRIA
+    // Certified") is almost always built from a handful of plain <div>s,
+    // a tag this project's own CMSes reach for constantly, and none of the
+    // specific tags above catch it. Deliberately NOT extended to <span> —
+    // that's routinely used purely for inline styling in the middle of a
+    // real sentence ("Some <span class='highlight'>important</span>
+    // text"), and punctuating every leaf span would corrupt that. A
+    // wrapping <div> with its own element children (e.g. a product card,
+    // already excluded above) is left alone here too, since its children
+    // get their own boundaries and double-punctuating would just add
+    // noise.
+    $('div').filter((i, el) => $(el).children().length === 0).each((i, el) => {
+      const t = $(el).text().trim();
+      if (t && !/[.!?]$/.test(t)) $(el).append('.');
+    });
     const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
     const wordCount = bodyText.split(' ').filter(w => w.length > 1).length;
     if (wordCount < 150) warnings.push(`Low word count (${wordCount} words)`);
@@ -853,9 +887,26 @@ function createEngine(client) {
     // genuinely "very difficult" (score < 30 on the standard 0-100 scale)
     // to avoid nagging about normal professional/clinical language that
     // just isn't a magazine article.
-    const readabilityScore = calcReadability(bodyText);
-    if (readabilityScore !== null && readabilityScore < 30) {
-      warnings.push(`Difficult to read (Flesch reading ease: ${readabilityScore}/100)`);
+    const readability = calcReadability(bodyText);
+    const readabilityScore = readability ? readability.score : null;
+    if (readability !== null && readability.score < 30) {
+      // The sentence/words-per-sentence breakdown is included directly in
+      // the finding text (not just the bare score) so an implausible
+      // result is self-diagnosing without needing to dig through server
+      // logs: a wordsPerSentence average in the double-or-triple digits
+      // means something non-prose (a list/label/widget with no
+      // punctuation) is still leaking into the extracted text — a genuine
+      // extraction problem — whereas a normal wordsPerSentence with high
+      // syllablesPerWord means the vocabulary itself is just dense
+      // clinical/technical language, which is a real, if lower-priority,
+      // finding rather than a bug.
+      warnings.push(`Difficult to read (Flesch reading ease: ${readability.score}/100 — ${readability.sentenceCount} sentences, ${readability.wordsPerSentence} words/sentence average)`);
+      // Full diagnostic detail, including the actual extracted text, goes
+      // to the server console rather than the client-facing report — the
+      // report is for the client, this is for us to verify exactly what
+      // the crawler read when a score looks implausible.
+      console.log(`  [readability] ${url}: score=${readability.score} words=${readability.wordCount} sentences=${readability.sentenceCount} words/sentence=${readability.wordsPerSentence} syllables/word=${readability.syllablesPerWord}`);
+      console.log(`  [readability] extracted text (first 500 chars): ${bodyText.slice(0, 500)}`);
     }
 
     return {
