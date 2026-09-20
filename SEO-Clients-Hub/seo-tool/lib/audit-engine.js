@@ -64,7 +64,24 @@ function normalizeUrl(href, base) {
 
 async function fetchPage(url) {
   try {
-    const res = await fetch(url, { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
+    // Append a one-off cache-busting query param to the actual outbound
+    // request only — never to the returned `url`, which is this page's
+    // identity for everything downstream (link graph, broken-link
+    // destinations, dedup, the "Findings by Page" slug). Confirmed on a
+    // real client site: re-running an audit kept returning stale content
+    // (old word counts, resolved issues still showing) even right after
+    // the client purged their host's cache — most managed WordPress hosts
+    // layer more than one cache (e.g. SiteGround's own Dynamic Cache is
+    // separate from the SG Optimizer plugin's own full-page cache, and
+    // purging one doesn't purge the other), so "purge cache" not reaching
+    // every layer is a common, easy-to-miss failure mode. A query string
+    // is the standard, broadly-supported escape hatch — WP Super Cache,
+    // W3 Total Cache, SG Optimizer, and WP Rocket all treat any query
+    // string as "dynamic, don't serve from cache" by convention — so this
+    // makes every crawled page bypass essentially any URL-keyed cache
+    // layer, whichever one the client forgot to purge, not just this one.
+    const bustUrl = url + (url.includes('?') ? '&' : '?') + '_seoaudit=' + Date.now();
+    const res = await fetch(bustUrl, { headers: BROWSER_HEADERS, timeout: 12000, redirect: 'follow' });
     if (!res.ok) return { url, error: `HTTP ${res.status}` };
     const html = await res.text();
     return { url, html, status: res.status, contentEncoding: res.headers.get('content-encoding') || '' };
