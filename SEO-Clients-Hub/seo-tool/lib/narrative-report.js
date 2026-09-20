@@ -202,6 +202,18 @@ fine, say nothing about it — an empty content_quality_findings array is the
 correct output for a well-written site, not a sign you didn't look hard
 enough.
 
+A page's warnings may include a mechanical "Difficult to read (Flesch
+reading ease)" score. That formula penalizes multi-syllable words
+indiscriminately, including necessary clinical/technical/legal
+terminology a specialized business has no reason to avoid (e.g. "EMDR,"
+"dissociation," "neurodivergence," "religious trauma" for a therapy
+site). Never suggest removing or simplifying accurate domain vocabulary
+just to raise that score. If a page's writing is genuinely dense, flag
+only real structural fixes — shorter sentences, more paragraph breaks,
+added subheadings — and only where the density is actually the sentence
+structure's fault, not the vocabulary a client in that field is expected
+to use.
+
 For competitive_analysis: compare this site against each entry in
 competitor_summaries (title, meta description, word count, schema types,
 and contentSample) and surface concrete, specific gaps or advantages —

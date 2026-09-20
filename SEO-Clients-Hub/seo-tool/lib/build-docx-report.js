@@ -592,7 +592,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
         bodyCell(p.h1Count === 0 ? 'None' : p.h1Count > 1 ? `${p.h1Count} (multiple)` : 'OK', i % 2 === 1),
         bodyCell(p.metaDesc ? 'OK' : 'Missing', i % 2 === 1),
         bodyCell(p.schemaTypes.length ? p.schemaTypes.join(', ') : 'None', i % 2 === 1),
-        bodyCell(p.imagesNoAlt > 0 ? String(p.imagesNoAlt) : 'OK', i % 2 === 1),
+        bodyCell(p.imagesNoAlt > 0 ? `${p.imagesNoAlt} missing` : p.imagesEmptyAlt > 0 ? `${p.imagesEmptyAlt} empty` : 'OK', i % 2 === 1),
       ],
     })),
   ];
