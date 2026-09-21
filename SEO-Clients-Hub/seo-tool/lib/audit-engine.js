@@ -626,7 +626,19 @@ function buildTrendChart(history) {
 // process, unlike the original audit.js which used module-level globals. ────
 
 function createEngine(client) {
-  let BASE_URL = client.url.replace(/\/$/, '');
+  // `.origin` (not just a trailing-slash strip) matters here: every link
+  // discovered during the crawl is normalized through normalizeUrl()'s
+  // `new URL(...).href`, which the URL spec always lowercases the hostname
+  // of. If a client's configured URL has any uppercase letters in its
+  // hostname (e.g. "https://Maxwellsplumbing.com", typed exactly as the
+  // business's own name is capitalized — a completely normal thing to
+  // type during onboarding), every `abs.startsWith(BASE_URL)` link filter
+  // below would silently fail on the case mismatch alone, dropping every
+  // single real internal link as "external" — confirmed in production: a
+  // real, healthy 40+ page WordPress site crawled as if it were a 1-page
+  // site, with no error to explain why (the homepage itself still fetches
+  // fine either way, since it's never compared against BASE_URL).
+  let BASE_URL = new URL(client.url).origin;
   const MAX_PAGES = client.max_pages || 50;
   const IGNORE = client.ignore_paths || [];
 
