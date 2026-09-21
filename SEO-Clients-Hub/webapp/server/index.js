@@ -12,6 +12,7 @@ const fs = require('fs');
 const { runAudit } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
+const { buildSalesReport } = require('../../seo-tool/lib/build-sales-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
@@ -306,6 +307,31 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(body.google_place_id.trim() || null);
     updates.push(`google_place_id = $${values.length}`);
   }
+  if (Array.isArray(body.ignore_paths)) {
+    // Already fully wired into audit-engine.js's shouldIgnore() — a path
+    // here is skipped both as a crawled page AND as a link destination, so
+    // adding a manually-verified false positive (e.g. a page that 403s
+    // only for the auditor, not real visitors) here removes it from the
+    // report entirely instead of just softening its wording.
+    const cleaned = body.ignore_paths
+      .map(p => String(p || '').trim())
+      .filter(Boolean)
+      .slice(0, 20);
+    values.push(JSON.stringify(cleaned));
+    updates.push(`ignore_paths = $${values.length}`);
+  }
+  if (body.max_pages !== undefined && body.max_pages !== null && body.max_pages !== '') {
+    // Caps the crawl (see audit-engine.js's `MAX_PAGES = client.max_pages ||
+    // 50`) — a client with no value set falls back to the schema's own
+    // DEFAULT 60, so this only needs to reject something that isn't a
+    // sane page count rather than supply its own fallback.
+    const n = Number(body.max_pages);
+    if (!Number.isInteger(n) || n < 1 || n > 500) {
+      return res.status(400).json({ error: 'max_pages must be a whole number between 1 and 500' });
+    }
+    values.push(n);
+    updates.push(`max_pages = $${values.length}`);
+  }
   if (typeof body.url === 'string' && body.url.trim()) {
     // Unlike the fields above, url can't be cleared to null — it's the
     // client's actual site and drives every crawl. Trailing slash stripped
@@ -319,7 +345,7 @@ app.patch('/api/clients/:slug', async (req, res) => {
     updates.push(`url = $${values.length}`);
   }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url, ignore_paths, max_pages' });
   }
 
   values.push(client.id);
@@ -582,6 +608,56 @@ app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
   res.set('Content-Type', 'text/html').send(rows[0].html_report);
 });
 
+// The "Customer Audit Report" — meant to be put in front of a prospect to
+// make the case they need help, showing the full findings number-grid
+// (not a curated teaser). Unlike the main /docx routes above, this works
+// for ANY past audit run (not just one still held in the in-memory `runs`
+// Map from a just-finished crawl): the score/page-count come straight from
+// the audit_runs row, and the stat grid itself is parsed back out of that
+// row's stored html_report (see build-sales-report.js's doc comment for
+// why — it's not stored as structured data anywhere on its own).
+app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).send('Client not found');
+  const { rows } = await getPool().query(
+    'SELECT seo_health_score, pages_crawled, html_report, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
+    [req.params.id, client.id]
+  );
+  if (!rows[0]) return res.status(404).send('Run not found');
+  const run = rows[0];
+  if (run.seo_health_score == null) {
+    return res.status(404).send('This run doesn\'t have enough stored data for a Customer Audit Report.');
+  }
+  let partner;
+  try {
+    partner = await resolveReferralPartner(run.referral_partner_id, client.id);
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+  const provider = {
+    name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
+    logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
+  };
+  const dateStr = run.run_date.toISOString().split('T')[0];
+  try {
+    const buffer = await buildSalesReport({
+      client, provider, date: dateStr,
+      score: run.seo_health_score,
+      pagesCrawled: run.pages_crawled,
+      htmlReport: run.html_report,
+    });
+    const namePart = client.name.replace(/\s+/g, '-');
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'Content-Disposition': `attachment; filename="${namePart}-Customer-Audit-Report-${dateStr}.docx"`,
+    });
+    res.send(buffer);
+  } catch (err) {
+    console.error(`Sales report generation for run ${req.params.id} failed:`, err);
+    res.status(500).send('Failed to generate Word document');
+  }
+});
+
 app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).json({ error: 'Client not found' });
@@ -687,6 +763,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // as part of this already-fast audit completion path.
       docxSource: {
         client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date,
+        crawledAt: result.crawledAt,
         changes, dominantPhone: result.dominantPhone,
         // Real GSC ranking-keyword data (with Google Ads search-volume
         // enrichment already applied by enrichKeywords above, when it
