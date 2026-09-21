@@ -238,7 +238,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .cover-stat-value { font-size: 20px; font-weight: bold; }
 
   .page { padding: 0.5in 0.7in; }
-  .pill-row { display: flex; gap: 12px; margin-bottom: 22px; }
+  .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 4.6in; }
   .pill { flex: 1; text-align: center; border-radius: 10px; padding: 10px 8px; font-weight: bold; font-size: 14px; }
   .pill-bad { background: #FEE2E2; color: #DC2626; }
   .pill-warn { background: #FEF3C7; color: #D97706; }
@@ -305,18 +305,17 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
       ${logoImg}
       <h1 class="client-name">${escapeHtml(client.name)}</h1>
       <div class="client-url">${escapeHtml(client.url)}</div>
+      ${grid.length ? `
+      <div class="pill-row">
+        <div class="pill pill-bad"><span class="n">${pillCounts.bad}</span> failed</div>
+        <div class="pill pill-warn"><span class="n">${pillCounts.warn}</span> warnings</div>
+        <div class="pill pill-good"><span class="n">${pillCounts.good}</span> passed</div>
+      </div>` : ''}
     </div>
     <div class="cover-stats">${coverStatsHtml(stats)}</div>
   </section>
 
   <section class="page">
-    ${grid.length ? `
-    <div class="pill-row">
-      <div class="pill pill-bad"><span class="n">${pillCounts.bad}</span> failed</div>
-      <div class="pill pill-warn"><span class="n">${pillCounts.warn}</span> warnings</div>
-      <div class="pill pill-good"><span class="n">${pillCounts.good}</span> passed</div>
-    </div>` : ''}
-
     <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
     <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
 
