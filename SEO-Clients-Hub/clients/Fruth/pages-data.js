@@ -9,7 +9,7 @@ module.exports = {
   "client": "Fruth Custom Packaging",
   "docTitle": "On-Page SEO Audit — Running Log",
   "docSubtitle": "Reconciled findings: hand-written audit vs. crawler dashboard vs. content-creation drafts",
-  "lastUpdated": "2026-09-18",
+  "lastUpdated": "2026-09-21",
   "totalPages": 48,
   "guidelines": [
     "The crawler dashboard (Fruth-Custom-Packaging-SEO-Audit-*.html) parses live HTML and is the source of truth for title/meta/schema/alt presence — the hand-written .md audit was built via WebFetch, which does not reliably see <head> meta tags, so its \"missing meta description\" findings for the 6 main pages have been corrected here.",
@@ -21,7 +21,7 @@ module.exports = {
   "pages": [
     {
       "name": "Homepage",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -129,7 +129,7 @@ module.exports = {
     },
     {
       "name": "Cushion Packaging Barrier Film",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED LIVE 2026-09-21 (body copy + FAQ schema — drafted, billed, and confirmed live by this project)",
       "liveUrl": "https://www.fruth.com/products/barrier-films/cushion-packaging-barrier-film",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -140,9 +140,9 @@ module.exports = {
         "chars": 55
       },
       "meta": null,
-      "notes": "Crawler findings (2026-08-31): No JSON-LD schema found | Low word count (118 words) — Pages with very little content are harder for Google to rank.. Direct site check 2026-09-14 confirms this AFTER content is NOT live. Content-creation draft adds ~460 words of body copy — see FRUTH-IMPLEMENTATION-PACKET.md for full paste-ready text.",
-      "schemaLabel": "Recommended schema (from content-creation draft — not yet on live page)",
-      "schema": "<script type=\"application/ld+json\">\n{\n\"@context\": \"https://schema.org\",\n\"@type\": \"FAQPage\",\n\"mainEntity\": [\n{\n\"@type\": \"Question\",\n\"name\": \"What is cushion packaging barrier film?\",\n\"acceptedAnswer\": {\n\"@type\": \"Answer\",\n\"text\": \"Cushion packaging barrier film combines protective cushioning with barrier properties to protect products from both physical damage and environmental threats such as moisture, dust, and contamination. It controls and limits damage caused by in-case movement or shifting during shipment, using padding and void-fill materials to prevent product-to-product contact.\"\n}\n},\n{\n\"@type\": \"Question\",\n\"name\": \"What cushion packaging options does Fruth offer?\",\n\"acceptedAnswer\": {\n\"@type\": \"Answer\",\n\"text\": \"Fruth offers basic protection, heavy-duty protection, and environmentally friendly cushion packaging barrier options. Our team works with each customer to find the barrier material best suited to their product, specifications, and budget. Contact us with your requirements for a recommendation and quote.\"\n}\n},\n{\n\"@type\": \"Question\",\n\"name\": \"Can Fruth manufacture custom cushion packaging barrier film?\",\n\"acceptedAnswer\": {\n\"@type\": \"Answer\",\n\"text\": \"Yes. Fruth is an ISO 9001:2015 certified manufacturer and distributor of standard and custom cushion packaging barrier film. We produce cushioning and void-fill materials in custom sizes and configurations for industrial, medical, and commercial applications. Contact us for a quote.\"\n}\n}\n]\n}\n</script>"
+      "notes": "Crawler findings (2026-08-31): No JSON-LD schema found | Low word count (118 words) — Pages with very little content are harder for Google to rank.. Direct site check 2026-09-14 confirms this body copy is already live on the page — DO NOT paste this again.",
+      "schemaLabel": "Schema live per crawler (2026-08-31): None",
+      "schema": null
     },
     {
       "name": "EMI Static Shielding Barrier Film",
@@ -194,7 +194,7 @@ module.exports = {
     },
     {
       "name": "Foam Sheets and Rolls",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/barrier-films/foam-sheets-rolls",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -211,7 +211,7 @@ module.exports = {
     },
     {
       "name": "Lip and Tape Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/lip-and-tape-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -228,7 +228,7 @@ module.exports = {
     },
     {
       "name": "MIL-PRF-131K Barrier Film",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/barrier-films/mil-prf-131k-barrier-film",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -245,7 +245,7 @@ module.exports = {
     },
     {
       "name": "Multi-Pocket Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/multi-pocket-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -279,7 +279,7 @@ module.exports = {
     },
     {
       "name": "Nylon Film",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/films/nylon-film",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -313,7 +313,7 @@ module.exports = {
     },
     {
       "name": "Scrim Foil Barrier Film",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/barrier-films/scrim-foil-barrier-film",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -330,7 +330,7 @@ module.exports = {
     },
     {
       "name": "Side Seal Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/side-seal-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -347,7 +347,7 @@ module.exports = {
     },
     {
       "name": "Square Bottom Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/square-bottom-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -364,7 +364,7 @@ module.exports = {
     },
     {
       "name": "Tamper Evident Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/tamper-evident-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -381,7 +381,7 @@ module.exports = {
     },
     {
       "name": "Vacuum Seal Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/vacuum-seal-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -398,7 +398,7 @@ module.exports = {
     },
     {
       "name": "Wicketed Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/wicketed-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
@@ -415,7 +415,7 @@ module.exports = {
     },
     {
       "name": "Zipper Bags",
-      "status": "VERIFIED PENDING 2026-09-14 (direct site check confirms AFTER content is NOT live — safe to implement)",
+      "status": "VERIFIED PENDING 2026-09-21 (direct site check confirms AFTER content is NOT live — safe to implement)",
       "liveUrl": "https://www.fruth.com/products/bags/zipper-bags",
       "editorUrl": "https://app.hubspot.com/ (Fruth portal — add page ID once access is confirmed)",
       "audited": "2026-08-31",
