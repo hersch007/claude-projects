@@ -136,7 +136,18 @@ function buildCategoryScores(grid) {
     const good = items.filter(i => i.status === 'good').length;
     const total = items.length;
     const score = Math.round((good / total) * 100);
-    return { name: cat.name, fail, warn, good, total, score };
+    // "2 fail · 4/6 passed" reads like a page count right under "113 pages
+    // scanned" on the cover, but it's a count of check *types*, not pages —
+    // confusing on its own. The real per-page impact of a category's
+    // flagged checks (e.g. "12 pages" from a "12 page(s) missing meta
+    // description" tile) is a much more concrete, and more persuasive,
+    // number to put next to it. Non-numeric tile values (the "Yes"/"No" of
+    // "Sitemap.xml Found," a site-wide flag, not a page count) contribute
+    // 0 rather than NaN.
+    const affectedPages = items
+      .filter(i => i.status === 'bad' || i.status === 'warn')
+      .reduce((sum, i) => { const n = parseInt(i.value, 10); return sum + (Number.isFinite(n) ? n : 0); }, 0);
+    return { name: cat.name, fail, warn, good, total, score, affectedPages };
   }).filter(Boolean);
 }
 
@@ -180,11 +191,15 @@ function coverStatsHtml(stats) {
 function categoryCardsHtml(categories) {
   return categories.map(cat => {
     const tier = scoreTierColor(cat.score);
-    const parts = [];
-    if (cat.fail) parts.push(`${cat.fail} fail`);
-    if (cat.warn) parts.push(`${cat.warn} warn`);
-    parts.push(`${cat.good}/${cat.total} passed`);
     const flagged = cat.fail > 0 || cat.warn > 0;
+    const parts = [];
+    if (flagged) {
+      const flaggedChecks = cat.fail + cat.warn;
+      parts.push(`${flaggedChecks} of ${cat.total} check${cat.total === 1 ? '' : 's'} flagged`);
+      if (cat.affectedPages > 0) parts.push(`${cat.affectedPages} page${cat.affectedPages === 1 ? '' : 's'} affected`);
+    } else {
+      parts.push(`${cat.good}/${cat.total} passed`);
+    }
     const consequence = flagged && CATEGORY_CONSEQUENCE[cat.name]
       ? `<div class="category-consequence">${escapeHtml(CATEGORY_CONSEQUENCE[cat.name])}</div>`
       : '';
