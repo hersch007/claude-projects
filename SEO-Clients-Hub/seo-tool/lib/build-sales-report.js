@@ -1,16 +1,21 @@
-// Generates the "Customer Audit Report" — a Word document meant to be
-// shown to a prospect to make the case that they need help, not a teaser
-// that withholds detail. It shows the score, how far that score is from
+// Generates the "Customer Audit Report" — a document meant to be shown to
+// a prospect to make the case that they need help, not a teaser that
+// withholds detail. It shows the score, how far that score is from
 // "Good," the findings grouped into categories, and the actual highest-
 // impact issues — so the case makes itself instead of relying on a wall
 // of raw stat tiles.
 //
-// The cover is a full-bleed brand-color page (its own docx `section` with
-// page margins zeroed out and a single edge-to-edge shaded table filling
-// it); everything after it is plain white/printable — deliberately not a
-// dark theme throughout, both because print cost/legibility favors a
-// white body and because one bold cover page reads as "designed" without
-// needing every page to carry it.
+// Rendered as HTML/CSS printed to PDF via headless Chromium (Puppeteer),
+// not assembled from docx tables — a real report design (rounded cards,
+// shadows, a gradient cover, an actual SVG score ring) needs real CSS.
+// Word has no shape/rect/arc primitives, so every "card" or "ring" in the
+// old docx version was a colored table cell faking a shape, and kept
+// reading as "cheap"/"clunky" no matter how much styling effort went into
+// it — that's this file's second full rewrite of this report for exactly
+// that reason (see git history). The cover is one gradient page; every
+// page after it is plain white — deliberately not a dark theme
+// throughout, both for print cost/legibility and because one bold cover
+// reads as designed without the whole document needing to carry it.
 //
 // Deliberately built from only what a stored audit_runs row actually has
 // (seo_health_score, pages_crawled, html_report, deductions — see
@@ -21,15 +26,8 @@
 // structured data anywhere — it's parsed back out of the stored
 // html_report, the one place every one of those counts already lives for
 // a saved run.
-const {
-  Document, Packer, Paragraph, TextRun, AlignmentType, Footer,
-  Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
-  HeightRule, VerticalAlign,
-} = require('docx');
 const cheerio = require('cheerio');
-const {
-  scoreTierColor, coverLogoImageRun, BODY_FONT, HEADING_FONT,
-} = require('./build-docx-report');
+const puppeteer = require('puppeteer');
 
 const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
 
@@ -41,24 +39,18 @@ const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
 // calcScore() gains or loses a check.
 const TOTAL_CHECK_TYPES = 33;
 
-const NO_BORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
-const NO_BORDERS = { top: NO_BORDER, bottom: NO_BORDER, left: NO_BORDER, right: NO_BORDER };
+// Same red/amber/green thresholds as build-docx-report.js's scoreTierColor
+// — duplicated rather than imported since this file no longer shares any
+// rendering code with the docx-based Master report (entirely different
+// medium now), and it's three lines.
+function scoreTierColor(score) {
+  return score >= 80 ? '#16A34A' : score >= 60 ? '#D97706' : '#DC2626';
+}
 
-// US Letter, in twips (1/20 pt) — docx's own default page size, spelled out
-// explicitly here since the cover section below overrides margins to 0 and
-// needs to know the exact page box its full-bleed table has to fill.
-const PAGE_WIDTH = 12240;
-const PAGE_HEIGHT = 15840;
-
-// Blends a hex color toward white — used to derive the cover's score-badge
-// fill/border from the brand color itself (a fixed lighter navy wouldn't
-// track every partner's actual brand hue), since Word shading only takes
-// solid colors, no alpha/opacity.
-function blendWithWhite(hex, amt) {
-  const n = parseInt(hex, 16);
-  const r = (n >> 16) & 0xff, g = (n >> 8) & 0xff, b = n & 0xff;
-  const mix = (c) => Math.round(c + (255 - c) * amt);
-  return [mix(r), mix(g), mix(b)].map((v) => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, (c) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  }[c]));
 }
 
 // Pulls the exact same stat tiles a client already sees on the on-screen
@@ -124,341 +116,243 @@ function buildCategoryScores(grid) {
   }).filter(Boolean);
 }
 
-// The score badge that floats top-right on the cover — a bordered card
-// (Word has no shape/rect primitive, so this is the same borderless/bordered
-// shaded-table trick used throughout this file) sized to a fraction of its
-// parent cell's width and right-aligned, rather than the score being just
-// another centered line of text in the page flow.
-function scoreBadgeTable(score, scoreColor, scoreLabel, brandHex) {
-  const fill = blendWithWhite(brandHex, 0.12);
-  const border = blendWithWhite(brandHex, 0.35);
-  return new Table({
-    width: { size: 62, type: WidthType.PERCENTAGE },
-    alignment: AlignmentType.RIGHT,
-    rows: [new TableRow({
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 6, color: border },
-          bottom: { style: BorderStyle.SINGLE, size: 6, color: border },
-          left: { style: BorderStyle.SINGLE, size: 6, color: border },
-          right: { style: BorderStyle.SINGLE, size: 6, color: border },
-        },
-        margins: { top: 160, bottom: 160, left: 120, right: 120 },
-        children: [
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: String(score), bold: true, size: 44, color: 'FFFFFF', font: HEADING_FONT })],
-            spacing: { after: 20 },
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: 'SEO HEALTH SCORE', size: 12, color: 'DCE4F2', characterSpacing: 8 })],
-            spacing: { after: 30 },
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: scoreLabel, bold: true, size: 15, color: scoreColor })],
-          }),
-        ],
-      })],
-    })],
-  });
+// A real SVG ring gauge for the cover's score badge — the one thing the
+// previous docx version explicitly couldn't do (Word has no arc/donut
+// primitive). stroke-dasharray draws the filled arc proportional to score;
+// the unfilled remainder is a translucent white track.
+function scoreRingSvg(score, color) {
+  const r = 52;
+  const circumference = 2 * Math.PI * r;
+  const filled = Math.max(0, Math.min(100, score)) / 100 * circumference;
+  return `
+    <svg width="140" height="140" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="${r}" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="10" />
+      <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="10"
+        stroke-linecap="round" stroke-dasharray="${filled.toFixed(1)} ${circumference.toFixed(1)}"
+        transform="rotate(-90 60 60)" />
+    </svg>`;
 }
 
-// Eyebrow (left) + score badge (right) sharing one borderless row — mirrors
-// a competitor report's cover layout, where the brand line and the score
-// sit on the same header row instead of stacking.
-function coverHeaderRow(providerName, badge) {
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      children: [
-        new TableCell({
-          width: { size: 38, type: WidthType.PERCENTAGE },
-          borders: NO_BORDERS,
-          verticalAlign: VerticalAlign.CENTER,
-          children: [new Paragraph({
-            children: [new TextRun({ text: `${providerName.toUpperCase()}  •  SEO AUDIT`, size: 14, color: 'B9C6DC', characterSpacing: 10 })],
-          })],
-        }),
-        new TableCell({
-          width: { size: 62, type: WidthType.PERCENTAGE },
-          borders: NO_BORDERS,
-          children: [badge],
-        }),
-      ],
-    })],
-  });
+function coverStatsHtml(stats) {
+  return stats.map(s => `
+    <div class="cover-stat">
+      <div class="cover-stat-label">${escapeHtml(s.label.toUpperCase())}</div>
+      <div class="cover-stat-value">${escapeHtml(s.value)}</div>
+    </div>`).join('');
 }
 
-// The horizontal "quick facts" strip near the bottom of the cover — label
-// small-caps above, bold value below, spread across equal columns. Only
-// uses numbers this route actually has (see this file's top doc comment);
-// unlike a competitor's per-page breakdowns ("16 of 19 pages"), this data
-// only has category-level counts for a saved run, so the labels here are
-// phrased to match what's really being counted.
-function coverStatsStrip(stats) {
-  const cell = (stat) => new TableCell({
-    width: { size: 100 / stats.length, type: WidthType.PERCENTAGE },
-    borders: NO_BORDERS,
-    children: [
-      new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: stat.label.toUpperCase(), size: 13, color: '8CA0C4', characterSpacing: 8 })] }),
-      new Paragraph({ children: [new TextRun({ text: stat.value, bold: true, size: 24, color: 'FFFFFF', font: HEADING_FONT })] }),
-    ],
-  });
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({ children: stats.map(cell) })],
-  });
+function categoryCardsHtml(categories) {
+  return categories.map(cat => {
+    const tier = scoreTierColor(cat.score);
+    const parts = [];
+    if (cat.fail) parts.push(`${cat.fail} fail`);
+    if (cat.warn) parts.push(`${cat.warn} warn`);
+    parts.push(`${cat.good}/${cat.total} passed`);
+    return `
+      <div class="category-card" style="border-left-color:${tier}">
+        <div class="category-score" style="color:${tier}">${cat.score}</div>
+        <div class="category-body">
+          <div class="category-name">${escapeHtml(cat.name)}</div>
+          <div class="category-detail">${escapeHtml(parts.join(' · '))}</div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
-// A thin horizontal rule — same borderless-shaded-cell trick, one row tall.
-function thinRule(color) {
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: color },
-        borders: NO_BORDERS,
-        margins: { top: 6, bottom: 6, left: 0, right: 0 },
-        children: [new Paragraph({ children: [] })],
-      })],
-    })],
-  });
+function issueCalloutsHtml(issues) {
+  return issues.map(d => {
+    const severe = d.pts >= 10;
+    const accent = severe ? '#DC2626' : '#D97706';
+    return `
+      <div class="issue-callout" style="border-left-color:${accent}">
+        <div class="issue-title">${escapeHtml(d.label)}</div>
+        <div class="issue-detail">-${d.pts} point${d.pts === 1 ? '' : 's'} off your SEO Health Score</div>
+      </div>`;
+  }).join('');
 }
 
-// The full-bleed cover itself: one table, one cell, sized to the exact page
-// box (see PAGE_WIDTH/PAGE_HEIGHT above) so the brand color runs edge to
-// edge — this is what a zero-margin docx `section` makes possible, and is
-// the single biggest lever for "looks like a sales brochure" vs. "looks
-// like a Word doc with a colored header." This is the one page in the
-// document that isn't white — everything after it is, both for print cost
-// and because a single bold cover reads as designed without the whole
-// document needing to carry a dark theme.
-function coverPage({ client, provider, brandHex, score, scoreColor, scoreLabel, logoImageRun, dateLabel, pagesCrawled, problemCount, gridLength, totalChecksRun }) {
-  const badge = scoreBadgeTable(score, scoreColor, scoreLabel, brandHex);
+function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, scoreLabel, dateLabel, pagesCrawled, grid, categories, pillCounts, topIssues, totalChecksRun, problemCount }) {
+  const logoImg = /^data:image\/(png|jpe?g|gif);base64,/i.test(provider.logo || '')
+    ? `<img class="cover-logo" src="${provider.logo}" alt="" />`
+    : '';
+
   const stats = [
     { label: 'Report Date', value: dateLabel },
     { label: 'Pages Scanned', value: String(pagesCrawled) },
-    { label: 'Categories Flagged', value: gridLength ? `${problemCount} of ${gridLength}` : '—' },
+    { label: 'Categories Flagged', value: grid.length ? `${problemCount} of ${grid.length}` : '—' },
     { label: 'Checks Performed', value: totalChecksRun.toLocaleString() },
   ];
 
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      height: { value: PAGE_HEIGHT - 40, rule: HeightRule.ATLEAST },
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: brandHex },
-        borders: NO_BORDERS,
-        verticalAlign: VerticalAlign.TOP,
-        margins: { top: 620, bottom: 620, left: 720, right: 720 },
-        children: [
-          coverHeaderRow(provider.name, badge),
-          new Paragraph({ spacing: { before: logoImageRun ? 1400 : 2000 }, children: [] }),
-          ...(logoImageRun
-            ? [new Paragraph({ children: [logoImageRun], spacing: { after: 200 } })]
-            : []),
-          new Paragraph({
-            children: [new TextRun({ text: client.name, bold: true, size: 56, color: 'FFFFFF', font: HEADING_FONT })],
-            spacing: { after: 100 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: client.url, size: 20, color: 'B9C6DC' })],
-            spacing: { after: 900 },
-          }),
-          thinRule(blendWithWhite(brandHex, 0.3)),
-          new Paragraph({ spacing: { before: 320 }, children: [] }),
-          coverStatsStrip(stats),
-        ],
-      })],
-    })],
-  });
-}
+  const whereYouShouldBeHtml = score < GOOD_THRESHOLD
+    ? `Sites that rank well typically score <strong class="good-text">${GOOD_THRESHOLD}+ (Good)</strong>. Right now ${escapeHtml(client.name)} is <strong class="bad-text">${GOOD_THRESHOLD - score} point${GOOD_THRESHOLD - score === 1 ? '' : 's'} away</strong> from that threshold — every point below it is a real reason a competitor outranks you in search.`
+    : (100 - score > 0
+      ? `${escapeHtml(client.name)} is already in the <strong class="good-text">Good</strong> range — but there's still <strong class="bad-text">${100 - score} point${100 - score === 1 ? '' : 's'}</strong> between here and a perfect, fully-optimized site. Here's exactly what's left:`
+      : `A perfect technical score — genuinely rare. The findings below are the remaining, lower-priority polish items.`);
 
-// A light-tint "pill" badge row (failed / warnings / passed counts) — free
-// to compute (it's just a tally of the same grid statuses the category
-// cards below already carry) and gives an at-a-glance scoreboard right
-// after the cover. Word has no border-radius, so the "pill" is
-// approximated the same way everything else in this file fakes shapes: a
-// borderless, shaded table cell — the tint is light enough to stay cheap
-// to print.
-const PILL_STYLE = {
-  bad: { bg: 'FEE2E2', text: 'DC2626', word: 'failed' },
-  warn: { bg: 'FEF3C7', text: 'D97706', word: 'warnings' },
-  good: { bg: 'DCFCE7', text: '16A34A', word: 'passed' },
-};
-function statusPillsTable(counts) {
-  const cell = (status) => {
-    const style = PILL_STYLE[status];
-    return new TableCell({
-      width: { size: 100 / 3, type: WidthType.PERCENTAGE },
-      shading: { type: ShadingType.CLEAR, fill: style.bg },
-      margins: { top: 90, bottom: 90, left: 60, right: 60 },
-      borders: NO_BORDERS,
-      children: [new Paragraph({
-        alignment: AlignmentType.CENTER,
-        children: [
-          new TextRun({ text: String(counts[status]), bold: true, size: 22, color: style.text }),
-          new TextRun({ text: ` ${style.word}`, bold: true, size: 18, color: style.text }),
-        ],
-      })],
-    });
-  };
-  return new Table({
-    width: { size: 78, type: WidthType.PERCENTAGE },
-    alignment: AlignmentType.CENTER,
-    rows: [new TableRow({ children: ['bad', 'warn', 'good'].map(cell) })],
-  });
-}
+  const categorySectionHtml = categories.length
+    ? `<div class="category-grid">${categoryCardsHtml(categories)}</div>`
+    : `<p class="muted-note">A detailed category breakdown isn't available for this specific run, but the score above reflects a real, full scan of the site.</p>`;
 
-// A full-width solid-color banner for a section title — stands in for a
-// real "card header," and reads as designed in a way a thin bottom-border
-// on plain text never does.
-function sectionBand(text, bgHex) {
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: bgHex },
-        borders: NO_BORDERS,
-        margins: { top: 140, bottom: 140, left: 200, right: 200 },
-        children: [new Paragraph({ children: [new TextRun({ text, bold: true, size: 24, color: 'FFFFFF', font: HEADING_FONT, characterSpacing: 4 })] })],
-      })],
-    })],
-  });
-}
+  const topIssuesSectionHtml = topIssues.length ? `
+    <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
+    <div class="section-body">
+      <div class="issue-list">${issueCalloutsHtml(topIssues)}</div>
+    </div>` : '';
 
-// One category card: white background, a thin gray border, and a colored
-// left accent bar (the same score-tier red/amber/green as the score badge
-// itself) instead of a tinted fill — reads as a clean bordered card rather
-// than a colored block, and uses far less ink/toner than a filled tile
-// when the report gets printed. Mirrors a competitor report's per-category
-// summary card (name, score, a short pass/fail/warn line) without
-// attempting an actual ring/gauge graphic — Word has no arc/donut
-// primitive, and a fake one built from table borders reads worse than a
-// plain, honest number.
-function categoryCardCell(cat) {
-  const tier = scoreTierColor(cat.score);
-  const parts = [];
-  if (cat.fail) parts.push(`${cat.fail} fail`);
-  if (cat.warn) parts.push(`${cat.warn} warn`);
-  parts.push(`${cat.good}/${cat.total} passed`);
-  return new TableCell({
-    width: { size: 50, type: WidthType.PERCENTAGE },
-    borders: {
-      top: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
-      bottom: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
-      right: { style: BorderStyle.SINGLE, size: 4, color: 'E2E8F0' },
-      left: { style: BorderStyle.SINGLE, size: 24, color: tier },
-    },
-    margins: { top: 160, bottom: 160, left: 220, right: 200 },
-    children: [
-      new Paragraph({
-        spacing: { after: 20 },
-        children: [
-          new TextRun({ text: String(cat.score), bold: true, size: 26, color: tier, font: HEADING_FONT }),
-          new TextRun({ text: '  ' + cat.name, bold: true, size: 19, color: '1E293B' }),
-        ],
-      }),
-      new Paragraph({
-        children: [new TextRun({ text: parts.join(' · '), size: 16, color: '64748B' })],
-      }),
-    ],
-  });
-}
-
-const CATEGORY_COLUMNS = 2;
-function categoryGridTable(categories) {
-  const rows = [];
-  for (let i = 0; i < categories.length; i += CATEGORY_COLUMNS) {
-    const rowItems = categories.slice(i, i + CATEGORY_COLUMNS);
-    rows.push(new TableRow({
-      children: rowItems.map(categoryCardCell),
-    }));
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<style>
+  @page { size: Letter; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #1E293B; }
+  .cover {
+    width: 8.5in; height: 11in; padding: 0.7in 0.75in;
+    background: linear-gradient(135deg, ${brandHex} 0%, #0B1D3A 100%);
+    color: #fff; display: flex; flex-direction: column;
+    page-break-after: always;
   }
-  return new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, rows });
+  .cover-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .eyebrow { font-size: 11px; letter-spacing: 2px; color: #B9C6DC; text-transform: uppercase; padding-top: 40px; }
+  .score-badge { position: relative; width: 140px; height: 140px; text-align: center; }
+  .score-badge-inner { position: absolute; top: 0; left: 0; width: 140px; height: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .score-badge-num { font-size: 34px; font-weight: bold; font-family: Georgia, serif; line-height: 1; }
+  .score-badge-label { font-size: 8px; letter-spacing: 1.5px; color: #DCE4F2; margin-top: 4px; }
+  .score-badge-tier { font-size: 10px; font-weight: bold; margin-top: 3px; }
+  .cover-middle { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .cover-logo { max-height: 48px; max-width: 200px; margin-bottom: 24px; }
+  .client-name { font-size: 42px; font-weight: bold; margin: 0 0 8px; line-height: 1.1; }
+  .client-url { font-size: 15px; color: #B9C6DC; }
+  .cover-stats { display: flex; gap: 30px; }
+  .cover-stat { flex: 1; }
+  .cover-stat-label { font-size: 10px; letter-spacing: 1.5px; color: #8CA0C4; margin-bottom: 6px; }
+  .cover-stat-value { font-size: 20px; font-weight: bold; }
+
+  .page { padding: 0.5in 0.7in; }
+  .pill-row { display: flex; gap: 12px; margin-bottom: 22px; }
+  .pill { flex: 1; text-align: center; border-radius: 10px; padding: 10px 8px; font-weight: bold; font-size: 14px; }
+  .pill-bad { background: #FEE2E2; color: #DC2626; }
+  .pill-warn { background: #FEF3C7; color: #D97706; }
+  .pill-good { background: #DCFCE7; color: #16A34A; }
+  .pill span.n { font-size: 18px; }
+
+  .section-band {
+    color: #fff; font-weight: bold; font-size: 13px; letter-spacing: 2px;
+    padding: 10px 18px; border-radius: 8px; margin: 20px 0 12px;
+  }
+  .section-body p { font-size: 14px; line-height: 1.5; color: #333; margin: 0 0 12px; }
+  .good-text { color: #16A34A; }
+  .bad-text { color: #DC2626; }
+  .muted-note { font-size: 13px; color: #595959; font-style: italic; }
+
+  .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .category-card {
+    display: flex; align-items: center; gap: 12px;
+    background: #fff; border: 1px solid #E2E8F0; border-left: 5px solid;
+    border-radius: 10px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    break-inside: avoid;
+  }
+  .category-score { font-size: 24px; font-weight: bold; font-family: Georgia, serif; min-width: 42px; }
+  .category-name { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .category-detail { font-size: 11px; color: #64748B; }
+
+  .issue-list { display: flex; flex-direction: column; gap: 7px; }
+  .issue-callout {
+    background: #FAFAFA; border-left: 5px solid; border-radius: 8px;
+    padding: 9px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    break-inside: avoid;
+  }
+  .issue-title { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
+  .issue-detail { font-size: 11px; color: #64748B; }
+
+  .cta-box {
+    background: linear-gradient(135deg, ${accentHex}, ${brandHex});
+    color: #fff; border-radius: 14px; padding: 26px 32px; text-align: center;
+    margin-top: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    break-inside: avoid;
+  }
+  .cta-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
+  .cta-body { font-size: 13px; line-height: 1.5; margin-bottom: 12px; max-width: 5.5in; margin-left: auto; margin-right: auto; }
+  .cta-email { font-size: 14px; font-weight: bold; }
+
+  .footer { text-align: center; font-size: 10px; color: #94A3B8; margin-top: 24px; }
+</style>
+</head>
+<body>
+
+  <section class="cover">
+    <div class="cover-header">
+      <div class="eyebrow">${escapeHtml(provider.name.toUpperCase())} &bull; SEO AUDIT</div>
+      <div class="score-badge">
+        ${scoreRingSvg(score, scoreColor)}
+        <div class="score-badge-inner">
+          <div class="score-badge-num">${score}</div>
+          <div class="score-badge-label">SEO HEALTH SCORE</div>
+          <div class="score-badge-tier" style="color:${scoreColor}">${escapeHtml(scoreLabel)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="cover-middle">
+      ${logoImg}
+      <h1 class="client-name">${escapeHtml(client.name)}</h1>
+      <div class="client-url">${escapeHtml(client.url)}</div>
+    </div>
+    <div class="cover-stats">${coverStatsHtml(stats)}</div>
+  </section>
+
+  <section class="page">
+    ${grid.length ? `
+    <div class="pill-row">
+      <div class="pill pill-bad"><span class="n">${pillCounts.bad}</span> failed</div>
+      <div class="pill pill-warn"><span class="n">${pillCounts.warn}</span> warnings</div>
+      <div class="pill pill-good"><span class="n">${pillCounts.good}</span> passed</div>
+    </div>` : ''}
+
+    <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
+    <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
+
+    <div class="section-band" style="background:${brandHex}">BY CATEGORY</div>
+    <div class="section-body">${categorySectionHtml}</div>
+
+    ${topIssuesSectionHtml}
+
+    <div class="cta-box">
+      <div class="cta-title">Ready to fix this?</div>
+      <div class="cta-body">${escapeHtml(provider.name)} turns this list into a prioritized, done-for-you fix plan — most of what's above is fixable in weeks, not months.</div>
+      <div class="cta-email">${escapeHtml(provider.email || '')}</div>
+    </div>
+
+    <div class="footer">${escapeHtml(provider.name)} — Customer Audit Report — ${escapeHtml(dateLabel)}</div>
+  </section>
+
+</body>
+</html>`;
 }
 
-// One "top issue" callout: a colored left-accent bar plus the deduction's
-// own plain-English label (already written for a human by calcScore()'s
-// own `deduct()` calls in audit-engine.js — see that file) and its point
-// value, so this section is real findings text, not another number tile.
-function issueCallout(deduction) {
-  const severe = deduction.pts >= 10;
-  const accent = severe ? 'DC2626' : 'D97706';
-  const tint = severe ? 'FEF2F2' : 'FFFBEB';
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: tint },
-        borders: {
-          top: { style: BorderStyle.SINGLE, size: 4, color: tint },
-          bottom: { style: BorderStyle.SINGLE, size: 4, color: tint },
-          right: { style: BorderStyle.SINGLE, size: 4, color: tint },
-          left: { style: BorderStyle.SINGLE, size: 24, color: accent },
-        },
-        margins: { top: 140, bottom: 140, left: 220, right: 200 },
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({ text: deduction.label, bold: true, size: 19, color: '1E293B' }),
-            ],
-            spacing: { after: 20 },
-          }),
-          new Paragraph({
-            children: [new TextRun({ text: `-${deduction.pts} point${deduction.pts === 1 ? '' : 's'} off your SEO Health Score`, size: 15, color: '64748B' })],
-          }),
-        ],
-      })],
-    })],
+async function renderPdf(html) {
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
   });
+  try {
+    const page = await browser.newPage();
+    await page.setContent(html, { waitUntil: 'load' });
+    // printBackground is the easy-to-miss flag here — without it Chromium
+    // drops every CSS background-color/gradient (the cover, the pills, the
+    // CTA box) and prints plain white, silently.
+    return await page.pdf({ format: 'Letter', printBackground: true });
+  } finally {
+    await browser.close();
+  }
 }
 
-// The closing call-to-action as a solid color block, not a plain
-// paragraph — the one place on page 2 this is deliberately as bold as the
-// cover itself, since it's the entire point of the document.
-function ctaBox(provider, accentHex) {
-  return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
-    rows: [new TableRow({
-      children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: accentHex },
-        borders: NO_BORDERS,
-        margins: { top: 280, bottom: 280, left: 320, right: 320 },
-        children: [
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 100 },
-            children: [new TextRun({ text: 'Ready to fix this?', bold: true, size: 28, color: 'FFFFFF', font: HEADING_FONT })],
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            spacing: { after: 140 },
-            children: [new TextRun({
-              text: `${provider.name} turns this list into a prioritized, done-for-you fix plan — most of what's above is fixable in weeks, not months.`,
-              size: 21, color: 'FFFFFF',
-            })],
-          }),
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: provider.email || '', bold: true, size: 22, color: 'FFFFFF' })],
-          }),
-        ],
-      })],
-    })],
-  });
-}
-
-function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, deductions, date }) {
-  const brandHex = (provider.brand || '#003366').replace('#', '');
-  const accentHex = (provider.accent || provider.brand2 || provider.brand || '#003366').replace('#', '');
+async function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, deductions, date }) {
+  const brandHex = provider.brand || '#003366';
+  const accentHex = provider.accent || provider.brand2 || provider.brand || '#003366';
   const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const scoreLabel = score >= 85 ? 'Good' : score >= 70 ? 'Needs Improvement' : 'Needs Attention';
   const scoreColor = scoreTierColor(score);
-  const logoImageRun = coverLogoImageRun(provider);
   const grid = parseStatGrid(htmlReport);
   const problemCount = grid.filter(g => g.status === 'bad' || g.status === 'warn').length;
   // "neutral" tiles (Sitemap.xml Found, Total Pages Audited) are
@@ -472,141 +366,17 @@ function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, d
   const categories = buildCategoryScores(grid);
   // Highest point-value deductions first — the ones actually worth a
   // client's attention — capped at 6 so this reads as "the headline
-  // issues," not another full dump of every finding (the category cards
-  // above already cover completeness).
+  // issues," not another full dump of every finding.
   const topIssues = Array.isArray(deductions)
     ? [...deductions].filter(d => d.pts > 0).sort((a, b) => b.pts - a.pts).slice(0, 6)
     : [];
 
-  const cover = coverPage({
-    client, provider, brandHex, score, scoreColor, scoreLabel, logoImageRun, dateLabel,
-    pagesCrawled, problemCount, gridLength: grid.length, totalChecksRun,
+  const html = renderHtml({
+    client, provider, brandHex, accentHex, score, scoreColor, scoreLabel, dateLabel,
+    pagesCrawled, grid, categories, pillCounts, topIssues, totalChecksRun, problemCount,
   });
 
-  const children = [];
-
-  // ── At A Glance ── the pill scoreboard right at the top of page 2, so
-  // the reader who just saw the score badge on the cover gets the
-  // pass/fail breakdown before the narrative or the category cards.
-  if (grid.length) {
-    children.push(
-      new Paragraph({ spacing: { before: 0, after: 160 }, children: [] }),
-      statusPillsTable(pillCounts),
-      new Paragraph({ spacing: { after: 320 }, children: [] }),
-    );
-  }
-
-  // ── Where You Should Be ──
-  children.push(
-    sectionBand('WHERE YOU SHOULD BE', brandHex),
-    new Paragraph({ spacing: { before: 200 }, children: [] }),
-  );
-  if (score < GOOD_THRESHOLD) {
-    const gap = GOOD_THRESHOLD - score;
-    children.push(new Paragraph({
-      spacing: { after: 260 },
-      children: [
-        new TextRun({ text: `Sites that rank well typically score `, size: 21, color: '333333' }),
-        new TextRun({ text: `${GOOD_THRESHOLD}+ (Good)`, bold: true, size: 21, color: '16A34A' }),
-        new TextRun({ text: `. Right now ${client.name} is `, size: 21, color: '333333' }),
-        new TextRun({ text: `${gap} point${gap === 1 ? '' : 's'} away`, bold: true, size: 21, color: 'DC2626' }),
-        new TextRun({ text: ` from that threshold — every point below it is a real reason a competitor outranks you in search.`, size: 21, color: '333333' }),
-      ],
-    }));
-  } else {
-    const gap = 100 - score;
-    children.push(new Paragraph({
-      spacing: { after: 260 },
-      children: gap > 0 ? [
-        new TextRun({ text: `${client.name} is already in the `, size: 21, color: '333333' }),
-        new TextRun({ text: 'Good', bold: true, size: 21, color: '16A34A' }),
-        new TextRun({ text: ` range — but there's still `, size: 21, color: '333333' }),
-        new TextRun({ text: `${gap} point${gap === 1 ? '' : 's'}`, bold: true, size: 21, color: 'DC2626' }),
-        new TextRun({ text: ` between here and a perfect, fully-optimized site. Here's exactly what's left:`, size: 21, color: '333333' }),
-      ] : [
-        new TextRun({ text: `A perfect technical score — genuinely rare. The findings below are the remaining, lower-priority polish items.`, size: 21, color: '333333' }),
-      ],
-    }));
-  }
-
-  // ── By Category ── the flat 27-tile grid rolled up into named
-  // categories (see buildCategoryScores above) — a card per category
-  // instead of a wall of raw numbers.
-  children.push(
-    sectionBand('BY CATEGORY', brandHex),
-    new Paragraph({ spacing: { before: 200 }, children: [] }),
-  );
-  if (categories.length) {
-    children.push(categoryGridTable(categories));
-    children.push(new Paragraph({ spacing: { after: 320 }, children: [] }));
-  } else {
-    // No stored html_report to parse (an old run from before this was
-    // saved) — the score/target sections above still stand on their own.
-    children.push(new Paragraph({
-      spacing: { after: 320 },
-      children: [new TextRun({ text: 'A detailed category breakdown isn\'t available for this specific run, but the score above reflects a real, full scan of the site.', size: 20, color: '595959', italics: true })],
-    }));
-  }
-
-  // ── Top Issues To Fix ── the actual highest-impact findings (by score
-  // impact), in the auditor's own words — pulled from the same
-  // deductions this run's score was built from, not a re-derived summary.
-  if (topIssues.length) {
-    children.push(
-      sectionBand('TOP ISSUES TO FIX', brandHex),
-      new Paragraph({ spacing: { before: 200, after: 200 }, children: [] }),
-    );
-    topIssues.forEach((d, i) => {
-      children.push(issueCallout(d));
-      if (i < topIssues.length - 1) children.push(new Paragraph({ spacing: { after: 120 }, children: [] }));
-    });
-    children.push(new Paragraph({ spacing: { after: 320 }, children: [] }));
-  }
-
-  children.push(ctaBox(provider, accentHex));
-
-  const doc = new Document({
-    styles: {
-      default: {
-        document: { run: { font: BODY_FONT, size: 20 } },
-      },
-    },
-    sections: [
-      {
-        // The cover: zero page margins so its full-bleed table (see
-        // coverPage() above) reaches every edge, and no footer — a page
-        // number/footer line on a brochure cover reads as "report,"
-        // exactly what this is deliberately styled to not look like.
-        properties: {
-          page: {
-            size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
-            margin: { top: 0, bottom: 0, left: 0, right: 0 },
-          },
-        },
-        children: [cover],
-      },
-      {
-        // Back to normal margins for the findings/CTA pages — white
-        // background throughout, printable.
-        properties: {
-          page: {
-            size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
-          },
-        },
-        footers: {
-          default: new Footer({
-            children: [new Paragraph({
-              alignment: AlignmentType.CENTER,
-              children: [new TextRun({ text: `${provider.name} — Customer Audit Report — ${dateLabel}`, size: 15, color: '94A3B8' })],
-            })],
-          }),
-        },
-        children,
-      },
-    ],
-  });
-
-  return Packer.toBuffer(doc);
+  return renderPdf(html);
 }
 
 module.exports = { buildSalesReport, parseStatGrid, buildCategoryScores };
