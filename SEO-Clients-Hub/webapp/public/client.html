@@ -111,6 +111,18 @@
   </div>
 
   <div class="card">
+    <h2>Max Pages</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      How many pages the crawler will visit in a single audit run before stopping, even if more
+      linked pages are still queued. Defaults to 60 for a new client. Raise it for a larger site;
+      a suspiciously low "Pages Audited" count on a past report usually means this was set too low.
+    </p>
+    <input id="max-pages" type="number" min="1" max="500" step="1" style="width:100%;font-size:13px;padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1" placeholder="60">
+    <div style="margin-top:8px"><button id="max-pages-save">Save Max Pages</button></div>
+    <div id="max-pages-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Google Business Profile</h2>
     <p style="color:#64748b;font-size:12px;margin-bottom:10px">
       Adds this client's Google rating, review count, and a phone-number match check against Google's
@@ -193,6 +205,7 @@
     document.getElementById('gsc-property').value = data.client.gsc_property || '';
     document.getElementById('competitor-urls').value = (data.client.competitor_urls || []).join('\n');
     document.getElementById('ignore-paths').value = (data.client.ignore_paths || []).join('\n');
+    document.getElementById('max-pages').value = data.client.max_pages || '';
     document.getElementById('google-place-id').value = data.client.google_place_id || '';
 
     // The dropdown itself is already scoped server-side to just this
@@ -453,6 +466,24 @@
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ignore_paths: paths }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('max-pages-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('max-pages-status');
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ max_pages: Number(document.getElementById('max-pages').value) }),
     });
     const data = await res.json();
     if (data.error) {

@@ -319,6 +319,18 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(JSON.stringify(cleaned));
     updates.push(`ignore_paths = $${values.length}`);
   }
+  if (body.max_pages !== undefined && body.max_pages !== null && body.max_pages !== '') {
+    // Caps the crawl (see audit-engine.js's `MAX_PAGES = client.max_pages ||
+    // 50`) — a client with no value set falls back to the schema's own
+    // DEFAULT 60, so this only needs to reject something that isn't a
+    // sane page count rather than supply its own fallback.
+    const n = Number(body.max_pages);
+    if (!Number.isInteger(n) || n < 1 || n > 500) {
+      return res.status(400).json({ error: 'max_pages must be a whole number between 1 and 500' });
+    }
+    values.push(n);
+    updates.push(`max_pages = $${values.length}`);
+  }
   if (typeof body.url === 'string' && body.url.trim()) {
     // Unlike the fields above, url can't be cleared to null — it's the
     // client's actual site and drives every crawl. Trailing slash stripped
@@ -332,7 +344,7 @@ app.patch('/api/clients/:slug', async (req, res) => {
     updates.push(`url = $${values.length}`);
   }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url, ignore_paths' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url, ignore_paths, max_pages' });
   }
 
   values.push(client.id);
