@@ -10,7 +10,14 @@ const http = require('http');
 // routes: { [path]: (req, res, query) => void }. A route not found in the
 // map returns a plain 404 — good enough to also double as "this link is
 // genuinely broken" in tests that need one.
-function createMockSite(routes) {
+//
+// `host` defaults to 127.0.0.1 (the "site under audit" in every existing
+// test) but can be set to a different loopback address (e.g. 127.0.0.2 —
+// the whole 127.0.0.0/8 range is loopback, so this needs no real network
+// and resolves instantly) to stand up a second, distinctly-hostnamed
+// server for tests that need to prove something is treated as an
+// *external* site rather than a real fetch failure.
+function createMockSite(routes, host = '127.0.0.1') {
   const server = http.createServer((req, res) => {
     const [urlPath, qs] = req.url.split('?');
     const handler = routes[urlPath];
@@ -23,10 +30,10 @@ function createMockSite(routes) {
   });
   return new Promise((resolve, reject) => {
     server.on('error', reject);
-    server.listen(0, '127.0.0.1', () => {
+    server.listen(0, host, () => {
       const { port } = server.address();
       resolve({
-        url: `http://127.0.0.1:${port}`,
+        url: `http://${host}:${port}`,
         close: () => new Promise(r => server.close(r)),
       });
     });
