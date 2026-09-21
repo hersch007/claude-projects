@@ -103,6 +103,22 @@ const CATEGORIES = [
   { name: 'Content & Trust', labels: ['Difficult-to-Read Pages', 'Inconsistent Phone Number'] },
 ];
 
+// A plain-English business-consequence sentence per category — deliberately
+// never a fix, just what the flagged state is actually costing the
+// business, since this report exists to make a prospect want the provider's
+// help, not to hand them a free to-do list. Only shown when a category has
+// at least one fail/warn (see categoryCardsHtml below); a clean category
+// gets no editorializing, just its passing count.
+const CATEGORY_CONSEQUENCE = {
+  'Titles & Meta Tags': 'Google and your prospects see confusing, missing, or duplicated information before they even click — a lot of them never make it to your site at all.',
+  'Headings': "Search engines can't tell what your pages are actually about, and neither can someone skimming your content — both leave confused.",
+  'Structured Data': "Google can't verify who you are, what you do, or where you're located — so it shows a competitor's listing with real trust signals instead of yours.",
+  'Images': "Search engines can't see what's in your images, and neither can visitors using assistive technology — that's lost visibility and lost customers.",
+  'Technical & Crawlability': 'Parts of your site may be invisible to Google entirely — pages nobody can find in search, no matter how good the content is.',
+  'Links & Site Structure': 'Visitors and search engines are hitting dead ends on your own website — trust and rankings leaking out with every broken click.',
+  'Content & Trust': "Visitors land on your site and can't quite tell the business is legitimate — and they leave for one that looks like it is.",
+};
+
 // Builds each category's score (percent of its checks that came back
 // "good") from the parsed grid — a straightforward, defensible proxy: it
 // never asserts a verdict the grid's own good/warn/bad coloring didn't
@@ -156,12 +172,17 @@ function categoryCardsHtml(categories) {
     if (cat.fail) parts.push(`${cat.fail} fail`);
     if (cat.warn) parts.push(`${cat.warn} warn`);
     parts.push(`${cat.good}/${cat.total} passed`);
+    const flagged = cat.fail > 0 || cat.warn > 0;
+    const consequence = flagged && CATEGORY_CONSEQUENCE[cat.name]
+      ? `<div class="category-consequence">${escapeHtml(CATEGORY_CONSEQUENCE[cat.name])}</div>`
+      : '';
     return `
       <div class="category-card" style="border-left-color:${tier}">
         <div class="category-score" style="color:${tier}">${cat.score}</div>
         <div class="category-body">
           <div class="category-name">${escapeHtml(cat.name)}</div>
           <div class="category-detail">${escapeHtml(parts.join(' · '))}</div>
+          ${consequence}
         </div>
       </div>`;
   }).join('');
@@ -264,6 +285,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .category-score { font-size: 24px; font-weight: bold; font-family: Georgia, serif; min-width: 42px; }
   .category-name { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
   .category-detail { font-size: 11px; color: #64748B; }
+  .category-consequence { font-size: 11px; color: #7A1F1F; margin-top: 5px; line-height: 1.4; font-style: italic; }
 
   .issue-list { display: flex; flex-direction: column; gap: 7px; }
   .issue-callout {
