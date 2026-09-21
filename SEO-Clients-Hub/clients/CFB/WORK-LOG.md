@@ -93,7 +93,13 @@
 
 | 2026-09-11 | Healthcare market page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), Service schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /markets/healthcare-cleanroom-packaging — VERIFIED LIVE 2026-09-14 |
 
-**Total billable to date: 31.35 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00 · 9/7: 4.00 · 9/8: 2.00 · 9/10: 2.25 · 9/11: 2.00)
+| 2026-09-14 | Standards page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), WebPage schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /standards — VERIFIED LIVE 2026-09-18 |
+
+| 2026-09-18 | Contact Us page — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), ContactPage schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /contact-us — VERIFIED LIVE 2026-09-18 |
+
+| 2026-09-17 | Products hub — audit (0920027 · 0.25), SEO copy (0920012 · 0.25), CollectionPage schema (0920018 · 0.25), HubSpot implementation (0920028 · 0.25) | 1.00 | Complete | /products — VERIFIED LIVE 2026-09-18 |
+
+**Total billable to date: 34.35 hrs** (7/16: 4.00 · 7/17: 7.75 · 7/22: 1.35 · 8/11: 2.25 · 9/3: 1.50 · 9/4: 2.00 · 9/7: 4.00 · 9/8: 2.00 · 9/10: 2.25 · 9/11: 2.00 · 9/14: 1.00 · 9/17: 1.00 · 9/18: 1.00)
 
 ## Open items
 - [x] ✅ VERIFIED 2026-07-22 live — homepage title, Organization schema, and meta description (150 chars) all confirmed live. Live meta wording: "...USA made for 35+ years." (drops "Get a quote" CTA — minor variance from draft, not worth a re-edit).

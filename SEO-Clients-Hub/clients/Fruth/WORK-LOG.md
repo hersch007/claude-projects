@@ -63,3 +63,10 @@
 | 2026-09-14 | Schema Dev — Cushion Packaging Barrier Film (FAQPage JSON-LD) | 0.25 | Complete | Billed in 15-min increments. |
 | 2026-09-14 | AISEO — Cushion Packaging Barrier Film (AI-content-expansion framing pass) | 0.25 | Complete | Billed in 15-min increments. |
 | 2026-09-14 | Implementation — Cushion Packaging Barrier Film | 0.25 | Complete | Billed in 15-min increments per Richard's request. Note: not yet confirmed live on the site — update this row once someone verifies it went live in HubSpot. |
+
+## Running-log maintenance
+
+| Date | Task | Hours | Status | Notes |
+|---|---|---|---|---|
+| 2026-09-18 | SEO Research + verification — Contact page (live title/meta pulled via direct JS check, not the stale Aug 31 crawler data; found word count grew from 26 to ~89 independent of this project) | 0.25 | Complete | Billed in 15-min increments. |
+| 2026-09-18 | Updated pages-data.js (added Contact Page entry, corrected the stale "Thin Content Pages" note) and regenerated FCP-On-Page-SEO-Audit-Running-Log.docx | 0.25 | Complete | Billed in 15-min increments. Doc now covers 46 of 48 site pages: 26 live, 14 pending, 1 blocked. |

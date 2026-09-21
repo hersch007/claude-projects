@@ -913,6 +913,106 @@ module.exports = {
     },
 
     {
+      name: 'Standards',
+      status: 'VERIFIED LIVE 2026-09-18 (title, meta, chart image alt, WebPage schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/standards',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-14',
+      primaryKw: 'cleanroom packaging standards',
+      secondaryKw: 'ASTM cleanroom packaging, MIL-SPEC cleanroom bags, ISO cleanroom packaging, USP packaging standards, IEST cleanroom standards',
+      title: { text: 'Cleanroom Packaging Standards & Certifications | CFB', chars: 51 },
+      meta: { text: 'CFB cleanroom packaging meets ASTM, MIL-SPEC, USP & ISO standards — ISO-certified Class 100 facility for medical, aerospace & semiconductor compliance.', chars: 151 },
+      notes: 'Title had wrong brand suffix ("Cleanroom Film & Bags" instead of "CFB"). Meta started with "Our ISO-certified..." — vague, no standards keywords. H1 "Standards" is bare but left as-is. The chart.avif image had a 271-char alt listing every standard verbatim — replaced with a concise 120-char descriptive alt. WebPage schema added.',
+      images: [
+        ['Standards chart (chart.avif)', '⚠️ 271-char paragraph', 'Industry standards and specifications for cleanroom packaging: ASTM, MIL-SPEC, USP, IEST-STD, ANSI/ESD and ISO standards', '120', 'Alt was a verbatim dump of the table contents. Replaced with concise descriptive alt.']
+      ],
+      schemaLabel: 'Deployed Structured Data (WebPage schema) — LIVE as of 2026-09-18',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Cleanroom Packaging Standards & Certifications",
+  "description": "CFB cleanroom packaging meets ASTM, MIL-SPEC, USP & ISO standards — ISO-certified Class 100 facility for medical, aerospace & semiconductor compliance.",
+  "url": "https://www.cleanroomfilm.com/standards",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com"
+  }
+}
+</script>`
+    },
+
+    {
+      name: 'Contact Us',
+      status: 'VERIFIED LIVE 2026-09-18 (title, meta, ContactPage schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/contact-us',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-18',
+      primaryKw: 'contact cleanroom film bags',
+      secondaryKw: 'cleanroom packaging quote, CFB contact, Placentia CA cleanroom manufacturer',
+      title: { text: 'Contact Cleanroom Film & Bags | CFB', chars: 35 },
+      meta: { text: 'Request a quote from CFB — cleanroom film & bags manufacturer in Placentia, CA, serving medical, pharmaceutical, semiconductor & aerospace industries.', chars: 150 },
+      notes: 'Title had wrong brand suffix ("Cleanroom Film & Bags" without "CFB"). Meta started with "We are a custom plastic packaging company" — "plastic" not "cleanroom", no location, no industries named. No content images on page. ContactPage schema added with Organization mainEntity and Placentia, CA address.',
+      images: [],
+      schemaLabel: 'Deployed Structured Data (ContactPage schema) — LIVE as of 2026-09-18',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact Cleanroom Film & Bags",
+  "description": "Request a quote from CFB — cleanroom film & bags manufacturer in Placentia, CA, serving medical, pharmaceutical, semiconductor & aerospace industries.",
+  "url": "https://www.cleanroomfilm.com/contact-us",
+  "mainEntity": {
+    "@type": "Organization",
+    "name": "Cleanroom Film & Bags",
+    "url": "https://www.cleanroomfilm.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Placentia",
+      "addressRegion": "CA",
+      "addressCountry": "US"
+    }
+  }
+}
+</script>`
+    },
+
+    {
+      name: 'Products (Hub)',
+      status: 'VERIFIED LIVE 2026-09-18 (title, meta, 2 image alts, CollectionPage schema)',
+      liveUrl: 'https://www.cleanroomfilm.com/products',
+      editorUrl: 'https://app.hubspot.com/pages/24024882/editor/ (add page ID from HubSpot)',
+      audited: '2026-09-17',
+      primaryKw: 'cleanroom packaging products',
+      secondaryKw: 'cleanroom film products, cleanroom bags products, rollstock, tubing, sheeting, bottom-seal bags, zipper bags',
+      title: { text: 'Cleanroom Packaging Products: Film & Bags | CFB', chars: 47 },
+      meta: { text: "CFB's full line of cleanroom packaging products — film rollstock, tubing, sheeting & bags for medical device, semiconductor & aerospace applications.", chars: 149 },
+      notes: 'Title had wrong brand suffix ("Cleanroom Film & Bags" without "CFB"). Meta was thin — named aluminum foil, medical-grade paper, Tyvek but no film/bag types. 2 content images had generic alts. CollectionPage schema added linking to both product sub-hubs and 3 standalone product pages.',
+      images: [
+        ['Film products (cleanroom-film-products.jpg)', 'cleanroom film products', 'CFB cleanroom film products: rollstock, tubing and sheeting', '58', 'Adds brand and product types.'],
+        ['Bags products (cleanroom-bags-products.jpg)', 'cleanroom bags products', 'CFB cleanroom bags products: bottom-seal bags, zipper bags and pouches', '70', 'Adds brand and product types.']
+      ],
+      schemaLabel: 'Deployed Structured Data (CollectionPage schema) — LIVE as of 2026-09-18',
+      schema: `<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Cleanroom Packaging Products",
+  "url": "https://www.cleanroomfilm.com/products",
+  "description": "CFB's full line of cleanroom packaging products — film rollstock, tubing, sheeting & bags for medical device, semiconductor & aerospace applications.",
+  "hasPart": [
+    { "@type": "WebPage", "name": "Cleanroom Film", "url": "https://www.cleanroomfilm.com/products/cleanroom-film" },
+    { "@type": "WebPage", "name": "Cleanroom Bags", "url": "https://www.cleanroomfilm.com/products/cleanroom-bags" },
+    { "@type": "WebPage", "name": "Aluminum Foil Bags", "url": "https://www.cleanroomfilm.com/products/aluminum-foil-bags" },
+    { "@type": "WebPage", "name": "Medical Film Rolls", "url": "https://www.cleanroomfilm.com/products/medical-film-rolls" },
+    { "@type": "WebPage", "name": "Medical Grade Paper Rolls", "url": "https://www.cleanroomfilm.com/products/medical-grade-paper-rolls" }
+  ]
+}
+</script>`
+    },
+
+    {
       name: 'Materials (Hub)',
       status: 'VERIFIED LIVE 2026-09-04 (title, meta, CollectionPage schema)',
       liveUrl: 'https://www.cleanroomfilm.com/materials',

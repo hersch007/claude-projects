@@ -9,7 +9,7 @@ module.exports = {
   "client": "Fruth Custom Packaging",
   "docTitle": "On-Page SEO Audit — Running Log",
   "docSubtitle": "Reconciled findings: hand-written audit vs. crawler dashboard vs. content-creation drafts",
-  "lastUpdated": "2026-09-14",
+  "lastUpdated": "2026-09-18",
   "totalPages": 48,
   "guidelines": [
     "The crawler dashboard (Fruth-Custom-Packaging-SEO-Audit-*.html) parses live HTML and is the source of truth for title/meta/schema/alt presence — the hand-written .md audit was built via WebFetch, which does not reliably see <head> meta tags, so its \"missing meta description\" findings for the 6 main pages have been corrected here.",
@@ -748,13 +748,33 @@ module.exports = {
       "name": "Thin Content Pages (word count)",
       "status": "AUDITED 2026-08-31 — crawler-confirmed, mapped to content-creation drafts",
       "liveUrl": "multiple — see notes",
-      "notes": "Crawler flagged low word count on: Cushion Packaging Barrier Film (118 words), Nylon Film (145), Tamper Evident Bags (86), Scrim Foil Barrier Film (90), Vacuum Seal Bags (95), Multi-Pocket Bags (83), Side Seal Bags (148), Zipper Bags (129), Wicketed Bags (107), MIL-PRF-131K Barrier Film (103), and /contact (26 words, no content-creation draft exists for Contact — flag as new gap). All except /contact already have body-copy expansion drafted and ready to implement (see their individual page entries above and FRUTH-IMPLEMENTATION-PACKET.md).",
+      "notes": "Crawler flagged low word count on: Cushion Packaging Barrier Film (118 words), Nylon Film (145), Tamper Evident Bags (86), Scrim Foil Barrier Film (90), Vacuum Seal Bags (95), Multi-Pocket Bags (83), Side Seal Bags (148), Zipper Bags (129), Wicketed Bags (107), MIL-PRF-131K Barrier Film (103). All already have body-copy expansion drafted and ready to implement (see their individual page entries above and FRUTH-IMPLEMENTATION-PACKET.md). /contact was also flagged at 26 words on 2026-08-31 but a direct site check on 2026-09-18 found it now has ~89 words — see its own entry below; this note no longer applies to /contact.",
       "schemaLabel": null,
       "schema": null,
       "title": null,
       "meta": null,
       "editorUrl": "https://app.hubspot.com/",
       "audited": "2026-08-31",
+      "primaryKw": "",
+      "secondaryKw": ""
+    },
+    {
+      "name": "Contact Page",
+      "status": "VERIFIED LIVE 2026-09-18 (title + meta present; meta slightly long) — optional tightening only",
+      "liveUrl": "https://www.fruth.com/contact",
+      "title": {
+        "text": "Contact Fruth Custom Packaging | Request a Quote",
+        "chars": 48
+      },
+      "meta": {
+        "text": "Have questions or need a custom packaging solution? Contact Fruth to request a quote, get product info, or speak with a packaging specialist.",
+        "chars": 144
+      },
+      "notes": "Direct site check 2026-09-18 (document.title + meta tag read via JS, not the Aug 31 crawler): live title is 48 chars, fine as-is — no change recommended. Live meta is 165 chars, 5 over the ~160 safe limit; tightened version above trims to 144 while keeping the same CTA. Word count is now ~89 (crawler recorded 26 words on 2026-08-31 — content has already been expanded on the client/HubSpot side since then, independent of this project). Not a required fix, just an optional tightening.",
+      "schemaLabel": "Schema live per crawler (2026-08-31): ContactPage",
+      "schema": null,
+      "editorUrl": "https://app.hubspot.com/",
+      "audited": "2026-09-18",
       "primaryKw": "",
       "secondaryKw": ""
     },
