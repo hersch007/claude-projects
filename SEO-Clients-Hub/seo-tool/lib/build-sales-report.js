@@ -4,10 +4,16 @@
 // "Good," and the full findings number-grid — the same stat tiles as the
 // on-screen quick report (see audit-engine.js's buildReport(), the
 // `.snap-card`/`.snap-num`/`.snap-label` markup) — so the sheer number of
-// red/amber tiles makes the case on its own. Styled with real color
-// blocking (banner-style section headers, tinted grid cells, a solid CTA
-// box) rather than thin text-and-a-border — a plain white page with only
-// colored numbers read as "unfinished" next to a competitor's report.
+// red/amber tiles makes the case on its own.
+//
+// The cover is a full-bleed brand-color page (its own docx `section` with
+// page margins zeroed out and a single edge-to-edge shaded table filling
+// it), not a banner on a white background — a plain white page with only
+// colored numbers read as "unfinished" next to a competitor's report, and
+// full-bleed color is what actually reads as "designed" rather than
+// "a Word document." Section 2 (normal margins, white background) carries
+// the findings grid and close, styled with the same color-blocking
+// (banner-style section headers, tinted grid cells, a solid CTA box).
 //
 // Deliberately built from only what a stored audit_runs row actually has
 // (seo_health_score, pages_crawled, html_report — see webapp/server/
@@ -20,10 +26,11 @@
 const {
   Document, Packer, Paragraph, TextRun, AlignmentType, Footer,
   Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
+  HeightRule, VerticalAlign,
 } = require('docx');
 const cheerio = require('cheerio');
 const {
-  scoreTierColor, scoreBarTable, coverLogoImageRun, BODY_FONT, HEADING_FONT,
+  scoreTierColor, coverLogoImageRun, BODY_FONT, HEADING_FONT,
 } = require('./build-docx-report');
 
 const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
@@ -42,6 +49,23 @@ const STATUS_COLOR = { good: '16A34A', warn: 'D97706', bad: 'DC2626' };
 const STATUS_TINT = { good: 'F0FDF4', warn: 'FFFBEB', bad: 'FEF2F2' };
 const NO_BORDER = { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' };
 const NO_BORDERS = { top: NO_BORDER, bottom: NO_BORDER, left: NO_BORDER, right: NO_BORDER };
+
+// US Letter, in twips (1/20 pt) — docx's own default page size, spelled out
+// explicitly here since the cover section below overrides margins to 0 and
+// needs to know the exact page box its full-bleed table has to fill.
+const PAGE_WIDTH = 12240;
+const PAGE_HEIGHT = 15840;
+
+// Blends a hex color toward white — used to derive the cover's score-badge
+// fill/border from the brand color itself (a fixed lighter navy wouldn't
+// track every partner's actual brand hue), since Word shading only takes
+// solid colors, no alpha/opacity.
+function blendWithWhite(hex, amt) {
+  const n = parseInt(hex, 16);
+  const r = (n >> 16) & 0xff, g = (n >> 8) & 0xff, b = n & 0xff;
+  const mix = (c) => Math.round(c + (255 - c) * amt);
+  return [mix(r), mix(g), mix(b)].map((v) => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+}
 
 // Pulls the exact same stat tiles a client already sees on the on-screen
 // quick report back out of that report's stored HTML — `.snap-card` wraps
@@ -65,31 +89,162 @@ function parseStatGrid(html) {
   return grid;
 }
 
-// A full-width solid-color banner for a section title — stands in for a
-// real "card header," and reads as designed in a way a thin bottom-border
-// on plain text never does. White text throughout since every brand color
-// this is called with is dark enough for contrast (same assumption
-// build-docx-report.js's own cover already makes about provider.brand).
-function sectionBand(text, bgHex) {
+// The score badge that floats top-right on the cover — a bordered card
+// (Word has no shape/rect primitive, so this is the same borderless/bordered
+// shaded-table trick used throughout this file) sized to a fraction of its
+// parent cell's width and right-aligned, rather than the score being just
+// another centered line of text in the page flow.
+function scoreBadgeTable(score, scoreColor, scoreLabel, brandHex) {
+  const fill = blendWithWhite(brandHex, 0.12);
+  const border = blendWithWhite(brandHex, 0.35);
   return new Table({
-    width: { size: 100, type: WidthType.PERCENTAGE },
+    width: { size: 62, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.RIGHT,
     rows: [new TableRow({
       children: [new TableCell({
-        shading: { type: ShadingType.CLEAR, fill: bgHex },
-        borders: NO_BORDERS,
-        margins: { top: 140, bottom: 140, left: 200, right: 200 },
-        children: [new Paragraph({ children: [new TextRun({ text, bold: true, size: 24, color: 'FFFFFF', font: HEADING_FONT, characterSpacing: 4 })] })],
+        shading: { type: ShadingType.CLEAR, fill },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 6, color: border },
+          bottom: { style: BorderStyle.SINGLE, size: 6, color: border },
+          left: { style: BorderStyle.SINGLE, size: 6, color: border },
+          right: { style: BorderStyle.SINGLE, size: 6, color: border },
+        },
+        margins: { top: 160, bottom: 160, left: 120, right: 120 },
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: String(score), bold: true, size: 44, color: 'FFFFFF', font: HEADING_FONT })],
+            spacing: { after: 20 },
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: 'SEO HEALTH SCORE', size: 12, color: 'DCE4F2', characterSpacing: 8 })],
+            spacing: { after: 30 },
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [new TextRun({ text: scoreLabel, bold: true, size: 15, color: scoreColor })],
+          }),
+        ],
       })],
     })],
   });
 }
 
-// A light-tint "pill" badge row (failed / warnings / passed counts) right
-// under the score — free to compute (it's just a tally of the same grid
-// statuses the tiles below already carry) and gives an at-a-glance read
-// before anyone scrolls to the grid itself. Word has no border-radius, so
-// the "pill" is approximated the same way scoreBarTable/sectionBand fake
-// shapes elsewhere in this file: a borderless, shaded table cell.
+// Eyebrow (left) + score badge (right) sharing one borderless row — mirrors
+// a competitor report's cover layout, where the brand line and the score
+// sit on the same header row instead of stacking.
+function coverHeaderRow(providerName, badge) {
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({
+      children: [
+        new TableCell({
+          width: { size: 38, type: WidthType.PERCENTAGE },
+          borders: NO_BORDERS,
+          verticalAlign: VerticalAlign.CENTER,
+          children: [new Paragraph({
+            children: [new TextRun({ text: `${providerName.toUpperCase()}  •  SEO AUDIT`, size: 14, color: 'B9C6DC', characterSpacing: 10 })],
+          })],
+        }),
+        new TableCell({
+          width: { size: 62, type: WidthType.PERCENTAGE },
+          borders: NO_BORDERS,
+          children: [badge],
+        }),
+      ],
+    })],
+  });
+}
+
+// The horizontal "quick facts" strip near the bottom of the cover — label
+// small-caps above, bold value below, spread across equal columns. Only
+// uses numbers this route actually has (see this file's top doc comment);
+// unlike a competitor's per-page breakdowns ("16 of 19 pages"), this data
+// only has category-level counts for a saved run, so the labels here are
+// phrased to match what's really being counted.
+function coverStatsStrip(stats) {
+  const cell = (stat) => new TableCell({
+    width: { size: 100 / stats.length, type: WidthType.PERCENTAGE },
+    borders: NO_BORDERS,
+    children: [
+      new Paragraph({ spacing: { after: 40 }, children: [new TextRun({ text: stat.label.toUpperCase(), size: 13, color: '8CA0C4', characterSpacing: 8 })] }),
+      new Paragraph({ children: [new TextRun({ text: stat.value, bold: true, size: 24, color: 'FFFFFF', font: HEADING_FONT })] }),
+    ],
+  });
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({ children: stats.map(cell) })],
+  });
+}
+
+// A thin horizontal rule — same borderless-shaded-cell trick, one row tall.
+function thinRule(color) {
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({
+      children: [new TableCell({
+        shading: { type: ShadingType.CLEAR, fill: color },
+        borders: NO_BORDERS,
+        margins: { top: 6, bottom: 6, left: 0, right: 0 },
+        children: [new Paragraph({ children: [] })],
+      })],
+    })],
+  });
+}
+
+// The full-bleed cover itself: one table, one cell, sized to the exact page
+// box (see PAGE_WIDTH/PAGE_HEIGHT above) so the brand color runs edge to
+// edge — this is what a zero-margin docx `section` makes possible, and is
+// the single biggest lever for "looks like a sales brochure" vs. "looks
+// like a Word doc with a colored header."
+function coverPage({ client, provider, brandHex, score, scoreColor, scoreLabel, logoImageRun, dateLabel, pagesCrawled, problemCount, gridLength, totalChecksRun }) {
+  const badge = scoreBadgeTable(score, scoreColor, scoreLabel, brandHex);
+  const stats = [
+    { label: 'Report Date', value: dateLabel },
+    { label: 'Pages Scanned', value: String(pagesCrawled) },
+    { label: 'Categories Flagged', value: gridLength ? `${problemCount} of ${gridLength}` : '—' },
+    { label: 'Checks Performed', value: totalChecksRun.toLocaleString() },
+  ];
+
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({
+      height: { value: PAGE_HEIGHT - 40, rule: HeightRule.ATLEAST },
+      children: [new TableCell({
+        shading: { type: ShadingType.CLEAR, fill: brandHex },
+        borders: NO_BORDERS,
+        verticalAlign: VerticalAlign.TOP,
+        margins: { top: 620, bottom: 620, left: 720, right: 720 },
+        children: [
+          coverHeaderRow(provider.name, badge),
+          new Paragraph({ spacing: { before: logoImageRun ? 1400 : 2000 }, children: [] }),
+          ...(logoImageRun
+            ? [new Paragraph({ children: [logoImageRun], spacing: { after: 200 } })]
+            : []),
+          new Paragraph({
+            children: [new TextRun({ text: client.name, bold: true, size: 56, color: 'FFFFFF', font: HEADING_FONT })],
+            spacing: { after: 100 },
+          }),
+          new Paragraph({
+            children: [new TextRun({ text: client.url, size: 20, color: 'B9C6DC' })],
+            spacing: { after: 900 },
+          }),
+          thinRule(blendWithWhite(brandHex, 0.3)),
+          new Paragraph({ spacing: { before: 320 }, children: [] }),
+          coverStatsStrip(stats),
+        ],
+      })],
+    })],
+  });
+}
+
+// A light-tint "pill" badge row (failed / warnings / passed counts) — free
+// to compute (it's just a tally of the same grid statuses the tiles below
+// already carry) and gives an at-a-glance scoreboard right after the cover,
+// before anyone scrolls to the full grid. Word has no border-radius, so the
+// "pill" is approximated the same way everything else in this file fakes
+// shapes: a borderless, shaded table cell.
 const PILL_STYLE = {
   bad: { bg: 'FEE2E2', text: 'DC2626', word: 'failed' },
   warn: { bg: 'FEF3C7', text: 'D97706', word: 'warnings' },
@@ -119,18 +274,39 @@ function statusPillsTable(counts) {
   });
 }
 
-// Each tile now carries a light background tint matching its verdict (the
-// same red/amber/green family the pills above use), not just colored text
-// on a plain white cell — turns the grid into something that reads as a
-// mosaic of results at a glance, the same way the on-screen report's own
-// `.snap-card` color-coding does, instead of a data table.
+// A full-width solid-color banner for a section title — stands in for a
+// real "card header," and reads as designed in a way a thin bottom-border
+// on plain text never does.
+function sectionBand(text, bgHex) {
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    rows: [new TableRow({
+      children: [new TableCell({
+        shading: { type: ShadingType.CLEAR, fill: bgHex },
+        borders: NO_BORDERS,
+        margins: { top: 140, bottom: 140, left: 200, right: 200 },
+        children: [new Paragraph({ children: [new TextRun({ text, bold: true, size: 24, color: 'FFFFFF', font: HEADING_FONT, characterSpacing: 4 })] })],
+      })],
+    })],
+  });
+}
+
+// Each tile carries a light background tint matching its verdict (the same
+// red/amber/green family the pills above use), not just colored text on a
+// plain white cell — turns the grid into something that reads as a mosaic
+// of results at a glance, the same way the on-screen report's own
+// `.snap-card` color-coding does, instead of a data table. Gaps between
+// tiles are a very light gray (not pure white) so each card reads as a
+// distinct tile with a little more breathing room, closer to a bordered
+// "card" than a dense spreadsheet.
 const GRID_COLUMNS = 3;
 function statGridTable(grid, brandHex) {
+  const gap = { style: BorderStyle.SINGLE, size: 8, color: 'F8FAFC' };
   const cell = (item) => new TableCell({
     width: { size: 100 / GRID_COLUMNS, type: WidthType.PERCENTAGE },
     shading: item ? { type: ShadingType.CLEAR, fill: STATUS_TINT[item.status] || 'FFFFFF' } : undefined,
-    borders: { top: { style: BorderStyle.SINGLE, size: 4, color: 'FFFFFF' }, bottom: { style: BorderStyle.SINGLE, size: 4, color: 'FFFFFF' }, left: { style: BorderStyle.SINGLE, size: 4, color: 'FFFFFF' }, right: { style: BorderStyle.SINGLE, size: 4, color: 'FFFFFF' } },
-    margins: { top: 140, bottom: 140, left: 80, right: 80 },
+    borders: { top: gap, bottom: gap, left: gap, right: gap },
+    margins: { top: 170, bottom: 170, left: 80, right: 80 },
     children: item ? [
       new Paragraph({
         alignment: AlignmentType.CENTER,
@@ -154,8 +330,8 @@ function statGridTable(grid, brandHex) {
 }
 
 // The closing call-to-action as a solid color block, not a plain
-// paragraph — the one place on the page this is deliberately as bold as
-// the score itself, since it's the entire point of the document.
+// paragraph — the one place on page 2 this is deliberately as bold as the
+// cover itself, since it's the entire point of the document.
 function ctaBox(provider, accentHex) {
   return new Table({
     width: { size: 100, type: WidthType.PERCENTAGE },
@@ -206,51 +382,23 @@ function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, d
   for (const g of grid) if (pillCounts[g.status] !== undefined) pillCounts[g.status]++;
   const totalChecksRun = TOTAL_CHECK_TYPES * Math.max(1, pagesCrawled || 1);
 
-  const children = [
-    new Paragraph({ spacing: { before: logoImageRun ? 400 : 600 }, children: [] }),
-    ...(logoImageRun
-      ? [new Paragraph({ alignment: AlignmentType.CENTER, children: [logoImageRun], spacing: { after: 120 } })]
-      : []),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: client.name, bold: true, size: 40, color: brandHex, font: HEADING_FONT })],
-      spacing: { after: 60 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: 'CUSTOMER AUDIT REPORT', bold: true, size: 22, color: '1E293B', font: HEADING_FONT, characterSpacing: 20 })],
-      spacing: { after: 40 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: `${client.url}  |  Scanned ${pagesCrawled} page${pagesCrawled === 1 ? '' : 's'} on ${dateLabel}`, size: 18, color: '94A3B8' })],
-      spacing: { after: 260 },
-    }),
+  const cover = coverPage({
+    client, provider, brandHex, score, scoreColor, scoreLabel, logoImageRun, dateLabel,
+    pagesCrawled, problemCount, gridLength: grid.length, totalChecksRun,
+  });
 
-    // ── Your Score ──
-    new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: 'YOUR SCORE', size: 15, color: '94A3B8', characterSpacing: 30 })], spacing: { after: 50 } }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [
-        new TextRun({ text: String(score), bold: true, size: 60, color: scoreColor, font: HEADING_FONT }),
-        new TextRun({ text: ' / 100', size: 24, color: '94A3B8' }),
-      ],
-      spacing: { after: 30 },
-    }),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: scoreLabel.toUpperCase(), bold: true, size: 18, color: scoreColor, characterSpacing: 20 })],
-      spacing: { after: 200 },
-    }),
-    scoreBarTable(score, 45),
-    new Paragraph({ spacing: { after: 240 }, children: [] }),
-    ...(grid.length ? [statusPillsTable(pillCounts), new Paragraph({ spacing: { after: 160 }, children: [] })] : [new Paragraph({ spacing: { after: 160 }, children: [] })]),
-    new Paragraph({
-      alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: `${totalChecksRun.toLocaleString()} checks performed  •  ${pagesCrawled} page${pagesCrawled === 1 ? '' : 's'} scanned`, size: 17, bold: true, color: '64748B' })],
-      spacing: { after: 320 },
-    }),
-  ];
+  const children = [];
+
+  // ── At A Glance ── the pill scoreboard right at the top of page 2, so
+  // the reader who just saw the score badge on the cover gets the
+  // pass/fail breakdown before the narrative or the full grid.
+  if (grid.length) {
+    children.push(
+      new Paragraph({ spacing: { before: 0, after: 160 }, children: [] }),
+      statusPillsTable(pillCounts),
+      new Paragraph({ spacing: { after: 320 }, children: [] }),
+    );
+  }
 
   // ── Where You Should Be ──
   children.push(
@@ -321,18 +469,38 @@ function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, d
         document: { run: { font: BODY_FONT, size: 20 } },
       },
     },
-    sections: [{
-      properties: { titlePage: true },
-      footers: {
-        default: new Footer({
-          children: [new Paragraph({
-            alignment: AlignmentType.CENTER,
-            children: [new TextRun({ text: `${provider.name} — Customer Audit Report — ${dateLabel}`, size: 15, color: '94A3B8' })],
-          })],
-        }),
+    sections: [
+      {
+        // The cover: zero page margins so its full-bleed table (see
+        // coverPage() above) reaches every edge, and no footer — a page
+        // number/footer line on a brochure cover reads as "report,"
+        // exactly what this is deliberately styled to not look like.
+        properties: {
+          page: {
+            size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+            margin: { top: 0, bottom: 0, left: 0, right: 0 },
+          },
+        },
+        children: [cover],
       },
-      children,
-    }],
+      {
+        // Back to normal margins for the findings/CTA pages.
+        properties: {
+          page: {
+            size: { width: PAGE_WIDTH, height: PAGE_HEIGHT },
+          },
+        },
+        footers: {
+          default: new Footer({
+            children: [new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: `${provider.name} — Customer Audit Report — ${dateLabel}`, size: 15, color: '94A3B8' })],
+            })],
+          }),
+        },
+        children,
+      },
+    ],
   });
 
   return Packer.toBuffer(doc);
