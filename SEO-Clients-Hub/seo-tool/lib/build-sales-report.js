@@ -338,22 +338,64 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
 </html>`;
 }
 
+// @sparticuz/chromium.executablePath() decompresses its ~50MB bundled
+// Chromium binary to /tmp on first call — real work, not a cheap lookup.
+// Doing that fresh on every single report request (as the first version of
+// this function did) adds real latency on top of an already-slow cold
+// browser launch, on a modest Render instance that's also running the rest
+// of this app; a request slow enough can get its response cut off
+// mid-stream by a platform-level timeout, which is indistinguishable from
+// the client's side as "downloaded a file that won't open" — exactly what
+// was seen in production. The binary's location can't change during this
+// process's lifetime, so resolving it once and reusing the same path for
+// every request removes that repeated cost.
+let executablePathPromise;
+function getExecutablePath() {
+  if (!executablePathPromise) executablePathPromise = chromium.executablePath();
+  return executablePathPromise;
+}
+
 async function renderPdf(html) {
   const browser = await puppeteer.launch({
     headless: true,
     args: chromium.args,
-    executablePath: await chromium.executablePath(),
+    executablePath: await getExecutablePath(),
   });
+  let buffer;
   try {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: 'load' });
     // printBackground is the easy-to-miss flag here — without it Chromium
     // drops every CSS background-color/gradient (the cover, the pills, the
     // CTA box) and prints plain white, silently.
-    return await page.pdf({ format: 'Letter', printBackground: true });
+    //
+    // page.pdf() resolves with a plain Uint8Array, not a Node Buffer — and
+    // that distinction actually matters downstream: Express's res.send()
+    // only treats a value as a raw binary body when Buffer.isBuffer() is
+    // true, which is false for a plain Uint8Array (Buffer.isBuffer checks
+    // for Buffer instances specifically, not just any typed array). Left
+    // unconverted, res.send() silently falls through to res.json(), which
+    // — since the route already sets Content-Type to application/pdf —
+    // doesn't touch that header but replaces the body with a JSON dump of
+    // the byte array. That shipped to production: a 200 response labeled
+    // application/pdf whose actual body was JSON, which downloads fine
+    // and then fails to open. Buffer.from() here is what actually fixes
+    // that, not just the integrity check below.
+    buffer = Buffer.from(await page.pdf({ format: 'Letter', printBackground: true }));
   } finally {
     await browser.close();
   }
+  // Belt-and-suspenders: a genuinely truncated/partial response (e.g. cut
+  // off mid-stream by a platform timeout) could still reach this point
+  // without page.pdf() itself throwing. A real PDF always starts with
+  // this magic-byte header and is never this small; catching it here
+  // turns that failure mode into the same clear "Failed to generate PDF
+  // report" response the route already sends for an outright exception,
+  // instead of a downloaded file that silently won't open.
+  if (buffer.length < 1000 || buffer.subarray(0, 5).toString('latin1') !== '%PDF-') {
+    throw new Error(`Generated PDF failed integrity check (${buffer.length} bytes)`);
+  }
+  return buffer;
 }
 
 async function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, deductions, date }) {
