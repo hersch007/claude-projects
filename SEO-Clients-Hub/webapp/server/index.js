@@ -12,6 +12,7 @@ const fs = require('fs');
 const { runAudit } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
+const { buildSalesReport } = require('../../seo-tool/lib/build-sales-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
@@ -605,6 +606,56 @@ app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
   if (!rows[0]) return res.status(404).send('Run not found');
   if (!rows[0].html_report) return res.status(404).send('No saved report for this run (older runs imported before reports were stored don\'t have one).');
   res.set('Content-Type', 'text/html').send(rows[0].html_report);
+});
+
+// The "Customer Audit Report" — meant to be put in front of a prospect to
+// make the case they need help, showing the full findings number-grid
+// (not a curated teaser). Unlike the main /docx routes above, this works
+// for ANY past audit run (not just one still held in the in-memory `runs`
+// Map from a just-finished crawl): the score/page-count come straight from
+// the audit_runs row, and the stat grid itself is parsed back out of that
+// row's stored html_report (see build-sales-report.js's doc comment for
+// why — it's not stored as structured data anywhere on its own).
+app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).send('Client not found');
+  const { rows } = await getPool().query(
+    'SELECT seo_health_score, pages_crawled, html_report, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
+    [req.params.id, client.id]
+  );
+  if (!rows[0]) return res.status(404).send('Run not found');
+  const run = rows[0];
+  if (run.seo_health_score == null) {
+    return res.status(404).send('This run doesn\'t have enough stored data for a Customer Audit Report.');
+  }
+  let partner;
+  try {
+    partner = await resolveReferralPartner(run.referral_partner_id, client.id);
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
+  const provider = {
+    name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
+    logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
+  };
+  const dateStr = run.run_date.toISOString().split('T')[0];
+  try {
+    const buffer = await buildSalesReport({
+      client, provider, date: dateStr,
+      score: run.seo_health_score,
+      pagesCrawled: run.pages_crawled,
+      htmlReport: run.html_report,
+    });
+    const namePart = client.name.replace(/\s+/g, '-');
+    res.set({
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'Content-Disposition': `attachment; filename="${namePart}-Customer-Audit-Report-${dateStr}.docx"`,
+    });
+    res.send(buffer);
+  } catch (err) {
+    console.error(`Sales report generation for run ${req.params.id} failed:`, err);
+    res.status(500).send('Failed to generate Word document');
+  }
 });
 
 app.delete('/api/clients/:slug/audit-run/:id', async (req, res) => {
