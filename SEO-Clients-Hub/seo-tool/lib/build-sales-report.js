@@ -283,10 +283,21 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   const worstCategory = pickWorstCategory(categories);
   const worstFindingHtml = worstCategory ? worstFindingCallout(worstCategory) : '';
 
+  // Wrapped as one break-inside:avoid unit rather than left as loose
+  // sibling elements — otherwise the band can land at the bottom of a
+  // page with its list split across the page break (some issues on one
+  // page, the rest on the next), which reads as broken layout rather than
+  // a section that just moved to the next page. Individual issue-callout
+  // boxes already avoid splitting on their own; this keeps the section as
+  // a whole from splitting too. Sized to comfortably fit a single page
+  // (topIssues is capped at 6 — see buildSalesReport), so this only ever
+  // pushes the whole block to the next page, never forces an overflow.
   const topIssuesSectionHtml = topIssues.length ? `
-    <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
-    <div class="section-body">
-      <div class="issue-list">${issueCalloutsHtml(topIssues)}</div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
+      <div class="section-body">
+        <div class="issue-list">${issueCalloutsHtml(topIssues)}</div>
+      </div>
     </div>` : '';
 
   return `<!DOCTYPE html>
@@ -329,6 +340,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .pill span.n { font-size: 18px; }
   .pill-total span.n { font-size: 18px; }
 
+  .section-group { break-inside: avoid; }
   .section-band {
     color: #fff; font-weight: bold; font-size: 13px; letter-spacing: 2px;
     padding: 10px 18px; border-radius: 8px; margin: 20px 0 12px;
@@ -414,11 +426,15 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   <section class="page">
     ${worstFindingHtml}
 
-    <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
-    <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
+      <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
+    </div>
 
-    <div class="section-band" style="background:${brandHex}">BY CATEGORY</div>
-    <div class="section-body">${categorySectionHtml}</div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">BY CATEGORY</div>
+      <div class="section-body">${categorySectionHtml}</div>
+    </div>
 
     ${topIssuesSectionHtml}
 
