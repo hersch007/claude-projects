@@ -256,6 +256,13 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
     ? `<img class="cover-logo" src="${provider.logo}" alt="" />`
     : '';
 
+  // Same sum-across-flagged-checks approach as each category card's own
+  // "up to N pages affected" (see buildCategoryScores) — a page with
+  // issues in two different categories gets counted in both, so this is
+  // an upper bound across the whole site, not a deduplicated count, and
+  // worded as "up to" for the same accuracy reason.
+  const totalPagesAffected = categories.reduce((sum, c) => sum + c.affectedPages, 0);
+
   const stats = [
     { label: 'Report Date', value: dateLabel },
     { label: 'Pages Scanned', value: String(pagesCrawled) },
@@ -276,10 +283,21 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   const worstCategory = pickWorstCategory(categories);
   const worstFindingHtml = worstCategory ? worstFindingCallout(worstCategory) : '';
 
+  // Wrapped as one break-inside:avoid unit rather than left as loose
+  // sibling elements — otherwise the band can land at the bottom of a
+  // page with its list split across the page break (some issues on one
+  // page, the rest on the next), which reads as broken layout rather than
+  // a section that just moved to the next page. Individual issue-callout
+  // boxes already avoid splitting on their own; this keeps the section as
+  // a whole from splitting too. Sized to comfortably fit a single page
+  // (topIssues is capped at 6 — see buildSalesReport), so this only ever
+  // pushes the whole block to the next page, never forces an overflow.
   const topIssuesSectionHtml = topIssues.length ? `
-    <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
-    <div class="section-body">
-      <div class="issue-list">${issueCalloutsHtml(topIssues)}</div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
+      <div class="section-body">
+        <div class="issue-list">${issueCalloutsHtml(topIssues)}</div>
+      </div>
     </div>` : '';
 
   return `<!DOCTYPE html>
@@ -287,7 +305,20 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
 <head>
 <meta charset="utf-8" />
 <style>
-  @page { size: Letter; margin: 0; }
+  /* Real @page margins, not the .page element's own padding — a single
+     HTML box's padding only applies its top/bottom edge to the box's
+     first/last fragment when the box is split across pages by natural
+     flow (CSS fragmentation), so a section that lands on page 3 rather
+     than page 2 got no top inset at all and sat flush against the
+     physical page edge. @page margin is defined per physical page, so
+     every page gets the same inset regardless of where content happens
+     to break. @page :first knocks it back to 0 for the cover alone,
+     which still wants true edge-to-edge bleed. (JS-style "//" line
+     comments are not valid CSS — using them here previously corrupted
+     the parser and silently dropped the @page rule below into a bogus
+     selector, which is why this margin never actually applied.) */
+  @page { size: Letter; margin: 0.5in 0.7in; }
+  @page :first { margin: 0; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #1E293B; }
   .cover {
@@ -312,14 +343,18 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .cover-stat-label { font-size: 10px; letter-spacing: 1.5px; color: #8CA0C4; margin-bottom: 6px; }
   .cover-stat-value { font-size: 20px; font-weight: bold; }
 
-  .page { padding: 0.5in 0.7in; }
-  .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 4.6in; }
+  /* .page itself needs no padding now — @page margin above provides it,
+     consistently, on every physical page. */
+  .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 6.4in; }
   .pill { flex: 1; text-align: center; border-radius: 10px; padding: 10px 8px; font-weight: bold; font-size: 14px; }
   .pill-bad { background: #FEE2E2; color: #DC2626; }
   .pill-warn { background: #FEF3C7; color: #D97706; }
   .pill-good { background: #DCFCE7; color: #16A34A; }
+  .pill-total { background: #DC2626; color: #FFFFFF; font-size: 12px; }
   .pill span.n { font-size: 18px; }
+  .pill-total span.n { font-size: 18px; }
 
+  .section-group { break-inside: avoid; }
   .section-band {
     color: #fff; font-weight: bold; font-size: 13px; letter-spacing: 2px;
     padding: 10px 18px; border-radius: 8px; margin: 20px 0 12px;
@@ -359,6 +394,15 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .issue-title { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
   .issue-detail { font-size: 11px; color: #64748B; }
 
+  .closing-warning {
+    display: flex; align-items: center; gap: 14px;
+    background: #FFFBEB; border: 2px solid #D97706; border-radius: 12px;
+    padding: 16px 20px; margin-top: 22px;
+    break-inside: avoid;
+  }
+  .closing-warning-icon { font-size: 26px; color: #D97706; flex-shrink: 0; }
+  .closing-warning-text { font-size: 13px; color: #7A4A00; line-height: 1.5; font-style: italic; }
+
   .cta-box {
     background: linear-gradient(135deg, ${accentHex}, ${brandHex});
     color: #fff; border-radius: 14px; padding: 26px 32px; text-align: center;
@@ -396,6 +440,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
         <div class="pill pill-bad"><span class="n">${pillCounts.bad}</span> failed</div>
         <div class="pill pill-warn"><span class="n">${pillCounts.warn}</span> warnings</div>
         <div class="pill pill-good"><span class="n">${pillCounts.good}</span> passed</div>
+        ${totalPagesAffected > 0 ? `<div class="pill pill-total">Up to <span class="n">${totalPagesAffected}</span> pages affected</div>` : ''}
       </div>` : ''}
     </div>
     <div class="cover-stats">${coverStatsHtml(stats)}</div>
@@ -404,13 +449,22 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   <section class="page">
     ${worstFindingHtml}
 
-    <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
-    <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
+      <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
+    </div>
 
-    <div class="section-band" style="background:${brandHex}">BY CATEGORY</div>
-    <div class="section-body">${categorySectionHtml}</div>
+    <div class="section-group">
+      <div class="section-band" style="background:${brandHex}">BY CATEGORY</div>
+      <div class="section-body">${categorySectionHtml}</div>
+    </div>
 
     ${topIssuesSectionHtml}
+
+    <div class="closing-warning">
+      <div class="closing-warning-icon">&#9888;</div>
+      <div class="closing-warning-text">SEO problems compound over time. The longer they go unaddressed, the more search engines discount this site's authority — and the more it costs, later, to win back rankings already lost.</div>
+    </div>
 
     <div class="cta-box">
       <div class="cta-urgency">Every week this goes unaddressed, competitors who are already fixing these exact issues pull further ahead.</div>
