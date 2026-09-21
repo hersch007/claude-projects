@@ -305,7 +305,20 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
 <head>
 <meta charset="utf-8" />
 <style>
-  @page { size: Letter; margin: 0; }
+  /* Real @page margins, not the .page element's own padding — a single
+     HTML box's padding only applies its top/bottom edge to the box's
+     first/last fragment when the box is split across pages by natural
+     flow (CSS fragmentation), so a section that lands on page 3 rather
+     than page 2 got no top inset at all and sat flush against the
+     physical page edge. @page margin is defined per physical page, so
+     every page gets the same inset regardless of where content happens
+     to break. @page :first knocks it back to 0 for the cover alone,
+     which still wants true edge-to-edge bleed. (JS-style "//" line
+     comments are not valid CSS — using them here previously corrupted
+     the parser and silently dropped the @page rule below into a bogus
+     selector, which is why this margin never actually applied.) */
+  @page { size: Letter; margin: 0.5in 0.7in; }
+  @page :first { margin: 0; }
   * { box-sizing: border-box; }
   body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #1E293B; }
   .cover {
@@ -330,7 +343,8 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .cover-stat-label { font-size: 10px; letter-spacing: 1.5px; color: #8CA0C4; margin-bottom: 6px; }
   .cover-stat-value { font-size: 20px; font-weight: bold; }
 
-  .page { padding: 0.5in 0.7in; }
+  /* .page itself needs no padding now — @page margin above provides it,
+     consistently, on every physical page. */
   .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 6.4in; }
   .pill { flex: 1; text-align: center; border-radius: 10px; padding: 10px 8px; font-weight: bold; font-size: 14px; }
   .pill-bad { background: #FEE2E2; color: #DC2626; }
@@ -379,6 +393,15 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   }
   .issue-title { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
   .issue-detail { font-size: 11px; color: #64748B; }
+
+  .closing-warning {
+    display: flex; align-items: center; gap: 14px;
+    background: #FFFBEB; border: 2px solid #D97706; border-radius: 12px;
+    padding: 16px 20px; margin-top: 22px;
+    break-inside: avoid;
+  }
+  .closing-warning-icon { font-size: 26px; color: #D97706; flex-shrink: 0; }
+  .closing-warning-text { font-size: 13px; color: #7A4A00; line-height: 1.5; font-style: italic; }
 
   .cta-box {
     background: linear-gradient(135deg, ${accentHex}, ${brandHex});
@@ -437,6 +460,11 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
     </div>
 
     ${topIssuesSectionHtml}
+
+    <div class="closing-warning">
+      <div class="closing-warning-icon">&#9888;</div>
+      <div class="closing-warning-text">SEO problems compound over time. The longer they go unaddressed, the more search engines discount this site's authority — and the more it costs, later, to win back rankings already lost.</div>
+    </div>
 
     <div class="cta-box">
       <div class="cta-urgency">Every week this goes unaddressed, competitors who are already fixing these exact issues pull further ahead.</div>
