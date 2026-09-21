@@ -98,6 +98,19 @@
   </div>
 
   <div class="card">
+    <h2>Ignore Paths</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      URL paths to skip entirely — both as a crawled page and as a link destination other pages are
+      checked against. Use this for a manually-verified false positive (e.g. a page that only 403s for
+      the auditor, not real visitors) so it stops showing up in the report at all — one per line, e.g.
+      <code>/privacy-policy</code>.
+    </p>
+    <textarea id="ignore-paths" rows="3" style="width:100%;font-size:13px;padding:10px;border-radius:6px;border:1px solid #cbd5e1;font-family:inherit" placeholder="/privacy-policy&#10;/cart"></textarea>
+    <div style="margin-top:8px"><button id="ignore-paths-save">Save Ignore Paths</button></div>
+    <div id="ignore-paths-status" style="font-size:12px;color:#16a34a;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
     <h2>Google Business Profile</h2>
     <p style="color:#64748b;font-size:12px;margin-bottom:10px">
       Adds this client's Google rating, review count, and a phone-number match check against Google's
@@ -179,6 +192,7 @@
     document.getElementById('business-notes').value = data.client.business_notes || '';
     document.getElementById('gsc-property').value = data.client.gsc_property || '';
     document.getElementById('competitor-urls').value = (data.client.competitor_urls || []).join('\n');
+    document.getElementById('ignore-paths').value = (data.client.ignore_paths || []).join('\n');
     document.getElementById('google-place-id').value = data.client.google_place_id || '';
 
     // The dropdown itself is already scoped server-side to just this
@@ -420,6 +434,25 @@
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ competitor_urls: urls }),
+    });
+    const data = await res.json();
+    if (data.error) {
+      statusEl.style.color = '#dc2626';
+      statusEl.textContent = data.error;
+      return;
+    }
+    statusEl.style.color = '#16a34a';
+    statusEl.textContent = 'Saved.';
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  });
+
+  document.getElementById('ignore-paths-save').addEventListener('click', async () => {
+    const statusEl = document.getElementById('ignore-paths-status');
+    const paths = document.getElementById('ignore-paths').value.split('\n').map(p => p.trim()).filter(Boolean);
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ignore_paths: paths }),
     });
     const data = await res.json();
     if (data.error) {
