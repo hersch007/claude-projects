@@ -17,7 +17,7 @@
 | **Heat level** | Sweet / closed-door. First kiss is the climactic physical beat of the book (Ch. 54). No content beyond that. |
 | **Content standard** | Written to CBA (Christian Booksellers Association) content standards — no profanity (including mild), physical intimacy limited and earned. Faith is treated as organic and costly, not evangelistic or preachy. |
 | **Status** | Complete draft. Full developmental/structural revision pass already done (see "What's already been done" below). Ready for line edit / copyedit. |
-| **Comp titles** | [e.g., two recent inspirational or crossover contemporary romances this sits alongside — fill in before sending] |
+| **Comp titles** | *Nashville Sweetheart* (formerly *Diva NashVegas*) by Rachel Hauck — superstar protagonist confronting lost faith and the cost of fame under public scrutiny, opposite a man tied to a world of media exposure she can't control. *Small Town Harmony* by Milla Holt (2025) — faith, fame, and family collide for musicians navigating public and private selves. For general-market crossover appeal (trope only, not content standard — both are spicier/general-market): *The Best of Both* by Chelsie Mowery — pop star hides her identity in her small hometown and falls for someone who knew her before the fame. |
 
 ---
 

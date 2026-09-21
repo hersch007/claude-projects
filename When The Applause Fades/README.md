@@ -56,8 +56,9 @@
 
 ## Comp Titles
 
-- *[Title]* by [Author] — [one sentence on why]
-- *[Title]* by [Author] — [one sentence on why]
+- *Nashville Sweetheart* (formerly *Diva NashVegas*) by Rachel Hauck — superstar protagonist confronting lost faith and the cost of public exposure, opposite a man tied to the world of media scrutiny she can't escape.
+- *Small Town Harmony* by Milla Holt (2025) — faith, fame, and family collide for musicians navigating public and private selves; closest recent CBA-standard comp on the faith+fame axis.
+- *The Best of Both* by Chelsie Mowery — pop star hides her identity in her small hometown and falls for someone who knew her before the fame. General-market crossover comp for trope appeal only — spicier than this book's content standard.
 
 ---
 
