@@ -16,7 +16,7 @@
 // place every one of those counts already lives for a saved run.
 const {
   Document, Packer, Paragraph, TextRun, AlignmentType, Footer,
-  Table, TableRow, TableCell, WidthType, BorderStyle,
+  Table, TableRow, TableCell, WidthType, BorderStyle, ShadingType,
 } = require('docx');
 const cheerio = require('cheerio');
 const {
@@ -47,6 +47,41 @@ function parseStatGrid(html) {
     grid.push({ label, value, status });
   });
   return grid;
+}
+
+// A light-tint "pill" badge row (failed / warnings / passed counts) right
+// under the score — free to compute (it's just a tally of the same grid
+// statuses the tiles below already carry) and gives an at-a-glance read
+// before anyone scrolls to the grid itself. Word has no border-radius, so
+// the "pill" is approximated the same way scoreBarTable/accentRuleTable
+// fake shapes elsewhere in this codebase: a borderless, shaded table cell.
+const PILL_STYLE = {
+  bad: { bg: 'FEE2E2', text: 'DC2626', word: 'failed' },
+  warn: { bg: 'FEF3C7', text: 'D97706', word: 'warnings' },
+  good: { bg: 'DCFCE7', text: '16A34A', word: 'passed' },
+};
+function statusPillsTable(counts) {
+  const cell = (status) => {
+    const style = PILL_STYLE[status];
+    return new TableCell({
+      width: { size: 100 / 3, type: WidthType.PERCENTAGE },
+      shading: { type: ShadingType.CLEAR, fill: style.bg },
+      margins: { top: 90, bottom: 90, left: 60, right: 60 },
+      borders: { top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }, right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' } },
+      children: [new Paragraph({
+        alignment: AlignmentType.CENTER,
+        children: [
+          new TextRun({ text: String(counts[status]), bold: true, size: 22, color: style.text }),
+          new TextRun({ text: ` ${style.word}`, bold: true, size: 18, color: style.text }),
+        ],
+      })],
+    });
+  };
+  return new Table({
+    width: { size: 78, type: WidthType.PERCENTAGE },
+    alignment: AlignmentType.CENTER,
+    rows: [new TableRow({ children: ['bad', 'warn', 'good'].map(cell) })],
+  });
 }
 
 const GRID_COLUMNS = 3;
@@ -85,6 +120,13 @@ function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, d
   const logoImageRun = coverLogoImageRun(provider);
   const grid = parseStatGrid(htmlReport);
   const problemCount = grid.filter(g => g.status === 'bad' || g.status === 'warn').length;
+  // "neutral" tiles (Missing Canonical Tag's raw count, Sitemap.xml Found,
+  // Total Pages Audited) are informational counts, not a pass/fail
+  // judgment the on-screen report itself made — left out of the pills so
+  // this always sums to a subset of grid.length, never double-counts, and
+  // never claims a verdict the grid's own coloring didn't already make.
+  const pillCounts = { bad: 0, warn: 0, good: 0 };
+  for (const g of grid) if (pillCounts[g.status] !== undefined) pillCounts[g.status]++;
 
   const children = [
     new Paragraph({ spacing: { before: logoImageRun ? 400 : 600 }, children: [] }),
@@ -123,7 +165,8 @@ function buildSalesReport({ client, provider, score, pagesCrawled, htmlReport, d
       spacing: { after: 200 },
     }),
     scoreBarTable(score, 45),
-    new Paragraph({ spacing: { after: 320 }, children: [] }),
+    new Paragraph({ spacing: { after: 240 }, children: [] }),
+    ...(grid.length ? [statusPillsTable(pillCounts), new Paragraph({ spacing: { after: 320 }, children: [] })] : [new Paragraph({ spacing: { after: 320 }, children: [] })]),
   ];
 
   // ── Where You Should Be ──
