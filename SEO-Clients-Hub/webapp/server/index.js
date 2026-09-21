@@ -620,7 +620,7 @@ app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).send('Client not found');
   const { rows } = await getPool().query(
-    'SELECT seo_health_score, pages_crawled, html_report, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
+    'SELECT seo_health_score, pages_crawled, html_report, deductions, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
     [req.params.id, client.id]
   );
   if (!rows[0]) return res.status(404).send('Run not found');
@@ -645,6 +645,7 @@ app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
       score: run.seo_health_score,
       pagesCrawled: run.pages_crawled,
       htmlReport: run.html_report,
+      deductions: run.deductions,
     });
     const namePart = client.name.replace(/\s+/g, '-');
     res.set({
