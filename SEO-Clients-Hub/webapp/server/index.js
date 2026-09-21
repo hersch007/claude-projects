@@ -610,9 +610,10 @@ app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
 
 // The "Customer Audit Report" — meant to be put in front of a prospect to
 // make the case they need help, showing the full findings number-grid
-// (not a curated teaser). Unlike the main /docx routes above, this works
-// for ANY past audit run (not just one still held in the in-memory `runs`
-// Map from a just-finished crawl): the score/page-count come straight from
+// (not a curated teaser). Rendered as a PDF (see build-sales-report.js),
+// not one of the main /docx routes above. Unlike those, this works for
+// ANY past audit run (not just one still held in the in-memory `runs` Map
+// from a just-finished crawl): the score/page-count come straight from
 // the audit_runs row, and the stat grid itself is parsed back out of that
 // row's stored html_report (see build-sales-report.js's doc comment for
 // why — it's not stored as structured data anywhere on its own).
@@ -649,13 +650,13 @@ app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
     });
     const namePart = client.name.replace(/\s+/g, '-');
     res.set({
-      'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'Content-Disposition': `attachment; filename="${namePart}-Customer-Audit-Report-${dateStr}.docx"`,
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="${namePart}-Customer-Audit-Report-${dateStr}.pdf"`,
     });
     res.send(buffer);
   } catch (err) {
     console.error(`Sales report generation for run ${req.params.id} failed:`, err);
-    res.status(500).send('Failed to generate Word document');
+    res.status(500).send('Failed to generate PDF report');
   }
 });
 
