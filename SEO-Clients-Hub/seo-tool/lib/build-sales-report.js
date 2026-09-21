@@ -27,7 +27,15 @@
 // html_report, the one place every one of those counts already lives for
 // a saved run.
 const cheerio = require('cheerio');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+// @sparticuz/chromium ships a Chromium build packaged specifically for
+// restrictive managed containers (originally built for AWS Lambda, widely
+// reused on Render/Railway/etc.) that don't have the desktop shared
+// libraries (libnss3, libatk, ...) a normal Puppeteer-bundled Chromium
+// download expects — plain `puppeteer` worked in local/sandbox testing but
+// failed to launch once deployed to Render for exactly that reason. It's
+// published as an ESM package; `.default` is its CJS interop export.
+const chromium = require('@sparticuz/chromium').default;
 
 const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
 
@@ -333,7 +341,8 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
 async function renderPdf(html) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
+    args: chromium.args,
+    executablePath: await chromium.executablePath(),
   });
   try {
     const page = await browser.newPage();
