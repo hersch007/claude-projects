@@ -747,15 +747,21 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
     // html_report column already carries full page-level detail for the
     // UI's needs; adding a separate queryable page_results table is deferred
     // until something actually needs to query across pages/clients directly.
-    await getPool().query(
+    const { rows: [updatedRun] } = await getPool().query(
       `UPDATE audit_runs SET referral_partner_id = $1, pages_crawled = $2, deductions = $3, html_report = $4
-       WHERE client_id = $5 AND run_date = $6`,
+       WHERE client_id = $5 AND run_date = $6 RETURNING id`,
       [partner.id, result.results.length, JSON.stringify(result.scoreData.deductions), result.html, clientRow.id, result.date]
     );
     const changes = await computeChanges(clientRow.id, result.date, result.scoreData.score, result.scoreData.deductions);
     runs.set(runId, {
       status: 'done', pagesCrawled: result.results.length, score: result.scoreData.score,
       html: result.html, slug: clientRow.slug, changes,
+      // The DB row's own id — once the server has this, "View full report"
+      // can point at the DB-backed /audit-run/:id/report route instead of
+      // this in-memory one, so the link doesn't go dead the instant this
+      // process restarts (every deploy, unlike a stored run it's not tied
+      // to this process's memory).
+      auditRunId: updatedRun && updatedRun.id,
       // Kept for the Word export route (§8) — generated on demand rather
       // than pre-built, since not every run's report gets downloaded as
       // .docx. Not persisted to the DB; only available for a run just

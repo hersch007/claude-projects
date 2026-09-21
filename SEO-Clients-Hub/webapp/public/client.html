@@ -259,8 +259,18 @@
             changesHtml += `<div style="font-size:12px;color:#16a34a;margin-top:2px">Resolved: ${s.changes.resolvedIssues.map(d => d.label).join('; ')}</div>`;
           }
         }
+        // Prefer the DB-backed /audit-run/:id/report link (survives a
+        // server restart/redeploy) over the in-memory /audit/report/:runId
+        // one — the latter only works within this same server process's
+        // lifetime, which is exactly what broke ("Unknown runId") after a
+        // deploy. auditRunId should always be present by the time status
+        // is 'done', but fall back to the old link rather than break if
+        // it's ever missing (an older/partial audit_runs row, etc.).
+        const viewReportHref = s.auditRunId
+          ? `/api/clients/${encodeURIComponent(slug)}/audit-run/${s.auditRunId}/report`
+          : `/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}`;
         statusEl.innerHTML = `Done — SEO Health Score: ${s.score}/100 ` + changesHtml +
-          `<br><a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit/report/${runId}" target="_blank">View full report &rarr;</a>` +
+          `<br><a class="report-link" href="${viewReportHref}" target="_blank">View full report &rarr;</a>` +
           ` &nbsp;|&nbsp; <a id="quick-docx-link" class="report-link" href="#">Download Word report &rarr;</a>` +
           `<span id="quick-docx-status" style="margin-left:8px;font-size:12px;color:#64748b"></span>` +
           `<br><button id="narrative-btn" class="btn secondary" style="margin-top:8px">+ Generate Full Strategy Report</button>` +
