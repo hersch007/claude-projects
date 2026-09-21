@@ -136,8 +136,40 @@ function buildCategoryScores(grid) {
     const good = items.filter(i => i.status === 'good').length;
     const total = items.length;
     const score = Math.round((good / total) * 100);
-    return { name: cat.name, fail, warn, good, total, score };
+    // "2 fail · 4/6 passed" reads like a page count right under "113 pages
+    // scanned" on the cover, but it's a count of check *types*, not pages —
+    // confusing on its own. The real per-page impact of a category's
+    // flagged checks (e.g. "12 pages" from a "12 page(s) missing meta
+    // description" tile) is a much more concrete, and more persuasive,
+    // number to put next to it. Non-numeric tile values (the "Yes"/"No" of
+    // "Sitemap.xml Found," a site-wide flag, not a page count) contribute
+    // 0 rather than NaN.
+    //
+    // This is a SUM across that category's flagged checks, not a
+    // deduplicated count of distinct pages — a page with both a missing
+    // meta description and a bad title tag gets counted in both tiles, so
+    // it's an upper bound, not an exact page count. Nothing this route has
+    // (parseStatGrid's per-check counts, not per-page identity — see
+    // audit_runs' intentionally-unpopulated page_results) can deduplicate
+    // that; the UI copy that shows this number is written as "up to N
+    // pages" specifically to stay accurate about that.
+    const affectedPages = items
+      .filter(i => i.status === 'bad' || i.status === 'warn')
+      .reduce((sum, i) => { const n = parseInt(i.value, 10); return sum + (Number.isFinite(n) ? n : 0); }, 0);
+    return { name: cat.name, fail, warn, good, total, score, affectedPages };
   }).filter(Boolean);
+}
+
+// Picks the single most damaging category — lowest score first, breaking a
+// tie by whichever has more fail/warn tiles — so the report can lead with
+// one prominent, scary headline finding instead of asking the reader to
+// scan a grid of cards to figure out what's worst themselves. Returns null
+// when every category is clean (score 100), since there's nothing to lead
+// with in that case.
+function pickWorstCategory(categories) {
+  const flagged = categories.filter(c => c.score < 100);
+  if (!flagged.length) return null;
+  return flagged.sort((a, b) => a.score - b.score || (b.fail * 2 + b.warn) - (a.fail * 2 + a.warn))[0];
 }
 
 // A real SVG ring gauge for the cover's score badge — the one thing the
@@ -168,11 +200,15 @@ function coverStatsHtml(stats) {
 function categoryCardsHtml(categories) {
   return categories.map(cat => {
     const tier = scoreTierColor(cat.score);
-    const parts = [];
-    if (cat.fail) parts.push(`${cat.fail} fail`);
-    if (cat.warn) parts.push(`${cat.warn} warn`);
-    parts.push(`${cat.good}/${cat.total} passed`);
     const flagged = cat.fail > 0 || cat.warn > 0;
+    const parts = [];
+    if (flagged) {
+      const flaggedChecks = cat.fail + cat.warn;
+      parts.push(`${flaggedChecks} of ${cat.total} check${cat.total === 1 ? '' : 's'} flagged`);
+      if (cat.affectedPages > 0) parts.push(`up to ${cat.affectedPages} page${cat.affectedPages === 1 ? '' : 's'} affected`);
+    } else {
+      parts.push(`${cat.good}/${cat.total} passed`);
+    }
     const consequence = flagged && CATEGORY_CONSEQUENCE[cat.name]
       ? `<div class="category-consequence">${escapeHtml(CATEGORY_CONSEQUENCE[cat.name])}</div>`
       : '';
@@ -186,6 +222,21 @@ function categoryCardsHtml(categories) {
         </div>
       </div>`;
   }).join('');
+}
+
+// The single biggest-risk finding, called out on its own before anything
+// else on page 2 — one big scary headline lands harder than asking the
+// reader to notice it buried in a grid of category cards. Reuses the same
+// CATEGORY_CONSEQUENCE copy the card itself would show; this is just a
+// louder, standalone presentation of it.
+function worstFindingCallout(cat) {
+  const consequence = CATEGORY_CONSEQUENCE[cat.name] || '';
+  return `
+    <div class="worst-finding">
+      <div class="worst-finding-eyebrow">YOUR BIGGEST RISK RIGHT NOW</div>
+      <div class="worst-finding-name">${escapeHtml(cat.name)}</div>
+      <div class="worst-finding-consequence">${escapeHtml(consequence)}</div>
+    </div>`;
 }
 
 function issueCalloutsHtml(issues) {
@@ -221,6 +272,9 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   const categorySectionHtml = categories.length
     ? `<div class="category-grid">${categoryCardsHtml(categories)}</div>`
     : `<p class="muted-note">A detailed category breakdown isn't available for this specific run, but the score above reflects a real, full scan of the site.</p>`;
+
+  const worstCategory = pickWorstCategory(categories);
+  const worstFindingHtml = worstCategory ? worstFindingCallout(worstCategory) : '';
 
   const topIssuesSectionHtml = topIssues.length ? `
     <div class="section-band" style="background:${brandHex}">TOP ISSUES TO FIX</div>
@@ -287,6 +341,15 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .category-detail { font-size: 11px; color: #64748B; }
   .category-consequence { font-size: 11px; color: #7A1F1F; margin-top: 5px; line-height: 1.4; font-style: italic; }
 
+  .worst-finding {
+    background: #FEE2E2; border: 2px solid #DC2626; border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 26px; text-align: center;
+    break-inside: avoid;
+  }
+  .worst-finding-eyebrow { font-size: 11px; font-weight: bold; letter-spacing: 2px; color: #DC2626; margin-bottom: 8px; }
+  .worst-finding-name { font-size: 20px; font-weight: bold; color: #7A1F1F; margin-bottom: 8px; font-family: Georgia, serif; }
+  .worst-finding-consequence { font-size: 14px; color: #7A1F1F; line-height: 1.5; max-width: 6in; margin: 0 auto; }
+
   .issue-list { display: flex; flex-direction: column; gap: 7px; }
   .issue-callout {
     background: #FAFAFA; border-left: 5px solid; border-radius: 8px;
@@ -302,6 +365,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
     margin-top: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     break-inside: avoid;
   }
+  .cta-urgency { font-size: 12px; color: rgba(255,255,255,0.85); margin-bottom: 10px; font-style: italic; }
   .cta-title { font-size: 20px; font-weight: bold; margin-bottom: 8px; }
   .cta-body { font-size: 13px; line-height: 1.5; margin-bottom: 12px; max-width: 5.5in; margin-left: auto; margin-right: auto; }
   .cta-email { font-size: 14px; font-weight: bold; }
@@ -338,6 +402,8 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   </section>
 
   <section class="page">
+    ${worstFindingHtml}
+
     <div class="section-band" style="background:${brandHex}">WHERE YOU SHOULD BE</div>
     <div class="section-body"><p>${whereYouShouldBeHtml}</p></div>
 
@@ -347,6 +413,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
     ${topIssuesSectionHtml}
 
     <div class="cta-box">
+      <div class="cta-urgency">Every week this goes unaddressed, competitors who are already fixing these exact issues pull further ahead.</div>
       <div class="cta-title">Ready to fix this?</div>
       <div class="cta-body">${escapeHtml(provider.name)} turns this list into a prioritized, done-for-you fix plan — most of what's above is fixable in weeks, not months.</div>
       <div class="cta-email">${escapeHtml(provider.email || '')}</div>
