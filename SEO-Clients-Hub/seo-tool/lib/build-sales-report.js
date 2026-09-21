@@ -256,6 +256,13 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
     ? `<img class="cover-logo" src="${provider.logo}" alt="" />`
     : '';
 
+  // Same sum-across-flagged-checks approach as each category card's own
+  // "up to N pages affected" (see buildCategoryScores) — a page with
+  // issues in two different categories gets counted in both, so this is
+  // an upper bound across the whole site, not a deduplicated count, and
+  // worded as "up to" for the same accuracy reason.
+  const totalPagesAffected = categories.reduce((sum, c) => sum + c.affectedPages, 0);
+
   const stats = [
     { label: 'Report Date', value: dateLabel },
     { label: 'Pages Scanned', value: String(pagesCrawled) },
@@ -313,12 +320,14 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
   .cover-stat-value { font-size: 20px; font-weight: bold; }
 
   .page { padding: 0.5in 0.7in; }
-  .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 4.6in; }
+  .pill-row { display: flex; gap: 12px; margin-top: 26px; max-width: 6.4in; }
   .pill { flex: 1; text-align: center; border-radius: 10px; padding: 10px 8px; font-weight: bold; font-size: 14px; }
   .pill-bad { background: #FEE2E2; color: #DC2626; }
   .pill-warn { background: #FEF3C7; color: #D97706; }
   .pill-good { background: #DCFCE7; color: #16A34A; }
+  .pill-total { background: #DC2626; color: #FFFFFF; font-size: 12px; }
   .pill span.n { font-size: 18px; }
+  .pill-total span.n { font-size: 18px; }
 
   .section-band {
     color: #fff; font-weight: bold; font-size: 13px; letter-spacing: 2px;
@@ -396,6 +405,7 @@ function renderHtml({ client, provider, brandHex, accentHex, score, scoreColor, 
         <div class="pill pill-bad"><span class="n">${pillCounts.bad}</span> failed</div>
         <div class="pill pill-warn"><span class="n">${pillCounts.warn}</span> warnings</div>
         <div class="pill pill-good"><span class="n">${pillCounts.good}</span> passed</div>
+        ${totalPagesAffected > 0 ? `<div class="pill pill-total">Up to <span class="n">${totalPagesAffected}</span> pages affected</div>` : ''}
       </div>` : ''}
     </div>
     <div class="cover-stats">${coverStatsHtml(stats)}</div>
