@@ -144,6 +144,15 @@ function buildCategoryScores(grid) {
     // number to put next to it. Non-numeric tile values (the "Yes"/"No" of
     // "Sitemap.xml Found," a site-wide flag, not a page count) contribute
     // 0 rather than NaN.
+    //
+    // This is a SUM across that category's flagged checks, not a
+    // deduplicated count of distinct pages — a page with both a missing
+    // meta description and a bad title tag gets counted in both tiles, so
+    // it's an upper bound, not an exact page count. Nothing this route has
+    // (parseStatGrid's per-check counts, not per-page identity — see
+    // audit_runs' intentionally-unpopulated page_results) can deduplicate
+    // that; the UI copy that shows this number is written as "up to N
+    // pages" specifically to stay accurate about that.
     const affectedPages = items
       .filter(i => i.status === 'bad' || i.status === 'warn')
       .reduce((sum, i) => { const n = parseInt(i.value, 10); return sum + (Number.isFinite(n) ? n : 0); }, 0);
@@ -196,7 +205,7 @@ function categoryCardsHtml(categories) {
     if (flagged) {
       const flaggedChecks = cat.fail + cat.warn;
       parts.push(`${flaggedChecks} of ${cat.total} check${cat.total === 1 ? '' : 's'} flagged`);
-      if (cat.affectedPages > 0) parts.push(`${cat.affectedPages} page${cat.affectedPages === 1 ? '' : 's'} affected`);
+      if (cat.affectedPages > 0) parts.push(`up to ${cat.affectedPages} page${cat.affectedPages === 1 ? '' : 's'} affected`);
     } else {
       parts.push(`${cat.good}/${cat.total} passed`);
     }
