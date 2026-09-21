@@ -663,9 +663,8 @@ function buildDocxReport({ client, results, scoreData, provider, date, crawledAt
   return Packer.toBuffer(doc);
 }
 
-// scoreTierColor/scoreBarTable/coverLogoImageRun/accentRuleTable/glyphLine
-// are also reused by build-sales-report.js's short teaser document, so its
-// cover-style header and findings list stay visually identical to this
-// report's own cover and "Score deductions" list rather than drifting into
+// scoreTierColor/scoreBarTable/coverLogoImageRun are also reused by
+// build-sales-report.js's Customer Audit Report, so its header stays
+// visually identical to this report's own cover rather than drifting into
 // a second, slightly-different implementation of the same look.
 module.exports = { buildDocxReport, scoreTierColor, scoreBarTable, coverLogoImageRun, accentRuleTable, glyphLine, BODY_FONT, HEADING_FONT };

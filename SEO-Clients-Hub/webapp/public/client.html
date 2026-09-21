@@ -225,7 +225,7 @@
           <td>${h.score}</td>
           <td>${h.source === 'manual' ? '<span class="source-manual">manual entry</span>' : ''}</td>
           <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/report" target="_blank">View report</a>` : ''}</td>
-          <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/sales-report" title="Short branded one-pager for a prospect, built from this run's score and top findings">Sales Snapshot</a>` : ''}</td>
+          <td>${h.hasReport ? `<a class="report-link" href="/api/clients/${encodeURIComponent(slug)}/audit-run/${h.id}/sales-report" title="Branded document for a prospect: score, target, and the full findings grid from this run">Customer Audit Report</a>` : ''}</td>
           <td><button class="history-delete" data-source="${h.source}" data-id="${h.id}" title="Delete this entry">&times;</button></td>
         </tr>
       `).join('');

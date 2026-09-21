@@ -608,24 +608,25 @@ app.get('/api/clients/:slug/audit-run/:id/report', async (req, res) => {
   res.set('Content-Type', 'text/html').send(rows[0].html_report);
 });
 
-// A short, one-page "sales snapshot" docx for a prospect — unlike the main
-// /docx routes above, this works for ANY past audit run (not just one still
-// held in the in-memory `runs` Map from a just-finished crawl), because it's
-// built from only what audit_runs actually persists per row: score,
-// deductions, pages_crawled. See build-sales-report.js's doc comment for
-// why that specifically is enough for this document and the full Master
-// report is not available this way.
+// The "Customer Audit Report" — meant to be put in front of a prospect to
+// make the case they need help, showing the full findings number-grid
+// (not a curated teaser). Unlike the main /docx routes above, this works
+// for ANY past audit run (not just one still held in the in-memory `runs`
+// Map from a just-finished crawl): the score/page-count come straight from
+// the audit_runs row, and the stat grid itself is parsed back out of that
+// row's stored html_report (see build-sales-report.js's doc comment for
+// why — it's not stored as structured data anywhere on its own).
 app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
   const client = await findClientBySlug(req.params.slug);
   if (!client) return res.status(404).send('Client not found');
   const { rows } = await getPool().query(
-    'SELECT seo_health_score, pages_crawled, deductions, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
+    'SELECT seo_health_score, pages_crawled, html_report, run_date, referral_partner_id FROM audit_runs WHERE id = $1 AND client_id = $2',
     [req.params.id, client.id]
   );
   if (!rows[0]) return res.status(404).send('Run not found');
   const run = rows[0];
-  if (run.seo_health_score == null || !run.deductions) {
-    return res.status(404).send('This run doesn\'t have enough stored data for a sales report (older runs imported before deductions were stored don\'t have one).');
+  if (run.seo_health_score == null) {
+    return res.status(404).send('This run doesn\'t have enough stored data for a Customer Audit Report.');
   }
   let partner;
   try {
@@ -643,12 +644,12 @@ app.get('/api/clients/:slug/audit-run/:id/sales-report', async (req, res) => {
       client, provider, date: dateStr,
       score: run.seo_health_score,
       pagesCrawled: run.pages_crawled,
-      deductions: run.deductions,
+      htmlReport: run.html_report,
     });
     const namePart = client.name.replace(/\s+/g, '-');
     res.set({
       'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'Content-Disposition': `attachment; filename="${namePart}-SEO-Snapshot-${dateStr}.docx"`,
+      'Content-Disposition': `attachment; filename="${namePart}-Customer-Audit-Report-${dateStr}.docx"`,
     });
     res.send(buffer);
   } catch (err) {
