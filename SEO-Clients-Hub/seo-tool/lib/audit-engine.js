@@ -383,7 +383,7 @@ function calcScore(results, { hasSitemap = true } = {}) {
     /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
     /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
-    /^Phone number doesn't match/, /the auditor was blocked from reaching/,
+    /^Phone number doesn't match/, /the auditor was blocked from reaching/, /^Borderline readability/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -446,6 +446,7 @@ function friendlyIssue(text) {
   if (text.match(/Orphan page/i)) return { label: text, why: 'No other page on the site links to this one, so visitors browsing normally can\'t find it and it gets little to no internal link authority.', priority: 'medium' };
   if (text.match(/Heading hierarchy skips/i)) return { label: text, why: 'Skipping a heading level breaks the logical document outline search engines and screen readers rely on.', priority: 'low' };
   if (text.match(/Difficult to read/i)) return { label: text, why: 'Dense, hard-to-read copy loses visitors and gives Google less clear signal about what the page is actually about.', priority: 'medium' };
+  if (text.match(/Borderline readability/i)) return { label: text, why: 'Close to the readability cutoff either way — not a meaningful problem on its own, and clinical/technical terminology naturally scores lower here regardless of how well it\'s written.', priority: 'low' };
   if (text.match(/LocalBusiness schema missing/i)) return { label: text, why: 'Missing phone/address/hours in structured data means Google has less to work with for map listings and knowledge panels, even though the schema is technically present and valid.', priority: 'medium' };
   if (text.match(/Phone number doesn't match/i)) return { label: text, why: 'An inconsistent phone number (a NAP signal) makes it harder for Google to confirm this is the same business as your Google Business Profile listing, and confuses visitors about which number is current.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
@@ -559,7 +560,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (missingImageDimensions) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingImageDimensions, action: `Add width/height to images on ${missingImageDimensions} page${missingImageDimensions > 1 ? 's' : ''}`, detail: 'Without explicit dimensions, images cause content to jump around as the page loads — a Core Web Vitals (layout shift) penalty.' });
   if (orphanPages) wins.push({ effort: 'Low', impact: 'Medium', pages: orphanPages, action: `Add internal links to ${orphanPages} orphan page${orphanPages > 1 ? 's' : ''}`, detail: 'No other page on the site links to these pages, so visitors browsing normally can\'t find them and they get little internal link authority.' });
   if (missingLocalBusinessFields) wins.push({ effort: 'Low', impact: 'Medium', pages: missingLocalBusinessFields, action: `Fill in missing LocalBusiness schema fields on ${missingLocalBusinessFields} page${missingLocalBusinessFields > 1 ? 's' : ''}`, detail: 'Phone, address, or hours are missing from the structured data — a quick addition that gives Google more to work with for map listings and knowledge panels.' });
-  if (difficultReading) wins.push({ effort: 'Medium', impact: 'Medium', pages: difficultReading, action: `Simplify dense copy on ${difficultReading} page${difficultReading > 1 ? 's' : ''}`, detail: 'These pages score as difficult to read (Flesch reading ease under 30) — shorter sentences and simpler wording would help both visitors and search engines.' });
+  if (difficultReading) wins.push({ effort: 'Medium', impact: 'Medium', pages: difficultReading, action: `Review readability and clinical terminology on ${difficultReading} page${difficultReading > 1 ? 's' : ''}`, detail: 'These pages score as difficult to read (Flesch reading ease under 25) — check whether shorter sentences would genuinely help, or whether the score mainly reflects necessary clinical/technical vocabulary that shouldn\'t be diluted.' });
   if (skippedHeadings) wins.push({ effort: 'Low', impact: 'Low', pages: skippedHeadings, action: `Fix heading hierarchy on ${skippedHeadings} page${skippedHeadings > 1 ? 's' : ''}`, detail: 'A heading level (H2 or H3) is being skipped, breaking the logical outline of the page.' });
   if (inconsistentPhone) wins.push({ effort: 'Low', impact: 'Medium', pages: inconsistentPhone, action: `Fix the mismatched phone number on ${inconsistentPhone} page${inconsistentPhone > 1 ? 's' : ''}`, detail: 'These pages show a different phone number than the rest of the site — usually a footer template that wasn\'t updated after a number change. Inconsistent contact info (NAP) is a local-SEO trust signal Google checks against your Google Business Profile.' });
   if (!hasSitemap) wins.push({ effort: 'Low', impact: 'High', pages: 0, action: 'Add an XML sitemap', detail: 'No sitemap.xml was found. Without one, search engines (and this audit) can only discover pages that are linked from the site\'s navigation — anything else may go unindexed.' });
@@ -890,17 +891,26 @@ function createEngine(client) {
     const readability = calcReadability(bodyText);
     const readabilityScore = readability ? readability.score : null;
     if (readability !== null && readability.score < 30) {
-      // The sentence/words-per-sentence breakdown is included directly in
-      // the finding text (not just the bare score) so an implausible
-      // result is self-diagnosing without needing to dig through server
-      // logs: a wordsPerSentence average in the double-or-triple digits
-      // means something non-prose (a list/label/widget with no
-      // punctuation) is still leaking into the extracted text — a genuine
-      // extraction problem — whereas a normal wordsPerSentence with high
-      // syllablesPerWord means the vocabulary itself is just dense
-      // clinical/technical language, which is a real, if lower-priority,
-      // finding rather than a bug.
-      warnings.push(`Difficult to read (Flesch reading ease: ${readability.score}/100 — ${readability.sentenceCount} sentences, ${readability.wordsPerSentence} words/sentence average)`);
+      // The sentence/words-per-sentence/syllables-per-word breakdown is
+      // included directly in the finding text (not just the bare score) so
+      // an implausible result is self-diagnosing without needing to dig
+      // through server logs: a wordsPerSentence average in the
+      // double-or-triple digits means something non-prose (a list/label/
+      // widget with no punctuation) is still leaking into the extracted
+      // text — a genuine extraction problem — whereas a normal
+      // wordsPerSentence with high syllablesPerWord means the vocabulary
+      // itself is just dense clinical/technical language, a real, if
+      // lower-priority, finding rather than a bug.
+      //
+      // 25-29 gets a separate, deliberately non-scored "Borderline
+      // readability" label rather than "Difficult to read" — a single
+      // point on either side of an arbitrary 30-point cutoff isn't a
+      // meaningful pass/fail line, and this tier is excluded from the
+      // scoring patterns below (see scoredWarningPatterns) so it doesn't
+      // cost score at all, only genuinely low scores (<25) do. It still
+      // appears in Findings by Page either way.
+      const label = readability.score >= 25 ? 'Borderline readability' : 'Difficult to read';
+      warnings.push(`${label} (Flesch reading ease: ${readability.score}/100 — ${readability.sentenceCount} sentences, ${readability.wordsPerSentence} words/sentence average, ${readability.syllablesPerWord} syllables/word)`);
       // Full diagnostic detail, including the actual extracted text, goes
       // to the server console rather than the client-facing report — the
       // report is for the client, this is for us to verify exactly what
@@ -1894,7 +1904,8 @@ function createEngine(client) {
     annotateDuplicates(results);
     const scoreData = calcScore(results, { hasSitemap });
 
-    const today = new Date().toISOString().split('T')[0];
+    const crawledAt = new Date();
+    const today = crawledAt.toISOString().split('T')[0];
     const history = await store.loadHistory(client);
     const existingToday = history.find(h => h.date === today);
     if (existingToday) existingToday.score = scoreData.score;
@@ -1930,7 +1941,13 @@ function createEngine(client) {
     // Word/strategy report, not this quick HTML one.
     const html = buildReport(results, scoreData, history, metrics, !!gscData, keywordHistory, resolvedProvider, hasSitemap);
 
-    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, outDir, provider: resolvedProvider, dominantPhone };
+    // crawledAt is the full timestamp this specific run finished (not just
+    // the date) — kept separate from `date`, which stays a plain
+    // YYYY-MM-DD string since that's what history/keyword-history storage
+    // key on and what the docx filename uses. Report display prefers the
+    // exact time so it's clear which of possibly several same-day runs a
+    // given report reflects.
+    return { results, scoreData, html, metrics, liveGSC: !!gscData, keywordHistory, date: today, crawledAt: crawledAt.toISOString(), outDir, provider: resolvedProvider, dominantPhone };
   }
 
   return { runAudit };

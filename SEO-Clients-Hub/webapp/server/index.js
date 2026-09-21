@@ -306,6 +306,19 @@ app.patch('/api/clients/:slug', async (req, res) => {
     values.push(body.google_place_id.trim() || null);
     updates.push(`google_place_id = $${values.length}`);
   }
+  if (Array.isArray(body.ignore_paths)) {
+    // Already fully wired into audit-engine.js's shouldIgnore() — a path
+    // here is skipped both as a crawled page AND as a link destination, so
+    // adding a manually-verified false positive (e.g. a page that 403s
+    // only for the auditor, not real visitors) here removes it from the
+    // report entirely instead of just softening its wording.
+    const cleaned = body.ignore_paths
+      .map(p => String(p || '').trim())
+      .filter(Boolean)
+      .slice(0, 20);
+    values.push(JSON.stringify(cleaned));
+    updates.push(`ignore_paths = $${values.length}`);
+  }
   if (typeof body.url === 'string' && body.url.trim()) {
     // Unlike the fields above, url can't be cleared to null — it's the
     // client's actual site and drives every crawl. Trailing slash stripped
@@ -319,7 +332,7 @@ app.patch('/api/clients/:slug', async (req, res) => {
     updates.push(`url = $${values.length}`);
   }
   if (!updates.length) {
-    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url' });
+    return res.status(400).json({ error: 'Provide at least one of: business_notes, gsc_property, competitor_urls, google_place_id, url, ignore_paths' });
   }
 
   values.push(client.id);
@@ -687,6 +700,7 @@ app.post('/api/clients/:slug/audit/run', async (req, res) => {
       // as part of this already-fast audit completion path.
       docxSource: {
         client: clientRow, results: result.results, scoreData: result.scoreData, provider: result.provider, date: result.date,
+        crawledAt: result.crawledAt,
         changes, dominantPhone: result.dominantPhone,
         // Real GSC ranking-keyword data (with Google Ads search-volume
         // enrichment already applied by enrichKeywords above, when it

@@ -196,12 +196,19 @@ function bodyCell(text, shaded) {
   });
 }
 
-function buildDocxReport({ client, results, scoreData, provider, date, narrative, changes, pageSpeed, gbp, dominantPhone, gscKeywords }) {
+function buildDocxReport({ client, results, scoreData, provider, date, crawledAt, narrative, changes, pageSpeed, gbp, dominantPhone, gscKeywords }) {
   const pages = results.filter(r => !r.error);
   const brandHex = (provider.brand || '#003366').replace('#', '');
   const brand2Hex = (provider.brand2 || provider.brand || '#003366').replace('#', '');
   const accentHex = (provider.accent || provider.brand2 || provider.brand || '#003366').replace('#', '');
   const dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  // The exact crawl time (not just the date) disambiguates which of
+  // possibly several same-day runs this report reflects — shown in UTC
+  // explicitly rather than implying the reader's own local time, since the
+  // server and reader aren't necessarily in the same timezone.
+  const crawlTimeLabel = crawledAt
+    ? new Date(crawledAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' }) + ' UTC'
+    : null;
   const scoreLabel = scoreData.score >= 85 ? 'Good' : scoreData.score >= 70 ? 'Needs Improvement' : 'Needs Attention';
   const scoreColor = scoreTierColor(scoreData.score);
 
@@ -271,7 +278,7 @@ function buildDocxReport({ client, results, scoreData, provider, date, narrative
     }),
     new Paragraph({
       alignment: AlignmentType.CENTER,
-      children: [new TextRun({ text: `Audit Date: ${dateLabel}  |  Prepared by: ${provider.name}`, size: 20, color: '595959' })],
+      children: [new TextRun({ text: `Audit Date: ${dateLabel}${crawlTimeLabel ? ` at ${crawlTimeLabel}` : ''}  |  Prepared by: ${provider.name}`, size: 20, color: '595959' })],
       spacing: { after: 320 },
     }),
     accentRuleTable(accentHex),
