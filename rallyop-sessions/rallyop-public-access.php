@@ -58,7 +58,11 @@ function rop_public_add_game() {
         'team_b1' => $ids[2], 'team_b2' => $ids[3],
         'score_a' => $score_a, 'score_b' => $score_b,
     ], ['%d','%s','%d','%d','%d','%d','%d','%d']);
-    rop_public_redirect($group_id, 'Game saved.');
+    wp_safe_redirect(add_query_arg([
+        'group' => $group_id,
+        'rop_pin_notice' => 'Game saved.',
+    ], home_url('/')) . '#standings');
+    exit;
 }
 add_action('admin_post_nopriv_rop_public_add_game', 'rop_public_add_game');
 add_action('admin_post_rop_public_add_game', 'rop_public_add_game');
