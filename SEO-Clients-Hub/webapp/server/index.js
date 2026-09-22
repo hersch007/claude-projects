@@ -107,9 +107,31 @@ app.get('/api/share/:token/summary', async (req, res) => {
   );
   if (!runs.length) return res.status(404).json({ error: 'No audit history yet for this client.' });
 
-  const latest = runs[runs.length - 1];
-  const history = runs.map(r => ({ date: r.run_date.toISOString().split('T')[0], score: r.seo_health_score }));
-  const categories = buildCategoryScores(parseStatGrid(latest.html_report));
+  // Staff can also log a "historical score" (manual_score_entries) for a
+  // month with no full crawl, so the trend line stays current without a
+  // real audit every time — the internal client dashboard already merges
+  // both sources for its history table (see GET /api/clients/:slug above);
+  // this public dashboard needs the same merge or a manually-entered score
+  // silently never shows up here. Real run wins over a manual entry on the
+  // same date, since it's ground truth.
+  const { rows: manualEntries } = await getPool().query(
+    `SELECT entry_date, score FROM manual_score_entries WHERE client_id = $1`,
+    [client.id]
+  );
+  const merged = new Map();
+  for (const m of manualEntries) merged.set(m.entry_date.toISOString().split('T')[0], m.score);
+  for (const r of runs) merged.set(r.run_date.toISOString().split('T')[0], r.seo_health_score);
+  const history = [...merged.entries()]
+    .map(([date, score]) => ({ date, score }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  // Categories/wins need the underlying crawl data (html_report/deductions),
+  // which only a real audit run has — a manual entry is score-only, so
+  // these two always derive from the latest actual run, even when a more
+  // recent manual entry is what's driving the cover score/trend below.
+  const latestRun = runs[runs.length - 1];
+  const latest = history[history.length - 1];
+  const categories = buildCategoryScores(parseStatGrid(latestRun.html_report));
   const wins = computeShareWins(runs);
 
   // Branding only — never lets a missing/misconfigured referral partner
@@ -118,7 +140,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
   // above are still perfectly real and worth showing either way.
   let provider = null;
   try {
-    const partner = await resolveReferralPartner(latest.referral_partner_id || client.referral_partner_id, client.id);
+    const partner = await resolveReferralPartner(latestRun.referral_partner_id || client.referral_partner_id, client.id);
     provider = {
       name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
       logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
@@ -127,8 +149,8 @@ app.get('/api/share/:token/summary', async (req, res) => {
 
   res.json({
     client: { name: client.name, url: client.url },
-    score: latest.seo_health_score,
-    lastAuditDate: history[history.length - 1].date,
+    score: latest.score,
+    lastAuditDate: latest.date,
     history,
     categories,
     wins,
