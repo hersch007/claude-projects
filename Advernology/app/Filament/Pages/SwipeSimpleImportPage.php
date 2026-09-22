@@ -56,13 +56,13 @@ class SwipeSimpleImportPage extends Page implements HasForms
             return;
         }
 
-        // Resolve Livewire temp file
-        if (is_string($file)) {
-            $path     = storage_path('app/livewire-tmp/' . $file);
-            $uploaded = new \Illuminate\Http\UploadedFile($path, $file);
-        } else {
-            $uploaded = $file;
-        }
+        // Resolve Livewire temp file. Use Livewire's own resolver rather than
+        // guessing the storage path — it correctly locates the file on
+        // whichever disk config('livewire.temporary_file_upload.disk') /
+        // filesystems.default actually is, instead of assuming 'local'.
+        $uploaded = is_string($file)
+            ? TemporaryUploadedFile::createFromLivewire($file)
+            : $file;
 
         $service = app(SwipeSimpleImportService::class);
         $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
