@@ -218,6 +218,64 @@ function findDuplicateGroups(pages, field) {
   return [...seen.values()].filter(urls => urls.length > 1);
 }
 
+// Word-shingle helpers for near-duplicate BODY content detection (below,
+// findNearDuplicateContentGroups) — distinct from findDuplicateGroups
+// above, which only catches an EXACT match on a single short field (title/
+// meta/H1). Real templated "doorway" pages (the same service description
+// copy-pasted across city/product pages with only the name swapped) almost
+// never have byte-identical body text, so that needs a fuzzy, not exact,
+// comparison.
+function shingles(text, size = 8) {
+  const words = text.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const set = new Set();
+  for (let i = 0; i + size <= words.length; i++) set.add(words.slice(i, i + size).join(' '));
+  return set;
+}
+
+function jaccardSimilarity(a, b) {
+  if (!a.size || !b.size) return 0;
+  let intersection = 0;
+  for (const s of a) if (b.has(s)) intersection++;
+  return intersection / (a.size + b.size - intersection);
+}
+
+// Groups of pages whose main body copy (nav/footer/product-card chrome is
+// already stripped out of bodyText by analyzePage(), so this is comparing
+// real content, not shared template furniture) is a near-match for another
+// page's — the classic doorway-page pattern a per-page check alone can't
+// see. Pages under minWords are skipped entirely: they're already caught
+// by the separate "Low word count" check, and near-empty pages produce
+// meaningless (trivially high) similarity scores against each other. 0.75
+// (75% of 8-word shingles shared) is a deliberately high bar — shared
+// boilerplate phrasing or a single author's consistent style can otherwise
+// push genuinely distinct pages higher than expected, and this check
+// should only fire on content that's unambiguously copy-pasted.
+function findNearDuplicateContentGroups(pages, { minWords = 150, threshold = 0.75 } = {}) {
+  const candidates = pages
+    .filter(p => p.wordCount >= minWords)
+    .map(p => ({ url: p.url, shingleSet: shingles(p.bodyText) }));
+
+  const parent = new Map(candidates.map(c => [c.url, c.url]));
+  const find = (u) => { while (parent.get(u) !== u) u = parent.get(u); return u; };
+  const union = (a, b) => { const ra = find(a), rb = find(b); if (ra !== rb) parent.set(ra, rb); };
+
+  for (let i = 0; i < candidates.length; i++) {
+    for (let j = i + 1; j < candidates.length; j++) {
+      if (jaccardSimilarity(candidates[i].shingleSet, candidates[j].shingleSet) >= threshold) {
+        union(candidates[i].url, candidates[j].url);
+      }
+    }
+  }
+
+  const groups = new Map();
+  for (const c of candidates) {
+    const root = find(c.url);
+    if (!groups.has(root)) groups.set(root, []);
+    groups.get(root).push(c.url);
+  }
+  return [...groups.values()].filter(g => g.length > 1);
+}
+
 // US phone numbers only (every current client is US-based) — strips
 // formatting down to a canonical 10-digit string so "(555) 123-4567" and
 // "555.123.4567" compare as identical instead of registering as a false
@@ -246,6 +304,13 @@ function annotateDuplicates(results) {
         const othersCount = group.length - 1;
         page.warnings.push(`Duplicate ${label} (shared with ${othersCount} other page${othersCount > 1 ? 's' : ''})`);
       }
+    }
+  }
+  for (const group of findNearDuplicateContentGroups(pages)) {
+    for (const url of group) {
+      const page = pages.find(p => p.url === url);
+      const othersCount = group.length - 1;
+      page.warnings.push(`Near-duplicate content (shared with ${othersCount} other page${othersCount > 1 ? 's' : ''})`);
     }
   }
 }
@@ -352,6 +417,11 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (duplicateTitlePages) deduct(Math.min(10, Math.round((duplicateTitlePages / totalPages) * 10)), `${duplicateTitlePages} page(s) with a duplicate title tag`);
   if (duplicateMetaPages) deduct(Math.min(8, Math.round((duplicateMetaPages / totalPages) * 8)), `${duplicateMetaPages} page(s) with a duplicate meta description`);
   if (duplicateH1Pages) deduct(Math.min(8, Math.round((duplicateH1Pages / totalPages) * 8)), `${duplicateH1Pages} page(s) with a duplicate H1 tag`);
+  // Body content, not just a tag — a page can have a perfectly unique title/
+  // meta/H1 and still be a copy-pasted "doorway" page underneath. See
+  // findNearDuplicateContentGroups() above.
+  const nearDuplicateContentPages = pages.filter(p => p.warnings.some(w => w.startsWith('Near-duplicate content'))).length;
+  if (nearDuplicateContentPages) deduct(Math.min(10, Math.round((nearDuplicateContentPages / totalPages) * 10)), `${nearDuplicateContentPages} page(s) with near-duplicate body content`);
 
   // Mobile-friendliness / accessibility / performance basics — real
   // ranking-adjacent signals, but each one alone is minor, so weighted
@@ -431,7 +501,7 @@ function calcScore(results, { hasSitemap = true } = {}) {
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
     /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
     /^Rich result schema incomplete/, /^Phone number doesn't match/, /the auditor was blocked from reaching/,
-    /^Borderline readability/,
+    /^Borderline readability/, /^Near-duplicate content/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -498,6 +568,7 @@ function friendlyIssue(text) {
   if (text.match(/LocalBusiness schema missing/i)) return { label: text, why: 'Missing phone/address/hours in structured data means Google has less to work with for map listings and knowledge panels, even though the schema is technically present and valid.', priority: 'medium' };
   if (text.match(/Rich result schema incomplete/i)) return { label: text, why: 'This schema is present and valid, but missing the specific fields Google requires to actually grant the rich result (star ratings, an FAQ dropdown, breadcrumb navigation) it\'s aiming for — so it shows as a plain search listing either way.', priority: 'medium' };
   if (text.match(/Phone number doesn't match/i)) return { label: text, why: 'An inconsistent phone number (a NAP signal) makes it harder for Google to confirm this is the same business as your Google Business Profile listing, and confuses visitors about which number is current.', priority: 'medium' };
+  if (text.match(/Near-duplicate content/i)) return { label: text, why: 'This page\'s main content closely matches another page on the site — usually a templated "doorway" page with only a city or product name swapped. Google can treat near-identical pages as duplicate content and decline to rank either one well.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
 }
 
@@ -567,6 +638,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const duplicateTitle = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag'))).length;
   const duplicateMeta = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description'))).length;
   const duplicateH1 = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate H1 tag'))).length;
+  const nearDuplicateContent = pages.filter(p => p.warnings.some(w => w.startsWith('Near-duplicate content'))).length;
   const noindexed = pages.filter(p => p.issues.includes('Meta robots tag set to noindex')).length;
   const robotsBlocked = pages.filter(p => p.issues.includes('Blocked by robots.txt')).length;
   const missingViewport = pages.filter(p => p.warnings.includes('Missing viewport meta tag')).length;
@@ -601,6 +673,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (duplicateTitle) wins.push({ effort: 'Low', impact: 'High', pages: duplicateTitle, action: `Write unique title tags for ${duplicateTitle} page${duplicateTitle > 1 ? 's' : ''}`, detail: 'These pages currently share an identical title tag with another page, so Google can\'t tell them apart in search results.' });
   if (duplicateMeta) wins.push({ effort: 'Low', impact: 'Medium', pages: duplicateMeta, action: `Write unique meta descriptions for ${duplicateMeta} page${duplicateMeta > 1 ? 's' : ''}`, detail: 'These pages currently share an identical meta description with another page, producing duplicate-looking search snippets.' });
   if (duplicateH1) wins.push({ effort: 'Low', impact: 'Medium', pages: duplicateH1, action: `Write unique H1 headings for ${duplicateH1} page${duplicateH1 > 1 ? 's' : ''}`, detail: 'These pages currently share an identical main heading with another page, diluting the topic signal for both.' });
+  if (nearDuplicateContent) wins.push({ effort: 'Medium', impact: 'High', pages: nearDuplicateContent, action: `Rewrite near-duplicate content on ${nearDuplicateContent} page${nearDuplicateContent > 1 ? 's' : ''}`, detail: 'These pages share the large majority of their body copy with another page on the site — usually a templated page with only a name or location swapped. Google can treat this as duplicate content and suppress rankings for both.' });
   if (missingViewport) wins.push({ effort: 'Low', impact: 'Medium', pages: missingViewport, action: `Add a viewport meta tag to ${missingViewport} page${missingViewport > 1 ? 's' : ''}`, detail: 'Without this tag, mobile browsers may render the page at desktop width, hurting mobile usability and rankings.' });
   if (missingLang) wins.push({ effort: 'Low', impact: 'Low', pages: missingLang, action: `Add an html lang attribute to ${missingLang} page${missingLang > 1 ? 's' : ''}`, detail: 'A one-line fix that tells search engines and screen readers what language the page is in.' });
   if (missingCompression) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingCompression, action: `Enable HTTP compression on ${missingCompression} page${missingCompression > 1 ? 's' : ''}`, detail: 'Serving pages without gzip/br compression means slower load times than necessary — usually a one-time hosting/server config change.' });
@@ -1278,6 +1351,7 @@ function createEngine(client) {
     const duplicateTitlePgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate title tag')));
     const duplicateMetaPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate meta description')));
     const duplicateH1Pgs = pages.filter(p => p.warnings.some(w => w.startsWith('Duplicate H1 tag')));
+    const nearDuplicateContentPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Near-duplicate content')));
     const noindexedPgs = pages.filter(p => p.issues.includes('Meta robots tag set to noindex'));
     const robotsBlockedPgs = pages.filter(p => p.issues.includes('Blocked by robots.txt'));
     const missingViewportPgs = pages.filter(p => p.warnings.includes('Missing viewport meta tag'));
@@ -1644,6 +1718,10 @@ function createEngine(client) {
     <div class="snap-card">
       <div class="snap-num ${duplicateH1Pgs.length === 0 ? 'good' : 'warn'}">${duplicateH1Pgs.length}</div>
       <div class="snap-label">Duplicate H1 Tags</div>
+    </div>
+    <div class="snap-card">
+      <div class="snap-num ${nearDuplicateContentPgs.length === 0 ? 'good' : 'warn'}">${nearDuplicateContentPgs.length}</div>
+      <div class="snap-label">Near-Duplicate Content</div>
     </div>
     <div class="snap-card">
       <div class="snap-num ${noindexedPgs.length === 0 ? 'good' : 'bad'}">${noindexedPgs.length}</div>

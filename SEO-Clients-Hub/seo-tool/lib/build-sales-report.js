@@ -45,7 +45,7 @@ const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
 // exports this today, so it's a plain constant — re-count
 // `grep -c "if (.*deduct(" lib/audit-engine.js` and update this if
 // calcScore() gains or loses a check.
-const TOTAL_CHECK_TYPES = 34;
+const TOTAL_CHECK_TYPES = 35;
 
 // Same red/amber/green thresholds as build-docx-report.js's scoreTierColor
 // — duplicated rather than imported since this file no longer shares any
@@ -101,7 +101,7 @@ const CATEGORIES = [
   { name: 'Images', labels: ['Pages w/ Missing Image Alt', 'Images Missing Dimensions'] },
   { name: 'Technical & Crawlability', labels: ['Missing Canonical Tag', 'Sitemap.xml Found', 'Pages Set to Noindex', 'Blocked by robots.txt', 'Missing Viewport Tag', 'Missing HTML Lang', 'No HTTP Compression', 'Mixed-Content Resources'] },
   { name: 'Links & Site Structure', labels: ['Pages w/ Broken Internal Links', 'Orphan Pages'] },
-  { name: 'Content & Trust', labels: ['Difficult-to-Read Pages', 'Inconsistent Phone Number'] },
+  { name: 'Content & Trust', labels: ['Difficult-to-Read Pages', 'Inconsistent Phone Number', 'Near-Duplicate Content'] },
 ];
 
 // A plain-English business-consequence sentence per category — deliberately
