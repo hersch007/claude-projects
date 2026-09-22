@@ -12,7 +12,7 @@ const fs = require('fs');
 const { runAudit } = require('../../seo-tool/lib/audit-engine');
 const dbStorage = require('../../seo-tool/lib/db-storage');
 const { buildDocxReport } = require('../../seo-tool/lib/build-docx-report');
-const { buildSalesReport } = require('../../seo-tool/lib/build-sales-report');
+const { buildSalesReport, buildCategoryScores, parseStatGrid } = require('../../seo-tool/lib/build-sales-report');
 const { enrichWithVolumes } = require('../../seo-tool/lib/keyword-planner');
 const { generateNarrative } = require('../../seo-tool/lib/narrative-report');
 const { getCoreWebVitals } = require('../../seo-tool/lib/page-speed');
@@ -69,6 +69,69 @@ app.post('/api/logout', (req, res) => {
 
 app.get('/login.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/login.html'));
+});
+
+// ─── Customer share dashboard (public, no login) ───────────────────────────
+// A read-only view for the client themselves — score, trend, category
+// breakdown, no findings detail, no editing. Deliberately registered here,
+// BEFORE the auth-gate middleware below, so it's reachable without the
+// shared agency SITE_PASSWORD: the unguessable share_token in the URL is
+// the credential instead (see schema.sql's own comment on these columns
+// for the "magic link" rationale). Both routes below must stay ahead of
+// that gate — moving either one below it would lock customers out behind
+// a password they were never given.
+app.get('/share/:token', (req, res) => {
+  // Always serves the same static shell regardless of whether the token is
+  // valid — share.html's own JS calls the summary endpoint below and shows
+  // a "this link isn't active" state on a 404, rather than the server
+  // needing to branch here (keeps this route a plain static file, so it's
+  // never accidentally caught by the auth gate two lines down).
+  res.sendFile(path.join(__dirname, '../public/share.html'));
+});
+
+app.get('/api/share/:token/summary', async (req, res) => {
+  // Deliberately the same 404 for "no such token" and "token exists but
+  // share_enabled is false" — distinguishing them would let someone probe
+  // whether a guessed token belongs to a real (just disabled) client.
+  const { rows: clientRows } = await getPool().query(
+    'SELECT id, name, url, referral_partner_id FROM clients WHERE share_token = $1 AND share_enabled = true',
+    [req.params.token]
+  );
+  const client = clientRows[0];
+  if (!client) return res.status(404).json({ error: 'This link is not active.' });
+
+  const { rows: runs } = await getPool().query(
+    `SELECT run_date, seo_health_score, html_report, referral_partner_id
+     FROM audit_runs WHERE client_id = $1 AND seo_health_score IS NOT NULL ORDER BY run_date ASC`,
+    [client.id]
+  );
+  if (!runs.length) return res.status(404).json({ error: 'No audit history yet for this client.' });
+
+  const latest = runs[runs.length - 1];
+  const history = runs.map(r => ({ date: r.run_date.toISOString().split('T')[0], score: r.seo_health_score }));
+  const categories = buildCategoryScores(parseStatGrid(latest.html_report));
+
+  // Branding only — never lets a missing/misconfigured referral partner
+  // 500 the whole dashboard (resolveReferralPartner throws when literally
+  // no active partner exists anywhere), since the score/trend/categories
+  // above are still perfectly real and worth showing either way.
+  let provider = null;
+  try {
+    const partner = await resolveReferralPartner(latest.referral_partner_id || client.referral_partner_id, client.id);
+    provider = {
+      name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
+      logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
+    };
+  } catch { /* no active referral partner configured — dashboard still renders without branding */ }
+
+  res.json({
+    client: { name: client.name, url: client.url },
+    score: latest.seo_health_score,
+    lastAuditDate: history[history.length - 1].date,
+    history,
+    categories,
+    provider,
+  });
 });
 
 app.use((req, res, next) => {
@@ -359,6 +422,45 @@ app.patch('/api/clients/:slug/archive', async (req, res) => {
   const archived = !!(req.body && req.body.archived);
   await getPool().query('UPDATE clients SET archived = $1 WHERE id = $2', [archived, client.id]);
   res.json({ ok: true });
+});
+
+// ─── Customer share dashboard: staff-side management ───────────────────────
+// The public GET /share/:token + /api/share/:token/summary routes live up
+// near the top of this file, ahead of the auth gate — these three routes
+// are the (authenticated) other half, letting staff turn a client's link
+// on/off and see its current URL from client.html.
+app.get('/api/clients/:slug/share-link', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  res.json({ enabled: client.share_enabled, token: client.share_token || null });
+});
+
+app.post('/api/clients/:slug/share-link/enable', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  // Reuses the existing token if one was already generated (so re-enabling
+  // after a disable gives the client back the same URL they already have)
+  // — only a fresh regenerate below should ever change the URL.
+  const token = client.share_token || crypto.randomUUID();
+  await getPool().query('UPDATE clients SET share_token = $1, share_enabled = true WHERE id = $2', [token, client.id]);
+  res.json({ enabled: true, token });
+});
+
+app.post('/api/clients/:slug/share-link/disable', async (req, res) => {
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  await getPool().query('UPDATE clients SET share_enabled = false WHERE id = $1', [client.id]);
+  res.json({ enabled: false });
+});
+
+app.post('/api/clients/:slug/share-link/regenerate', async (req, res) => {
+  // The actual "revoke" lever — a new token means the old URL 404s
+  // immediately, for a client whose link leaked or who wants a fresh one.
+  const client = await findClientBySlug(req.params.slug);
+  if (!client) return res.status(404).json({ error: 'Client not found' });
+  const token = crypto.randomUUID();
+  await getPool().query('UPDATE clients SET share_token = $1, share_enabled = true WHERE id = $2', [token, client.id]);
+  res.json({ enabled: true, token });
 });
 
 app.delete('/api/clients/:slug', async (req, res) => {

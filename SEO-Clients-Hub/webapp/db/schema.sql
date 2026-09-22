@@ -39,6 +39,21 @@ ALTER TABLE clients ADD COLUMN IF NOT EXISTS competitor_urls jsonb DEFAULT '[]';
 -- NAP comparison against the site's own crawled phone number).
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS google_place_id text;
 
+-- Read-only customer-facing dashboard (score, trend, category breakdown —
+-- see GET /share/:token in the server). No customer accounts/passwords —
+-- share_token is an unguessable per-client credential in the URL itself
+-- (a "magic link," same idea as a Calendly/Stripe customer-portal link),
+-- generated on demand rather than at client-creation time (most clients
+-- will never get one). share_enabled lets staff turn a client's link off
+-- without losing/regenerating the token; regenerating (a separate action)
+-- is the actual "revoke this link" lever if one ever leaks.
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS share_token text;
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS share_enabled boolean NOT NULL DEFAULT false;
+-- Partial index (most rows have a NULL token) — still enforces uniqueness
+-- among the ones that are actually set, so two clients can never collide
+-- on the same shareable URL.
+CREATE UNIQUE INDEX IF NOT EXISTS clients_share_token_idx ON clients (share_token) WHERE share_token IS NOT NULL;
+
 CREATE TABLE IF NOT EXISTS audit_runs (
   id                serial PRIMARY KEY,
   client_id         int NOT NULL REFERENCES clients(id),
