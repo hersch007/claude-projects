@@ -29,6 +29,48 @@ const LOCAL_BUSINESS_TYPES = new Set([
   'HealthAndBeautyBusiness', 'FinancialService', 'RealEstateAgent',
 ]);
 
+// Google grants a "rich result" (star ratings, an expandable FAQ dropdown,
+// breadcrumb navigation, etc. shown right in search results instead of a
+// plain blue link) only when a schema block includes the SPECIFIC fields
+// that result type requires — just having *some* schema present isn't
+// enough, and this codebase's schema check above this point never verified
+// that. Scoped to the three rich-result types most likely to actually
+// appear on a small local-service site (FAQ sections, breadcrumb nav, and
+// review/rating blocks), not every rich-result type Google supports
+// (Recipe, JobPosting, Event, Product, etc. — not relevant to this
+// client base, same scoping rationale as LOCAL_BUSINESS_TYPES above).
+// Returns a list of gap descriptions for a single parsed schema item (a
+// page can have more than one schema block, so the caller collects these
+// into a Set across all of them).
+function richResultGapsFor(item, itemTypes) {
+  const gaps = [];
+  if (itemTypes.includes('FAQPage')) {
+    const entities = Array.isArray(item.mainEntity) ? item.mainEntity : (item.mainEntity ? [item.mainEntity] : []);
+    const valid = entities.length > 0 && entities.every(q => q && q.name && q.acceptedAnswer && q.acceptedAnswer.text);
+    if (!valid) gaps.push('FAQPage missing valid Question/Answer pairs');
+  }
+  if (itemTypes.includes('BreadcrumbList')) {
+    const elements = Array.isArray(item.itemListElement) ? item.itemListElement : [];
+    const valid = elements.length > 0 && elements.every(el => el && el.position && (el.name || (el.item && el.item.name)));
+    if (!valid) gaps.push('BreadcrumbList missing itemListElement');
+  }
+  if (itemTypes.includes('Review')) {
+    if (!item.reviewRating || !item.reviewRating.ratingValue || !item.author) {
+      gaps.push('Review missing a rating value or author');
+    }
+  }
+  // aggregateRating is a property that can show up nested inside a
+  // Product/LocalBusiness/Service item, not just a standalone Review type
+  // — checked regardless of the item's own top-level @type.
+  if (item.aggregateRating) {
+    const ar = item.aggregateRating;
+    if (!ar.ratingValue || !(ar.reviewCount || ar.ratingCount)) {
+      gaps.push('AggregateRating missing a rating value or review count');
+    }
+  }
+  return gaps;
+}
+
 function resolveProvider(provider) {
   if (!provider) return PROVIDERS['1'];
   if (typeof provider === 'object' && provider.name) return provider;
@@ -355,6 +397,10 @@ function calcScore(results, { hasSitemap = true } = {}) {
   const skippedHeadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
   const difficultReadingPages = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
   const missingLocalBusinessFieldPages = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
+  // A page can have valid, present schema and still not qualify for the
+  // rich result it's aiming for (an FAQ block with no answers, a
+  // breadcrumb list with no items) — see richResultGapsFor() above.
+  const richResultGapPages = pages.filter(p => p.warnings.some(w => w.startsWith('Rich result schema incomplete'))).length;
   // NAP consistency — a page whose shown phone number doesn't match the
   // site's dominant one (see crawl()'s post-crawl pass). A real trust/local-
   // SEO signal: Google cross-checks a business's listed number against its
@@ -366,6 +412,7 @@ function calcScore(results, { hasSitemap = true } = {}) {
   if (skippedHeadingPages) deduct(Math.min(4, Math.round((skippedHeadingPages / totalPages) * 4)), `${skippedHeadingPages} page(s) with a skipped heading level`);
   if (difficultReadingPages) deduct(Math.min(6, Math.round((difficultReadingPages / totalPages) * 6)), `${difficultReadingPages} page(s) with difficult-to-read copy`);
   if (missingLocalBusinessFieldPages) deduct(Math.min(6, Math.round((missingLocalBusinessFieldPages / totalPages) * 6)), `${missingLocalBusinessFieldPages} page(s) with incomplete LocalBusiness schema (missing phone/address/hours)`);
+  if (richResultGapPages) deduct(Math.min(6, Math.round((richResultGapPages / totalPages) * 6)), `${richResultGapPages} page(s) with schema too incomplete to earn its rich result (FAQ, breadcrumb, or review)`);
   if (inconsistentPhonePages) deduct(Math.min(6, Math.round((inconsistentPhonePages / totalPages) * 6)), `${inconsistentPhonePages} page(s) showing a phone number that doesn't match the rest of the site`);
 
   // Advisory warning deduction: pages with *other* warnings (not already scored above) and no critical issues (-0.5 each, max -15)
@@ -383,7 +430,8 @@ function calcScore(results, { hasSitemap = true } = {}) {
     /^Multiple title tags/, /^Multiple meta description tags/, /missing width\/height attributes/,
     /^Missing Open Graph tags/, /^Missing character encoding declaration/, /^Missing doctype declaration/,
     /^Orphan page/, /^Heading hierarchy skips/, /^Difficult to read/, /^LocalBusiness schema missing/,
-    /^Phone number doesn't match/, /the auditor was blocked from reaching/, /^Borderline readability/,
+    /^Rich result schema incomplete/, /^Phone number doesn't match/, /the auditor was blocked from reaching/,
+    /^Borderline readability/,
   ];
   const warningOnlyPages = pages.filter(p => {
     if (p.issues.length > 0) return false;
@@ -448,6 +496,7 @@ function friendlyIssue(text) {
   if (text.match(/Difficult to read/i)) return { label: text, why: 'Dense, hard-to-read copy loses visitors and gives Google less clear signal about what the page is actually about.', priority: 'medium' };
   if (text.match(/Borderline readability/i)) return { label: text, why: 'Close to the readability cutoff either way — not a meaningful problem on its own, and clinical/technical terminology naturally scores lower here regardless of how well it\'s written.', priority: 'low' };
   if (text.match(/LocalBusiness schema missing/i)) return { label: text, why: 'Missing phone/address/hours in structured data means Google has less to work with for map listings and knowledge panels, even though the schema is technically present and valid.', priority: 'medium' };
+  if (text.match(/Rich result schema incomplete/i)) return { label: text, why: 'This schema is present and valid, but missing the specific fields Google requires to actually grant the rich result (star ratings, an FAQ dropdown, breadcrumb navigation) it\'s aiming for — so it shows as a plain search listing either way.', priority: 'medium' };
   if (text.match(/Phone number doesn't match/i)) return { label: text, why: 'An inconsistent phone number (a NAP signal) makes it harder for Google to confirm this is the same business as your Google Business Profile listing, and confuses visitors about which number is current.', priority: 'medium' };
   return { label: text, why: '', priority: 'low' };
 }
@@ -533,6 +582,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   const skippedHeadings = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips'))).length;
   const difficultReading = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read'))).length;
   const missingLocalBusinessFields = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing'))).length;
+  const richResultGaps = pages.filter(p => p.warnings.some(w => w.startsWith('Rich result schema incomplete'))).length;
   const inconsistentPhone = pages.filter(p => p.warnings.some(w => w.startsWith("Phone number doesn't match"))).length;
 
   // critical: true always sorts these to the very top, ahead of effort/
@@ -560,6 +610,7 @@ function getQuickWins(pages, { hasSitemap = true } = {}) {
   if (missingImageDimensions) wins.push({ effort: 'Medium', impact: 'Medium', pages: missingImageDimensions, action: `Add width/height to images on ${missingImageDimensions} page${missingImageDimensions > 1 ? 's' : ''}`, detail: 'Without explicit dimensions, images cause content to jump around as the page loads — a Core Web Vitals (layout shift) penalty.' });
   if (orphanPages) wins.push({ effort: 'Low', impact: 'Medium', pages: orphanPages, action: `Add internal links to ${orphanPages} orphan page${orphanPages > 1 ? 's' : ''}`, detail: 'No other page on the site links to these pages, so visitors browsing normally can\'t find them and they get little internal link authority.' });
   if (missingLocalBusinessFields) wins.push({ effort: 'Low', impact: 'Medium', pages: missingLocalBusinessFields, action: `Fill in missing LocalBusiness schema fields on ${missingLocalBusinessFields} page${missingLocalBusinessFields > 1 ? 's' : ''}`, detail: 'Phone, address, or hours are missing from the structured data — a quick addition that gives Google more to work with for map listings and knowledge panels.' });
+  if (richResultGaps) wins.push({ effort: 'Low', impact: 'Medium', pages: richResultGaps, action: `Complete FAQ/breadcrumb/review schema on ${richResultGaps} page${richResultGaps > 1 ? 's' : ''}`, detail: 'These pages have an FAQ, breadcrumb, or review schema block, but it\'s missing the specific fields Google requires to actually grant that rich result — usually a small, quick fix to the existing markup.' });
   if (difficultReading) wins.push({ effort: 'Medium', impact: 'Medium', pages: difficultReading, action: `Review readability and clinical terminology on ${difficultReading} page${difficultReading > 1 ? 's' : ''}`, detail: 'These pages score as difficult to read (Flesch reading ease under 25) — check whether shorter sentences would genuinely help, or whether the score mainly reflects necessary clinical/technical vocabulary that shouldn\'t be diluted.' });
   if (skippedHeadings) wins.push({ effort: 'Low', impact: 'Low', pages: skippedHeadings, action: `Fix heading hierarchy on ${skippedHeadings} page${skippedHeadings > 1 ? 's' : ''}`, detail: 'A heading level (H2 or H3) is being skipped, breaking the logical outline of the page.' });
   if (inconsistentPhone) wins.push({ effort: 'Low', impact: 'Medium', pages: inconsistentPhone, action: `Fix the mismatched phone number on ${inconsistentPhone} page${inconsistentPhone > 1 ? 's' : ''}`, detail: 'These pages show a different phone number than the rest of the site — usually a footer template that wasn\'t updated after a number change. Inconsistent contact info (NAP) is a local-SEO trust signal Google checks against your Google Business Profile.' });
@@ -775,6 +826,7 @@ function createEngine(client) {
     // Schema / JSON-LD
     const schemas = $('script[type="application/ld+json"]').toArray();
     const missingLocalBusinessFields = new Set();
+    const richResultGaps = new Set();
     const schemaTypes = schemas.map(s => {
       try {
         const parsed = JSON.parse($(s).html());
@@ -792,6 +844,7 @@ function createEngine(client) {
         for (const item of items) {
           if (!item) continue;
           const itemTypes = Array.isArray(item['@type']) ? item['@type'] : [item['@type']];
+          richResultGapsFor(item, itemTypes).forEach(g => richResultGaps.add(g));
           if (!itemTypes.some(t => LOCAL_BUSINESS_TYPES.has(t))) continue;
           if (!item.telephone) missingLocalBusinessFields.add('telephone');
           else { const norm = normalizePhone(item.telephone); if (norm) phoneNumbers.add(norm); }
@@ -809,6 +862,11 @@ function createEngine(client) {
     const invalidSchemaCount = schemaTypes.filter(t => t === 'Invalid JSON-LD').length;
     if (invalidSchemaCount) issues.push(`${invalidSchemaCount} invalid (malformed) JSON-LD schema block(s)`);
     if (missingLocalBusinessFields.size) warnings.push(`LocalBusiness schema missing recommended field(s): ${[...missingLocalBusinessFields].join(', ')}`);
+    // Only fires for a page that actually attempts a FAQ/Breadcrumb/Review
+    // block — a page with none of these schema types present isn't
+    // "failing" this check, it's just not applicable, same as the
+    // LocalBusiness-field check above only applying to LocalBusiness pages.
+    if (richResultGaps.size) warnings.push(`Rich result schema incomplete: ${[...richResultGaps].join('; ')}`);
 
     // Internal links — collected before nav/footer/header get stripped
     // below (they're removed only to keep word-count/readability from
@@ -1238,6 +1296,7 @@ function createEngine(client) {
     const skippedHeadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Heading hierarchy skips')));
     const difficultReadingPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Difficult to read')));
     const missingLocalBusinessFieldPgs = pages.filter(p => p.warnings.some(w => w.startsWith('LocalBusiness schema missing')));
+    const richResultGapPgs = pages.filter(p => p.warnings.some(w => w.startsWith('Rich result schema incomplete')));
     const inconsistentPhonePgs = pages.filter(p => p.warnings.some(w => w.startsWith("Phone number doesn't match")));
 
     function priorityBadge(p) {
@@ -1643,6 +1702,10 @@ function createEngine(client) {
       <div class="snap-label">Incomplete LocalBusiness Schema</div>
     </div>
     <div class="snap-card">
+      <div class="snap-num ${richResultGapPgs.length === 0 ? 'good' : 'warn'}">${richResultGapPgs.length}</div>
+      <div class="snap-label">Rich Result Ineligible Pages</div>
+    </div>
+    <div class="snap-card">
       <div class="snap-num ${inconsistentPhonePgs.length === 0 ? 'good' : 'warn'}">${inconsistentPhonePgs.length}</div>
       <div class="snap-label">Inconsistent Phone Number</div>
     </div>
@@ -1823,6 +1886,7 @@ function createEngine(client) {
       ${skippedHeadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with a skipped heading level</span><span class="sr-val warn">${skippedHeadingPgs.length} page${skippedHeadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${difficultReadingPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with difficult-to-read copy</span><span class="sr-val warn">${difficultReadingPgs.length} page${difficultReadingPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${missingLocalBusinessFieldPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with incomplete LocalBusiness schema</span><span class="sr-val warn">${missingLocalBusinessFieldPgs.length} page${missingLocalBusinessFieldPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
+      ${richResultGapPgs.length ? `<div class="summary-row"><span class="sr-label">Pages with schema too incomplete for its rich result</span><span class="sr-val warn">${richResultGapPgs.length} page${richResultGapPgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${inconsistentPhonePgs.length ? `<div class="summary-row"><span class="sr-label">Pages with an inconsistent phone number</span><span class="sr-val warn">${inconsistentPhonePgs.length} page${inconsistentPhonePgs.length > 1 ? 's' : ''} affected</span></div>` : ''}
       ${!hasSitemap ? `<div class="summary-row"><span class="sr-label">Sitemap.xml</span><span class="sr-val warn">Not found &mdash; only nav-linked pages could be discovered</span></div>` : ''}
       <div class="summary-row">
