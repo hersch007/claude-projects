@@ -101,7 +101,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
   if (!client) return res.status(404).json({ error: 'This link is not active.' });
 
   const { rows: runs } = await getPool().query(
-    `SELECT run_date, seo_health_score, html_report, referral_partner_id
+    `SELECT run_date, seo_health_score, html_report, deductions, referral_partner_id
      FROM audit_runs WHERE client_id = $1 AND seo_health_score IS NOT NULL ORDER BY run_date ASC`,
     [client.id]
   );
@@ -110,6 +110,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
   const latest = runs[runs.length - 1];
   const history = runs.map(r => ({ date: r.run_date.toISOString().split('T')[0], score: r.seo_health_score }));
   const categories = buildCategoryScores(parseStatGrid(latest.html_report));
+  const wins = computeShareWins(runs);
 
   // Branding only — never lets a missing/misconfigured referral partner
   // 500 the whole dashboard (resolveReferralPartner throws when literally
@@ -130,6 +131,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
     lastAuditDate: history[history.length - 1].date,
     history,
     categories,
+    wins,
     provider,
   });
 });
@@ -799,6 +801,63 @@ async function computeChanges(clientId, currentRunDate, currentScore, currentDed
     newIssues: (currentDeductions || []).filter(d => !prevLabels.has(d.label)),
     resolvedIssues: (prev.deductions || []).filter(d => !currLabels.has(d.label)),
   };
+}
+
+// A deduction label is (almost) always a fixed template with a live count
+// spliced in — "12 page(s) with a poorly sized title tag..." — never a
+// free-floating sentence, since every deduct() call site in
+// audit-engine.js's calcScore() only ever varies the leading number. That
+// makes the text *after* the number a stable identifier for "the same
+// underlying check" across runs, even as the count itself changes — used
+// below to recognize a partial improvement (12 pages -> 4 pages), not just
+// a check disappearing entirely. The one label with no leading number
+// ("No sitemap.xml found") still round-trips fine: parseDeductionLabel
+// falls back to treating the whole string as both the key and an
+// unknown/null count, so it can still register as a win if it fully
+// disappears, just never as a partial one (there's nothing to count).
+function parseDeductionLabel(label) {
+  const m = /^(\d+)\s*(.*)$/.exec(label);
+  return m ? { key: m[2].trim(), count: parseInt(m[1], 10) } : { key: label, count: null };
+}
+
+// The customer share dashboard's "What We've Fixed" feed — a running,
+// entirely positive track record built by diffing EVERY consecutive pair
+// of stored runs (not just latest-vs-previous, unlike computeChanges
+// above, which only serves the one-time "since your last audit" summary
+// right after a live crawl finishes). Deliberately reports improvements
+// only, never new/regressed issues — this page exists to demonstrate
+// ongoing value to a paying customer, not to alarm them the way the
+// Customer Audit Report's fear-driven framing deliberately does.
+function computeShareWins(runs) {
+  const wins = [];
+  for (let i = 1; i < runs.length; i++) {
+    const prevDeductions = runs[i - 1].deductions || [];
+    const currDeductions = runs[i].deductions || [];
+    const currByKey = new Map(currDeductions.map(d => [parseDeductionLabel(d.label).key, parseDeductionLabel(d.label).count]));
+    const date = runs[i].run_date.toISOString().split('T')[0];
+    for (const d of prevDeductions) {
+      const { key, count: prevCount } = parseDeductionLabel(d.label);
+      const stillPresent = currByKey.has(key);
+      const currCount = stillPresent ? currByKey.get(key) : 0;
+      if (prevCount === null) {
+        // A boolean-style check (no count to compare) only counts as a win
+        // if it disappeared outright — there's no partial-improvement case.
+        if (!stillPresent) wins.push({ date, text: key, detail: null });
+        continue;
+      }
+      if (currCount < prevCount) {
+        wins.push({
+          date,
+          text: key,
+          detail: currCount === 0 ? `Fully resolved (was ${prevCount} page${prevCount === 1 ? '' : 's'})` : `${prevCount} → ${currCount} pages`,
+        });
+      }
+    }
+  }
+  // Most recent first, capped so this reads as "recent highlights," not a
+  // complete audit log — a client with a long history could otherwise
+  // scroll through dozens of entries.
+  return wins.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
 }
 
 // runId -> { status: 'crawling'|'done'|'error', pagesCrawled, totalQueued, score, html, error, slug }
