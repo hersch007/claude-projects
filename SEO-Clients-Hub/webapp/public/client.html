@@ -136,6 +136,24 @@
   </div>
 
   <div class="card">
+    <h2>Customer Share Link</h2>
+    <p style="color:#64748b;font-size:12px;margin-bottom:10px">
+      A read-only link for the client to check their own score, trend, and category breakdown — no
+      login, no editing, no page-level findings. Anyone with the link can view it (there's no
+      per-viewer login), so only hand it directly to the client.
+    </p>
+    <div id="share-link-status" style="font-size:13px;margin-bottom:10px">Loading&hellip;</div>
+    <div id="share-link-row" style="display:none;margin-bottom:10px">
+      <input id="share-link-url" type="text" readonly style="width:100%;font-size:13px;padding:9px 10px;border-radius:6px;border:1px solid #cbd5e1;background:#f8fafc">
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="share-link-toggle"></button>
+      <button id="share-link-copy" class="btn secondary" style="display:none">Copy Link</button>
+      <button id="share-link-regenerate" class="btn secondary" style="display:none">Regenerate Link</button>
+    </div>
+  </div>
+
+  <div class="card">
     <h2>Run Audit</h2>
     <div class="run-row">
       <select id="provider-select"></select>
@@ -565,7 +583,59 @@
     load();
   });
 
+  async function loadShareLink() {
+    const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/share-link`);
+    renderShareLink(await res.json());
+  }
+
+  function renderShareLink(data) {
+    const statusEl = document.getElementById('share-link-status');
+    const rowEl = document.getElementById('share-link-row');
+    const urlInput = document.getElementById('share-link-url');
+    const toggleBtn = document.getElementById('share-link-toggle');
+    const copyBtn = document.getElementById('share-link-copy');
+    const regenBtn = document.getElementById('share-link-regenerate');
+
+    if (data.enabled && data.token) {
+      const url = `${window.location.origin}/share/${data.token}`;
+      statusEl.style.color = '#16a34a';
+      statusEl.textContent = 'Active — anyone with this link can view this client\'s dashboard.';
+      rowEl.style.display = '';
+      urlInput.value = url;
+      toggleBtn.textContent = 'Disable Link';
+      toggleBtn.className = 'btn danger';
+      copyBtn.style.display = '';
+      regenBtn.style.display = '';
+    } else {
+      statusEl.style.color = '#64748b';
+      statusEl.textContent = 'Not active — no one can view this client\'s dashboard yet.';
+      rowEl.style.display = 'none';
+      toggleBtn.textContent = 'Enable Link';
+      toggleBtn.className = '';
+      copyBtn.style.display = 'none';
+      regenBtn.style.display = 'none';
+    }
+
+    toggleBtn.onclick = async () => {
+      const action = data.enabled ? 'disable' : 'enable';
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/share-link/${action}`, { method: 'POST' });
+      renderShareLink(await res.json());
+    };
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(urlInput.value);
+      const prev = copyBtn.textContent;
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => { copyBtn.textContent = prev; }, 1500);
+    };
+    regenBtn.onclick = async () => {
+      if (!confirm('This invalidates the current link — anyone still using the old one will get an error. Continue?')) return;
+      const res = await fetch(`/api/clients/${encodeURIComponent(slug)}/share-link/regenerate`, { method: 'POST' });
+      renderShareLink(await res.json());
+    };
+  }
+
   load();
+  loadShareLink();
 </script>
 
 </body>
