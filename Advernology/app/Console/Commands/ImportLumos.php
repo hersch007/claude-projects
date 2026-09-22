@@ -26,6 +26,7 @@ class ImportLumos extends Command
             $data = array_combine($headers, $row);
             $email = strtolower(trim($data['email'] ?? ''));
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { $skipped++; continue; }
+            if (!$this->isEmailProductRow($data)) { $skipped++; continue; }
             $domain = strtolower(substr(strrchr($email, '@'), 1));
             EligibleDomain::firstOrCreate(['domain' => $domain], ['active' => true]);
             $customer = Customer::firstOrCreate(
@@ -54,5 +55,22 @@ class ImportLumos extends Command
         }
         fclose($handle);
         $this->info("Imported: $imported, Skipped: $skipped");
+    }
+
+    /**
+     * Only import rows for email products. If the export includes a
+     * product/service/plan/item/description column, skip rows that
+     * aren't clearly an email product; if no such column is present,
+     * there's nothing to filter on, so let the row through.
+     */
+    private function isEmailProductRow(array $row): bool
+    {
+        foreach (['product', 'product_name', 'service', 'plan', 'plan_name', 'item', 'description'] as $key) {
+            if (! empty($row[$key])) {
+                return stripos((string) $row[$key], 'email') !== false;
+            }
+        }
+
+        return true;
     }
 }

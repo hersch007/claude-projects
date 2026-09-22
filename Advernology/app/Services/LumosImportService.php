@@ -30,6 +30,11 @@ class LumosImportService
                     continue;
                 }
 
+                if (! $this->isEmailProductRow($row)) {
+                    $skipped++;
+                    continue;
+                }
+
                 $domain = strtolower(substr(strrchr($email, '@'), 1));
 
                 // Auto-add domain to eligible list
@@ -91,5 +96,22 @@ class LumosImportService
             'errors'        => $errors ? implode("\n", $errors) : null,
             'admin_id'      => $adminId,
         ]);
+    }
+
+    /**
+     * Only import rows for email products. If the export includes a
+     * product/service/plan/item/description column, skip rows that
+     * aren't clearly an email product; if no such column is present,
+     * there's nothing to filter on, so let the row through.
+     */
+    private function isEmailProductRow(array $row): bool
+    {
+        foreach (['product', 'product_name', 'service', 'plan', 'plan_name', 'item', 'description'] as $key) {
+            if (! empty($row[$key])) {
+                return stripos((string) $row[$key], 'email') !== false;
+            }
+        }
+
+        return true;
     }
 }
