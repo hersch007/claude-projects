@@ -83,6 +83,8 @@ class PaymentResource extends Resource
                         'gray'    => 'refunded',
                     ]),
                 Tables\Columns\TextColumn::make('payment_method')->label('Method'),
+                Tables\Columns\TextColumn::make('reference_number')->label('Reference')->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('needs_review')->boolean()->label('Review?')->color(fn ($state) => $state ? 'danger' : 'gray'),
                 Tables\Columns\TextColumn::make('payment_date')->dateTime()->sortable(),
                 Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -101,6 +103,7 @@ class PaymentResource extends Resource
                         'manual'      => 'Manual',
                         'imported'    => 'Imported',
                     ]),
+                Tables\Filters\TernaryFilter::make('needs_review')->label('Needs Review'),
                 Tables\Filters\Filter::make('payment_date')
                     ->form([
                         Forms\Components\DatePicker::make('from'),

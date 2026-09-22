@@ -10,7 +10,7 @@ class Payment extends Model
     protected $fillable = [
         'customer_id', 'product_id', 'amount', 'transaction_id',
         'status', 'notes', 'payment_date', 'renewal_date', 'payment_method', 'gateway_response',
-        'cardholder_name', 'card_last4', 'card_brand', 'needs_review',
+        'cardholder_name', 'card_last4', 'card_brand', 'reference_number', 'needs_review',
     ];
 
     protected $casts = [
@@ -18,6 +18,7 @@ class Payment extends Model
         'payment_date'     => 'datetime',
         'renewal_date'     => 'date',
         'gateway_response' => 'array',
+        'needs_review'     => 'boolean',
     ];
 
     public function customer(): BelongsTo

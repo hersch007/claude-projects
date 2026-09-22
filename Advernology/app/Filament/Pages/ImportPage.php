@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\ImportLog;
 use App\Services\LumosImportService;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -34,9 +35,13 @@ class ImportPage extends Page implements HasForms
         return $form
             ->schema([
                 FileUpload::make('file')
-                    ->label('Upload Lumos Excel/CSV File')
+                    ->label('Upload SwipeSimple Transactions Export')
                     ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv', 'application/vnd.ms-excel'])
                     ->required(),
+
+                DatePicker::make('since')
+                    ->label('Only Import Transactions On/After')
+                    ->helperText('Leave blank to import every transaction in the file.'),
             ])
             ->statePath('data');
     }
@@ -60,10 +65,10 @@ class ImportPage extends Page implements HasForms
         }
 
         $service = app(LumosImportService::class);
-        $log     = $service->import($uploaded, auth()->id());
+        $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
 
         Notification::make()
-            ->title("Import complete! {$log->rows_imported} imported, {$log->rows_skipped} skipped.")
+            ->title("Import complete! {$log->rows_imported} imported, {$log->rows_refunded} refunded, {$log->rows_skipped} skipped.")
             ->success()
             ->send();
 

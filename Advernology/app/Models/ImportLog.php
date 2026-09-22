@@ -6,5 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ImportLog extends Model
 {
-    protected $fillable = ['filename', 'rows_imported', 'rows_skipped', 'errors', 'admin_id'];
+    protected $fillable = ['filename', 'rows_imported', 'rows_skipped', 'rows_refunded', 'errors', 'admin_id'];
 }
