@@ -9,7 +9,7 @@ use App\Models\Product;
 class PaymentService
 {
     /**
-     * Create a pending payment record and return the Payment + redirect URL.
+     * Create a pending payment record for a product order.
      */
     public function initiate(array $data, Product $product): Payment
     {
@@ -28,30 +28,9 @@ class PaymentService
             'product_id'     => $product->id,
             'amount'         => $product->price,
             'status'         => 'pending',
-            'payment_method' => 'swipepay',
+            'payment_method' => 'swipesimple',
             'notes'          => $data['notes'] ?? null,
         ]);
-    }
-
-    /**
-     * Build SwipePay redirect URL (placeholder — replace with real SDK call).
-     */
-    public function buildSwipePayUrl(Payment $payment): string
-    {
-        $params = http_build_query([
-            'merchant_id'  => config('services.swipepay.merchant_id'),
-            'amount'       => $payment->amount,
-            'order_id'     => $payment->id,
-            'description'  => $payment->product->name ?? 'Email Migration',
-            'return_url'   => route('order.complete', $payment->id),
-            'cancel_url'   => route('order.cancel', $payment->id),
-        ]);
-
-        $base = config('services.swipepay.env') === 'sandbox'
-            ? 'https://sandbox.swipepay.com/pay'
-            : 'https://pay.swipepay.com/pay';
-
-        return "{$base}?{$params}";
     }
 
     public function handleCallback(Payment $payment, array $gatewayData): bool

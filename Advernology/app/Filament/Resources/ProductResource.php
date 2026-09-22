@@ -45,9 +45,10 @@ class ProductResource extends Resource
                 ->maxLength(1000),
 
             Forms\Components\TextInput::make('payment_link')
-                ->label('SwipePay Payment Link')
+                ->label('SwipeSimple Payment Link')
                 ->url()
                 ->placeholder('https://swipesimple.com/links/...')
+                ->helperText('Required for this product to be purchasable online. Without it, customers land on a "payment unavailable" page.')
                 ->columnSpanFull(),
 
             Forms\Components\Toggle::make('active')

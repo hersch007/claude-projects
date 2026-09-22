@@ -53,7 +53,7 @@
 
                     <p class="text-center mt-4" style="font-size:.8rem;color:var(--brand-muted)">
                         <i class="bi bi-lock me-1" style="color:var(--brand-primary)"></i>
-                        Secure payment via SwipePay. Your information is never stored on our servers.
+                        Secure payment via SwipeSimple. Your information is never stored on our servers.
                     </p>
 
                 @else

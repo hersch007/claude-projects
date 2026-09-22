@@ -75,7 +75,7 @@
 
                         <p class="text-center mt-3" style="font-size:.75rem;color:var(--brand-muted)">
                             <i class="bi bi-shield-check me-1" style="color:var(--brand-primary)"></i>
-                            Secured by SwipePay. Your info is never stored on our servers.
+                            Secured by SwipeSimple. Your info is never stored on our servers.
                         </p>
                     </form>
                 </div>

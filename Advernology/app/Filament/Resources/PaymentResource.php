@@ -53,11 +53,12 @@ class PaymentResource extends Resource
 
             Forms\Components\Select::make('payment_method')
                 ->options([
-                    'swipepay' => 'SwipePay',
-                    'manual'   => 'Manual',
-                    'imported' => 'Imported',
+                    'swipesimple' => 'SwipeSimple',
+                    'swipepay'    => 'SwipePay (legacy)',
+                    'manual'      => 'Manual',
+                    'imported'    => 'Imported',
                 ])
-                ->default('swipepay'),
+                ->default('swipesimple'),
 
             Forms\Components\DateTimePicker::make('payment_date'),
             Forms\Components\DatePicker::make('renewal_date')->label('Renewal Date'),
@@ -95,9 +96,10 @@ class PaymentResource extends Resource
                     ]),
                 Tables\Filters\SelectFilter::make('payment_method')
                     ->options([
-                        'swipepay' => 'SwipePay',
-                        'manual'   => 'Manual',
-                        'imported' => 'Imported',
+                        'swipesimple' => 'SwipeSimple',
+                        'swipepay'    => 'SwipePay (legacy)',
+                        'manual'      => 'Manual',
+                        'imported'    => 'Imported',
                     ]),
                 Tables\Filters\Filter::make('payment_date')
                     ->form([

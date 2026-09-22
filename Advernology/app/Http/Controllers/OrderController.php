@@ -27,13 +27,17 @@ class OrderController extends Controller
             return redirect($product->payment_link);
         }
 
-        $payUrl = $this->paymentService->buildSwipePayUrl($payment);
-        return view('public.payment', compact('payment', 'payUrl', 'product'));
+        return redirect()->route('order.unavailable', $payment);
+    }
+
+    public function unavailable(Payment $payment)
+    {
+        return view('public.payment_unavailable', compact('payment'));
     }
 
     public function complete(Payment $payment)
     {
-        // SwipePay callback after success
+        // Callback after a successful SwipeSimple payment
         $this->paymentService->handleCallback($payment, request()->all());
 
         return view('public.complete', compact('payment'));

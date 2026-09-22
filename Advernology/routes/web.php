@@ -23,3 +23,4 @@ Route::get('/order/{product}', [OrderController::class, 'create'])->name('order.
 Route::post('/order/{product}', [OrderController::class, 'store'])->name('order.store');
 Route::get('/order/{payment}/complete', [OrderController::class, 'complete'])->name('order.complete');
 Route::get('/order/{payment}/cancel', [OrderController::class, 'cancel'])->name('order.cancel');
+Route::get('/order/{payment}/unavailable', [OrderController::class, 'unavailable'])->name('order.unavailable');

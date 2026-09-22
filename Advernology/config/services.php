@@ -24,10 +24,4 @@ return [
         'model'   => env('ANTHROPIC_MODEL', 'claude-sonnet-4-6'),
     ],
 
-    'swipepay' => [
-        'api_key'     => env('SWIPEPAY_API_KEY'),
-        'merchant_id' => env('SWIPEPAY_MERCHANT_ID'),
-        'env'         => env('SWIPEPAY_ENV', 'sandbox'),
-    ],
-
 ];

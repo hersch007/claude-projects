@@ -55,7 +55,7 @@ npm run build
 cp .env.example .env
 php artisan key:generate
 
-# 6. Edit .env — set DB, mail, Anthropic, Stripe/SwipePay credentials
+# 6. Edit .env — set DB, mail, and Anthropic credentials
 #    (see Section 3)
 
 # 7. Run migrations & seed
@@ -90,9 +90,9 @@ DB_PASSWORD=your_secure_password
 ANTHROPIC_API_KEY=sk-ant-...
 ANTHROPIC_MODEL=claude-sonnet-4-6
 
-# SwipePay / payment gateway
-SWIPEPAY_API_KEY=
-SWIPEPAY_MERCHANT_ID=
+# Payments are handled via SwipeSimple hosted payment links.
+# No API keys needed — set each product's payment link in
+# Admin → Configuration → Products.
 
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.yourhost.com

@@ -160,7 +160,7 @@
             <div class="col-sm-6 col-lg-3 text-center">
                 <div class="step-number">3</div>
                 <h5 class="fw-bold mb-2">Secure Payment</h5>
-                <p class="text-muted small">Complete your one-time payment via SwipePay. Takes under 2 minutes.</p>
+                <p class="text-muted small">Complete your one-time payment via SwipeSimple. Takes under 2 minutes.</p>
             </div>
             <div class="col-sm-6 col-lg-3 text-center">
                 <div class="step-number">4</div>
