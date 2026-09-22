@@ -45,7 +45,7 @@ const GOOD_THRESHOLD = 85; // matches audit-engine.js's own scoreLabel tiering
 // exports this today, so it's a plain constant — re-count
 // `grep -c "if (.*deduct(" lib/audit-engine.js` and update this if
 // calcScore() gains or loses a check.
-const TOTAL_CHECK_TYPES = 33;
+const TOTAL_CHECK_TYPES = 34;
 
 // Same red/amber/green thresholds as build-docx-report.js's scoreTierColor
 // — duplicated rather than imported since this file no longer shares any
@@ -83,7 +83,7 @@ function parseStatGrid(html) {
   return grid;
 }
 
-// Groups the flat 27 pass/fail/warn tiles (see parseStatGrid above) into a
+// Groups the flat 28 pass/fail/warn tiles (see parseStatGrid above) into a
 // handful of named categories, the same idea as a competitor report's
 // weighted-category cards. There's no category taxonomy anywhere else in
 // this codebase — the on-screen report only ever shows the flat grid — so
@@ -97,6 +97,7 @@ const CATEGORIES = [
   { name: 'Titles & Meta Tags', labels: ['Pages Missing Title', 'Missing Meta Description', 'Poorly Sized Title Tags', 'Duplicate Title Tags', 'Duplicate Meta Descriptions', 'Multiple Title/Meta Tags'] },
   { name: 'Headings', labels: ['Pages Missing H1', 'Pages w/ Multiple H1s', 'Duplicate H1 Tags', 'Skipped Heading Levels'] },
   { name: 'Structured Data', labels: ['Pages Without Schema', 'Invalid Schema Markup', 'Incomplete LocalBusiness Schema'] },
+  { name: 'Rich Result Eligibility', labels: ['Rich Result Ineligible Pages'] },
   { name: 'Images', labels: ['Pages w/ Missing Image Alt', 'Images Missing Dimensions'] },
   { name: 'Technical & Crawlability', labels: ['Missing Canonical Tag', 'Sitemap.xml Found', 'Pages Set to Noindex', 'Blocked by robots.txt', 'Missing Viewport Tag', 'Missing HTML Lang', 'No HTTP Compression', 'Mixed-Content Resources'] },
   { name: 'Links & Site Structure', labels: ['Pages w/ Broken Internal Links', 'Orphan Pages'] },
@@ -113,6 +114,7 @@ const CATEGORY_CONSEQUENCE = {
   'Titles & Meta Tags': 'Google and your prospects see confusing, missing, or duplicated information before they even click — a lot of them never make it to your site at all.',
   'Headings': "Search engines can't tell what your pages are actually about, and neither can someone skimming your content — both leave confused.",
   'Structured Data': "Google can't verify who you are, what you do, or where you're located — so it shows a competitor's listing with real trust signals instead of yours.",
+  'Rich Result Eligibility': "Google won't show star ratings, an FAQ dropdown, or breadcrumb navigation for these pages in search — just a plain listing, even though the underlying content is already there.",
   'Images': "Search engines can't see what's in your images, and neither can visitors using assistive technology — that's lost visibility and lost customers.",
   'Technical & Crawlability': 'Parts of your site may be invisible to Google entirely — pages nobody can find in search, no matter how good the content is.',
   'Links & Site Structure': 'Visitors and search engines are hitting dead ends on your own website — trust and rankings leaking out with every broken click.',
