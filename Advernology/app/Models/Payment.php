@@ -11,6 +11,7 @@ class Payment extends Model
         'customer_id', 'product_id', 'amount', 'transaction_id',
         'status', 'notes', 'payment_date', 'renewal_date', 'payment_method', 'gateway_response',
         'cardholder_name', 'card_last4', 'card_brand', 'reference_number', 'needs_review',
+        'email_addresses',
     ];
 
     protected $casts = [
@@ -19,6 +20,7 @@ class Payment extends Model
         'renewal_date'     => 'date',
         'gateway_response' => 'array',
         'needs_review'     => 'boolean',
+        'email_addresses'  => 'array',
     ];
 
     public function customer(): BelongsTo
