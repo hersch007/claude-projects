@@ -2,10 +2,11 @@
 
     <div class="space-y-6">
 
-        <x-filament::section heading="Upload Lumos Customer Payment File">
+        <x-filament::section heading="Upload SwipeSimple Transactions Export">
             <p class="text-sm text-gray-500 mb-4">
-                Upload the Excel (.xlsx) or CSV file exported from the Lumos payment system.
-                The importer will automatically create customers, domains, and payment records.
+                Upload the Excel (.xlsx) or CSV transactions export from SwipeSimple. Only approved
+                sales for known email-product reference codes are imported; matching refunds mark
+                the original sale as refunded. Customers are matched/created by cardholder name.
             </p>
 
             <form wire:submit.prevent="import">
@@ -26,6 +27,7 @@
                         <tr class="border-b text-left text-gray-500">
                             <th class="py-2 pr-4">File</th>
                             <th class="py-2 pr-4">Imported</th>
+                            <th class="py-2 pr-4">Refunded</th>
                             <th class="py-2 pr-4">Skipped</th>
                             <th class="py-2 pr-4">Date</th>
                             <th class="py-2">Errors</th>
@@ -36,6 +38,7 @@
                         <tr class="border-b">
                             <td class="py-2 pr-4 font-medium">{{ $log->filename }}</td>
                             <td class="py-2 pr-4 text-green-600">{{ $log->rows_imported }}</td>
+                            <td class="py-2 pr-4 text-blue-600">{{ $log->rows_refunded }}</td>
                             <td class="py-2 pr-4 text-yellow-600">{{ $log->rows_skipped }}</td>
                             <td class="py-2 pr-4 text-gray-500">{{ $log->created_at->format('M j, Y g:ia') }}</td>
                             <td class="py-2 text-red-500 text-xs">{{ $log->errors ? 'Yes' : '—' }}</td>
@@ -43,7 +46,7 @@
                         @endforeach
 
                         @if($this->getLogs()->isEmpty())
-                            <tr><td colspan="5" class="py-4 text-gray-400 text-center">No imports yet.</td></tr>
+                            <tr><td colspan="6" class="py-4 text-gray-400 text-center">No imports yet.</td></tr>
                         @endif
                     </tbody>
                 </table>

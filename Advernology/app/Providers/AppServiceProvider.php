@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(\App\Services\EligibilityService::class);
         $this->app->singleton(\App\Services\PaymentService::class);
         $this->app->singleton(\App\Services\AnthropicService::class);
-        $this->app->singleton(\App\Services\LumosImportService::class);
+        $this->app->singleton(\App\Services\SwipeSimpleImportService::class);
     }
 
     public function boot(): void

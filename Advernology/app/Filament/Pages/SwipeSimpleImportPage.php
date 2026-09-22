@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\ImportLog;
-use App\Services\LumosImportService;
+use App\Services\SwipeSimpleImportService;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -13,15 +13,15 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class ImportPage extends Page implements HasForms
+class SwipeSimpleImportPage extends Page implements HasForms
 {
     use InteractsWithForms;
 
     protected static ?string $navigationIcon  = 'heroicon-o-arrow-up-tray';
-    protected static ?string $navigationLabel = 'Import Lumos Data';
+    protected static ?string $navigationLabel = 'Import SwipeSimple Transactions';
     protected static ?string $navigationGroup = 'Operations';
     protected static ?int    $navigationSort  = 10;
-    protected static string  $view            = 'filament.pages.import-page';
+    protected static string  $view            = 'filament.pages.swipesimple-import';
 
     public ?array $data = [];
 
@@ -64,7 +64,7 @@ class ImportPage extends Page implements HasForms
             $uploaded = $file;
         }
 
-        $service = app(LumosImportService::class);
+        $service = app(SwipeSimpleImportService::class);
         $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
 
         Notification::make()

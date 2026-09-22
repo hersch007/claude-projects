@@ -2,16 +2,16 @@
 
 namespace App\Console\Commands;
 
-use App\Services\LumosImportService;
+use App\Services\SwipeSimpleImportService;
 use Illuminate\Console\Command;
 use Illuminate\Http\UploadedFile;
 
-class ImportLumos extends Command
+class ImportSwipeSimple extends Command
 {
-    protected $signature = 'lumos:import {file} {--since= : Only import transactions on/after this date (Y-m-d)}';
+    protected $signature = 'swipesimple:import {file} {--since= : Only import transactions on/after this date (Y-m-d)}';
     protected $description = 'Import a SwipeSimple transactions export (email products only)';
 
-    public function handle(LumosImportService $service): int
+    public function handle(SwipeSimpleImportService $service): int
     {
         $path = $this->argument('file');
 

@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Services\AnthropicService;
-use App\Services\LumosImportService;
+use App\Services\SwipeSimpleImportService;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -54,7 +54,7 @@ class Dashboard extends BaseDashboard
             $uploaded = collect((array) $file)->first();
         }
 
-        $service = app(LumosImportService::class);
+        $service = app(SwipeSimpleImportService::class);
         $log     = $service->import($uploaded, auth()->id());
 
         Notification::make()

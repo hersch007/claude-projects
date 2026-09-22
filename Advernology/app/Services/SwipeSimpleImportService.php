@@ -11,7 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
-class LumosImportService
+class SwipeSimpleImportService
 {
     /**
      * SwipeSimple "Reference Number" (normalized: whitespace stripped,

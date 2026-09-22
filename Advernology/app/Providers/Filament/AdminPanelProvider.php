@@ -3,7 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\AiAnalyzePage;
-use App\Filament\Pages\ImportPage;
+use App\Filament\Pages\SwipeSimpleImportPage;
 use App\Filament\Resources\CustomerResource;
 use App\Filament\Resources\EligibleDomainResource;
 use App\Filament\Resources\PaymentResource;
@@ -46,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->pages([
                 Pages\Dashboard::class,
-                ImportPage::class,
+                SwipeSimpleImportPage::class,
                 AiAnalyzePage::class,
             ])
             ->widgets([
