@@ -1342,6 +1342,7 @@ function createEngine(client) {
     const totalIssues = pages.reduce((a, p) => a + p.issues.length, 0);
     const totalWarnings = pages.reduce((a, p) => a + p.warnings.length, 0);
     const noSchemaPgs = pages.filter(p => p.schemaTypes.length === 0);
+    const noCanonicalPgs = pages.filter(p => !p.canonical);
     const noMetaPgs = pages.filter(p => !p.metaDesc);
     const noTitlePgs = pages.filter(p => !p.title);
     const noH1Pgs = pages.filter(p => p.h1Count === 0);
@@ -1700,7 +1701,7 @@ function createEngine(client) {
       <div class="snap-label">Pages w/ Missing Image Alt</div>
     </div>
     <div class="snap-card">
-      <div class="snap-num neutral">${pages.filter(p => !p.canonical).length}</div>
+      <div class="snap-num ${noCanonicalPgs.length === 0 ? 'good' : 'warn'}">${noCanonicalPgs.length}</div>
       <div class="snap-label">Missing Canonical Tag</div>
     </div>
     <div class="snap-card">
