@@ -158,7 +158,13 @@ function buildCategoryScores(grid) {
     const affectedPages = items
       .filter(i => i.status === 'bad' || i.status === 'warn')
       .reduce((sum, i) => { const n = parseInt(i.value, 10); return sum + (Number.isFinite(n) ? n : 0); }, 0);
-    return { name: cat.name, fail, warn, good, total, score, affectedPages };
+    // Per-check breakdown (label/value/status only — never a page URL or a
+    // fix instruction) for the share dashboard's expandable category cards.
+    // Sorted worst-first so a customer clicking a card sees what's actually
+    // wrong before what's already fine.
+    const statusOrder = { bad: 0, warn: 1, good: 2, neutral: 3 };
+    const sortedItems = [...items].sort((a, b) => (statusOrder[a.status] ?? 9) - (statusOrder[b.status] ?? 9));
+    return { name: cat.name, fail, warn, good, total, score, affectedPages, items: sortedItems };
   }).filter(Boolean);
 }
 

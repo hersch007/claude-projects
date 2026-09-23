@@ -59,13 +59,25 @@
   .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 520px) { .category-grid { grid-template-columns: 1fr; } }
   .category-card {
-    display: flex; align-items: center; gap: 12px;
+    display: flex; flex-direction: column;
     border: 1px solid #E2E8F0; border-left-width: 5px; border-left-style: solid;
-    border-radius: 10px; padding: 12px 14px;
+    border-radius: 10px; padding: 12px 14px; cursor: pointer;
   }
+  .category-card-header { display: flex; align-items: center; gap: 12px; }
   .category-score { font-size: 24px; font-weight: bold; min-width: 42px; }
   .category-name { font-weight: bold; font-size: 13px; margin-bottom: 2px; }
   .category-detail { font-size: 11px; color: #64748B; }
+  .category-chevron { font-size: 11px; color: #94A3B8; transition: transform 0.15s; flex-shrink: 0; }
+  .category-card.expanded .category-chevron { transform: rotate(180deg); }
+  .category-item-list { display: none; margin-top: 4px; }
+  .category-card.expanded .category-item-list { display: block; }
+  .category-item-row {
+    display: flex; align-items: center; gap: 8px; padding: 6px 0 6px 54px;
+    border-top: 1px solid #F1F5F9; font-size: 12px;
+  }
+  .category-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .category-item-label { flex: 1; color: #1E293B; }
+  .category-item-value { color: #64748B; font-weight: bold; white-space: nowrap; }
 
   .wins-card {
     background: #fff; border-radius: 14px; padding: 24px; margin-bottom: 20px;
@@ -210,19 +222,38 @@
     `;
   }
 
+  // "good"/"warn"/"bad"/"neutral" match the status classes parseStatGrid
+  // (server-side) reads off the internal report's own snap-card markup —
+  // same vocabulary, not redefined here.
+  const ITEM_STATUS_COLOR = { bad: '#DC2626', warn: '#D97706', good: '#16A34A', neutral: '#94A3B8' };
+
+  function renderCategoryItems(items) {
+    if (!items || !items.length) return '';
+    return items.map(i => `
+      <div class="category-item-row">
+        <div class="category-item-dot" style="background:${ITEM_STATUS_COLOR[i.status] || ITEM_STATUS_COLOR.neutral}"></div>
+        <div class="category-item-label">${escapeHtml(i.label)}</div>
+        <div class="category-item-value">${escapeHtml(i.value)}</div>
+      </div>`).join('');
+  }
+
   function renderCategories(categories) {
     if (!categories.length) {
       return `<div class="trend-empty">A detailed category breakdown isn't available for the most recent run.</div>`;
     }
-    return categories.map(cat => {
+    return categories.map((cat, i) => {
       const tier = scoreTierColor(cat.score);
       return `
-        <div class="category-card" style="border-left-color:${tier}">
-          <div class="category-score" style="color:${tier}">${cat.score}</div>
-          <div>
-            <div class="category-name">${escapeHtml(cat.name)}</div>
-            <div class="category-detail">${cat.good}/${cat.total} passed</div>
+        <div class="category-card" data-idx="${i}" style="border-left-color:${tier}">
+          <div class="category-card-header">
+            <div class="category-score" style="color:${tier}">${cat.score}</div>
+            <div style="flex:1">
+              <div class="category-name">${escapeHtml(cat.name)}</div>
+              <div class="category-detail">${cat.good}/${cat.total} passed</div>
+            </div>
+            <div class="category-chevron">&#9662;</div>
           </div>
+          <div class="category-item-list">${renderCategoryItems(cat.items)}</div>
         </div>`;
     }).join('');
   }
@@ -300,6 +331,15 @@
     document.getElementById('loading').style.display = 'none';
     document.getElementById('content').style.display = 'block';
   }
+
+  // Delegated (not per-card) so it keeps working across renderCategories()
+  // re-rendering the grid's innerHTML on every load() — no per-card
+  // listeners to re-attach.
+  document.getElementById('category-grid').addEventListener('click', (e) => {
+    const card = e.target.closest('.category-card');
+    if (!card) return;
+    card.classList.toggle('expanded');
+  });
 
   load();
 </script>
