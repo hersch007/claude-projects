@@ -8,7 +8,6 @@ use App\Models\Payment;
 use App\Models\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 
 class SwipeSimpleImportService
 {
@@ -119,19 +118,20 @@ class SwipeSimpleImportService
                     continue;
                 }
 
-                $customer = Customer::firstOrCreate(
-                    ['name' => $cardholderName],
-                    [
-                        'email'  => $this->placeholderEmail($cardholderName),
-                        'domain' => 'no-email.import',
-                        'notes'  => 'Created from SwipeSimple transaction import — no email on file.',
-                    ]
-                );
+                // The customers table is the authoritative Lumos roster — don't
+                // fabricate new customer records from a card name. Only attach
+                // to an existing customer with an exact name match; otherwise
+                // leave the payment unlinked (customer_id null) and flagged for
+                // manual review, rather than inventing a placeholder identity.
+                $customer = Customer::where('name', $cardholderName)->first();
+                if (! $customer) {
+                    $needsReview = true;
+                }
 
                 $amount = (float) preg_replace('/[^0-9.]/', '', $row['amount'] ?? 0);
 
                 Payment::create([
-                    'customer_id'      => $customer->id,
+                    'customer_id'      => optional($customer)->id,
                     'product_id'       => optional($product)->id,
                     'amount'           => $amount,
                     'transaction_id'   => $transactionId,
@@ -265,26 +265,5 @@ class SwipeSimpleImportService
         } catch (\Exception) {
             return null;
         }
-    }
-
-    /**
-     * SwipeSimple exports don't include the customer's email, only their
-     * name on the card. We still need a unique, non-null email to satisfy
-     * the customers table, so generate a placeholder until a real one is
-     * known (e.g. from a support reply or future checkout).
-     */
-    private function placeholderEmail(string $name): string
-    {
-        $slug = Str::slug($name, '.');
-        $slug = $slug !== '' ? $slug : 'customer';
-
-        $email  = "{$slug}@no-email.import";
-        $suffix = 2;
-        while (Customer::where('email', $email)->exists()) {
-            $email = "{$slug}.{$suffix}@no-email.import";
-            $suffix++;
-        }
-
-        return $email;
     }
 }
