@@ -18,9 +18,13 @@ class SwipeSimpleImportService
      * represent an email product. Anything else (e.g. "Advernology Pay Now",
      * "Advernology LB link") is a different service and is skipped, never
      * imported.
+     *
+     * '2658ISPMAIL1D' and '2658ISPMAIL1' both price at $9.99, matching the
+     * current "1 Email Account" product — they're the same product under two
+     * reference-code spellings, not separate products.
      */
     private const REFERENCE_PRODUCT_MAP = [
-        '2658ISPMAIL1D' => 'Drop-back / 1D Package',
+        '2658ISPMAIL1D' => '1 Email Account',
         '2658ISPMAIL1'  => '1 Email Account',
         '2658ISPMAIL6'  => '6 Email Package',
         '2658ISPMAIL25' => '25 Email Package',
