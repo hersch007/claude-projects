@@ -11,7 +11,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class SwipeSimpleImportPage extends Page implements HasForms
 {
@@ -37,6 +37,11 @@ class SwipeSimpleImportPage extends Page implements HasForms
                 FileUpload::make('file')
                     ->label('Upload SwipeSimple Transactions Export')
                     ->acceptedFileTypes(['text/csv', 'text/plain', 'application/vnd.ms-excel'])
+                    // Cardholder names and partial card numbers pass through this
+                    // file — keep it off the public disk, not web-accessible.
+                    ->disk('local')
+                    ->directory('swipesimple-imports')
+                    ->visibility('private')
                     ->required(),
 
                 DatePicker::make('since')
@@ -56,19 +61,13 @@ class SwipeSimpleImportPage extends Page implements HasForms
             return;
         }
 
-        // Resolve Livewire temp file. Use Livewire's own resolver rather than
-        // guessing the storage path — it correctly locates the file on
-        // whichever disk config('livewire.temporary_file_upload.disk') /
-        // filesystems.default actually is, instead of assuming 'local'.
-        $uploaded = is_string($file)
-            ? TemporaryUploadedFile::createFromLivewire($file)
-            : $file;
+        // By the time getState() runs, Filament's FileUpload has already
+        // saved the file permanently to the disk configured above — $file
+        // here is just that filename (relative to the 'local' disk), not a
+        // raw Livewire temp upload reference.
+        $path = is_string($file) ? Storage::disk('local')->path($file) : null;
 
-        // A stale/corrupted Livewire component reference can produce a file
-        // object that doesn't actually point at a real, readable file. Catch
-        // that here with a clear message instead of crashing further down
-        // (e.g. a garbled filename failing to insert into the database).
-        if (! $uploaded->isValid() || ! is_readable($uploaded->getRealPath() ?: '')) {
+        if (! $path || ! is_readable($path)) {
             Notification::make()
                 ->title('That upload seems to have expired or gotten corrupted. Please reload this page and re-upload the file.')
                 ->danger()
@@ -76,13 +75,20 @@ class SwipeSimpleImportPage extends Page implements HasForms
             return;
         }
 
-        $service = app(SwipeSimpleImportService::class);
-        $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
+        $uploaded = new \Illuminate\Http\UploadedFile($path, basename($path), null, null, true);
 
-        Notification::make()
-            ->title("Import complete! {$log->rows_imported} imported, {$log->rows_refunded} refunded, {$log->rows_skipped} skipped.")
-            ->success()
-            ->send();
+        try {
+            $service = app(SwipeSimpleImportService::class);
+            $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
+
+            Notification::make()
+                ->title("Import complete! {$log->rows_imported} imported, {$log->rows_refunded} refunded, {$log->rows_skipped} skipped.")
+                ->success()
+                ->send();
+        } finally {
+            // Don't leave transaction data (cardholder names, card fragments) sitting in storage.
+            Storage::disk('local')->delete($file);
+        }
 
         $this->form->fill();
     }
