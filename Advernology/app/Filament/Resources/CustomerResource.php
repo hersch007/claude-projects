@@ -3,9 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CustomerResource\Pages;
+use App\Filament\Resources\CustomerResource\RelationManagers\PaymentsRelationManager;
 use App\Models\Customer;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,6 +29,28 @@ class CustomerResource extends Resource
             Forms\Components\TextInput::make('phone')->tel()->maxLength(30),
             Forms\Components\TextInput::make('domain')->maxLength(255),
             Forms\Components\Textarea::make('notes')->rows(3),
+        ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist->schema([
+            Section::make('Customer Info')
+                ->columns(2)
+                ->schema([
+                    TextEntry::make('name'),
+                    TextEntry::make('email')->copyable(),
+                    TextEntry::make('domain')->badge(),
+                    TextEntry::make('phone')->placeholder('—'),
+                    TextEntry::make('total_paid')
+                        ->label('Total Paid')
+                        ->money('USD'),
+                    TextEntry::make('created_at')->dateTime()->label('Customer Since'),
+                ]),
+            Section::make('Notes')
+                ->schema([
+                    TextEntry::make('notes')->hiddenLabel()->placeholder('No notes on file.'),
+                ]),
         ]);
     }
 
@@ -71,7 +97,7 @@ class CustomerResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [PaymentsRelationManager::class];
     }
 
     public static function getPages(): array
@@ -79,6 +105,7 @@ class CustomerResource extends Resource
         return [
             'index'  => Pages\ListCustomers::route('/'),
             'create' => Pages\CreateCustomer::route('/create'),
+            'view'   => Pages\ViewCustomer::route('/{record}'),
             'edit'   => Pages\EditCustomer::route('/{record}/edit'),
         ];
     }
