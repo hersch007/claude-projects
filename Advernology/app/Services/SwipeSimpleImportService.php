@@ -49,6 +49,7 @@ class SwipeSimpleImportService
         $refunded  = 0;
         $errors    = [];
         $refundRows = [];
+        $missingProductsWarned = []; // productName => true, so we don't log the same one per row
 
         // Pass 1: import approved email-product sales.
         foreach ($sheet as $line => $row) {
@@ -101,8 +102,11 @@ class SwipeSimpleImportService
                 $product     = Product::where('name', $productName)->first();
                 $needsReview = false;
                 if (! $product) {
-                    $errors[]    = "Row {$line}: reference '{$reference}' expects product '{$productName}' but it wasn't found in the catalog.";
                     $needsReview = true;
+                    if (! isset($missingProductsWarned[$productName])) {
+                        $missingProductsWarned[$productName] = true;
+                        $errors[] = "Reference '{$reference}' expects product '{$productName}' but it wasn't found in the catalog (starting at row {$line}) — these rows still imported, flagged Needs Review.";
+                    }
                 }
 
                 $cardholderName = trim($row['cardholder_name'] ?? '');
@@ -174,12 +178,20 @@ class SwipeSimpleImportService
             }
         }
 
+        $errorText = $errors ? implode("\n", $errors) : null;
+        if ($errorText && strlen($errorText) > 60000) {
+            // Defense in depth: however unlikely after deduping the common
+            // case above, don't let a flood of distinct error messages
+            // overflow the errors column and crash the whole import.
+            $errorText = substr($errorText, 0, 60000) . "\n… (truncated, see logs for the rest)";
+        }
+
         return ImportLog::create([
             'filename'      => $file->getClientOriginalName(),
             'rows_imported' => $imported,
             'rows_skipped'  => $skipped,
             'rows_refunded' => $refunded,
-            'errors'        => $errors ? implode("\n", $errors) : null,
+            'errors'        => $errorText,
             'admin_id'      => $adminId,
         ]);
     }
