@@ -4,7 +4,7 @@
 
         <x-filament::section heading="Upload SwipeSimple Transactions Export">
             <p class="text-sm text-gray-500 mb-4">
-                Upload the Excel (.xlsx) or CSV transactions export from SwipeSimple. Only approved
+                Upload the CSV transactions export from SwipeSimple. Only approved
                 sales for known email-product reference codes are imported; matching refunds mark
                 the original sale as refunded. Customers are matched/created by cardholder name.
             </p>

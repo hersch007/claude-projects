@@ -9,7 +9,6 @@ use App\Models\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 
 class SwipeSimpleImportService
 {
@@ -187,24 +186,36 @@ class SwipeSimpleImportService
 
     /**
      * Read the file into an array of rows keyed by normalized header name,
-     * handling a UTF-8 BOM on the first header cell explicitly rather than
-     * relying on the Excel/CSV reader to strip it.
+     * handling a UTF-8 BOM on the first header cell explicitly. SwipeSimple
+     * only ever exports CSV, so this reads it directly with fgetcsv rather
+     * than going through maatwebsite/excel — that package's internal temp
+     * file handling doesn't reliably find Livewire's uploaded file on this
+     * host, and a plain CSV reader avoids the whole dependency.
      */
     private function readRows(UploadedFile $file): array
     {
-        $sheets = Excel::toArray(null, $file);
-        $rows   = $sheets[0] ?? [];
-
-        if (empty($rows)) {
+        $path = $file->getRealPath();
+        if (! $path || ! is_readable($path)) {
             return [];
         }
 
-        $headers = array_map([$this, 'normalizeHeader'], array_shift($rows));
+        $handle = fopen($path, 'r');
+        if (! $handle) {
+            return [];
+        }
+
+        $headerRow = fgetcsv($handle);
+        if ($headerRow === false) {
+            fclose($handle);
+            return [];
+        }
+
+        $headers = array_map([$this, 'normalizeHeader'], $headerRow);
         $count   = count($headers);
 
         $result = [];
         $line   = 1; // the header row is line 1
-        foreach ($rows as $values) {
+        while (($values = fgetcsv($handle)) !== false) {
             $line++;
             if (! array_filter($values, fn ($v) => $v !== null && $v !== '')) {
                 continue; // blank row
@@ -212,6 +223,7 @@ class SwipeSimpleImportService
             $values        = array_pad(array_slice($values, 0, $count), $count, null);
             $result[$line] = array_combine($headers, $values);
         }
+        fclose($handle);
 
         return $result;
     }

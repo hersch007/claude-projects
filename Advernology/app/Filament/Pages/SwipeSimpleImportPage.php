@@ -36,7 +36,7 @@ class SwipeSimpleImportPage extends Page implements HasForms
             ->schema([
                 FileUpload::make('file')
                     ->label('Upload SwipeSimple Transactions Export')
-                    ->acceptedFileTypes(['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv', 'application/vnd.ms-excel'])
+                    ->acceptedFileTypes(['text/csv', 'text/plain', 'application/vnd.ms-excel'])
                     ->required(),
 
                 DatePicker::make('since')
