@@ -64,6 +64,18 @@ class SwipeSimpleImportPage extends Page implements HasForms
             ? TemporaryUploadedFile::createFromLivewire($file)
             : $file;
 
+        // A stale/corrupted Livewire component reference can produce a file
+        // object that doesn't actually point at a real, readable file. Catch
+        // that here with a clear message instead of crashing further down
+        // (e.g. a garbled filename failing to insert into the database).
+        if (! $uploaded->isValid() || ! is_readable($uploaded->getRealPath() ?: '')) {
+            Notification::make()
+                ->title('That upload seems to have expired or gotten corrupted. Please reload this page and re-upload the file.')
+                ->danger()
+                ->send();
+            return;
+        }
+
         $service = app(SwipeSimpleImportService::class);
         $log     = $service->import($uploaded, auth()->id(), $data['since'] ?? null);
 
