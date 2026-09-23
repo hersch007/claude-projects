@@ -92,6 +92,8 @@ class CustomerResource extends Resource
                     ->exporter(\App\Filament\Exports\CustomerExporter::class)
                     ->label('Export CSV'),
             ])
+            ->paginationPageOptions([10, 25, 50])
+            ->defaultPaginationPageOption(25)
             ->defaultSort('created_at', 'desc');
     }
 
