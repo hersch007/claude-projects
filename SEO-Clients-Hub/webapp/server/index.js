@@ -134,6 +134,16 @@ app.get('/api/share/:token/summary', async (req, res) => {
   const categories = buildCategoryScores(parseStatGrid(latestRun.html_report));
   const wins = computeShareWins(runs);
 
+  // Only present at all for a client with Search Console connected — most
+  // clients don't have one, and computeKeywordWins needs at least 2
+  // snapshots to diff anyway, same "hide entirely, don't show empty" call
+  // as the wins card above.
+  const { rows: gscSnapshots } = await getPool().query(
+    `SELECT period_end, top_keywords FROM gsc_snapshots WHERE client_id = $1 ORDER BY period_end ASC`,
+    [client.id]
+  );
+  const keywordWins = computeKeywordWins(gscSnapshots);
+
   // Branding only — never lets a missing/misconfigured referral partner
   // 500 the whole dashboard (resolveReferralPartner throws when literally
   // no active partner exists anywhere), since the score/trend/categories
@@ -154,6 +164,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
     history,
     categories,
     wins,
+    keywordWins,
     provider,
   });
 });
@@ -880,6 +891,35 @@ function computeShareWins(runs) {
   // complete audit log — a client with a long history could otherwise
   // scroll through dozens of entries.
   return wins.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+}
+
+// Same "diff every consecutive pair, positive-only" idea as
+// computeShareWins above, applied to GSC keyword rankings instead of
+// audit deductions. Each gsc_snapshots row's top_keywords is only the top
+// 25 keywords BY CLICKS for that period (see seo-tool/gsc.js), not an
+// exhaustive list sorted by position — a keyword climbing to a great
+// position while staying low-volume/low-click may never appear in either
+// snapshot at all, so this can under-report real improvements on
+// low-traffic keywords. Not fixable without changing how GSC is queried;
+// accepted as a known limitation rather than solved here.
+function computeKeywordWins(snapshots) {
+  const wins = [];
+  for (let i = 1; i < snapshots.length; i++) {
+    const prevKeywords = snapshots[i - 1].top_keywords || [];
+    const currKeywords = snapshots[i].top_keywords || [];
+    const prevByKeyword = new Map(prevKeywords.map(k => [k.keyword, k.position]));
+    const date = snapshots[i].period_end.toISOString().split('T')[0];
+    for (const k of currKeywords) {
+      if (k.position === null || k.position > 10) continue;
+      const prevPosition = prevByKeyword.get(k.keyword);
+      // Wasn't in the top 10 last period (or wasn't in the top-25-by-clicks
+      // list at all) and is now — a real, reportable improvement either way.
+      if (prevPosition === undefined || prevPosition > 10) {
+        wins.push({ date, keyword: k.keyword, position: k.position });
+      }
+    }
+  }
+  return wins.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 8);
 }
 
 // runId -> { status: 'crawling'|'done'|'error', pagesCrawled, totalQueued, score, html, error, slug }

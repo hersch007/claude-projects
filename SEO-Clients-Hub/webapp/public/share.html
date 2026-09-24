@@ -141,6 +141,11 @@
       <div id="wins-list"></div>
     </div>
 
+    <div class="wins-card" id="keyword-wins-card" style="display:none">
+      <h2>Search Ranking Wins</h2>
+      <div id="keyword-wins-list"></div>
+    </div>
+
     <div class="footer-note" id="footer-note"></div>
   </div>
 </div>
@@ -273,6 +278,21 @@
     }).join('');
   }
 
+  function renderKeywordWins(keywordWins) {
+    return keywordWins.map(w => {
+      const dateLabel = new Date(w.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      return `
+        <div class="win-row">
+          <div class="win-check">&#9650;</div>
+          <div style="flex:1">
+            <div class="win-text">${escapeHtml(w.keyword)}</div>
+            <div class="win-detail">Now ranking #${w.position}</div>
+          </div>
+          <div class="win-date">${dateLabel}</div>
+        </div>`;
+    }).join('');
+  }
+
   function escapeHtml(str) {
     return String(str ?? '').replace(/[&<>"']/g, (c) => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -321,6 +341,14 @@
     if (data.wins && data.wins.length) {
       document.getElementById('wins-list').innerHTML = renderWins(data.wins);
       document.getElementById('wins-card').style.display = '';
+    }
+
+    // Same "hidden entirely, not shown empty" call as the wins card above
+    // — absent for most clients (no Search Console connected yet) or a
+    // client with less than 2 GSC snapshots to diff.
+    if (data.keywordWins && data.keywordWins.length) {
+      document.getElementById('keyword-wins-list').innerHTML = renderKeywordWins(data.keywordWins);
+      document.getElementById('keyword-wins-card').style.display = '';
     }
 
     const footer = document.getElementById('footer-note');
