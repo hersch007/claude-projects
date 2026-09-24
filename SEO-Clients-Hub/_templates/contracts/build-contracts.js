@@ -241,9 +241,10 @@ function buildDoc(tier, client) {
   sec('Included Services');
   tier.included(client).forEach(b => c.push(bullet(b)));
 
-  if (tier.allowances) {
-    sec('Monthly Content Allowances');
-    tier.allowances.forEach(b => c.push(bullet(b)));
+  const allowances = (client.allowances && client.allowances[tier.key]) || tier.allowances;
+  if (allowances) {
+    sec('Content Allowances');
+    allowances.forEach(b => c.push(bullet(b)));
   }
 
   if (client.platformNote) {
@@ -261,7 +262,7 @@ function buildDoc(tier, client) {
     'Client will provide credentials through a reasonably secure method and will maintain backups appropriate to its risk.',
     ...(tier.allowances ? [
       'Each included page addition and blog post draft is subject to timely source information from Client and one consolidated round of reasonable revisions. Client reviews and approves all content before publication. Substantial rewrites, material redesigns, or changes in direction require a written change order.',
-      'Monthly allowances expire at the end of the applicable service month and do not roll over unless Provider agrees otherwise in writing.',
+      'Allowances apply only to the service month or period stated above, expire at the end of that month or period, and do not roll over unless Provider agrees otherwise in writing.',
     ] : [
       'New pages, blog posts, substantial copywriting, material redesigns, and changes in direction require a written change order.',
     ]),
@@ -325,7 +326,7 @@ async function write(doc, file) {
 }
 
 (async () => {
-  for (const tier of Object.values(TIERS)) {
+  for (const tier of Object.values(TIERS).filter(t => t.key)) {
     await write(buildDoc(tier, BLANK_CLIENT),
       path.join(__dirname, 'output', `TEMPLATE-${tier.fileTag}-Agreement.docx`));
   }

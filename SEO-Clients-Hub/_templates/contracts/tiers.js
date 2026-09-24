@@ -26,6 +26,10 @@ const TAIL_EXCLUDED = [
   'Emergency support, restoration from backup, malware removal, incident response, or repair of pre-existing defects unless added by change order.',
 ];
 
+// What one "page" / "blog post" counts as, so allowances can't stretch into custom work.
+const PAGE_DEF = 'A "page addition" means one standard informational content page of up to approximately eight hundred (800) words, built using an existing layout or template on Client\'s website. Custom-designed layouts, landing pages with forms, booking tools, or other integrations, and pages exceeding this length require a written change order.';
+const BLOG_DEF = 'A "blog post draft" means one SEO-optimized article of up to approximately one thousand (1,000) words, drafted for Client\'s review and approval before publication.';
+
 module.exports = {
   spark: {
     key: 'spark',
@@ -50,7 +54,8 @@ module.exports = {
     objective: "Strengthen Client's online presence and correct critical search gaps through ongoing website support and search-engine optimization within Client's existing website, hosting, and technical framework.",
     included: c => [...CORE_SPARK(c).slice(0, 4), ...SUPPORT_EXTRAS, ...CORE_SPARK(c).slice(4)],
     allowances: [
-      'Web page additions: up to three (3) new pages in total during service months one (1) and two (2), then one (1) to two (2) new pages per service month during service months three (3) through twelve (12), with the number each month determined by Provider based on SEO priority and Client approvals.',
+      'Web page additions: up to two (2) new pages per service month during service months one (1) and two (2), then up to four (4) new pages in total during service months three (3) through twelve (12).',
+      PAGE_DEF,
     ],
     excluded: [
       ...COMMON_EXCLUDED,
@@ -77,6 +82,8 @@ module.exports = {
     allowances: [
       'Web page additions: up to two (2) new pages per service month during service months one (1) through six (6), then up to one (1) new page per service month during service months seven (7) through twelve (12).',
       'Blog post drafts: up to two (2) SEO-optimized blog post drafts per service month throughout the Initial Term.',
+      PAGE_DEF,
+      BLOG_DEF,
     ],
     excluded: [
       ...COMMON_EXCLUDED,
@@ -85,3 +92,5 @@ module.exports = {
     ],
   },
 };
+
+module.exports.PAGE_DEF = PAGE_DEF;
