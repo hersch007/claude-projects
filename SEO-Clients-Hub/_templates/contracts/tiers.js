@@ -80,8 +80,8 @@ module.exports = {
       ...CORE_SPARK(c).slice(4),
     ],
     allowances: [
-      'Web page additions: up to two (2) new pages per service month during service months one (1) through six (6), then up to one (1) new page per service month during service months seven (7) through twelve (12).',
-      'Blog post drafts: up to two (2) SEO-optimized blog post drafts per service month throughout the Initial Term.',
+      'Web page additions: up to two (2) new pages per service month during service months one (1) through three (3), then up to six (6) new pages in total during service months four (4) through twelve (12).',
+      'Blog post drafts: up to two (2) SEO-optimized blog post drafts per service month during service months one (1) through three (3), then up to one (1) per service month during service months four (4) through twelve (12).',
       PAGE_DEF,
       BLOG_DEF,
     ],
@@ -94,3 +94,4 @@ module.exports = {
 };
 
 module.exports.PAGE_DEF = PAGE_DEF;
+module.exports.BLOG_DEF = BLOG_DEF;
