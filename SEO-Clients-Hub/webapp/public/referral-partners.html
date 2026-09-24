@@ -186,6 +186,12 @@
           </label>
           <textarea id="pf-billing" rows="2" placeholder="e.g. 15% markup on ad spend, or $500/mo flat retainer"></textarea>
         </div>
+        <div class="billing-field">
+          <label for="pf-cross-sell" style="font-size:11px;color:#64748b;font-weight:600;display:block;margin-bottom:4px">
+            Cross-Sell Note — shown to customers on their share dashboard (leave blank to show nothing)
+          </label>
+          <textarea id="pf-cross-sell" rows="2" placeholder="e.g. Ask us about paid ads, social media, and other digital marketing."></textarea>
+        </div>
         <label class="active-toggle">
           <input type="checkbox" id="pf-active" checked>
           Active — shows up in the Run Audit dropdown
@@ -231,6 +237,7 @@
             ${[p.contact_name, p.email, p.phone, p.website].filter(Boolean).join(' &nbsp;·&nbsp; ') || 'No contact details on file'}
           </div>
           ${p.billing_notes ? `<div class="partner-meta">${p.billing_notes}</div>` : ''}
+          ${p.cross_sell_note ? `<div class="partner-meta" style="font-style:italic">Cross-sell: ${p.cross_sell_note}</div>` : ''}
           <div class="partner-swatches">
             ${[p.brand_hex, p.brand2_hex, p.accent_hex].filter(Boolean).map(hex => `<span class="swatch" style="background:${hex}" title="${hex}"></span>`).join('')}
           </div>
@@ -284,6 +291,7 @@
     document.getElementById('pf-brand2').value = (partner && partner.brand2_hex) || '#1d4ed8';
     document.getElementById('pf-accent').value = (partner && partner.accent_hex) || '#f59e0b';
     document.getElementById('pf-billing').value = partner ? (partner.billing_notes || '') : '';
+    document.getElementById('pf-cross-sell').value = partner ? (partner.cross_sell_note || '') : '';
     document.getElementById('pf-active').checked = partner ? partner.active : true;
     document.getElementById('pf-logo-file').value = '';
     document.getElementById('pf-logo-width').value = (partner && partner.logo_width) || '';
@@ -354,6 +362,7 @@
       brand2_hex: document.getElementById('pf-brand2').value,
       accent_hex: document.getElementById('pf-accent').value,
       billing_notes: document.getElementById('pf-billing').value.trim(),
+      cross_sell_note: document.getElementById('pf-cross-sell').value.trim(),
       active: document.getElementById('pf-active').checked,
       logo_data_url: document.getElementById('pf-logo-data-url').value,
       logo_width: document.getElementById('pf-logo-width').value,
