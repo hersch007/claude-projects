@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Laravel's session-auth middleware falls back to route('login') when it
+// invalidates a session (e.g. password changed elsewhere); since auth here
+// is entirely through the Filament admin panel (named
+// filament.admin.auth.login), that fallback has nowhere to go without this
+// route and throws a RouteNotFoundException instead of redirecting.
+Route::get('/login', fn () => redirect('/admin/login'))->name('login');
+
 // Static pages
 Route::view('/about', 'public.about')->name('about');
 Route::view('/technology', 'public.technology')->name('technology');

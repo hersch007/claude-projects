@@ -38,6 +38,8 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors(['primary' => Color::Indigo])
             ->brandName('Advernology Admin')
+            ->passwordReset()
+            ->profile()
             ->resources([
                 EligibleDomainResource::class,
                 ProductResource::class,
