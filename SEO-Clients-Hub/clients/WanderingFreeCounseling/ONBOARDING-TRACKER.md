@@ -8,7 +8,7 @@
 | **Checklist** | `WFC-Welcome-Checklist.pdf` |
 | **Access email** | PartsofPractice@gmail.com |
 | **Client email** | info@wanderingfreecounseling.sprucecare.com · 614-881-2439 (call or text) |
-| **Status** | ⏳ Contract + checklist ready to send |
+| **Status** | ✅ Contract signed · ⏳ Welcome email drafted in Gmail, waiting on access |
 | **Last updated** | 2026-09-25 |
 
 Status key: ✅ done · ⏳ waiting on Erin · 🔲 not started · ⚠️ blocked / issue
@@ -19,8 +19,9 @@ Status key: ✅ done · ⏳ waiting on Erin · 🔲 not started · ⚠️ blocke
 
 | Item | Status | Date | Notes |
 |------|--------|------|-------|
-| Contract + welcome checklist sent | 🔲 | | Log the date the email goes out |
-| Erin signed | ⏳ | | |
+| Contract sent | ✅ | | Via e-signature |
+| Welcome email + checklist sent | ⏳ | | Gmail draft created 2026-09-25; log the date it's sent |
+| Erin signed | ✅ | *date needed* | Pull the date from the e-signature record |
 | Provider countersigned | 🔲 | | |
 | **Effective Date** (later of the two signatures) | ⏳ | | Contract §1: Effective Date = date of the later signature |
 | Payment method on file | ⏳ | | Checklist Step 5 |
@@ -53,7 +54,7 @@ Formulas (from the $99 agreement, §2.1, §3.2, and Exhibit A):
 |--------|-----------------|--------|------|-------|
 | Squarespace | Administrator (contributor invite) | ⏳ | | Checklist Step 1 |
 | Squarespace plan level | Info only | ⏳ | | **Business plan or higher is needed for schema (Code Injection).** On Personal, schema is limited per the contract's platform note |
-| Google Business Profile | Manager | ⚠️ | | Listing exists (Counselor, 5.0 from 5 reviews, NAP matches) but shows **"Own this business?"**, so it's probably unclaimed. Erin must claim and verify it before she can add us as Manager |
+| Google Business Profile | Manager | ⏳ | | Erin has claimed the listing and has owner access (confirmed 2026-09-25). Waiting on the Manager invite |
 | Google Analytics (GA4) | Editor | ⏳ | | If none, we set it up under Erin's Google account |
 | Google Search Console | Full | ⏳ | | If none, we set it up and verify through Squarespace |
 
@@ -63,13 +64,13 @@ Formulas (from the $99 agreement, §2.1, §3.2, and Exhibit A):
 |------|--------|------|-------|
 | Top 2–3 services to grow | ⏳ | | Sets which new pages we build in months 1–2 |
 | License details | ✅ | 2026-09-25 | LPCC, State of Ohio, E.1901023 (verified on Psychology Today) |
-| Bio | ⏳ | | Needed for the Meet Erin page. PT profile copy can seed the draft |
+| Bio | ✅ | 2026-09-25 | Build from the current website and the Psychology Today profile; Erin reviews the Meet Erin draft |
 | EMDR training level (EMDRIA Certified vs. EMDR-trained) | ⏳ | | Audit copy says "EMDR-certified"; do not publish the claim until confirmed |
 | Telehealth | ✅ | 2026-09-25 | In person and online via video. Ohio only (single-state license). Fridays are EMDR intensives |
-| Headshot + office photos (with rights) | ⏳ | | |
+| Headshot + office photos | ✅ | 2026-09-25 | Approved to use any photos from the current website and the Psychology Today profile |
 | Psychology Today link | ✅ | 2026-09-25 | https://www.psychologytoday.com/us/therapists/erin-zarlino-dublin-oh/1377982 |
 | Other directory links (TherapyDen, insurance directories) | ⏳ | | Optional; add to schema `sameAs` if she has them |
-| Approval contact (name, email, best way to reach) | ⏳ | | Contract §4: one decision-maker, 5-business-day approvals |
+| Approval contact | ✅ | 2026-09-25 | Erin approves all drafts (info@wanderingfreecounseling.sprucecare.com). 5-business-day turnaround |
 | Topics, wording, or claims to avoid | ⏳ | | |
 | Confirm fees and insurance on file are current | ⏳ | | Already on file (see below); just needs a yes |
 | Logo file (or confirm the site logo can be used) | ⏳ | | For schema `logo` |
@@ -100,5 +101,6 @@ From `CLIENT-BRIEF.md` and `WFC-SEO-AUDIT-2026-09-01.md`:
 
 | Date | Update |
 |------|--------|
+| 2026-09-25 | Contract signed (date TBD). GBP claimed by Erin. Bio + photos to come from site and PT. Erin approves drafts. Welcome email drafted in Gmail (richard@grouprb.com). |
 | 2026-09-25 | Got PT link, Ohio license E.1901023, and telehealth (in person + video). GBP checked: exists, NAP matches, 5 reviews, but likely unclaimed. Claiming added to the email. |
 | 2026-09-25 | Tracker created. $99 contract and welcome checklist generated; email drafted (`EMAIL-Erin-Contract-Welcome.md`). |
