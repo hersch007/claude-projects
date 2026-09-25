@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+  /* Deliberately light-only, high-contrast: built for older eyes on phones. */
+  *{box-sizing:border-box}
+  html,body{margin:0;background:#FFFFFF;color:#111827}
+  body{font-family:"Atkinson Hyperlegible","Segoe UI",system-ui,-apple-system,sans-serif;font-size:21px;line-height:1.45;-webkit-text-size-adjust:100%}
+  body.big{font-size:25px}
+  main{max-width:520px;margin:0 auto;padding:12px 20px 40px;min-height:100vh;display:flex;flex-direction:column}
+  .scr{display:flex;flex-direction:column;gap:18px;flex:1}
+  .scr[hidden]{display:none!important}
+  h1{font-size:1.4em;line-height:1.2;margin:0;color:#0F172A;text-wrap:balance}
+  p{margin:0}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid #E5E7EB}
+  .top b{font-size:.78em;color:#0B3B6E}
+  .sizebtn{border:2px solid #CBD5E1;background:#fff;color:#111827;border-radius:12px;padding:6px 12px;font:inherit;font-size:16px;font-weight:700;min-height:44px;cursor:pointer}
+  .sizebtn[aria-pressed="true"]{border-color:#0B3B6E;background:#E7F0FA}
+  .progress{display:flex;gap:10px;align-items:center;font-size:.78em;font-weight:700;color:#374151}
+  .dots{display:flex;gap:6px}
+  .dots i{width:30px;height:10px;border-radius:5px;background:#E5E7EB}
+  .dots i.on{background:#0B6E4F}
+  .bigbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:78px;border:none;border-radius:18px;background:#0B6E4F;color:#fff;font:inherit;font-size:1.08em;font-weight:700;padding:14px 18px;text-align:center;text-decoration:none;box-shadow:0 4px 0 #075338;cursor:pointer}
+  .bigbtn:active{transform:translateY(2px);box-shadow:0 2px 0 #075338}
+  .bigbtn[aria-disabled="true"],.bigbtn:disabled{background:#9CA3AF;box-shadow:none;pointer-events:none}
+  .outbtn{display:flex;align-items:center;justify-content:center;width:100%;min-height:66px;border:3px solid #0B3B6E;border-radius:18px;background:#fff;color:#0B3B6E;font:inherit;font-size:1em;font-weight:700;padding:10px 16px;cursor:pointer}
+  .help{font-size:.85em;color:#374151}
+  .illus{align-self:center;width:100%;max-width:300px}
+  .shot{width:100%;border-radius:14px;border:3px solid #0B6E4F;display:block;max-height:50vh;object-fit:contain;background:#F3F4F6}
+  .note{background:#FFF4D6;border-radius:14px;padding:14px 16px;font-size:.88em}
+  .err{background:#FDE8E8;color:#7F1D1D;border-radius:14px;padding:14px 16px;font-size:.88em}
+  .err[hidden],.note[hidden]{display:none}
+  .tips{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px;font-size:.88em;color:#374151}
+  .push{margin-top:auto;display:flex;flex-direction:column;gap:14px}
+  .vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .busy{position:fixed;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-weight:700;z-index:10;text-align:center;padding:24px}
+  .busy[hidden]{display:none}
+  .spin{width:64px;height:64px;border-radius:50%;border:8px solid #D1FAE5;border-top-color:#0B6E4F;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion:reduce){.spin{animation-duration:3s}}
+  :focus-visible{outline:4px solid #1D4E89;outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- message (bad or expired link) -->
+  <section class="scr" data-s="message" hidden>
+    <h1 id="msgTitle" style="margin-top:32px"></h1>
+    <p id="msgText"></p>
+  </section>
+
+  <!-- welcome -->
+  <section class="scr" data-s="welcome" hidden>
+    <div class="top"><b class="agency"></b><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Hi <span class="fname"></span>!</h1>
+    <p><span class="caller"></span> is on the phone with you and will help.</p>
+    <p>This takes <b class="nsteps">3 short steps</b>:</p>
+    <ol style="margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px">
+      <li>Picture of the <b>front</b> of your insurance card</li>
+      <li>Picture of the <b>back</b> of your card</li>
+      <li class="dsonly">Sign your form with your finger</li>
+    </ol>
+    <div class="push"><button class="bigbtn" data-go="front">Start</button></div>
+  </section>
+
+  <!-- front -->
+  <section class="scr" data-s="front" hidden>
+    <div class="top"><div class="progress"><span>Step 1 of <span class="n">3</span></span><span class="dots"><i class="on"></i><i></i><i class="dsonly"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Take a picture of the FRONT of your card</h1>
+    <svg class="illus" viewBox="0 0 300 190" aria-hidden="true"><rect x="4" y="4" width="292" height="182" rx="16" fill="#E7F0FA" stroke="#0B3B6E" stroke-width="4"/><rect x="22" y="24" width="120" height="16" rx="4" fill="#0B3B6E"/><rect x="22" y="60" width="180" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="80" width="140" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="100" width="160" height="10" rx="4" fill="#94A3B8"/><text x="150" y="160" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-size="22" font-weight="700" fill="#0B3B6E">FRONT</text></svg>
+    <ul class="tips"><li>Lay the card flat on a table.</li><li>Turn on a light if the room is dark.</li></ul>
+    <div class="err" data-err hidden></div>
+    <div class="push">
+      <label class="bigbtn" for="fileFront"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></svg>Take picture of FRONT</label>
+    </div>
+    <input class="vh" type="file" accept="image/*" capture="environment" id="fileFront">
+  </section>
+
+  <!-- front review -->
+  <section class="scr" data-s="frontReview" hidden>
+    <div class="top"><div class="progress"><span>Step 1 of <span class="n">3</span></span><span class="dots"><i class="on"></i><i></i><i class="dsonly"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Can you read the words in the picture?</h1>
+    <img class="shot" id="prevFront" alt="Your picture of the front of your card">
+    <div class="err" data-err hidden></div>
+    <div class="push">
+      <button class="bigbtn" data-accept="front">Yes, send it</button>
+      <label class="outbtn" for="fileFront">No, take it again</label>
+    </div>
+  </section>
+
+  <!-- back -->
+  <section class="scr" data-s="back" hidden>
+    <div class="top"><div class="progress"><span>Step 2 of <span class="n">3</span></span><span class="dots"><i class="on"></i><i class="on"></i><i class="dsonly"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Got it! Now turn the card over.</h1>
+    <svg class="illus" viewBox="0 0 300 190" aria-hidden="true"><rect x="4" y="4" width="292" height="182" rx="16" fill="#F1F5F9" stroke="#0B3B6E" stroke-width="4"/><rect x="4" y="28" width="292" height="30" fill="#334155"/><rect x="22" y="80" width="200" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="100" width="150" height="10" rx="4" fill="#94A3B8"/><text x="150" y="160" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-size="22" font-weight="700" fill="#0B3B6E">BACK</text></svg>
+    <p class="help">Take a picture of the <b>back</b> of the card.</p>
+    <div class="err" data-err hidden></div>
+    <div class="push">
+      <label class="bigbtn" for="fileBack"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></svg>Take picture of BACK</label>
+    </div>
+    <input class="vh" type="file" accept="image/*" capture="environment" id="fileBack">
+  </section>
+
+  <!-- back review -->
+  <section class="scr" data-s="backReview" hidden>
+    <div class="top"><div class="progress"><span>Step 2 of <span class="n">3</span></span><span class="dots"><i class="on"></i><i class="on"></i><i class="dsonly"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Can you read the words in the picture?</h1>
+    <img class="shot" id="prevBack" alt="Your picture of the back of your card">
+    <div class="err" data-err hidden></div>
+    <div class="push">
+      <button class="bigbtn" data-accept="back">Yes, send it</button>
+      <label class="outbtn" for="fileBack">No, take it again</label>
+    </div>
+  </section>
+
+  <!-- sign (DocuSign) -->
+  <section class="scr" data-s="sign" hidden>
+    <div class="top"><div class="progress"><span>Step 3 of 3</span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+    <h1>Last step: sign your form</h1>
+    <div class="note" id="signNote" hidden></div>
+    <p>Tap the green button. Your form will open.</p>
+    <ul class="tips">
+      <li>Tap the yellow <b>Continue</b> button.</li>
+      <li>Tap the yellow <b>Sign</b> tag, then <b>Adopt and Sign</b>.</li>
+      <li>Tap <b>Finish</b> at the end.</li>
+    </ul>
+    <div class="err" data-err hidden></div>
+    <div class="push">
+      <a class="bigbtn" id="signBtn" aria-disabled="true" target="_top">Getting your form ready…</a>
+    </div>
+  </section>
+
+  <!-- checking after DocuSign -->
+  <section class="scr" data-s="checking" hidden>
+    <div class="spin" style="align-self:center;margin-top:60px"></div>
+    <h1 style="text-align:center">One moment…</h1>
+  </section>
+
+  <!-- done -->
+  <section class="scr" data-s="done" hidden>
+    <svg style="align-self:center;margin-top:28px" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#0B6E4F"/><path d="M34 62l17 17 36-38" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h1 style="text-align:center">All done, <span class="fname"></span>!</h1>
+    <p style="text-align:center">You can tell <span class="caller"></span> you are finished.</p>
+    <p class="help" style="text-align:center">You can close this page now. Thank you!</p>
+  </section>
+
+</main>
+
+<div class="busy" id="busy" hidden><div class="spin"></div><span id="busyText">Sending your picture…</span></div>
+
+<script>
+var S = <?!= stateJson ?>;
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var all = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+  var screens = all('.scr');
+  var current = '';
+  var pending = {};      // photos waiting for "Yes, send it"
+  var signTimer = null;
+
+  if (S.message) {
+    $('#msgTitle').textContent = S.message.title;
+    $('#msgText').textContent = S.message.text;
+    return show('message');
+  }
+
+  all('.fname').forEach(function (el) { el.textContent = S.firstName; });
+  all('.caller').forEach(function (el) { el.textContent = S.caller; });
+  all('.agency').forEach(function (el) { el.textContent = S.agency; });
+  if (!S.docusign) {
+    all('.dsonly').forEach(function (el) { el.remove(); });
+    all('.n').forEach(function (el) { el.textContent = '2'; });
+    $('.nsteps').textContent = '2 short steps';
+  }
+
+  // Bigger text, remembered on this phone.
+  var big = false;
+  try { big = localStorage.getItem('cc_big') === '1'; } catch (e) {}
+  function applySize() {
+    document.body.classList.toggle('big', big);
+    all('[data-size]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(big));
+      b.textContent = big ? 'Aa Smaller' : 'Aa Bigger';
+    });
+  }
+  all('[data-size]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      big = !big; applySize();
+      try { localStorage.setItem('cc_big', big ? '1' : '0'); } catch (e) {}
+    });
+  });
+  applySize();
+
+  function show(name) {
+    current = name;
+    screens.forEach(function (s) { s.hidden = s.getAttribute('data-s') !== name; });
+    all('[data-err]').forEach(function (e) { e.hidden = true; });
+    window.scrollTo(0, 0);
+    if (S.id && name !== 'checking' && name !== 'message') {
+      google.script.run.clientScreen(S.id, name);
+    }
+    clearInterval(signTimer);
+    if (name === 'sign') prepareSigning();
+  }
+
+  function showError(msg) {
+    var box = document.querySelector('.scr:not([hidden]) [data-err]');
+    if (box) { box.textContent = msg; box.hidden = false; }
+  }
+
+  function busy(on, text) {
+    $('#busyText').textContent = text || 'Sending your picture…';
+    $('#busy').hidden = !on;
+  }
+
+  function afterBack() { show(S.docusign ? 'sign' : 'done'); }
+
+  /* ----- photos ----- */
+
+  // Shrink to at most 1800px so it uploads quickly on a weak signal.
+  function shrink(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () {
+        var max = 1800, w = img.naturalWidth, h = img.naturalHeight;
+        var s = Math.min(1, max / Math.max(w, h));
+        var c = document.createElement('canvas');
+        c.width = Math.round(w * s); c.height = Math.round(h * s);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        resolve(c.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+
+  ['front', 'back'].forEach(function (side) {
+    var input = $(side === 'front' ? '#fileFront' : '#fileBack');
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0];
+      input.value = '';
+      if (!f) return;
+      busy(true, 'Getting your picture ready…');
+      shrink(f).then(function (dataUrl) {
+        busy(false);
+        pending[side] = dataUrl;
+        $(side === 'front' ? '#prevFront' : '#prevBack').src = dataUrl;
+        show(side + 'Review');
+      }).catch(function () {
+        busy(false);
+        showError('That picture didn’t work. Please try again.');
+      });
+    });
+  });
+
+  all('[data-accept]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var side = b.getAttribute('data-accept');
+      busy(true, 'Sending your picture…');
+      google.script.run
+        .withSuccessHandler(function () {
+          busy(false);
+          if (side === 'front') { S.frontDone = true; show('back'); }
+          else { S.backDone = true; afterBack(); }
+        })
+        .withFailureHandler(function (err) {
+          busy(false);
+          showError((err && err.message) || 'It didn’t send. Please tap "Yes, send it" again.');
+        })
+        .clientUpload(S.id, side, pending[side]);
+    });
+  });
+
+  all('[data-go]').forEach(function (b) {
+    b.addEventListener('click', function () { show(b.getAttribute('data-go')); });
+  });
+
+  /* ----- signing ----- */
+
+  // DocuSign signing addresses last 5 minutes, so fetch a fresh one every 4.
+  function prepareSigning() {
+    var btn = $('#signBtn');
+    function load() {
+      btn.setAttribute('aria-disabled', 'true');
+      btn.removeAttribute('href');
+      btn.textContent = 'Getting your form ready…';
+      google.script.run
+        .withSuccessHandler(function (url) {
+          btn.href = url;
+          btn.setAttribute('aria-disabled', 'false');
+          btn.textContent = 'Open my form to sign';
+        })
+        .withFailureHandler(function (err) {
+          btn.textContent = 'Try again';
+          btn.setAttribute('aria-disabled', 'false');
+          btn.href = '#';
+          showError((err && err.message) || 'We couldn’t open your form.');
+        })
+        .clientSigningUrl(S.id);
+    }
+    load();
+    signTimer = setInterval(load, 4 * 60 * 1000);
+    btn.onclick = function (e) {
+      if (btn.getAttribute('href') === '#') { e.preventDefault(); load(); return; }
+      google.script.run.clientScreen(S.id, 'signing');
+    };
+  }
+
+  /* ----- where to start ----- */
+
+  if (S.signed) return show('done');
+
+  if (S.dsEvent) {
+    if (S.dsEvent === 'signing_complete' || S.dsEvent === 'viewing_complete') {
+      show('checking');
+      google.script.run
+        .withSuccessHandler(function (r) {
+          if (r && r.signed) return show('done');
+          $('#signNote').textContent = 'Your form isn’t finished yet. Tap the green button to open it again.';
+          $('#signNote').hidden = false;
+          show('sign');
+        })
+        .withFailureHandler(function () { show('done'); })
+        .clientConfirmSigning(S.id);
+      return;
+    }
+    $('#signNote').textContent = S.dsEvent === 'decline'
+      ? 'It looks like the form was declined. If that was a mistake, tap the green button to open it again.'
+      : 'Your form isn’t signed yet. Tap the green button to open it again.';
+    $('#signNote').hidden = false;
+    return show('sign');
+  }
+
+  if (S.backDone) return afterBack();
+  if (S.frontDone) return show('back');
+  show('welcome');
+})();
+</script>
+</body>
+</html>
