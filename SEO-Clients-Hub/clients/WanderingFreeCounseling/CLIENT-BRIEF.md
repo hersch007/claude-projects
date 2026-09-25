@@ -5,11 +5,13 @@
 | **Website** | https://www.wanderingfreecounseling.com |
 | **Niche** | Therapy / Mental Health — Trauma Counseling |
 | **Therapist** | Erin Zarlino, LPCC (Licensed Professional Clinical Counselor) |
+| **License** | State of Ohio, E.1901023 (verified on Psychology Today) |
 | **Location** | 5995 Wilcox Place Suite D, Dublin, OH 43016 |
 | **Phone** | 614-881-2439 (call or text) |
 | **Fax** | 614-803-9745 |
 | **Email** | info@wanderingfreecounseling.sprucecare.com |
-| **Hours** | Wed 8:30am–5pm · Thu 10am–6pm · Fri 8:30am–4pm |
+| **Hours** | Wed 8:30am–5pm · Thu 10am–6pm · Fri 8:30am–4pm (Fridays = EMDR intensives) |
+| **Session format** | In person and online via video (licensed in Ohio only) |
 | **Platform** | Squarespace (confirmed) |
 | **Agency** | Parts of Practice |
 | **Onboarded** | 2026-09-01 |
@@ -44,7 +46,8 @@ Medical Mutual · UHC/UMR/Optum (incl. Ohio State student plan) · Ohio Healthy 
 - Homepage title says "Columbus Ohio" but address is Dublin OH — NAP inconsistency to fix
 - No schema markup on any page
 - All 6 pages missing meta descriptions
-- Psychology Today profile exists (backlink)
+- Psychology Today: https://www.psychologytoday.com/us/therapists/erin-zarlino-dublin-oh/1377982
+- Google Business Profile (checked 2026-09-25): "Wandering Free Counseling, LLC", category Counselor, 5.0 stars from 5 reviews, address/phone match the site, Appointments link goes to Psychology Today. **Shows "Own this business?", so it's probably unclaimed.**
 - Instagram: @wanderingfreecounseling
 - Client portal: therapyportal.com/p/wanderingfree24/
 - YMYL/E-E-A-T site — mental health niche requires strong credibility signals

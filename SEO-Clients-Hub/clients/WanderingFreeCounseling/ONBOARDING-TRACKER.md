@@ -53,7 +53,7 @@ Formulas (from the $99 agreement, §2.1, §3.2, and Exhibit A):
 |--------|-----------------|--------|------|-------|
 | Squarespace | Administrator (contributor invite) | ⏳ | | Checklist Step 1 |
 | Squarespace plan level | Info only | ⏳ | | **Business plan or higher is needed for schema (Code Injection).** On Personal, schema is limited per the contract's platform note |
-| Google Business Profile | Manager | ⏳ | | Status unknown in audit — confirm it exists and is verified |
+| Google Business Profile | Manager | ⚠️ | | Listing exists (Counselor, 5.0 from 5 reviews, NAP matches) but shows **"Own this business?"**, so it's probably unclaimed. Erin must claim and verify it before she can add us as Manager |
 | Google Analytics (GA4) | Editor | ⏳ | | If none, we set it up under Erin's Google account |
 | Google Search Console | Full | ⏳ | | If none, we set it up and verify through Squarespace |
 
@@ -62,11 +62,13 @@ Formulas (from the $99 agreement, §2.1, §3.2, and Exhibit A):
 | Item | Status | Date | Notes |
 |------|--------|------|-------|
 | Top 2–3 services to grow | ⏳ | | Sets which new pages we build in months 1–2 |
-| Bio + license details (license type, number, state[s]) | ⏳ | | Needed for the Meet Erin page and Person schema |
+| License details | ✅ | 2026-09-25 | LPCC, State of Ohio, E.1901023 (verified on Psychology Today) |
+| Bio | ⏳ | | Needed for the Meet Erin page. PT profile copy can seed the draft |
 | EMDR training level (EMDRIA Certified vs. EMDR-trained) | ⏳ | | Audit copy says "EMDR-certified"; do not publish the claim until confirmed |
-| Telehealth: yes/no, and which states | ⏳ | | Audit's childhood trauma meta says "in-person and virtual"; confirm first |
+| Telehealth | ✅ | 2026-09-25 | In person and online via video. Ohio only (single-state license). Fridays are EMDR intensives |
 | Headshot + office photos (with rights) | ⏳ | | |
-| Directory links (Psychology Today, TherapyDen, insurance directories) | ⏳ | | Needed for schema `sameAs`; the audit schema has a placeholder PT URL |
+| Psychology Today link | ✅ | 2026-09-25 | https://www.psychologytoday.com/us/therapists/erin-zarlino-dublin-oh/1377982 |
+| Other directory links (TherapyDen, insurance directories) | ⏳ | | Optional; add to schema `sameAs` if she has them |
 | Approval contact (name, email, best way to reach) | ⏳ | | Contract §4: one decision-maker, 5-business-day approvals |
 | Topics, wording, or claims to avoid | ⏳ | | |
 | Confirm fees and insurance on file are current | ⏳ | | Already on file (see below); just needs a yes |
@@ -98,4 +100,5 @@ From `CLIENT-BRIEF.md` and `WFC-SEO-AUDIT-2026-09-01.md`:
 
 | Date | Update |
 |------|--------|
+| 2026-09-25 | Got PT link, Ohio license E.1901023, and telehealth (in person + video). GBP checked: exists, NAP matches, 5 reviews, but likely unclaimed. Claiming added to the email. |
 | 2026-09-25 | Tracker created. $99 contract and welcome checklist generated; email drafted (`EMAIL-Erin-Contract-Welcome.md`). |

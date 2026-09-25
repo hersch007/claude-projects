@@ -36,7 +36,7 @@
 
 **Priority 1: Meta descriptions (all 6 pages).** Squarespace: Page settings → SEO. Use the audit copy with these edits:
 - Perinatal: change "EMDR-certified therapist" → match Erin's confirmed credential (EMDRIA Certified vs. EMDR-trained)
-- Childhood trauma: keep "In-person and virtual" only if Erin confirms telehealth
+- Childhood trauma: keep "In-person and virtual" (confirmed: in person + video, Ohio only). Where it fits, say "virtual across Ohio"
 - EMDR: "Columbus/Dublin" → "Dublin and Columbus, Ohio"
 
 **Priority 2: Title tags**
@@ -50,9 +50,12 @@
 
 **Priority 4: NAP consistency**
 - [ ] Homepage title → Dublin (above). Keep "Columbus" in body copy and meta as the service area, not the address
-- [ ] GBP: confirm verified, address = 5995 Wilcox Place Suite D, Dublin, OH 43016, phone 614-881-2439, hours Wed/Thu/Fri match the site
-- [ ] GBP primary category: **Psychotherapist** (secondary: Counselor, Mental health service)
-- [ ] Psychology Today: confirm the address matches and the profile links to the website
+- [ ] **GBP claim (blocker).** Checked 2026-09-25: the listing shows "Own this business?", so it's probably unclaimed. Erin claims and verifies it at business.google.com, then adds PartsofPractice@gmail.com as Manager. Verification can take days (postcard or video), so start in week 1
+- [x] GBP NAP already matches: 5995 Wilcox Pl D, Dublin, OH 43016 · (614) 881-2439. Only the website title is off
+- [ ] Once claimed: confirm hours (Wed/Thu/Fri), and add **Psychotherapist** as a secondary category (primary is Counselor today; that's fine to keep)
+- [ ] Once claimed: Appointments link currently goes to Psychology Today. Point it to `/contactme?utm_source=gbp&utm_medium=organic` so bookings are tracked, or keep PT if Erin prefers its inbox. Set the Website link with the same UTM
+- [ ] Once claimed: add the business description, services (EMDR, EMDR Intensives, Childhood Trauma, Perinatal Trauma), and photos. Reply to the 5 existing reviews in general terms only, never confirming anyone is a client
+- [ ] Psychology Today ([profile](https://www.psychologytoday.com/us/therapists/erin-zarlino-dublin-oh/1377982)): confirm the address matches and the profile links to the website
 
 **Also in week 1**
 - [ ] Homepage H1: brand-only → "Trauma & EMDR Therapy in Dublin, Ohio" (keep the brand as a subheading or in the logo)
@@ -79,7 +82,8 @@
 
 - **Remove `"medicalSpecialty": "Psychiatry"`.** Erin is an LPCC, not a psychiatrist, and this is a YMYL accuracy issue. Use `"@type": ["MedicalBusiness", "LocalBusiness"]` without it, or `"ProfessionalService"`.
 - **Quick-schema `worksFor`:** `{ "@name": ... }` is invalid. Use `{ "@id": "https://www.wanderingfreecounseling.com/#organization" }` (as in section 11).
-- **`sameAs`:** replace `https://www.psychologytoday.com` with Erin's actual profile URL, and add TherapyDen or other directories she sends.
+- **`sameAs`:** replace `https://www.psychologytoday.com` with `https://www.psychologytoday.com/us/therapists/erin-zarlino-dublin-oh/1377982`, and add the GBP Maps URL once claimed, plus any other directories she sends.
+- **Person `hasCredential`:** add the license number, e.g. `"identifier": "E.1901023"`, keep `recognizedBy` as the Ohio CSWMFT Board, and add `"areaServed": {"@type": "State", "name": "Ohio"}` for telehealth.
 - **`logo`:** `/logo.png` is a placeholder. Use the real Squarespace image URL.
 - **Person:** add `"image"` (headshot URL), `"url": ".../meet-erin"`, and `"knowsAbout"` once the page exists. Add EMDRIA only if she's certified.
 - **Service schema:** add `"@context"`, a `"description"`, and `"provider": { "@id": "...#organization" }`. Set `areaServed` to both Dublin and Columbus.
@@ -88,8 +92,8 @@
 
 | # | Page | Month | Why | Needs from Erin |
 |---|---|---|---|---|
-| 1 | **/meet-erin**: "Meet Erin Zarlino, LPCC — Trauma & EMDR Therapist in Dublin, OH" | **1** | Biggest E-E-A-T gap on a YMYL site. The nav link already exists and points to the wrong page | Bio, license #, EMDR training level, headshot, approval |
-| 2 | **/emdr-intensives**: "EMDR Intensives in Columbus & Dublin, Ohio" (90 min / 3 hr / 6 hr, pricing, who it's for, FAQ) | **1** (if confirmed) | Audit keyword "EMDR intensives Columbus Ohio" is medium volume and low difficulty. Few local competitors offer 6-hour intensives | Confirm intensives are a top-3 growth priority; insurance vs. self-pay for intensives |
+| 1 | **/meet-erin**: "Meet Erin Zarlino, LPCC — Trauma & EMDR Therapist in Dublin, OH" | **1** | Biggest E-E-A-T gap on a YMYL site. The nav link already exists and points to the wrong page. Include Ohio license E.1901023 and a link to her license lookup | Bio, EMDR training level, headshot, approval (license ✅) |
+| 2 | **/emdr-intensives**: "EMDR Intensives in Columbus & Dublin, Ohio" (90 min / 3 hr / 6 hr, pricing, Friday scheduling, who it's for, FAQ) | **1** (if confirmed) | Audit keyword "EMDR intensives Columbus Ohio" is medium volume and low difficulty. Few local competitors offer 6-hour intensives | Confirm intensives are a top-3 growth priority; insurance vs. self-pay for intensives |
 | 3 | **Chosen by Erin's top services** (month 2), e.g. *Birth Trauma Therapy in Dublin, OH*, or the perinatal rewrite | **2** | Held until Erin names her priorities, so the last slot goes to what she wants to grow | Top 2–3 services |
 
 If Erin's priorities don't include intensives, swap page 2 for her #1 service. Drafts go to Erin for clinical accuracy. She has 5 business days to approve or send one round of combined edits.
