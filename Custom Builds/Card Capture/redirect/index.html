@@ -1,0 +1,16 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opening your page…</title>
+<!--
+  Optional short link. Upload this file to your website as /card/index.html,
+  paste your web app address below, and put https://yourwebsite.com/card/ in
+  Card Capture → Settings → "Short link address". Texts then show your own
+  website instead of a long script.google.com address.
+-->
+<script>
+  var WEB_APP_URL = 'PASTE_YOUR_WEB_APP_URL_HERE'; // ends in /exec
+  var t = new URLSearchParams(location.search).get('t') || '';
+  if (/^[a-f0-9]{32}$/.test(t)) location.replace(WEB_APP_URL + '?t=' + t);
+</script>
+<p style="font:22px/1.4 Arial, sans-serif; padding:24px">Opening your page… If nothing happens, please call our office.</p>

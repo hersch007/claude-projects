@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_blank">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:4px 4px 80px;font-family:"Google Sans",Roboto,Arial,sans-serif;font-size:14px;line-height:1.45;color:#132033}
+  fieldset{border:1px solid #E1E6EC;border-radius:12px;padding:12px 14px 14px;margin:0 0 14px;display:flex;flex-direction:column;gap:10px}
+  legend{font-weight:700;font-size:15px;padding:0 6px}
+  label{display:flex;flex-direction:column;gap:3px;font-size:12px;font-weight:700;color:#566476}
+  label small{font-weight:400}
+  input,select,textarea{font:inherit;font-size:14px;padding:7px 9px;border:1px solid #CBD3DD;border-radius:8px;color:#132033;width:100%}
+  textarea{font-family:ui-monospace,Menlo,monospace;font-size:12px;min-height:90px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .row{display:flex;gap:8px;align-items:end;flex-wrap:wrap}
+  .row input{flex:1;min-width:140px}
+  button{font:inherit;font-weight:700;border-radius:8px;padding:8px 14px;cursor:pointer;border:1px solid #CBD3DD;background:#fff;color:#132033}
+  button.primary{background:#0B6E4F;border-color:#0B6E4F;color:#fff}
+  .out{font-size:13px;border-radius:8px;padding:8px 10px;background:#F3F5F8}
+  .out.ok{background:#E2F3EB;color:#0B6E4F}
+  .out.bad{background:#FDE8E8;color:#7F1D1D}
+  .out[hidden]{display:none}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #E1E6EC;padding:10px 12px;display:flex;gap:10px;align-items:center}
+  .bar .out{flex:1}
+  a{color:#1D4E89}
+</style>
+</head>
+<body>
+<form id="f" autocomplete="off">
+  <fieldset>
+    <legend>Your agency</legend>
+    <div class="two">
+      <label>Agency name <small>shown to clients</small><input name="AGENCY_NAME" id="AGENCY_NAME"></label>
+      <label>Office phone <small>shown if a link stops working</small><input name="AGENCY_PHONE" id="AGENCY_PHONE"></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Where files go</legend>
+    <label>Google Drive folder <small>paste the folder’s address from your browser</small><input name="DRIVE_FOLDER" id="DRIVE_FOLDER" placeholder="https://drive.google.com/drive/folders/…"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Client page</legend>
+    <label>Web app address <small>from Deploy → Manage deployments (ends in /exec)</small><input name="WEBAPP_URL" id="WEBAPP_URL" placeholder="https://script.google.com/macros/s/…/exec"></label>
+    <div class="two">
+      <label>Short link address <small>optional, see the guide</small><input name="LINK_BASE" id="LINK_BASE" placeholder="https://youragency.com/card/"></label>
+      <label>Links expire after (hours)<input name="EXPIRY_HOURS" id="EXPIRY_HOURS" type="number" min="1" max="720"></label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Texting (Twilio)</legend>
+    <div class="two">
+      <label>Account SID<input name="TW_SID" id="TW_SID" placeholder="AC…"></label>
+      <label>Auth Token<input name="TW_AUTH" id="TW_AUTH" type="password" placeholder=""></label>
+    </div>
+    <label>Send from <small>your Twilio number, or a Messaging Service SID (MG…)</small><input name="TW_FROM" id="TW_FROM"></label>
+    <div class="row">
+      <label style="flex:1">Send a test text to<input id="testPhone" placeholder="Your cell number"></label>
+      <button type="button" id="testSms">Send test</button>
+    </div>
+    <div class="out" id="smsOut" hidden></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>DocuSign</legend>
+    <div class="two">
+      <label>Environment
+        <select name="DS_ENV" id="DS_ENV"><option value="demo">Testing (developer sandbox)</option><option value="production">Live</option></select>
+      </label>
+      <label>Integration Key<input name="DS_KEY" id="DS_KEY"></label>
+      <label>User ID <small>under “My Account Information” on Apps and Keys</small><input name="DS_USER" id="DS_USER"></label>
+      <label>Template ID<input name="DS_TEMPLATE" id="DS_TEMPLATE"></label>
+      <label>Signer role name <small>exactly as in the template</small><input name="DS_ROLE" id="DS_ROLE" placeholder="Client"></label>
+      <label>Email when client has none<input name="DS_FALLBACK_EMAIL" id="DS_FALLBACK_EMAIL"></label>
+    </div>
+    <label>RSA private key <small>paste the whole key, BEGIN to END</small><textarea name="DS_PRIVATE" id="DS_PRIVATE"></textarea></label>
+    <div class="row">
+      <button type="button" id="consent">Approve DocuSign access</button>
+      <button type="button" id="testDs">Test DocuSign</button>
+    </div>
+    <div class="out" id="dsOut" hidden></div>
+  </fieldset>
+</form>
+
+<div class="bar">
+  <div class="out" id="saveOut" hidden></div>
+  <button class="primary" id="save" type="button">Save</button>
+  <button type="button" onclick="google.script.host.close()">Close</button>
+</div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.getElementById(s); };
+  var FIELDS = ['AGENCY_NAME','AGENCY_PHONE','DRIVE_FOLDER','WEBAPP_URL','LINK_BASE','EXPIRY_HOURS','TW_SID','TW_AUTH','TW_FROM','DS_ENV','DS_KEY','DS_USER','DS_TEMPLATE','DS_ROLE','DS_FALLBACK_EMAIL','DS_PRIVATE'];
+
+  function say(id, msg, kind) { var o = $(id); o.textContent = msg; o.className = 'out' + (kind ? ' ' + kind : ''); o.hidden = false; }
+  function fill(s) {
+    FIELDS.forEach(function (k) { if (k in s) $(k).value = s[k]; });
+    $('TW_AUTH').value = ''; $('DS_PRIVATE').value = '';
+    $('TW_AUTH').placeholder = s.TW_AUTH_SAVED ? 'Saved (leave blank to keep)' : '';
+    $('DS_PRIVATE').placeholder = s.DS_PRIVATE_SAVED ? 'Saved (leave blank to keep)' : '-----BEGIN RSA PRIVATE KEY-----';
+    if (!s.WEBAPP_URL && s.suggestedWebAppUrl && /\/exec$/.test(s.suggestedWebAppUrl)) $('WEBAPP_URL').value = s.suggestedWebAppUrl;
+  }
+  function collect() { var o = {}; FIELDS.forEach(function (k) { o[k] = $(k).value; }); return o; }
+  function err(id) { return function (e) { say(id, (e && e.message) || 'Something went wrong.', 'bad'); }; }
+
+  google.script.run.withSuccessHandler(fill).withFailureHandler(err('saveOut')).settingsLoad();
+
+  function save(then) {
+    say('saveOut', 'Saving…');
+    google.script.run.withSuccessHandler(function (s) { fill(s); say('saveOut', 'Saved.', 'ok'); if (then) then(); })
+      .withFailureHandler(err('saveOut')).settingsSave(collect());
+  }
+  $('save').onclick = function () { save(); };
+
+  $('testSms').onclick = function () {
+    save(function () {
+      say('smsOut', 'Sending…');
+      google.script.run.withSuccessHandler(function (m) { say('smsOut', m, 'ok'); })
+        .withFailureHandler(err('smsOut')).settingsTestSms($('testPhone').value);
+    });
+  };
+  $('testDs').onclick = function () {
+    save(function () {
+      say('dsOut', 'Checking…');
+      google.script.run.withSuccessHandler(function (m) { say('dsOut', m, /NOT/.test(m) ? 'bad' : 'ok'); })
+        .withFailureHandler(err('dsOut')).settingsTestDocuSign();
+    });
+  };
+  $('consent').onclick = function () {
+    save(function () {
+      google.script.run.withSuccessHandler(function (url) {
+        var o = $('dsOut'); o.className = 'out'; o.hidden = false; o.textContent = '';
+        o.appendChild(document.createTextNode('Sign in to DocuSign as the account admin and click Accept: '));
+        var a = document.createElement('a'); a.href = url; a.textContent = 'Open DocuSign approval page'; o.appendChild(a);
+        o.appendChild(document.createTextNode(' Then come back and click Test DocuSign.'));
+      }).withFailureHandler(err('dsOut')).settingsConsentUrl();
+    });
+  };
+})();
+</script>
+</body>
+</html>

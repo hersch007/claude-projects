@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_blank">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:12px 14px 24px;font-family:"Google Sans",Roboto,Arial,sans-serif;font-size:14px;line-height:1.45;color:#132033;background:#fff}
+  h2{font-size:18px;margin:0}
+  p{margin:0}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  .eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#566476;font-weight:700}
+  label.field{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#566476;font-weight:700}
+  input[type=text]{font:inherit;font-size:14px;padding:7px 9px;border:1px solid #CBD3DD;border-radius:8px;color:#132033;width:100%}
+  .hint{background:#F3F5F8;border-radius:10px;padding:14px;color:#566476}
+  .pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:#EAEEF3;color:#566476}
+  .pill.ok{background:#E2F3EB;color:#0B6E4F}
+  .pill.live{background:#E1ECF9;color:#1D4E89}
+  .pill.warn{background:#FFF1CC;color:#7A5100}
+  .btn{font:inherit;font-weight:700;font-size:14px;border-radius:10px;padding:10px 14px;cursor:pointer;border:1px solid #CBD3DD;background:#fff;color:#132033;width:100%}
+  .btn.primary{background:#0B6E4F;border-color:#0B6E4F;color:#fff}
+  .btn:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:8px}
+  .where{background:#E1ECF9;border-radius:12px;padding:12px}
+  .where.done{background:#E2F3EB}
+  .where b{display:block;font-size:17px;margin-top:2px}
+  .say{background:#FFF8E1;border-left:4px solid #E0B43C;border-radius:4px 12px 12px 4px;padding:12px}
+  .say q{display:block;font-size:16px;line-height:1.4;margin-top:4px;quotes:"“" "”"}
+  ul.check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+  ul.check li{display:flex;gap:10px;align-items:center;border:1px solid #E1E6EC;border-radius:10px;padding:8px 10px}
+  .dot{width:20px;height:20px;border-radius:50%;flex:none;background:#EAEEF3;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+  li.ok .dot{background:#0B6E4F}
+  li .lbl{flex:1;font-weight:700}
+  li .when{font-size:12px;color:#566476;display:block;font-weight:400}
+  li a{font-size:12px;color:#1D4E89}
+  li img{width:64px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #E1E6EC}
+  .copybox{background:#F3F5F8;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px}
+  .copybox input{font-size:12px}
+  .err{background:#FDE8E8;color:#7F1D1D;border-radius:10px;padding:10px}
+  .ok-msg{background:#E2F3EB;color:#0B6E4F;border-radius:10px;padding:10px;font-weight:700}
+  [hidden]{display:none!important}
+  a{color:#1D4E89}
+</style>
+</head>
+<body>
+<div class="stack">
+  <label class="field">Your first name (clients see this)
+    <input type="text" id="caller" placeholder="e.g. Sarah" autocomplete="given-name">
+  </label>
+
+  <div class="hint" id="hint">Click a client’s row on the Calls tab.</div>
+
+  <div class="stack" id="client" hidden>
+    <div>
+      <p class="eyebrow">On the phone with</p>
+      <h2 id="cName"></h2>
+      <p id="cPhone" style="color:#566476"></p>
+      <p style="margin-top:6px"><span class="pill" id="cStatus"></span></p>
+    </div>
+
+    <div class="err" id="err" hidden></div>
+    <div class="ok-msg" id="okMsg" hidden></div>
+
+    <button class="btn primary" id="sendBtn">Text link</button>
+
+    <div class="copybox" id="copyBox" hidden>
+      <p id="copyWhy">Texting isn’t set up yet. Copy this link and text it to the client from your phone:</p>
+      <input type="text" id="copyUrl" readonly>
+      <button class="btn" id="copyBtn">Copy link</button>
+    </div>
+
+    <div class="where" id="where">
+      <span class="eyebrow">What <span class="fn"></span> sees now</span>
+      <b id="whereText"></b>
+    </div>
+
+    <div class="say">
+      <span class="eyebrow">Say this</span>
+      <q id="sayText"></q>
+    </div>
+
+    <ul class="check">
+      <li id="kOpen"><span class="dot">✓</span><span class="lbl">Opened link<span class="when"></span></span></li>
+      <li id="kFront"><span class="dot">✓</span><span class="lbl">Card front<span class="when"></span></span><a class="view" hidden>View</a></li>
+      <li id="kBack"><span class="dot">✓</span><span class="lbl">Card back<span class="when"></span></span><a class="view" hidden>View</a></li>
+      <li id="kSign"><span class="dot">✓</span><span class="lbl">Signed<span class="when"></span></span><a class="view" hidden>PDF</a></li>
+    </ul>
+
+    <div class="row">
+      <a class="btn" id="folderBtn" style="text-align:center;text-decoration:none" hidden>Open Drive folder</a>
+    </div>
+    <button class="btn" id="checkBtn" hidden>Check DocuSign now</button>
+    <button class="btn" id="newBtn" hidden>Start over with a new link</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var data = null, sending = false, busyPoll = false, panelErr = '';
+
+  var LINES = {
+    '':          ['The text message', 'I just sent you a text message. Do you see it? Tap the blue link inside it.'],
+    welcome:     ['Welcome page', 'You should see a page that says “Hi {first}.” Tap the big green Start button at the bottom.'],
+    front:       ['Card front: camera button', 'Get your insurance card and lay it flat on the table, front side up. Tap the green button that says “Take picture of front.”'],
+    frontReview: ['Checking the front picture', 'Can you read the words in the picture? If you can, tap “Yes, send it.”'],
+    back:        ['Card back: camera button', 'Got it, thank you! Now turn the card over and tap the green button again.'],
+    backReview:  ['Checking the back picture', 'Can you read that one too? Then tap “Yes, send it.”'],
+    sign:        ['Ready to sign', 'Last step. Tap the green button that says “Open my form to sign.”'],
+    signing:     ['In DocuSign, signing', 'You’ll see your form. Tap the yellow Continue button. Then tap the yellow Sign tag and choose Adopt and Sign. When you’re done, tap Finish.'],
+    done:        ['Finished', 'That’s everything, {first}. I have what I need. Thank you so much!']
+  };
+
+  google.script.run.withSuccessHandler(function (n) { $('#caller').value = n || ''; }).panelGetCaller();
+  $('#caller').addEventListener('change', function () { google.script.run.panelSetCaller($('#caller').value.trim()); });
+
+  function setItem(el, when, fileId, isPdf) {
+    el.classList.toggle('ok', !!when);
+    el.querySelector('.when').textContent = when ? when : 'Waiting';
+    var a = el.querySelector('.view');
+    if (!a) return;
+    a.hidden = !fileId;
+    if (fileId) a.href = 'https://drive.google.com/file/d/' + fileId + '/view';
+  }
+
+  function render() {
+    var d = data;
+    if (!d || d.hint) {
+      $('#hint').textContent = (d && d.hint) || 'Click a client’s row on the Calls tab.';
+      $('#hint').hidden = false; $('#client').hidden = true; return;
+    }
+    $('#hint').hidden = true; $('#client').hidden = false;
+    $('#cName').textContent = d.name;
+    $('#cPhone').textContent = d.phone + (d.phoneOk ? '' : '  (check this number)');
+    document.querySelectorAll('.fn').forEach(function (e) { e.textContent = d.firstName; });
+
+    var L = d.link, st = $('#cStatus');
+    var complete = L && (L.signedAt || (L.backAt && !d.docusignReady));
+    st.textContent = L ? L.status : 'No link sent yet';
+    st.className = 'pill ' + (complete ? 'ok' : L && L.expired ? 'warn' : L ? 'live' : '');
+
+    var send = $('#sendBtn');
+    send.hidden = !!complete || (L && L.expired);
+    send.disabled = sending || !d.phoneOk;
+    send.textContent = sending ? 'Sending…' : !L ? 'Text link to ' + d.firstName
+      : (d.textingReady ? 'Resend the text' : 'Show link again');
+    $('#newBtn').hidden = !(complete || (L && L.expired));
+
+    var screen = !L ? null : complete ? 'done' : (L.screen || (L.openedAt ? 'welcome' : ''));
+    var line = screen === null
+      ? ['Nothing yet', 'When you’re on the phone with {first}, click “Text link.”']
+      : LINES[screen] || LINES[''];
+    $('#whereText').textContent = line[0];
+    $('#sayText').textContent = line[1].replace('{first}', d.firstName);
+    $('#where').classList.toggle('done', screen === 'done');
+
+    setItem($('#kOpen'), L && L.openedAt);
+    setItem($('#kFront'), L && L.frontAt, L && L.frontFileId);
+    setItem($('#kBack'), L && L.backAt, L && L.backFileId);
+    setItem($('#kSign'), L && L.signedAt, L && L.pdfFileId);
+    $('#kSign').hidden = !d.docusignReady;
+
+    $('#folderBtn').hidden = !(L && L.folderUrl);
+    if (L && L.folderUrl) $('#folderBtn').href = L.folderUrl;
+    $('#checkBtn').hidden = !(L && L.envelopeId && !L.signedAt);
+
+    var err = panelErr || (L && L.lastError);
+    $('#err').hidden = !err;
+    if (err) $('#err').textContent = err;
+
+    var showCopy = L && !complete && !L.expired && !d.textingReady;
+    $('#copyBox').hidden = !showCopy;
+    if (showCopy && $('#copyUrl').value !== L.url) $('#copyUrl').value = L.url;
+  }
+
+  function poll() {
+    if (busyPoll) return;
+    busyPoll = true;
+    google.script.run
+      .withSuccessHandler(function (d) {
+        busyPoll = false;
+        var changedClient = !data || !d || data.row !== d.row || data.name !== d.name;
+        if (changedClient) { $('#okMsg').hidden = true; panelErr = ''; }
+        data = d; render();
+      })
+      .withFailureHandler(function () { busyPoll = false; })
+      .panelPoll();
+  }
+
+  function flash(msg) { $('#okMsg').textContent = msg; $('#okMsg').hidden = false; }
+  function fail(err) {
+    sending = false;
+    panelErr = (err && err.message) || 'Something went wrong.';
+    render();
+  }
+
+  function send(forceNew) {
+    if (!$('#caller').value.trim()) { fail({ message: 'Type your first name at the top first.' }); $('#caller').focus(); return; }
+    sending = true; render();
+    google.script.run.withSuccessHandler(function () {
+      google.script.run
+        .withSuccessHandler(function (s) {
+          sending = false; panelErr = '';
+          flash(s.justTexted ? 'Text sent to ' + data.firstName + '.' : 'Link ready. Copy it below.');
+          poll();
+        })
+        .withFailureHandler(fail)
+        .panelSendLink(data.row, !!forceNew);
+    }).withFailureHandler(fail).panelSetCaller($('#caller').value.trim());
+  }
+
+  $('#sendBtn').addEventListener('click', function () { send(false); });
+  $('#newBtn').addEventListener('click', function () { send(true); });
+  $('#checkBtn').addEventListener('click', function () {
+    var id = data && data.link && data.link.id;
+    if (!id) return;
+    $('#checkBtn').disabled = true;
+    google.script.run
+      .withSuccessHandler(function () { $('#checkBtn').disabled = false; poll(); })
+      .withFailureHandler(function (e) { $('#checkBtn').disabled = false; fail(e); })
+      .panelCheckSigned(id);
+  });
+  $('#copyBtn').addEventListener('click', function () {
+    var input = $('#copyUrl');
+    input.select();
+    var done = function () { $('#copyBtn').textContent = 'Copied'; setTimeout(function () { $('#copyBtn').textContent = 'Copy link'; }, 1500); };
+    if (navigator.clipboard) navigator.clipboard.writeText(input.value).then(done, function () { document.execCommand('copy'); done(); });
+    else { document.execCommand('copy'); done(); }
+  });
+
+  poll();
+  setInterval(poll, 2500);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<title>Card &amp; Signature Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+:root{
+  --bg:#EDF0F4; --surface:#FFFFFF; --surface-2:#F6F8FA; --ink:#132033; --muted:#566476; --line:#D5DBE3;
+  --brand:#0B6E4F; --brand-ink:#FFFFFF; --accent:#1D4E89;
+  --ok:#0B6E4F; --ok-bg:#E2F3EB; --wait:#566476; --wait-bg:#EAEEF3; --warn:#7A5100; --warn-bg:#FFF1CC; --live:#1D4E89; --live-bg:#E1ECF9;
+  --quote-bg:#FFF8E1; --quote-line:#E0B43C;
+  --sans:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0D131B; --surface:#151E2A; --surface-2:#1B2635; --ink:#E5EBF2; --muted:#9BA8B8; --line:#273447;
+    --brand:#3CC18D; --brand-ink:#05241A; --accent:#86B6F0;
+    --ok:#5ED3A2; --ok-bg:#11342A; --wait:#9BA8B8; --wait-bg:#1F2B3A; --warn:#F2C45A; --warn-bg:#3A2D0E; --live:#86B6F0; --live-bg:#17304F;
+    --quote-bg:#2A2412; --quote-line:#B48B22;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0D131B; --surface:#151E2A; --surface-2:#1B2635; --ink:#E5EBF2; --muted:#9BA8B8; --line:#273447;
+  --brand:#3CC18D; --brand-ink:#05241A; --accent:#86B6F0;
+  --ok:#5ED3A2; --ok-bg:#11342A; --wait:#9BA8B8; --wait-bg:#1F2B3A; --warn:#F2C45A; --warn-bg:#3A2D0E; --live:#86B6F0; --live-bg:#17304F;
+  --quote-bg:#2A2412; --quote-line:#B48B22;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:24px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.2}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* intro */
+.intro{display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end;justify-content:space-between}
+.intro h1{font-size:clamp(26px,4vw,36px)}
+.intro p.lede{color:var(--muted);max-width:62ch;margin-top:6px}
+.tag{display:inline-block;background:var(--warn-bg);color:var(--warn);font-weight:700;font-size:13px;padding:4px 10px;border-radius:999px}
+
+/* layout */
+.stage{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:920px){.stage{grid-template-columns:minmax(0,1fr)}}
+.col-label{display:flex;gap:10px;align-items:baseline;margin-bottom:12px}
+.col-label h2{font-size:18px}
+.col-label span{color:var(--muted);font-size:14px}
+
+/* phone */
+.phone-col{display:flex;flex-direction:column;align-items:center}
+.phone-col .col-label{align-self:stretch}
+.phone{width:min(100%,380px);height:760px;max-height:88vh;min-height:620px;border-radius:46px;background:#0F141B;padding:12px;box-shadow:0 20px 50px -20px rgba(10,20,35,.45)}
+.screen{position:relative;height:100%;border-radius:36px;background:#FFFFFF;color:#111827;overflow:hidden;display:flex;flex-direction:column;font-size:20px;line-height:1.45}
+.screen.big{font-size:24px}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 6px;font-size:14px;font-weight:700;color:#111827;flex:none}
+.statusbar .notch{width:90px;height:24px;border-radius:14px;background:#0F141B}
+.scr{flex:1;overflow-y:auto;padding:8px 22px 22px;display:flex;flex-direction:column;gap:18px}
+.scr[hidden]{display:none!important}
+.brandbar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-bottom:10px;border-bottom:1px solid #E5E7EB}
+.brandbar b{font-size:.8em;color:#0B3B6E}
+.sizebtn{border:2px solid #CBD5E1;background:#fff;color:#111827;border-radius:12px;padding:6px 12px;font-size:16px;font-weight:700;min-height:44px}
+.sizebtn[aria-pressed="true"]{border-color:#0B3B6E;background:#E7F0FA}
+.progress{display:flex;gap:8px;align-items:center;font-size:.8em;font-weight:700;color:#374151}
+.progress .dots{display:flex;gap:6px}
+.progress .dots i{width:34px;height:10px;border-radius:5px;background:#E5E7EB}
+.progress .dots i.on{background:#0B6E4F}
+.scr h3{font-size:1.4em;line-height:1.2;color:#0F172A}
+.bigbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;min-height:76px;border:none;border-radius:18px;background:#0B6E4F;color:#fff;font-size:1.1em;font-weight:700;padding:14px 18px;text-align:center;box-shadow:0 4px 0 #075338}
+.bigbtn:active{transform:translateY(2px);box-shadow:0 2px 0 #075338}
+.bigbtn[disabled]{background:#9CA3AF;box-shadow:none;cursor:not-allowed}
+.bigbtn svg{flex:none}
+.outbtn{display:flex;align-items:center;justify-content:center;width:100%;min-height:64px;border:3px solid #0B3B6E;border-radius:18px;background:#fff;color:#0B3B6E;font-size:1em;font-weight:700;padding:10px 16px}
+.demo-link{background:none;border:none;color:#6B7280;font-size:15px;text-decoration:underline;padding:6px;align-self:center}
+.help{font-size:.8em;color:#4B5563}
+.card-illus{align-self:center;width:100%;max-width:300px}
+.shot{width:100%;border-radius:14px;border:3px solid #0B6E4F;display:block;aspect-ratio:856/540;object-fit:cover;background:#F3F4F6}
+.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* sms */
+.sms{background:#F2F2F7;flex:1;display:flex;flex-direction:column}
+.sms-head{text-align:center;padding:6px 16px 12px;border-bottom:1px solid #D1D5DB;background:#F9FAFB}
+.sms-head .avatar{width:48px;height:48px;border-radius:50%;background:#0B3B6E;color:#fff;display:grid;place-items:center;margin:0 auto 4px;font-weight:700;font-size:18px}
+.sms-head b{font-size:15px}
+.sms-body{padding:18px 14px;display:flex;flex-direction:column;gap:8px;font-size:17px}
+.sms-time{text-align:center;font-size:12px;color:#6B7280}
+.bubble{background:#E5E5EA;color:#111;border-radius:20px;padding:12px 16px;max-width:88%;line-height:1.4}
+.bubble a{color:#0A58CA;font-weight:700;text-decoration:underline;word-break:break-all;cursor:pointer}
+.tap-hint{align-self:flex-start;margin-left:6px;font-size:13px;color:#0A58CA;font-weight:700;animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){.tap-hint{animation:none}}
+
+/* signature */
+.agree{background:#F3F6FA;border-radius:14px;padding:14px 16px;font-size:.85em}
+.agree details{margin-top:8px}
+.agree summary{color:#0B3B6E;font-weight:700;cursor:pointer;min-height:36px}
+.agree details p{margin-top:6px;color:#374151;font-size:.9em}
+.sigwrap{position:relative;border:3px dashed #94A3B8;border-radius:16px;background:#fff}
+.sigwrap canvas{display:block;width:100%;height:190px;touch-action:none;cursor:crosshair}
+.sigwrap .xline{position:absolute;left:18px;right:18px;bottom:44px;border-bottom:2px solid #CBD5E1;pointer-events:none}
+.sigwrap .xmark{position:absolute;left:18px;bottom:48px;font-size:22px;color:#94A3B8;pointer-events:none}
+.sigwrap .ph{position:absolute;inset:0;display:grid;place-items:center;color:#94A3B8;font-size:.85em;pointer-events:none}
+.signame{display:flex;justify-content:space-between;align-items:center;font-size:.8em;color:#374151}
+.clearbtn{background:none;border:2px solid #CBD5E1;border-radius:10px;padding:6px 14px;font-size:16px;font-weight:700;color:#374151;min-height:44px}
+.donemark{align-self:center;margin-top:24px}
+
+/* console */
+.console{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.console-head{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.console-head h2{font-size:18px}
+.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-weight:700;font-size:14px}
+.ghost:hover{border-color:var(--muted)}
+.current{padding:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+@media (max-width:640px){.current{grid-template-columns:minmax(0,1fr)}}
+.client{display:flex;flex-direction:column;gap:4px}
+.client h3{font-size:22px}
+.client dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:8px 0 0;font-size:14px}
+.client dt{color:var(--muted)}
+.client dd{margin:0}
+.oncall{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--live);background:var(--live-bg);padding:4px 10px;border-radius:999px;align-self:flex-start}
+.oncall::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.3}}
+@media (prefers-reduced-motion:reduce){.oncall::before{animation:none}}
+.whereblock{background:var(--live-bg);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.whereblock .where{font-size:20px;font-weight:700;color:var(--ink)}
+.whereblock.done{background:var(--ok-bg)}
+.script{grid-column:1/-1;background:var(--quote-bg);border-left:5px solid var(--quote-line);border-radius:6px 14px 14px 6px;padding:14px 18px;display:flex;flex-direction:column;gap:4px}
+.script q{font-size:19px;quotes:"“" "”";line-height:1.4}
+.checklist{grid-column:1/-1;list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:640px){.checklist{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.item{border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.item .top{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.state{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--wait-bg);color:var(--wait)}
+.item.ok .state{background:var(--ok);color:var(--surface)}
+.item.ok{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.item .thumb{aspect-ratio:856/540;border-radius:8px;background:var(--surface-2);border:1px dashed var(--line);display:grid;place-items:center;overflow:hidden;color:var(--muted);font-size:12px}
+.item .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.item .thumb.sig img{object-fit:contain;background:#fff}
+.item .when{font-size:12px;color:var(--muted)}
+.actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.primary{background:var(--brand);color:var(--brand-ink);border:none;border-radius:10px;padding:10px 16px;font-weight:700;font-size:15px}
+.primary[disabled]{opacity:.45;cursor:not-allowed}
+.actions .note{font-size:13px;color:var(--muted)}
+
+.queue{border-top:1px solid var(--line);padding:16px 20px 20px}
+.queue h3{font-size:15px;margin-bottom:10px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:520px}
+th{text-align:left;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr.cur td{background:var(--live-bg)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.live{background:var(--live-bg);color:var(--live);outline:1px solid color-mix(in srgb,var(--live) 40%,transparent)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.wait{background:var(--wait-bg);color:var(--wait)}
+
+/* how it works */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;border-top:1px solid var(--line);padding-top:24px}
+@media (max-width:820px){.how{grid-template-columns:minmax(0,1fr)}}
+.how h3{font-size:17px;margin-bottom:8px}
+.how ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--ink)}
+.how li{max-width:60ch}
+.how li::marker{color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <div>
+      <span class="tag">Mockup · sample data only</span>
+      <h1 style="margin-top:10px">Text-a-link card &amp; signature capture</h1>
+      <p class="lede">Left: what your client sees on their phone. Right: what your caller sees while they're on the phone with them. Tap through the phone. The caller screen updates as each step comes in.</p>
+    </div>
+  </header>
+
+  <div class="stage">
+    <!-- PHONE -->
+    <div class="phone-col">
+      <div class="col-label"><h2>Client's phone</h2><span>Try it: tap the link</span></div>
+      <div class="phone">
+        <div class="screen" id="screen">
+          <div class="statusbar"><span class="mono" id="sbTime">10:41</span><span class="notch"></span><span>5G ▮▮▮</span></div>
+
+          <!-- SMS -->
+          <div class="scr sms" data-s="sms" style="padding:0;gap:0">
+            <div class="sms-head"><div class="avatar">MS</div><b>Maple Street Insurance</b></div>
+            <div class="sms-body">
+              <div class="sms-time">Today 10:41 AM</div>
+              <div class="bubble">Hi Margaret, this is Sarah from Maple Street Insurance. Tap this link to send us your card and sign your form:<br><a id="smsLink" role="button" tabindex="0">msins.co/m/K7Q2</a></div>
+              <span class="tap-hint">↑ Tap the blue link</span>
+            </div>
+          </div>
+
+          <!-- WELCOME -->
+          <div class="scr" data-s="welcome" hidden>
+            <div class="brandbar"><b>Maple Street Insurance</b><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Hi Margaret!</h3>
+            <p>Sarah is on the phone with you. She will help you.</p>
+            <p>This takes <b>3 short steps</b>:</p>
+            <ol style="margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px">
+              <li>Picture of the <b>front</b> of your card</li>
+              <li>Picture of the <b>back</b> of your card</li>
+              <li>Sign with your finger</li>
+            </ol>
+            <button class="bigbtn" data-go="front" style="margin-top:auto">Start</button>
+          </div>
+
+          <!-- FRONT -->
+          <div class="scr" data-s="front" hidden>
+            <div class="brandbar"><div class="progress"><span>Step 1 of 3</span><span class="dots"><i class="on"></i><i></i><i></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Take a picture of the FRONT of your card</h3>
+            <svg class="card-illus" viewBox="0 0 300 190" aria-hidden="true"><rect x="4" y="4" width="292" height="182" rx="16" fill="#E7F0FA" stroke="#0B3B6E" stroke-width="4"/><rect x="22" y="24" width="120" height="16" rx="4" fill="#0B3B6E"/><rect x="22" y="60" width="180" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="80" width="140" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="100" width="160" height="10" rx="4" fill="#94A3B8"/><text x="150" y="160" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-size="22" font-weight="700" fill="#0B3B6E">FRONT</text></svg>
+            <p class="help">Lay the card flat on a table. Make sure there is good light.</p>
+            <label class="bigbtn" for="fileFront">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></svg>
+              Take picture of FRONT
+            </label>
+            <input class="visually-hidden" type="file" accept="image/*" capture="environment" id="fileFront">
+            <button class="demo-link" data-sample="front">Demo: use a sample card picture</button>
+          </div>
+
+          <!-- FRONT REVIEW -->
+          <div class="scr" data-s="frontReview" hidden>
+            <div class="brandbar"><div class="progress"><span>Step 1 of 3</span><span class="dots"><i class="on"></i><i></i><i></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Can you read the words in the picture?</h3>
+            <img class="shot" id="prevFront" alt="Your picture of the front of the card">
+            <button class="bigbtn" data-accept="front">Yes, looks good</button>
+            <label class="outbtn" for="fileFront">No, take it again</label>
+          </div>
+
+          <!-- BACK -->
+          <div class="scr" data-s="back" hidden>
+            <div class="brandbar"><div class="progress"><span>Step 2 of 3</span><span class="dots"><i class="on"></i><i class="on"></i><i></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Great! Now turn the card over.</h3>
+            <svg class="card-illus" viewBox="0 0 300 190" aria-hidden="true"><rect x="4" y="4" width="292" height="182" rx="16" fill="#F1F5F9" stroke="#0B3B6E" stroke-width="4"/><rect x="4" y="28" width="292" height="30" fill="#334155"/><rect x="22" y="80" width="200" height="10" rx="4" fill="#94A3B8"/><rect x="22" y="100" width="150" height="10" rx="4" fill="#94A3B8"/><text x="150" y="160" text-anchor="middle" font-family="Atkinson Hyperlegible, sans-serif" font-size="22" font-weight="700" fill="#0B3B6E">BACK</text></svg>
+            <p class="help">Take a picture of the <b>back</b> of the card.</p>
+            <label class="bigbtn" for="fileBack">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.8"/></svg>
+              Take picture of BACK
+            </label>
+            <input class="visually-hidden" type="file" accept="image/*" capture="environment" id="fileBack">
+            <button class="demo-link" data-sample="back">Demo: use a sample card picture</button>
+          </div>
+
+          <!-- BACK REVIEW -->
+          <div class="scr" data-s="backReview" hidden>
+            <div class="brandbar"><div class="progress"><span>Step 2 of 3</span><span class="dots"><i class="on"></i><i class="on"></i><i></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Can you read the words in the picture?</h3>
+            <img class="shot" id="prevBack" alt="Your picture of the back of the card">
+            <button class="bigbtn" data-accept="back">Yes, looks good</button>
+            <label class="outbtn" for="fileBack">No, take it again</label>
+          </div>
+
+          <!-- SIGN -->
+          <div class="scr" data-s="sign" hidden>
+            <div class="brandbar"><div class="progress"><span>Step 3 of 3</span><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i></span></div><button class="sizebtn" data-size aria-pressed="false">Aa Bigger</button></div>
+            <h3>Last step: sign your name</h3>
+            <div class="agree">
+              By signing, you let Maple Street Insurance get your health information to help with your insurance.
+              <details><summary>Read the full form</summary>
+                <p>Authorization to Release Health Information (sample). I authorize my doctors, pharmacies and health plans to share my medical and prescription records with Maple Street Insurance for the purpose of reviewing and servicing my insurance coverage. This authorization lasts 24 months unless I cancel it in writing.</p>
+              </details>
+            </div>
+            <div class="sigwrap">
+              <canvas id="sig" aria-label="Sign here with your finger"></canvas>
+              <span class="xmark">✕</span><span class="xline"></span>
+              <span class="ph" id="sigPh">Sign here with your finger</span>
+            </div>
+            <div class="signame"><span>Margaret Ellis</span><button class="clearbtn" id="sigClear">Start over</button></div>
+            <button class="bigbtn" id="sigDone" disabled>I agree and sign</button>
+          </div>
+
+          <!-- DONE -->
+          <div class="scr" data-s="done" hidden>
+            <svg class="donemark" width="120" height="120" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#0B6E4F"/><path d="M34 62l17 17 36-38" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <h3 style="text-align:center">All done, Margaret!</h3>
+            <p style="text-align:center">You can tell Sarah you are finished.</p>
+            <p class="help" style="text-align:center">You can close this page now. Thank you!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSOLE -->
+    <div>
+      <div class="col-label"><h2>Caller's screen</h2><span>Updates live as each step comes in</span></div>
+      <section class="console">
+        <header class="console-head">
+          <div><p class="eyebrow">Caller console</p><h2>Sarah K. · Today's calls</h2></div>
+          <button class="ghost" id="restart">Restart demo</button>
+        </header>
+
+        <div class="current">
+          <div class="client">
+            <span class="oncall">On call <span class="mono" id="callTimer">0:00</span></span>
+            <h3>Margaret Ellis</h3>
+            <dl>
+              <dt>Cell</dt><dd class="mono">(555) 014-2291</dd>
+              <dt>Link</dt><dd><span id="linkState">Texted at 10:41 AM</span></dd>
+              <dt>Form</dt><dd>Health info release</dd>
+            </dl>
+          </div>
+          <div class="whereblock" id="whereBlock">
+            <span class="eyebrow">What Margaret sees now</span>
+            <span class="where" id="whereText">The text message</span>
+            <span style="font-size:14px;color:var(--muted)" id="whereSub">She hasn't opened the link yet</span>
+          </div>
+
+          <div class="script">
+            <span class="eyebrow">Say this</span>
+            <q id="scriptText">I just sent you a text message. Do you see it? Tap the blue link inside it.</q>
+          </div>
+
+          <ol class="checklist">
+            <li class="item" id="itOpen"><div class="top"><span class="state">✓</span>Link opened</div><div class="thumb">Not yet</div><span class="when mono">Waiting</span></li>
+            <li class="item" id="itFront"><div class="top"><span class="state">✓</span>Card front</div><div class="thumb">Not yet</div><span class="when mono">Waiting</span></li>
+            <li class="item" id="itBack"><div class="top"><span class="state">✓</span>Card back</div><div class="thumb">Not yet</div><span class="when mono">Waiting</span></li>
+            <li class="item" id="itSig"><div class="top"><span class="state">✓</span>Signature</div><div class="thumb sig">Not yet</div><span class="when mono">Waiting</span></li>
+          </ol>
+
+          <div class="actions">
+            <button class="ghost" id="resend">Resend text</button>
+            <button class="primary" id="packet" disabled>Save to client file</button>
+            <span class="note" id="packetNote">Unlocks when all 4 are in.</span>
+          </div>
+        </div>
+
+        <div class="queue">
+          <h3>Today's list</h3>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Client</th><th>Time</th><th>Status</th><th>Items</th></tr></thead>
+              <tbody>
+                <tr class="cur"><td><b>Margaret Ellis</b></td><td class="mono">10:41</td><td><span class="pill live" id="qStatus">On call now</span></td><td class="mono" id="qItems">0 / 3</td></tr>
+                <tr><td>Harold Brandt</td><td class="mono">10:12</td><td><span class="pill ok">Complete</span></td><td class="mono">3 / 3</td></tr>
+                <tr><td>Dolores Vega</td><td class="mono">09:48</td><td><span class="pill ok">Complete</span></td><td class="mono">3 / 3</td></tr>
+                <tr><td>Walter Kim</td><td class="mono">09:30</td><td><span class="pill warn">Link not opened</span></td><td class="mono">0 / 3</td></tr>
+                <tr><td>Ruth Okafor</td><td class="mono">09:05</td><td><span class="pill warn">Needs card back</span></td><td class="mono">2 / 3</td></tr>
+                <tr><td>Eugene Park</td><td class="mono">11:15</td><td><span class="pill wait">Not called</span></td><td class="mono">–</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section class="how">
+    <div>
+      <h3>Why this is easier than email</h3>
+      <ul>
+        <li>They never leave the text message. No email app, no attachments, no scanning.</li>
+        <li>One big button per screen, large readable type, and a "bigger text" button.</li>
+        <li>The camera opens right from the page. They take the picture and it's sent.</li>
+        <li>Your caller sees exactly which step they're on and what to say next.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>What the real version needs</h3>
+      <ul>
+        <li>A texting service (such as Twilio) to send the link from your business number.</li>
+        <li>A small secure website: one link per client, expiring after 24–48 hours.</li>
+        <li>Storage for the card photos, plus a push into your client files or CRM.</li>
+        <li>The signature can stay in DocuSign (embedded right in step 3), or be captured here with a signed-and-timestamped audit record.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Decisions for your team</h3>
+      <ul>
+        <li>Keep DocuSign for the signature, or replace it?</li>
+        <li>Where should finished packets land: a shared drive, your CRM, email to a team inbox?</li>
+        <li>Should a family member be able to finish the link for them?</li>
+        <li>Automatic reminder text if a link isn't finished within a day?</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  const $ = s => document.querySelector(s);
+  const screens = [...document.querySelectorAll('.scr')];
+  const screenEl = $('#screen');
+  const S = {};
+  let t0 = Date.now();
+
+  const SCRIPT = {
+    sms:        ['The text message', "She hasn't opened the link yet", 'I just sent you a text message. Do you see it? Tap the blue link inside it.'],
+    welcome:    ['Welcome page', 'Link opened. Waiting for her to tap Start', 'You should see a page that says "Hi Margaret." Tap the big green Start button at the bottom.'],
+    front:      ['Step 1 of 3 · Card front', 'Camera button on screen', 'Get your insurance card and lay it flat on the table, front side up. Tap the green button that says "Take picture of front."'],
+    frontReview:['Step 1 of 3 · Checking the picture', 'She took a picture of the front', 'Can you read the words in the picture? If you can, tap "Yes, looks good."'],
+    back:       ['Step 2 of 3 · Card back', 'Front received', 'Perfect, I got the front. Now turn the card over and tap the green button again.'],
+    backReview: ['Step 2 of 3 · Checking the picture', 'She took a picture of the back', 'Can you read that one too? Then tap "Yes, looks good."'],
+    sign:       ['Step 3 of 3 · Signature', 'Both card pictures received', 'Last step. Sign your name with your finger in the white box, just like signing a check. Then tap "I agree and sign."'],
+    done:       ['Finished', 'Everything received', "That's everything, Margaret. I have your card and your signature. Thank you so much!"]
+  };
+
+  function clock(){
+    const secs = Math.floor((Date.now()-t0)/1000);
+    const base = 10*3600 + 41*60 + secs;
+    const h = Math.floor(base/3600), m = Math.floor(base%3600/60);
+    return {h, m, secs};
+  }
+  function stamp(){
+    const {h,m} = clock();
+    return `${h}:${String(m).padStart(2,'0')} AM`;
+  }
+  setInterval(()=>{
+    const {h,m,secs} = clock();
+    $('#sbTime').textContent = `${h}:${String(m).padStart(2,'0')}`;
+    const cs = secs + 72;
+    $('#callTimer').textContent = `${Math.floor(cs/60)}:${String(cs%60).padStart(2,'0')}`;
+  }, 1000);
+
+  function go(step){
+    S.step = step;
+    screens.forEach(s => s.hidden = s.dataset.s !== step);
+    if(step === 'sign') requestAnimationFrame(sizeCanvas);
+    render();
+  }
+
+  function setItem(id, src, when, isSig){
+    const el = $(id);
+    const thumb = el.querySelector('.thumb');
+    el.classList.toggle('ok', !!when);
+    thumb.innerHTML = src ? `<img alt="" src="${src}">` : (when ? '<span>Opened</span>' : 'Not yet');
+    el.querySelector('.when').textContent = when ? `Received ${when}` : 'Waiting';
+    if(!src && when) thumb.innerHTML = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>';
+  }
+
+  function render(){
+    const [where, sub, line] = SCRIPT[S.step];
+    $('#whereText').textContent = where;
+    $('#whereSub').textContent = sub;
+    $('#scriptText').textContent = line;
+    $('#whereBlock').classList.toggle('done', S.step === 'done');
+    setItem('#itOpen', null, S.openedAt);
+    setItem('#itFront', S.frontAt ? S.front : null, S.frontAt);
+    setItem('#itBack', S.backAt ? S.back : null, S.backAt);
+    setItem('#itSig', S.sig, S.sigAt, true);
+    const n = (S.frontAt?1:0)+(S.backAt?1:0)+(S.sigAt?1:0);
+    $('#qItems').textContent = `${n} / 3`;
+    const done = S.step === 'done';
+    const q = $('#qStatus');
+    q.className = 'pill ' + (done ? 'ok' : 'live');
+    q.textContent = done ? 'Complete' : 'On call now';
+    const p = $('#packet');
+    p.disabled = !done;
+    if(!S.saved){ p.textContent = 'Save to client file'; $('#packetNote').textContent = done ? 'Card photos + signed form, bundled as one PDF.' : 'Unlocks when all 4 are in.'; }
+  }
+
+  // sample card images
+  function makeCard(side){
+    const c = document.createElement('canvas'); c.width = 856; c.height = 540;
+    const x = c.getContext('2d');
+    const r = (a,b,w,h,rad)=>{x.beginPath();x.roundRect(a,b,w,h,rad);};
+    x.fillStyle = '#6B5B4B'; x.fillRect(0,0,856,540); // table
+    x.save(); x.translate(428,270); x.rotate(side==='front'?-0.02:0.015); x.translate(-400,-250);
+    x.shadowColor='rgba(0,0,0,.35)'; x.shadowBlur=18; x.shadowOffsetY=6;
+    r(0,0,800,500,28); x.fillStyle='#FFFFFF'; x.fill(); x.shadowColor='transparent';
+    x.font = '700 30px "Atkinson Hyperlegible", Arial, sans-serif';
+    if(side==='front'){
+      const g = x.createLinearGradient(0,0,800,0); g.addColorStop(0,'#0B3B6E'); g.addColorStop(1,'#1D6FA8');
+      x.save(); r(0,0,800,500,28); x.clip(); x.fillStyle=g; x.fillRect(0,0,800,110); x.restore();
+      x.fillStyle='#fff'; x.font='700 40px "Atkinson Hyperlegible", Arial, sans-serif'; x.fillText('SAMPLE HEALTH PLAN',36,70);
+      x.font='700 26px Arial, sans-serif'; x.fillText('PPO',700,68);
+      x.fillStyle='#111827';
+      const rows=[['Member','MARGARET A ELLIS'],['Member ID','XJH 448210 97'],['Group #','07731'],['RxBIN / PCN','610014 / MSIRX'],['Effective','01/01/2026']];
+      rows.forEach(([k,v],i)=>{x.font='400 24px Arial, sans-serif';x.fillStyle='#4B5563';x.fillText(k,40,170+i*56);x.font='700 30px Arial, sans-serif';x.fillStyle='#111827';x.fillText(v,250,170+i*56);});
+      x.font='700 22px Arial, sans-serif'; x.fillStyle='#0B3B6E'; x.fillText('Copays: PCP $25 · Specialist $50 · ER $250',40,470);
+    } else {
+      x.fillStyle='#1F2937'; x.fillRect(0,40,800,70);
+      x.fillStyle='#111827'; x.font='700 28px Arial, sans-serif'; x.fillText('Member Services: 1-800-555-0142',40,170);
+      x.font='400 24px Arial, sans-serif'; x.fillStyle='#374151';
+      ['Pharmacy help: 1-800-555-0177','Nurse line (24/7): 1-800-555-0190','Send medical claims to:','Sample Health Plan, PO Box 1234, Springfield','This card is a sample for demonstration only.'].forEach((t,i)=>x.fillText(t,40,220+i*44));
+    }
+    x.restore();
+    return c.toDataURL('image/jpeg', .85);
+  }
+
+  function takePhoto(side, src){
+    S[side] = src;
+    $(side==='front' ? '#prevFront' : '#prevBack').src = src;
+    go(side==='front' ? 'frontReview' : 'backReview');
+  }
+
+  ['front','back'].forEach(side=>{
+    const inp = $(side==='front' ? '#fileFront' : '#fileBack');
+    inp.addEventListener('change', ()=>{
+      const f = inp.files && inp.files[0]; if(!f) return;
+      const rd = new FileReader();
+      rd.onload = () => takePhoto(side, rd.result);
+      rd.readAsDataURL(f);
+      inp.value = '';
+    });
+  });
+  document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', ()=> takePhoto(b.dataset.sample, makeCard(b.dataset.sample))));
+  document.querySelectorAll('[data-accept]').forEach(b => b.addEventListener('click', ()=>{
+    const side = b.dataset.accept;
+    S[side+'At'] = stamp();
+    go(side==='front' ? 'back' : 'sign');
+  }));
+  document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', ()=> go(b.dataset.go)));
+
+  const openLink = ()=>{ S.openedAt = stamp(); go('welcome'); };
+  $('#smsLink').addEventListener('click', openLink);
+  $('#smsLink').addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();openLink();} });
+
+  document.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', ()=>{
+    S.big = !S.big;
+    screenEl.classList.toggle('big', S.big);
+    document.querySelectorAll('[data-size]').forEach(x=>{x.setAttribute('aria-pressed', S.big);x.textContent = S.big ? 'Aa Smaller' : 'Aa Bigger';});
+    if(S.step==='sign') requestAnimationFrame(sizeCanvas);
+  }));
+
+  // signature pad
+  const cv = $('#sig'), ctx = cv.getContext('2d');
+  let drawing = false, inked = false, last = null;
+  function sizeCanvas(){
+    const dpr = window.devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+    if(!w) return;
+    const keep = inked ? cv.toDataURL() : null;
+    cv.width = w*dpr; cv.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.lineWidth = 3.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.strokeStyle = '#0F172A';
+    if(keep){ const im = new Image(); im.onload = ()=>ctx.drawImage(im,0,0,w,h); im.src = keep; }
+  }
+  const pt = e => { const b = cv.getBoundingClientRect(); return {x:e.clientX-b.left, y:e.clientY-b.top}; };
+  cv.addEventListener('pointerdown', e=>{ drawing = true; last = pt(e); cv.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.arc(last.x,last.y,1.4,0,Math.PI*2); ctx.fillStyle='#0F172A'; ctx.fill(); mark(); });
+  cv.addEventListener('pointermove', e=>{ if(!drawing) return; const p = pt(e); ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last = p; });
+  const end = ()=>{ drawing = false; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  function mark(){ inked = true; $('#sigPh').hidden = true; $('#sigDone').disabled = false; }
+  function clearSig(){ ctx.clearRect(0,0,cv.width,cv.height); inked = false; $('#sigPh').hidden = false; $('#sigDone').disabled = true; }
+  $('#sigClear').addEventListener('click', clearSig);
+  $('#sigDone').addEventListener('click', ()=>{
+    // flatten onto white for the caller's thumbnail
+    const out = document.createElement('canvas'); out.width = cv.width; out.height = cv.height;
+    const o = out.getContext('2d'); o.fillStyle = '#fff'; o.fillRect(0,0,out.width,out.height); o.drawImage(cv,0,0);
+    S.sig = out.toDataURL('image/png'); S.sigAt = stamp();
+    go('done');
+  });
+  window.addEventListener('resize', ()=>{ if(S.step==='sign') sizeCanvas(); });
+
+  $('#resend').addEventListener('click', ()=>{
+    $('#linkState').textContent = `Re-sent at ${stamp()}`;
+  });
+  $('#packet').addEventListener('click', ()=>{
+    S.saved = true;
+    $('#packet').textContent = 'Saved';
+    $('#packet').disabled = true;
+    $('#packetNote').textContent = 'Demo only. In the real version this lands in the client file automatically.';
+  });
+
+  function reset(){
+    Object.keys(S).forEach(k => delete S[k]);
+    t0 = Date.now();
+    clearSig();
+    $('#linkState').textContent = 'Texted at 10:41 AM';
+    if(screenEl.classList.contains('big')) screenEl.classList.remove('big');
+    document.querySelectorAll('[data-size]').forEach(x=>{x.setAttribute('aria-pressed','false');x.textContent='Aa Bigger';});
+    go('sms');
+  }
+  $('#restart').addEventListener('click', reset);
+  reset();
+})();
+</script>
