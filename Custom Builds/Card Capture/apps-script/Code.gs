@@ -309,12 +309,16 @@ function settingsLoad() {
   if (!out.DS_ENV) out.DS_ENV = 'demo';
   if (!out.EXPIRY_HOURS) out.EXPIRY_HOURS = '48';
   if (!out.DS_FALLBACK_EMAIL) out.DS_FALLBACK_EMAIL = Session.getEffectiveUser().getEmail();
-  out.suggestedWebAppUrl = ScriptApp.getService().getUrl() || '';
   return out;
 }
 
 function settingsSave(values) {
   requireStaff_();
+  var url = String(values.WEBAPP_URL || '').trim();
+  if (url && !/^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec$/.test(url)) {
+    throw new Error('The web app address should look like https://script.google.com/macros/s/…/exec. ' +
+      'Copy it from Deploy → Manage deployments in the Apps Script editor.');
+  }
   var p = PropertiesService.getScriptProperties();
   SETTING_KEYS.forEach(function (k) {
     if (!(k in values)) return;

@@ -101,7 +101,6 @@
     $('TW_AUTH').value = ''; $('DS_PRIVATE').value = '';
     $('TW_AUTH').placeholder = s.TW_AUTH_SAVED ? 'Saved (leave blank to keep)' : '';
     $('DS_PRIVATE').placeholder = s.DS_PRIVATE_SAVED ? 'Saved (leave blank to keep)' : '-----BEGIN RSA PRIVATE KEY-----';
-    if (!s.WEBAPP_URL && s.suggestedWebAppUrl && /\/exec$/.test(s.suggestedWebAppUrl)) $('WEBAPP_URL').value = s.suggestedWebAppUrl;
   }
   function collect() { var o = {}; FIELDS.forEach(function (k) { o[k] = $(k).value; }); return o; }
   function err(id) { return function (e) { say(id, (e && e.message) || 'Something went wrong.', 'bad'); }; }
