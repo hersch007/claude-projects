@@ -1,0 +1,16 @@
+{
+  "date": "2026-09-19",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    {"time": "7:00a-7:15a", "client": "GAR", "note": "JS Nav coding",            "job": "0790167", "billable": true},
+    {"time": "7:15a-7:30a", "client": "GAR", "note": "JS Nav coding",            "job": "0790167", "billable": true},
+    {"time": "7:30a-7:45a", "client": "GAR", "note": "JS Nav coding",            "job": "0790167", "billable": true},
+    {"time": "7:45a-8:00a", "client": "GAR", "note": "JS Nav coding / testing",  "job": "0790167", "billable": true},
+    {"time": "8:00a-8:15a", "client": "GAR", "note": "JS Nav coding / testing",  "job": "0790167", "billable": true},
+    {"time": "8:15a-8:30a", "client": "GAR", "note": "JS Nav coding",            "job": "0790167", "billable": true},
+    {"time": "8:30a-8:45a", "client": "GAR", "note": "JS Nav coding",            "job": "0790167", "billable": true},
+    {"time": "8:45a-9:00a", "client": "GAR", "note": "JS Nav coding / testing",  "job": "0790167", "billable": true},
+    {"time": "9:00a-9:15a", "client": "GAR", "note": "JS Nav coding / testing",  "job": "0790167", "billable": true}
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-18",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    {"time": "6:00a-6:15a",   "client": "CFB", "note": "FR Tracker Setup for Jaime",   "job": "0920066", "billable": true},
+    {"time": "6:15a-6:30a",   "client": "CFB", "note": "FR Tracker Setup for Jaime",   "job": "0920066", "billable": true},
+    {"time": "6:30a-6:45a",   "client": "CFB", "note": "TH Tracker Setup for Jaime",   "job": "0920068", "billable": true},
+    {"time": "6:45a-7:00a",   "client": "CFB", "note": "TH Tracker Setup for Jaime",   "job": "0920068", "billable": true},
+    {"time": "7:00a-7:15a",   "client": "CFB", "note": "CFB Tracker Setup for Jaime",  "job": "0920067", "billable": true},
+    {"time": "7:15a-7:30a",   "client": "CFB", "note": "CFB Tracker Setup for Jaime",  "job": "0920067", "billable": true},
+    {"time": "7:30a-7:45a",   "client": "CFB", "note": "Product Page SEO Research",    "job": "0920027", "billable": true},
+    {"time": "7:45a-8:00a",   "client": "CFB", "note": "Product Page SEO AISEO",       "job": "0920012", "billable": true},
+    {"time": "8:00a-8:15a",   "client": "CFB", "note": "Product Page SEO Schema",      "job": "0920018", "billable": true},
+    {"time": "8:15a-8:30a",   "client": "CFB", "note": "Product Page SEO Imp",         "job": "0920028", "billable": true},
+    {"time": "8:30a-8:45a",   "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "8:45a-9:00a",   "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "9:00a-9:15a",   "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "9:15a-9:30a",   "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "9:30a-9:45a",   "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "9:45a-10:00a",  "client": "GAR", "note": "MENU fix - research analysis", "job": "0790146", "billable": true},
+    {"time": "10:15a-10:30a", "client": "STA", "note": "meeting bud",                  "job": null, "billable": false},
+    {"time": "10:30a-10:45a", "client": "STA", "note": "meeting bud",                  "job": null, "billable": false},
+    {"time": "10:45a-11:00a", "client": "STA", "note": "meeting bud",                  "job": null, "billable": false},
+    {"time": "11:15a-11:30a", "client": "GAR", "note": "Mobile NAV CSS fix test",      "job": "0790167", "billable": true},
+    {"time": "11:30a-11:45a", "client": "GAR", "note": "Mobile NAV CSS fix test",      "job": "0790167", "billable": true},
+    {"time": "11:45a-12:00p", "client": "GAR", "note": "Mobile NAV CSS fix test",      "job": "0790167", "billable": true},
+    {"time": "12:00p-12:15p", "client": "GAR", "note": "Mobile NAV CSS fix test",      "job": "0790167", "billable": true}
+  ]
+}

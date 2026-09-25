@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-20",
+  "employee": "Richard Brashear",
+  "minutesPerBlock": 15,
+  "rows": [
+    {"time": "7:45a-8:00a",   "client": "GAR", "note": "CSS Nav coding",                          "job": "0790167", "billable": true},
+    {"time": "8:00a-8:15a",   "client": "GAR", "note": "CSS Nav coding",                          "job": "0790167", "billable": true},
+    {"time": "8:15a-8:30a",   "client": "GAR", "note": "CSS Nav coding",                          "job": "0790167", "billable": true},
+    {"time": "8:30a-8:45a",   "client": "GAR", "note": "CSS Nav coding / testing / refine",       "job": "0790167", "billable": true},
+    {"time": "8:45a-9:00a",   "client": "GAR", "note": "CSS Nav coding / testing / refine",       "job": "0790167", "billable": true},
+    {"time": "9:00a-9:15a",   "client": "GAR", "note": "CSS Nav coding / testing / refine",       "job": "0790167", "billable": true},
+    {"time": "9:15a-9:30a",   "client": "GAR", "note": "SEO Tracking",                            "job": "0790165", "billable": true},
+    {"time": "9:30a-9:45a",   "client": "GAR", "note": "SEO Tracking",                            "job": "0790165", "billable": true},
+    {"time": "9:45a-10:00a",  "client": "GAR", "note": "SEO Tracking",                            "job": "0790165", "billable": true},
+    {"time": "10:00a-10:15a", "client": "GAR", "note": "SEO Tracking",                            "job": "0790165", "billable": true},
+    {"time": "10:15a-10:30a", "client": "GAR", "note": "SEO Tracking",                            "job": "0790165", "billable": true}
+  ]
+}
