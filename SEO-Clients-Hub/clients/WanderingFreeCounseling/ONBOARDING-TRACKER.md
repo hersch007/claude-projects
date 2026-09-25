@@ -8,7 +8,7 @@
 | **Checklist** | `WFC-Welcome-Checklist.pdf` |
 | **Access email** | PartsofPractice@gmail.com |
 | **Client email** | info@wanderingfreecounseling.sprucecare.com · 614-881-2439 (call or text) |
-| **Status** | ✅ Contract signed · ⏳ Welcome email drafted in Gmail, waiting on access |
+| **Status** | ✅ Contract signed 9/14 · Billing starts 10/1 · ⏳ Welcome email ready to send, waiting on access |
 | **Last updated** | 2026-09-25 |
 
 Status key: ✅ done · ⏳ waiting on Erin · 🔲 not started · ⚠️ blocked / issue
@@ -20,31 +20,30 @@ Status key: ✅ done · ⏳ waiting on Erin · 🔲 not started · ⚠️ blocke
 | Item | Status | Date | Notes |
 |------|--------|------|-------|
 | Contract sent | ✅ | | Via e-signature |
-| Welcome email + checklist sent | ⏳ | | Gmail draft created 2026-09-25; log the date it's sent |
-| Erin signed | ✅ | *date needed* | Pull the date from the e-signature record |
-| Provider countersigned | 🔲 | | |
-| **Effective Date** (later of the two signatures) | ⏳ | | Contract §1: Effective Date = date of the later signature |
-| Payment method on file | ⏳ | | Checklist Step 5 |
-| First payment ($99) due | ⏳ | = Effective Date | Contract §3.2 — due on the Effective Date |
-| Recurring billing day | ⏳ | Same day each month | Or the last day of a month that has no such day |
-| Welcome checklist due back | ⏳ | Effective Date + 5 business days | Checklist asks for completion within 5 business days of signing |
+| Erin signed | ✅ | 2026-09-14 (Mon) | |
+| **Effective Date** | ✅ | **2026-09-14** | Assumes Parts of Practice signed on or before 9/14 (Effective Date = the later signature). If our signature is later, every date below moves |
+| Welcome email + checklist sent | ⏳ | | Sending from Richard@partsofpractice.com; log the date it's sent |
+| Welcome checklist due back | ⏳ | Sent date + 5 business days | |
+| Payment method on file | ⏳ | | |
+| **First payment ($99)** | ⏳ | **2026-10-01** | ⚠️ Agreed billing start. Contract §3.2 says the first payment is due on the Effective Date (9/14) and monthly on that day. The welcome email confirms the 10/1 start in writing |
+| Recurring billing day | ✅ | 1st of each month | 10/1/2026 → 9/1/2027 = 12 payments ($1,188) |
+| Last $99 payment (12th) | | 2027-09-01 | |
 
-## 2. Key Dates (fill in once the Effective Date is known)
+## 2. Key Dates
 
-Formulas (from the $99 agreement, §2.1, §3.2, and Exhibit A):
+The service months and the term follow the Effective Date (9/14), not the billing date (§2.1, Exhibit A: "a service month is each consecutive one-month period beginning on the Effective Date").
 
 | Date | Formula | Actual |
 |------|---------|--------|
-| Service month 1 | Effective Date → day before same date next month | |
-| **3-page allowance ends** | End of service month 2 (Effective Date + 2 months − 1 day) | |
-| Last $99 payment (12th) | Effective Date + 11 months | |
-| **Initial Term ends** | Effective Date + 12 months − 1 day | |
-| Auto-renewal starts ($55/mo SEO-only) | Effective Date + 12 months | |
-| **Non-renewal notice deadline** | Initial Term end − 60 days | |
-| Renewal reminder #1 (90 days out) | Initial Term end − 90 days | |
-| Renewal reminder #2 (1 week before deadline) | Notice deadline − 7 days | |
-
-> **Example only (if signed Thursday, Oct 1, 2026):** checklist due Thu Oct 8 · page allowance ends Nov 30, 2026 · last $99 payment Sep 1, 2027 · Initial Term ends Sep 30, 2027 · renews at $55/mo Oct 1, 2027 · non-renewal deadline **Sun Aug 1, 2027** (act by Fri Jul 30) · reminder #1 Fri Jul 2, 2027 · reminder #2 Sun Jul 25, 2027.
+| Service month 1 | Effective Date → day before same date next month | **2026-09-14 → 2026-10-13** |
+| Service month 2 | | 2026-10-14 → 2026-11-13 |
+| **3-page allowance ends** | End of service month 2 | **Fri 2026-11-13** |
+| Page allowance from month 3 | Up to 2 new pages per service month | Starts 2026-11-14 |
+| **Initial Term ends** | Effective Date + 12 months − 1 day | **Mon 2027-09-13** |
+| Auto-renewal starts ($55/mo SEO-only) | Effective Date + 12 months | Tue 2027-09-14 (billing: first $55 invoice 2027-10-01 if we keep the 1st) |
+| **Non-renewal notice deadline** | Initial Term end − 60 days | **Thu 2027-07-15** |
+| Renewal reminder #1 (90 days out) | Initial Term end − 90 days | **Tue 2027-06-15** |
+| Renewal reminder #2 (1 week before deadline) | Notice deadline − 7 days | **Thu 2027-07-08** |
 
 **Renewal note:** after month 12 the plan drops to $55/month for Spark-level SEO-only services, so schema, page additions, GA/GSC work, and content recommendations stop unless a change order is signed. Start the renewal conversation at reminder #1: offer to continue at $99 by written change order, or confirm the $55 renewal.
 
@@ -101,6 +100,7 @@ From `CLIENT-BRIEF.md` and `WFC-SEO-AUDIT-2026-09-01.md`:
 
 | Date | Update |
 |------|--------|
+| 2026-09-25 | Signed 2026-09-14; first bill 2026-10-01. Key dates filled in. Email will go from Richard@partsofpractice.com (Gmail draft in richard@grouprb.com not used). |
 | 2026-09-25 | Contract signed (date TBD). GBP claimed by Erin. Bio + photos to come from site and PT. Erin approves drafts. Welcome email drafted in Gmail (richard@grouprb.com). |
 | 2026-09-25 | Got PT link, Ohio license E.1901023, and telehealth (in person + video). GBP checked: exists, NAP matches, 5 reviews, but likely unclaimed. Claiming added to the email. |
 | 2026-09-25 | Tracker created. $99 contract and welcome checklist generated; email drafted (`EMAIL-Erin-Contract-Welcome.md`). |

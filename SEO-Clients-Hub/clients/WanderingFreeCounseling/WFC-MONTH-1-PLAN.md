@@ -2,7 +2,8 @@
 
 **Client:** Wandering Free Counseling, LLC (Erin Zarlino, LPCC)
 **Source:** `WFC-SEO-AUDIT-2026-09-01.md` (baseline **47/100**)
-**Service month 1:** Effective Date → day before the same date next month (see `ONBOARDING-TRACKER.md`)
+**Service month 1:** 2026-09-14 → 2026-10-13 (contract signed 9/14; billing starts 10/1). ⚠️ Month 1 is already underway, and access isn't in yet
+**3-page allowance deadline:** end of service month 2, **2026-11-13**
 **Page allowance:** up to **3 new pages total across months 1–2**, then up to 2 per month (months 3–12). A page is one standard page of up to ~800 words on an existing Squarespace layout.
 **Goal for month 1:** Fix every critical on-page gap, correct the NAP mismatch, get tracking in place, and publish the Meet Erin page. Target score after month 1: **65–70/100**.
 
@@ -25,7 +26,9 @@
 
 ---
 
-## Week 0 — Before access (now → signature)
+## Week 0 — Before access (now → access arrives)
+
+*The weeks below count from the day access arrives, not from 9/14. The work may spill into service month 2 (10/14–11/13). That's fine for the fixes, but the 3-page allowance ends 11/13.*
 
 - [ ] Send contract + checklist (`EMAIL-Erin-Contract-Welcome.md`); log it in the tracker
 - [ ] Pre-write all 6 meta descriptions and 3 title fixes (below) so they're paste-ready
@@ -88,7 +91,9 @@
 - **Person:** add `"image"` (headshot URL), `"url": ".../meet-erin"`, and `"knowsAbout"` once the page exists. Add EMDRIA only if she's certified.
 - **Service schema:** add `"@context"`, a `"description"`, and `"provider": { "@id": "...#organization" }`. Set `areaServed` to both Dublin and Columbus.
 
-## Weeks 2–4 — New pages (page allowance: 3 in months 1–2)
+## Weeks 2–4 — New pages (page allowance: 3 in months 1–2, ends 2026-11-13)
+
+**Page timing:** send drafts of pages 1–2 by about 10/23, and page 3 by about 10/30. That leaves Erin's 5-business-day review plus edits before 11/13. If her delays push a page past 11/13, log it: the contract says client delays shift timing, but it doesn't extend the allowance.
 
 | # | Page | Month | Why | Needs from Erin |
 |---|---|---|---|---|
