@@ -151,6 +151,14 @@ ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS billing_notes text;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_data_url text;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_width int;
 ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS logo_height int;
+-- One tasteful, non-diagnostic cross-sell line ("we also do paid ads and
+-- social media") shown on this partner's clients' customer-facing share
+-- dashboards, right next to the existing "Questions? Contact..." footer —
+-- deliberately never tied to a specific audit finding or SEO weakness
+-- (that reads as "you're not doing your job," not "here's what else we
+-- do"). Null/empty means nothing is shown, same "hide, don't show empty"
+-- precedent as the dashboard's other optional cards.
+ALTER TABLE referral_partners ADD COLUMN IF NOT EXISTS cross_sell_note text;
 
 -- Attribution only (§ referral/reseller partners who send clients our way,
 -- and/or the default "runs under this company" pick for the client). This
@@ -206,3 +214,16 @@ INSERT INTO referral_partners (name, email, brand_hex, brand2_hex) VALUES
   ('Parts of Practice',  'Richard@PartsofPractice.com', '#003366', '#f59e0b'),
   ('GroupRB',            'Richard@GroupRB.com',         '#0B0B0C', '#1D4ED8')
 ON CONFLICT (name) DO NOTHING;
+
+-- Seed the initial cross-sell copy for the two partners actually offering
+-- broader digital services today (see cross_sell_note's own comment above)
+-- — must run after the seed INSERT above, not before, so it still takes
+-- effect on a brand-new database where these rows don't exist yet until
+-- that INSERT creates them. Safe to re-run either way; just keeps the
+-- note current rather than being a one-time migration.
+UPDATE referral_partners SET cross_sell_note =
+  'Growing your practice takes more than SEO. Parts of Practice also helps with paid ads, social media, and other digital marketing — ask us what''s next.'
+  WHERE name = 'Parts of Practice';
+UPDATE referral_partners SET cross_sell_note =
+  'SEO is just one piece. GroupRB also handles paid ads, social media, and digital marketing — reach out to talk about what else we can do for you.'
+  WHERE name = 'GroupRB';

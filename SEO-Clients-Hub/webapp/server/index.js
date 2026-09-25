@@ -154,6 +154,7 @@ app.get('/api/share/:token/summary', async (req, res) => {
     provider = {
       name: partner.name, email: partner.email, brand: partner.brand_hex, brand2: partner.brand2_hex, accent: partner.accent_hex,
       logo: partner.logo_data_url, logoWidth: partner.logo_width, logoHeight: partner.logo_height,
+      crossSellNote: partner.cross_sell_note,
     };
   } catch { /* no active referral partner configured — dashboard still renders without branding */ }
 
@@ -573,7 +574,7 @@ app.get('/api/referral-partners', async (req, res) => {
 app.post('/api/referral-partners', async (req, res) => {
   const {
     name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
-    active, billing_notes, logo_data_url, logo_width, logo_height, client_ids,
+    active, billing_notes, cross_sell_note, logo_data_url, logo_width, logo_height, client_ids,
   } = req.body || {};
   if (!name || !String(name).trim()) return res.status(400).json({ error: 'Company name is required' });
 
@@ -591,8 +592,8 @@ app.post('/api/referral-partners', async (req, res) => {
     const { rows } = await dbClient.query(
       `INSERT INTO referral_partners
          (name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
-          active, billing_notes, logo_data_url, logo_width, logo_height)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+          active, billing_notes, cross_sell_note, logo_data_url, logo_width, logo_height)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *`,
       [
         String(name).trim(),
         (contact_name || '').trim() || null,
@@ -604,6 +605,7 @@ app.post('/api/referral-partners', async (req, res) => {
         cleanHex(accent_hex),
         active === false ? false : true,
         (billing_notes || '').trim() || null,
+        (cross_sell_note || '').trim() || null,
         cleanedLogo,
         cleanedLogo ? cleanLogoDim(logo_width) : null,
         cleanedLogo ? cleanLogoDim(logo_height) : null,
@@ -635,7 +637,7 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
 
   const {
     name, contact_name, email, phone, website, brand_hex, brand2_hex, accent_hex,
-    active, billing_notes, logo_data_url, logo_width, logo_height, client_ids,
+    active, billing_notes, cross_sell_note, logo_data_url, logo_width, logo_height, client_ids,
   } = req.body || {};
   const updates = [];
   const values = [];
@@ -649,6 +651,7 @@ app.patch('/api/referral-partners/:id', async (req, res) => {
   if (typeof accent_hex === 'string') { values.push(cleanHex(accent_hex)); updates.push(`accent_hex = $${values.length}`); }
   if (typeof active === 'boolean') { values.push(active); updates.push(`active = $${values.length}`); }
   if (typeof billing_notes === 'string') { values.push(billing_notes.trim() || null); updates.push(`billing_notes = $${values.length}`); }
+  if (typeof cross_sell_note === 'string') { values.push(cross_sell_note.trim() || null); updates.push(`cross_sell_note = $${values.length}`); }
   if (typeof logo_data_url === 'string') {
     // Presence of the key means "set or clear the logo" — an empty string
     // clears it (and its now-meaningless stored dimensions) rather than
