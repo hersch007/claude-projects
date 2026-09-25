@@ -26,6 +26,11 @@ module.exports = [
         BLOG_DEF,
       ],
     },
+    contactFirstName: 'Erin',
+    website: 'wanderingfreecounseling.com',
+    platform: 'Squarespace',
+    welcomeTier: 'support',
+    summaries: { support: 'Up to 3 new pages in months 1-2, then up to 2 new pages per month through month 12' },
     platformNote: "Client's website runs on Squarespace. Schema implementation requires custom code injection, which is available on the Squarespace Business plan or higher. If Client does not maintain an eligible plan, Provider will implement schema only to the extent the platform allows, and the remaining Services and fees are unaffected. All other included Services work on all Squarespace plans.",
   },
 ];

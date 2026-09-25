@@ -95,3 +95,13 @@ module.exports = {
 
 module.exports.PAGE_DEF = PAGE_DEF;
 module.exports.BLOG_DEF = BLOG_DEF;
+
+// Rates for work beyond a plan's allowances (Exhibit A "Additional Work Rates", welcome checklist).
+module.exports.RATES = { page: 75, blog: 50 };
+
+// One-line allowance summaries for the welcome checklist.
+module.exports.SUMMARIES = {
+  spark: 'No page or blog allowance (available at the add-on rates below)',
+  support: 'Up to 2 new pages per month in months 1-2, then up to 4 more pages through month 12',
+  growth: 'Up to 2 new pages and 2 blog posts per month in months 1-3, then up to 6 more pages and 1 blog post per month through month 12',
+};

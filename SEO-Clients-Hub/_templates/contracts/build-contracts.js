@@ -28,6 +28,8 @@ const PROVIDER = {
   email: 'PartsofPractice@gmail.com',
 };
 
+const { RATES } = TIERS;
+
 const money = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 // ---------- inline markup: **bold**, [[fill-in]] ----------
@@ -53,7 +55,7 @@ const para = (text, opts = {}) => new Paragraph({
   keepNext: opts.keepNext,
 });
 const bullet = text => new Paragraph({
-  children: runs(text), numbering: { reference: 'bullets', level: 0 }, spacing: { after: 60, line: 264 },
+  children: runs(text), numbering: { reference: 'bullets', level: 0 }, spacing: { after: 40, line: 259 },
 });
 const h1 = text => new Paragraph({
   children: [new TextRun({ text, bold: true, size: 26, color: NAVY })],
@@ -279,6 +281,14 @@ function buildDoc(tier, client) {
     ['Setup Fee', 'None'],
   ]));
   c.push(para('Payment is due in advance as stated in Section 3 of the Agreement.'));
+
+  sec('Additional Work Rates');
+  c.push(para('Client may request work beyond the allowances in this Exhibit at the following rates. Each request is approved in writing (email is sufficient) before work begins and is billed with the next monthly invoice.'));
+  c.push(feeTable([
+    ['Additional page', `${money(RATES.page)} each (one standard content page of up to approximately 800 words on an existing layout)`],
+    ['Additional blog post', `${money(RATES.blog)} each (one SEO-optimized draft of up to approximately 1,000 words)`],
+    ['Custom work', 'Custom-designed layouts, landing pages with forms or booking integrations, and other work are quoted separately by written change order.'],
+  ]));
 
   sec(tier.key === 'spark' ? 'Renewal Services' : 'SEO-Only Renewal Services');
   c.push(para(tier.key === 'spark'
