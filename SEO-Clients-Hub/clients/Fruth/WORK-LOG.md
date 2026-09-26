@@ -76,3 +76,8 @@
 | 2026-09-21 | **Running-Log / QA Verification** — Updated pages-data.js and regenerated the running log with both rechecks | 0.25 | Complete | Billed in 15-min increments. Homepage still not implemented — remains VERIFIED PENDING. |
 
 **Running-Log / QA Verification category total: 10.00h** — 26 individual per-page checks @ 0.25h (24 + cleanroom-bags cross-check + Contact + Homepage recheck + Cushion recheck = 28 pages × 0.25h = 7.00h) + 5 doc-construction/regeneration tasks (0.50 crawler parse + 1.25 tooling build + 0.75 rebuild/patch + 0.25 Contact regen + 0.25 final regen = 3.00h). Revised up from the earlier 4.75h bundled estimate — that version billed the 24-page verification batch as a single 1.50h line (0.0625h/page), inconsistent with the 0.25h/page standard used everywhere else.
+
+| 2026-09-25 | Live-site audit + schema fix drafted + doc update — Blog: "3 Questions to Ask Your Medical Packaging Manufacturer" (title/meta/alt tags checked, schema publisher bug found + corrected, 5 internal links recommended) | 1.00 | Complete — Billed 2026-10-07 | Done 2026-09-25, billed 2026-10-07, per Richard. |
+| 2026-09-25 | Live-site audit + meta fix + schema fix drafted + doc update — Blog: "Custom Medical Packaging for Catheter & Syringe Bags" (title/alt tags checked, meta too-long fix confirmed, schema publisher bug found + corrected, 4 internal links recommended) | 1.25 | Complete — Billed 2026-10-07 | Done 2026-09-25, billed 2026-10-07, per Richard. |
+
+**Running-Log / QA Verification category total: 12.25h** (11.00h through the "3 Questions" blog + 1.25h for the Catheter/Syringe blog audit).

@@ -9,7 +9,7 @@ module.exports = {
   "client": "Fruth Custom Packaging",
   "docTitle": "On-Page SEO Audit — Running Log",
   "docSubtitle": "Reconciled findings: hand-written audit vs. crawler dashboard vs. content-creation drafts",
-  "lastUpdated": "2026-09-21",
+  "lastUpdated": "2026-09-25",
   "totalPages": 48,
   "guidelines": [
     "The crawler dashboard (Fruth-Custom-Packaging-SEO-Audit-*.html) parses live HTML and is the source of truth for title/meta/schema/alt presence — the hand-written .md audit was built via WebFetch, which does not reliably see <head> meta tags, so its \"missing meta description\" findings for the 6 main pages have been corrected here.",
@@ -779,19 +779,42 @@ module.exports = {
       "secondaryKw": ""
     },
     {
+      "name": "Blog: 3 Questions to Ask Your Medical Packaging Manufacturer",
+      "status": "AUDITED 2026-09-25 — 1 fix needed (schema), 1 opportunity (internal links)",
+      "liveUrl": "https://www.fruth.com/learning-center/3-questions-to-be-asking-your-medical-packaging-manufacturer",
+      "title": {
+        "text": "3 Questions to be Asking Your Medical Packaging Manufacturer",
+        "chars": 60
+      },
+      "meta": {
+        "text": "Learn how to choose the right medical packaging manufacturer. Discover key factors like in-house production, lead times, and custom packaging solutions.",
+        "chars": 152
+      },
+      "notes": "TITLE TAG: no change needed (60 chars, current — already live).\nMETA DESCRIPTION: no change needed (152 chars, current — already live).\nALT TAGS: no change needed. All 4 images checked via DOM — image 1 is the post's own hero (alt matches this post's title, correct); images 2-4 are an auto-generated \"Related Posts\" module (hhs-blog-card-inner), each correctly linking to and describing its OWN article. Not a bug.\nCANONICAL / H1 / WORD COUNT: all fine (canonical present + correct, H1 matches title, 661 words).\n\nSCHEMA — FIX NEEDED: live \"publisher\" field says \"Garlock Flexibles\" with Garlock's logo instead of Fruth (cross-brand contamination from the shared HubSpot portal — same pattern as the C-P Flexible Packaging news post). Corrected block below; placeholder logo URL (fruth.com/logo.png) not independently verified against HubSpot.\n\nPOTENTIAL LINKS — 0 internal links currently in the article body (confirmed via DOM check; only the auto Related-Posts cards link anywhere). Recommend adding:\n1. Q1 \"operate fully in-house\" -> /capabilities\n2. Q1 \"A vertically integrated manufacturer\" -> /fruth-360\n3. Q2 \"fully manufactured in the United States\" -> /our-story\n4. Q3 \"sterilization compatibility\" -> /products/bags/autoclave-bags\n5. Closing \"protected, compliant, and ready for market\" -> /industries",
+      "schemaLabel": "SCHEMA (Head HTML) — current is wrong, replace with corrected version below",
+      "schema": "CURRENT (live, wrong publisher):\n<script type=\"application/ld+json\">\n{\n  \"mainEntityOfPage\" : { \"@type\" : \"WebPage\", \"@id\" : \"https://www.fruth.com/learning-center/3-questions-to-be-asking-your-medical-packaging-manufacturer\" },\n  \"author\" : { \"name\" : \"Fruth Custom Packaging\", \"url\" : \"https://www.fruth.com/learning-center/author/fruth-custom-packaging\", \"@type\" : \"Person\" },\n  \"headline\" : \"3 Questions to be Asking Your Medical Packaging Manufacturer\",\n  \"datePublished\" : \"2024-09-13T12:45:00.000Z\",\n  \"dateModified\" : \"2026-02-17T15:52:14.829Z\",\n  \"publisher\" : { \"name\" : \"Garlock Flexibles\", \"logo\" : { \"url\" : \"https://www.fruth.com/hubfs/Garlock%20Logo.jpg\", \"@type\" : \"ImageObject\" }, \"@type\" : \"Organization\" },\n  \"@context\" : \"https://schema.org\",\n  \"@type\" : \"BlogPosting\",\n  \"image\" : [ \"https://www.fruth.com/hubfs/Fruth%20Custom%20Packaging/Home/customization.jpg\" ]\n}\n</script>\n\nCORRECTED (paste this instead):\n<script type=\"application/ld+json\">\n{\n  \"mainEntityOfPage\" : { \"@type\" : \"WebPage\", \"@id\" : \"https://www.fruth.com/learning-center/3-questions-to-be-asking-your-medical-packaging-manufacturer\" },\n  \"author\" : { \"name\" : \"Fruth Custom Packaging\", \"url\" : \"https://www.fruth.com/learning-center/author/fruth-custom-packaging\", \"@type\" : \"Person\" },\n  \"headline\" : \"3 Questions to be Asking Your Medical Packaging Manufacturer\",\n  \"datePublished\" : \"2024-09-13T12:45:00.000Z\",\n  \"dateModified\" : \"2026-02-17T15:52:14.829Z\",\n  \"publisher\" : { \"name\" : \"Fruth Custom Packaging\", \"logo\" : { \"url\" : \"https://www.fruth.com/logo.png\", \"@type\" : \"ImageObject\" }, \"@type\" : \"Organization\" },\n  \"@context\" : \"https://schema.org\",\n  \"@type\" : \"BlogPosting\",\n  \"image\" : [ \"https://www.fruth.com/hubfs/Fruth%20Custom%20Packaging/Home/customization.jpg\" ]\n}\n</script>",
+      "editorUrl": "https://app.hubspot.com/",
+      "audited": "2026-09-25",
+      "primaryKw": "",
+      "secondaryKw": ""
+    },
+    {
       "name": "Blog: Custom Medical Packaging for Catheter & Syringe Bags",
-      "status": "AUDITED 2026-08-31 — meta too long, needs shortening",
+      "status": "AUDITED 2026-09-25 — 2 fixes needed (meta, schema), 1 opportunity (internal links)",
       "liveUrl": "https://www.fruth.com/learning-center/custom-medical-packaging-for-catheter-syringe-bags",
+      "title": {
+        "text": "Custom Medical Packaging for Catheter Syringe Bags",
+        "chars": 50
+      },
       "meta": {
         "text": "Fruth manufactures custom medical packaging for catheters and syringes — sterile bags built to spec for device makers and healthcare buyers.",
         "chars": 140
       },
-      "notes": "Crawler: meta description long (182 chars, aim for 140-160) — gets truncated in search results.",
-      "schemaLabel": null,
-      "schema": null,
-      "title": null,
+      "notes": "TITLE TAG: no change needed (50 chars, current — already live).\nMETA DESCRIPTION — FIX NEEDED: current is 182 chars (aim 140-160), gets truncated in search results. Corrected version above (140 chars).\nALT TAGS: no change needed. Same pattern as the other blog posts on this site — image 1 is this post's own hero (alt matches this post's title, correct); images 2-4 are the auto \"Related Posts\" module, each correctly linking to and describing its own article.\nCANONICAL / H1 / WORD COUNT: all fine (canonical present + correct, single H1 matches title, 484 words).\n\nSCHEMA — FIX NEEDED: same \"Garlock Flexibles\" publisher bug found on the \"3 Questions\" blog post — this is now confirmed on 2 of 2 blog posts checked, likely site-wide across every Learning Center article on this shared HubSpot portal. Corrected block below; placeholder logo URL (fruth.com/logo.png) not independently verified.\n\nPOTENTIAL LINKS — 0 internal links currently in the article body. Recommend adding:\n1. \"we recently partnered with a medical packaging supplier\" -> /industries (Medical/Bio/Pharma Packaging section)\n2. \"state-of-the-art printing presses and in-house flexographic printing capabilities\" -> /capabilities\n3. \"advanced conversion capabilities\" -> /capabilities\n4. Closing \"our team is ready to help design a solution tailored to your requirements\" -> /contact",
+      "schemaLabel": "SCHEMA (Head HTML) — current is wrong, replace with corrected version below",
+      "schema": "CURRENT (live, wrong publisher):\n<script type=\"application/ld+json\">\n{\n  \"mainEntityOfPage\" : { \"@type\" : \"WebPage\", \"@id\" : \"https://www.fruth.com/learning-center/custom-medical-packaging-for-catheter-syringe-bags\" },\n  \"author\" : { \"name\" : \"Fruth Custom Packaging\", \"url\" : \"https://www.fruth.com/learning-center/author/fruth-custom-packaging\", \"@type\" : \"Person\" },\n  \"headline\" : \"Custom Medical Packaging for Catheter Syringe Bags\",\n  \"datePublished\" : \"2023-08-16T12:45:00.000Z\",\n  \"dateModified\" : \"2026-02-17T16:18:24.429Z\",\n  \"publisher\" : { \"name\" : \"Garlock Flexibles\", \"logo\" : { \"url\" : \"https://www.fruth.com/hubfs/Garlock%20Logo.jpg\", \"@type\" : \"ImageObject\" }, \"@type\" : \"Organization\" },\n  \"@context\" : \"https://schema.org\",\n  \"@type\" : \"BlogPosting\",\n  \"image\" : [ \"https://www.fruth.com/hubfs/Fruth%20Custom%20Packaging/Products/custom-catheter-bag%20(1).jpg\" ]\n}\n</script>\n\nCORRECTED (paste this instead):\n<script type=\"application/ld+json\">\n{\n  \"mainEntityOfPage\" : { \"@type\" : \"WebPage\", \"@id\" : \"https://www.fruth.com/learning-center/custom-medical-packaging-for-catheter-syringe-bags\" },\n  \"author\" : { \"name\" : \"Fruth Custom Packaging\", \"url\" : \"https://www.fruth.com/learning-center/author/fruth-custom-packaging\", \"@type\" : \"Person\" },\n  \"headline\" : \"Custom Medical Packaging for Catheter Syringe Bags\",\n  \"datePublished\" : \"2023-08-16T12:45:00.000Z\",\n  \"dateModified\" : \"2026-02-17T16:18:24.429Z\",\n  \"publisher\" : { \"name\" : \"Fruth Custom Packaging\", \"logo\" : { \"url\" : \"https://www.fruth.com/logo.png\", \"@type\" : \"ImageObject\" }, \"@type\" : \"Organization\" },\n  \"@context\" : \"https://schema.org\",\n  \"@type\" : \"BlogPosting\",\n  \"image\" : [ \"https://www.fruth.com/hubfs/Fruth%20Custom%20Packaging/Products/custom-catheter-bag%20(1).jpg\" ]\n}\n</script>",
       "editorUrl": "https://app.hubspot.com/",
-      "audited": "2026-08-31",
+      "audited": "2026-09-25",
       "primaryKw": "",
       "secondaryKw": ""
     }
